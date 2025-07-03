@@ -24,6 +24,9 @@ const LoginForm = () => {
     isValid,
   } = useLoginForm();
 
+  //인풋관리
+
+
   return (
     <S.Form>
       <S.Logo
@@ -32,8 +35,8 @@ const LoginForm = () => {
       />
       <S.Input
         type="email"
-        value={email}
         placeholder="이메일"
+        value={email}
         onChange={(e) => handleEmailChange(e.target.value)}
         onBlur={validateEmail}
         hasError={!!emailError}
@@ -41,8 +44,8 @@ const LoginForm = () => {
       {emailError && <S.ErrorMessage>{emailError}</S.ErrorMessage>}
       <S.Input
         type="password"
-        value={password}
         placeholder="비밀번호"
+        value={password}
         onChange={(e) => handlePasswordChange(e.target.value)}
         onBlur={validatePassword}
         hasError={!!passwordError}
