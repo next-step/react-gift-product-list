@@ -17,8 +17,8 @@ const LoginForm = () => {
     password,
     emailError,
     passwordError,
-    handleEmailChange,
-    handlePasswordChange,
+    EmailChange,
+    PasswordChange,
     validateEmail,
     validatePassword,
     isValid,
@@ -37,7 +37,7 @@ const LoginForm = () => {
         type="email"
         placeholder="이메일"
         value={email}
-        onChange={(e) => handleEmailChange(e.target.value)}
+        onChange={(e) => EmailChange(e.target.value)}
         onBlur={validateEmail}
         hasError={!!emailError}
       />
@@ -46,7 +46,7 @@ const LoginForm = () => {
         type="password"
         placeholder="비밀번호"
         value={password}
-        onChange={(e) => handlePasswordChange(e.target.value)}
+        onChange={(e) => PasswordChange(e.target.value)}
         onBlur={validatePassword}
         hasError={!!passwordError}
       />
