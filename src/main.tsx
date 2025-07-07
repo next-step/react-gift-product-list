@@ -36,7 +36,7 @@ const router = createBrowserRouter([
         <OrderPage />
       </PrivateRoute>
     ),
-  }
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(

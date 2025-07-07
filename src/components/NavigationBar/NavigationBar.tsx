@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
 
   const handleBack = () => {
     navigate(-1);

@@ -17,7 +17,6 @@ const ProductItem = ({
   brandImageURL,
   brandName,
 }: ProductItemProps) => {
-  
   const navigate = useNavigate();
 
   const goToOrderPage = () => {
