@@ -7,6 +7,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage.tsx';
+import MyPage from '@/pages/MyPage/MyPage';
+import PrivateRoute from '@/PrivateRoute';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,12 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/my',
+    element: <PrivateRoute>
+            <MyPage />
+          </PrivateRoute>,
   },
 ]);
 
