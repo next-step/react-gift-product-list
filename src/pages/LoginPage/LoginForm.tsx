@@ -1,12 +1,20 @@
 import * as S from '@/pages/LoginPage/LoginForm.styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLoginForm } from './useLoginForm';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
 
   const handleLogin = () => {
+    // 로그인 정보 저장 
+    login({
+      email,
+      pw: password,
+    });
+
     const redirectTo = location.state?.from?.pathname || '/';
     navigate(redirectTo, { replace: true });
   };

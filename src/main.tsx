@@ -4,6 +4,7 @@ import App from '@/App.tsx';
 import { ThemeProvider } from '@emotion/react';
 import { theme } from '@/styles/theme';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '@/contexts/AuthContext';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage.tsx';
 
@@ -22,7 +23,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ThemeProvider>
   </StrictMode>
 );
