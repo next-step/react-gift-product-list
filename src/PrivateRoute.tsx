@@ -11,7 +11,6 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const location = useLocation();
 
   if (!user) {
-    // 로그인 안 했으면 로그인 페이지로 이동시키고, 돌아올 경로 저장
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

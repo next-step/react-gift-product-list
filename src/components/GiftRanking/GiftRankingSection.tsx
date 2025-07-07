@@ -44,7 +44,7 @@ const GiftRankingSection = () => {
       <S.Grid>
         {repeatedProducts.map((product) => (
           <ProductItem
-            key={product.id}
+            id={product.id}
             name={product.name}
             imageURL={product.imageURL}
             sellingPrice={product.price.sellingPrice}

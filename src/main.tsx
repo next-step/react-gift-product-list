@@ -9,6 +9,7 @@ import LoginPage from '@/pages/LoginPage/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage.tsx';
 import MyPage from '@/pages/MyPage/MyPage';
 import PrivateRoute from '@/PrivateRoute';
+import OrderPage from '@/pages/OrderPage/OrderPage';
 
 const router = createBrowserRouter([
   {
@@ -22,10 +23,20 @@ const router = createBrowserRouter([
   },
   {
     path: '/my',
-    element: <PrivateRoute>
-            <MyPage />
-          </PrivateRoute>,
+    element: (
+      <PrivateRoute>
+        <MyPage />
+      </PrivateRoute>
+    ),
   },
+  {
+    path: '/order/:id',
+    element: (
+      <PrivateRoute>
+        <OrderPage />
+      </PrivateRoute>
+    ),
+  }
 ]);
 
 createRoot(document.getElementById('root')!).render(

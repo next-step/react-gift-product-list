@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-
+import { useNavigate } from 'react-router-dom';
 interface ProductItemProps {
+  id: number;
   name: string;
   imageURL: string;
   sellingPrice: number;
@@ -9,14 +10,22 @@ interface ProductItemProps {
 }
 
 const ProductItem = ({
+  id,
   name,
   imageURL,
   sellingPrice,
   brandImageURL,
   brandName,
 }: ProductItemProps) => {
+  
+  const navigate = useNavigate();
+
+  const goToOrderPage = () => {
+    navigate(`/order/${id}`);
+  };
+
   return (
-    <Card>
+    <Card onClick={goToOrderPage}>
       <Thumbnail src={imageURL} alt={name} />
       <Brand>
         <BrandLogo src={brandImageURL} alt={brandName} />
