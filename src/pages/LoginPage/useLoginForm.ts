@@ -17,11 +17,11 @@ export const useLoginForm = () => {
     return '';
   }, [password]);
 
-  const EmailChange = (value: string) => {
+  const emailChange = (value: string) => {
     setEmail(value);
   };
 
-  const PasswordChange = (value: string) => {
+  const passwordChange = (value: string) => {
     setPassword(value);
   };
 
@@ -42,8 +42,8 @@ export const useLoginForm = () => {
     password,
     emailError,
     passwordError,
-    EmailChange,
-    PasswordChange,
+    emailChange,
+    passwordChange,
     validateEmail,
     validatePassword,
     isValid,
