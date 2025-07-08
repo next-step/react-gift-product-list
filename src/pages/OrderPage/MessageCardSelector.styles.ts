@@ -5,6 +5,7 @@ export const Container = styled.div`
   gap: 4px;
   overflow-x: auto;
   padding: 1rem 0;
+  margin-bottom: 12px;
 `;
 
 export const Card = styled.div<{ isSelected: boolean }>`

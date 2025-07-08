@@ -5,6 +5,7 @@ import MessageCardSelector, { type MessageCard } from './MessageCardSelector';
 import SelectedCardPreview from './SelectedCardPreview';
 import { useState } from 'react';
 import Layout from '@/components/Layout';
+import SectionTitle from '@/components/SectionTitle';
 
 const OrderPage = () => {
   const { id } = useParams();
@@ -25,6 +26,9 @@ const OrderPage = () => {
       {selectedCard && (
         <SelectedCardPreview card={selectedCard} message={message} onChange={setMessage} />
       )}
+      <SectionTitle title="보내는 사람"/>
+      <SectionTitle title="받는 사람"/>
+      <SectionTitle title="상품 정보"/>
       <p>선택한 상품 ID: {id}</p>
     </Layout>
   );
