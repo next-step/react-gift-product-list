@@ -1,11 +1,15 @@
 import { useParams } from 'react-router-dom';
+import NavigationBar from '@/components/NavigationBar/NavigationBar';
+import { messageCards } from '@/data/messageCards';
+import MessageCardSelector from './MessageCardSelector';
 
 const OrderPage = () => {
   const { id } = useParams();
 
   return (
     <div>
-      <h1>주문하기 페이지</h1>
+      <NavigationBar/>
+      <MessageCardSelector cards={messageCards} />
       <p>선택한 상품 ID: {id}</p>
     </div>
   );
