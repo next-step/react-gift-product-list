@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import NavigationBar from '@/components/NavigationBar/NavigationBar';
 import { messageCards } from '@/data/messageCards';
-import MessageCardSelector, { type MessageCard } from './MessageCardSelector';
-import SelectedCardPreview from './SelectedCardPreview';
+import MessageCardSelector, { type MessageCard } from './MessageCardSelector/MessageCardSelector';
+import SelectedCardPreview from './SelectedCardPreview/SelectedCardPreview';
 import { useState } from 'react';
 import Layout from '@/components/Layout';
 import SectionTitle from '@/components/SectionTitle';

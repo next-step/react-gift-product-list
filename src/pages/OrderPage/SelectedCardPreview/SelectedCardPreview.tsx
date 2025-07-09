@@ -1,4 +1,4 @@
-import type { MessageCard } from './MessageCardSelector';
+import type { MessageCard } from '../MessageCardSelector/MessageCardSelector';
 import * as S from './SelectedCardPreview.styles';
 
 interface Props {
