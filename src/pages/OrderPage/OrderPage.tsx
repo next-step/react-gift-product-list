@@ -5,9 +5,10 @@ import SelectedCardPreview from './SelectedCardPreview/SelectedCardPreview';
 import { useState } from 'react';
 import Layout from '@/components/Layout';
 import SectionTitle from '@/components/SectionTitle';
-import ProductSummary from './ProductSummary/ProductSummary';
+import SectionDivider from '@/components/SectionDivider';
 import SenderInfo from './SenderInfo/SenderInfo';
 import ReceiverInfo from './ReceiverInfo/ReceiverInfo';
+import ProductSummary from './ProductSummary/ProductSummary';
 
 const OrderPage = () => {
   const [selectedCard, setSelectedCard] = useState<MessageCard | null>(null);
@@ -35,7 +36,9 @@ const OrderPage = () => {
       {selectedCard && (
         <SelectedCardPreview card={selectedCard} message={message} onChange={setMessage} />
       )}
+      <SectionDivider />
       <SenderInfo senderName={senderName} onChangeSenderName={setSenderName} />
+      <SectionDivider />
       <ReceiverInfo
         receiverName={receiverName}
         onChangeReceiverName={setReceiverName}
@@ -44,6 +47,7 @@ const OrderPage = () => {
         quantity={quantity}
         onChangeQuantity={setQuantity}
       />
+      <SectionDivider />
       <SectionTitle title="상품 정보" />
       <ProductSummary />
     </Layout>
