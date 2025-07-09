@@ -16,7 +16,9 @@ export const Card = styled.div<{ isSelected: boolean }>`
   cursor: pointer;
   border: 3px solid ${({ isSelected, theme }) => (isSelected ? theme.color.gray800 : 'transparent')};
   box-shadow: ${({ isSelected }) => (isSelected ? '0 0 7px rgba(125, 125, 125, 0.5)' : 'none')};
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     border-color: ${({ theme }) => theme.color.gray600};

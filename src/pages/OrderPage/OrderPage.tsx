@@ -21,14 +21,17 @@ const OrderPage = () => {
   return (
     <Layout>
       <NavigationBar />
-      <MessageCardSelector cards={messageCards} selectedId={selectedCard?.id ?? null}
-        onSelect={handleSelectCard} />
+      <MessageCardSelector
+        cards={messageCards}
+        selectedId={selectedCard?.id ?? null}
+        onSelect={handleSelectCard}
+      />
       {selectedCard && (
         <SelectedCardPreview card={selectedCard} message={message} onChange={setMessage} />
       )}
-      <SectionTitle title="보내는 사람"/>
-      <SectionTitle title="받는 사람"/>
-      <SectionTitle title="상품 정보"/>
+      <SectionTitle title="보내는 사람" />
+      <SectionTitle title="받는 사람" />
+      <SectionTitle title="상품 정보" />
       <p>선택한 상품 ID: {id}</p>
     </Layout>
   );
