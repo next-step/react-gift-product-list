@@ -4,11 +4,12 @@ import TextInputBox from '@/components/TextInputBox';
 interface SenderInfoProps {
   senderName: string;
   onChangeSenderName: (value: string) => void;
+  isSubmitted: boolean;
 }
 
-const SenderInfo = ({ senderName, onChangeSenderName }: SenderInfoProps) => {
+const SenderInfo = ({ senderName, onChangeSenderName, isSubmitted }: SenderInfoProps) => {
   const errorMessage =
-    senderName.trim() === '' ? '보내는 사람 이름이 반드시 입력 되어야 해요.' : '';
+    isSubmitted && senderName.trim() === '' ? '보내는 사람 이름이 반드시 입력 되어야 해요.' : '';
 
   return (
     <div>

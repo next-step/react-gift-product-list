@@ -9,6 +9,7 @@ import SectionDivider from '@/components/SectionDivider';
 import SenderInfo from './SenderInfo/SenderInfo';
 import ReceiverInfo from './ReceiverInfo/ReceiverInfo';
 import ProductSummary from './ProductSummary/ProductSummary';
+import BottomButton from '@/components/BottomButton';
 
 const OrderPage = () => {
   const [selectedCard, setSelectedCard] = useState<MessageCard | null>(null);
@@ -23,7 +24,31 @@ const OrderPage = () => {
   const [receiverName, setReceiverName] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
   const [quantity, setQuantity] = useState('1');
+
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = () => {
+    setIsSubmitted(true);
+
+    const isValid =
+      senderName.trim() !== '' &&
+      receiverName.trim() !== '' &&
+      /^010\d{8}$/.test(receiverPhone) &&
+      parseInt(quantity, 10) >= 1 &&
+      message.trim() !== '';
+
+    if (!isValid) {
+      return;
+    }
+
+    console.log('폼 제출 완료!', {
+      senderName,
+      receiverName,
+      receiverPhone,
+      quantity,
+      message,
+    });
+  };
 
   return (
     <Layout>
@@ -39,7 +64,11 @@ const OrderPage = () => {
         onChange={setMessage}
       />
       <SectionDivider />
-      <SenderInfo senderName={senderName} onChangeSenderName={setSenderName} />
+      <SenderInfo
+        senderName={senderName}
+        onChangeSenderName={setSenderName}
+        isSubmitted={isSubmitted}
+      />
       <SectionDivider />
       <ReceiverInfo
         receiverName={receiverName}
@@ -48,10 +77,13 @@ const OrderPage = () => {
         onChangeReceiverPhone={setReceiverPhone}
         quantity={quantity}
         onChangeQuantity={setQuantity}
+        isSubmitted={isSubmitted}
       />
       <SectionDivider />
       <SectionTitle title="상품 정보" />
       <ProductSummary />
+
+      <BottomButton onClick={handleSubmit}>주문하기</BottomButton>
     </Layout>
   );
 };
