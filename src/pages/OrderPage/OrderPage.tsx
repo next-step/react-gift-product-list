@@ -33,9 +33,11 @@ const OrderPage = () => {
         selectedId={selectedCard?.id ?? null}
         onSelect={handleSelectCard}
       />
-      {selectedCard && (
-        <SelectedCardPreview card={selectedCard} message={message} onChange={setMessage} />
-      )}
+      <SelectedCardPreview
+        card={selectedCard ?? messageCards[0]}
+        message={message || messageCards[0].defaultTextMessage}
+        onChange={setMessage}
+      />
       <SectionDivider />
       <SenderInfo senderName={senderName} onChangeSenderName={setSenderName} />
       <SectionDivider />

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const ImageWrapper = styled.div`
-  width: 60%;
+  width: 50%;
   border-radius: 12px;
   overflow: hidden;
   margin: 12px auto 45px auto;
@@ -15,7 +15,7 @@ export const ImageWrapper = styled.div`
 
 export const Textarea = styled.textarea`
   width: 95%;
-  height: 90px;
+  height: 40px;
   padding: 12px;
   font-size: 14px;
   border-radius: 8px;

@@ -11,8 +11,8 @@ export const Wrapper = styled.div`
 `;
 
 export const Thumbnail = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
   border-radius: 8px;
 `;
@@ -24,7 +24,7 @@ export const Info = styled.div`
 `;
 
 export const Name = styled.h4`
-  ${({ theme }) => theme.typography.title2Bold};
+  ${({ theme }) => theme.typography.subtitle2Bold};
   margin-bottom: 4px;
 `;
 
