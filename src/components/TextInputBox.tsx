@@ -6,6 +6,7 @@ interface TextInputBoxProps {
   value: string;
   onChange: (value: string) => void;
   marginBottom?: string;
+  errorMessage?: string;
 }
 
 const TextInputBox = ({
@@ -14,15 +15,20 @@ const TextInputBox = ({
   value,
   onChange,
   marginBottom = '16px',
+  errorMessage,
 }: TextInputBoxProps) => {
   return (
     <Wrapper marginBottom={marginBottom}>
       {title && <Title>{title}</Title>}
-      <Textarea
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <InputWrapper>
+        <Textarea
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          hasError={!!errorMessage}
+        />
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      </InputWrapper>
     </Wrapper>
   );
 };
@@ -31,8 +37,7 @@ export default TextInputBox;
 
 const Wrapper = styled.div<{ marginBottom: string }>`
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  flex-direction: column;
   width: 100%;
   margin: ${({ marginBottom }) => marginBottom};
 `;
@@ -42,20 +47,30 @@ const Title = styled.label`
   font-size: 14px;
   font-weight: 500;
   color: ${({ theme }) => theme.color.text.default};
-  padding-top: 12px;
+  padding-bottom: 4px;
 `;
 
-const Textarea = styled.textarea`
-  flex: 1;
-  height: 20px;
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Textarea = styled.textarea<{ hasError?: boolean }>`
+  height: 40px;
   padding: 12px;
   font-size: 14px;
   border-radius: 8px;
   resize: none;
-  border: 1px solid ${({ theme }) => theme.color.border.default};
+  border: 1px solid
+    ${({ hasError, theme }) => (hasError ? theme.color.state.critical : theme.color.border.default)};
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.color.kakaoYellow};
   }
-  margin-right: 20px;
+`;
+
+const ErrorMessage = styled.span`
+  color: ${({ theme }) => theme.color.state.critical};
+  font-size: 12px;
+  margin-top: 4px;
 `;

@@ -20,10 +20,10 @@ const OrderPage = () => {
   };
 
   const [senderName, setSenderName] = useState('');
-
   const [receiverName, setReceiverName] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
   const [quantity, setQuantity] = useState('1');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   return (
     <Layout>
