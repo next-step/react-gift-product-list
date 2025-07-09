@@ -56,7 +56,7 @@ const InputWrapper = styled.div`
 `;
 
 const Textarea = styled.textarea<{ hasError?: boolean }>`
-  height: 40px;
+  height: 20px;
   padding: 12px;
   font-size: 14px;
   border-radius: 8px;
