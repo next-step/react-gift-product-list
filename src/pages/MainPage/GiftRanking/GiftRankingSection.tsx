@@ -4,16 +4,10 @@ import ProductItem from './ProductItem';
 import { useEffect, useState } from 'react';
 import FilterGroup from './FilterGroup';
 import { useSearchParams } from 'react-router-dom';
-import type { Product } from '@/data/products.types';
 
 const GiftRankingSection = () => {
-  // 목데이터 반복
-  const repeatedProducts: Product[] = Array(9)
-    .fill(null)
-    .map((_, index) => ({
-      ...productList[0],
-      id: index + 1,
-    }));
+  // 목데이터
+  const repeatedProducts = productList.slice(0, 9);
 
   // 필터
 
