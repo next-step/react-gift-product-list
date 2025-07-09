@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
   border-radius: 12px;
   background-color: ${({ theme }) => theme.color.background.default};
   border: 1px solid ${({ theme }) => theme.color.border.default};
-  margin-bottom: 20px;
+  margin-bottom: 80px;
 `;
 
 export const Thumbnail = styled.img`
