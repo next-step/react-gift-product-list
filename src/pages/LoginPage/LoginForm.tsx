@@ -21,14 +21,13 @@ const LoginForm = () => {
 
   //커스텀훅
   const {
-    email,
-    password,
-    emailError,
-    passwordError,
-    changeEmail,
-    changePassword,
-    validateEmail,
-    validatePassword,
+    email: { value: email, change: changeEmail, error: emailError, validate: validateEmail },
+    password: {
+      value: password,
+      change: changePassword,
+      error: passwordError,
+      validate: validatePassword,
+    },
     isValid,
   } = useLoginForm();
 

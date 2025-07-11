@@ -38,14 +38,18 @@ export const useLoginForm = () => {
   }, [emailError, passwordError]);
 
   return {
-    email,
-    password,
-    emailError,
-    passwordError,
-    changeEmail,
-    changePassword,
-    validateEmail,
-    validatePassword,
+    email: {
+      value: email,
+      change: changeEmail,
+      error: emailError,
+      validate: validateEmail,
+    },
+    password: {
+      value: password,
+      change: changePassword,
+      error: passwordError,
+      validate: validatePassword,
+    },
     isValid,
   };
 };
