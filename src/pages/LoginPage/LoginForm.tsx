@@ -9,12 +9,7 @@ const LoginForm = () => {
   const { login } = useAuth();
 
   const {
-    email: {
-      value: email,
-      change: changeEmail,
-      error: emailError,
-      validate: validateEmail,
-    },
+    email: { value: email, change: changeEmail, error: emailError, validate: validateEmail },
     password: {
       value: password,
       change: changePassword,
@@ -43,7 +38,7 @@ const LoginForm = () => {
       <S.Input
         type="email"
         placeholder="이메일"
-        value={email}
+        value={email ?? ''}
         onChange={(e) => changeEmail(e.target.value)}
         onBlur={validateEmail}
         hasError={!!emailError}
@@ -53,7 +48,7 @@ const LoginForm = () => {
       <S.Input
         type="password"
         placeholder="비밀번호"
-        value={password}
+        value={password ?? ''}
         onChange={(e) => changePassword(e.target.value)}
         onBlur={validatePassword}
         hasError={!!passwordError}
