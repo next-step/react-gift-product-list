@@ -1,55 +1,38 @@
-import { useMemo, useState } from 'react';
+// hooks/useLoginForm.ts
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginSchema } from './schemas/loginSchema';
+import type { z } from 'zod';
+
+type LoginFormType = z.infer<typeof LoginSchema>;
 
 export const useLoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const emailError = useMemo(() => {
-    if (!email.trim()) return 'ID를 입력해주세요.';
-    if (!/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email))
-      return 'ID는 이메일 형식으로 입력해주세요.';
-    return '';
-  }, [email]);
-
-  const passwordError = useMemo(() => {
-    if (!password.trim()) return 'PW를 입력해주세요.';
-    if (password.length < 8) return 'PW는 최소 8글자 이상이어야 합니다.';
-    return '';
-  }, [password]);
-
-  const changeEmail = (value: string) => {
-    setEmail(value);
-  };
-
-  const changePassword = (value: string) => {
-    setPassword(value);
-  };
-
-  const validateEmail = () => {
-    return emailError === '';
-  };
-
-  const validatePassword = () => {
-    return passwordError === '';
-  };
-
-  const isValid = useMemo(() => {
-    return emailError === '' && passwordError === '';
-  }, [emailError, passwordError]);
+  const {
+    register,
+    formState: { errors, isValid },
+    trigger,
+    getValues,
+    setValue,
+  } = useForm<LoginFormType>({
+    resolver: zodResolver(LoginSchema),
+    mode: 'onChange',
+  });
 
   return {
     email: {
-      value: email,
-      change: changeEmail,
-      error: emailError,
-      validate: validateEmail,
-    },
+      ...register('email'),
+      value: getValues('email'),
+      change: (v: string) => setValue('email', v, { shouldValidate: true }),
+      error: errors.email?.message || '',
+      validate: () => trigger('email'),
+    } as const,
     password: {
-      value: password,
-      change: changePassword,
-      error: passwordError,
-      validate: validatePassword,
-    },
+      ...register('password'),
+      value: getValues('password'),
+      change: (v: string) => setValue('password', v, { shouldValidate: true }),
+      error: errors.password?.message || '',
+      validate: () => trigger('password'),
+    } as const,
     isValid,
   };
 };

@@ -8,20 +8,13 @@ const LoginForm = () => {
   const location = useLocation();
   const { login } = useAuth();
 
-  const handleLogin = () => {
-    // 로그인 정보 저장
-    login({
-      email,
-      pw: password,
-    });
-
-    const redirectTo = location.state?.from?.pathname || '/';
-    navigate(redirectTo, { replace: true });
-  };
-
-  //커스텀훅
   const {
-    email: { value: email, change: changeEmail, error: emailError, validate: validateEmail },
+    email: {
+      value: email,
+      change: changeEmail,
+      error: emailError,
+      validate: validateEmail,
+    },
     password: {
       value: password,
       change: changePassword,
@@ -31,7 +24,15 @@ const LoginForm = () => {
     isValid,
   } = useLoginForm();
 
-  //인풋관리
+  const handleLogin = () => {
+    login({
+      email,
+      pw: password,
+    });
+
+    const redirectTo = location.state?.from?.pathname || '/';
+    navigate(redirectTo, { replace: true });
+  };
 
   return (
     <S.Form>
@@ -48,6 +49,7 @@ const LoginForm = () => {
         hasError={!!emailError}
       />
       {emailError && <S.ErrorMessage>{emailError}</S.ErrorMessage>}
+
       <S.Input
         type="password"
         placeholder="비밀번호"
@@ -57,6 +59,7 @@ const LoginForm = () => {
         hasError={!!passwordError}
       />
       {passwordError && <S.ErrorMessage>{passwordError}</S.ErrorMessage>}
+
       <S.LoginButton type="button" onClick={handleLogin} disabled={!isValid}>
         로그인
       </S.LoginButton>
