@@ -7,13 +7,13 @@ import Layout from '@/components/Layout';
 import SectionTitle from '@/components/SectionTitle';
 import SectionDivider from '@/components/SectionDivider';
 import SenderInfo from './SenderInfo/SenderInfo';
-import ReceiverInfo from './ReceiverInfo/ReceiverInfo';
 import ProductSummary from './ProductSummary/ProductSummary';
 import BottomButton from '@/components/BottomButton';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { OrderFormSchema } from './schemas/orderSchema';
 import type { z } from 'zod';
+import ReceiverSection from './ReceiverInfo/ReceiverSection';
 
 const OrderPage = () => {
   type OrderFormType = z.infer<typeof OrderFormSchema>;
@@ -22,9 +22,7 @@ const OrderPage = () => {
     resolver: zodResolver(OrderFormSchema),
     defaultValues: {
       senderName: '',
-      receiverName: '',
-      receiverPhone: '',
-      quantity: 1,
+      receivers: [],
       message: '',
     },
   });
@@ -60,7 +58,7 @@ const OrderPage = () => {
           <SectionDivider />
           <SenderInfo />
           <SectionDivider />
-          <ReceiverInfo />
+          <ReceiverSection/>
           <SectionDivider />
           <SectionTitle title="상품 정보" />
           <ProductSummary />
