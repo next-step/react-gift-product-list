@@ -50,7 +50,7 @@ const ORDER_ENTRIES = (() => {
 
 //Back-End api entries
 export const BE = {
-  PING: `/ping`,
+  PING: `${PROTOCOL}://${ENDPOINT}/ping`,
   API: {
     LOGIN: LOGIN_ENTRIES,
     THEME: THEME_ENTRIES,
