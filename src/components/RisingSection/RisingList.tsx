@@ -1,5 +1,5 @@
-import type { Product } from "@/mocks/types";
 /** @jsxImportSource @emotion/react */
+import type { Product } from "@/mocks/types";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -37,10 +37,11 @@ export default function RisingList() {
   return (
     <Wrapper>
       <Grid>
-        {products.slice(0, visibleCount).map((item) => (
-          <div key={item.id} onClick={() => handleItemClick(item)}>
+        {products.slice(0, visibleCount).map((item, index) => (
+          <CardWrapper key={item.id} onClick={() => handleItemClick(item)}>
+            <RankBadge>{index + 1}</RankBadge>
             <RisingItem product={item} />
-          </div>
+          </CardWrapper>
         ))}
       </Grid>
       {visibleCount < products.length && (
@@ -79,4 +80,25 @@ const EmptyMessage = styled.div`
   margin: 40px 0;
   color: ${({ theme }) => theme.colors.gray1000};
   font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+`;
+
+const CardWrapper = styled.div`
+  position: relative;
+  cursor: pointer;
+`;
+
+const RankBadge = styled.div`
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.colors.gray600};
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
