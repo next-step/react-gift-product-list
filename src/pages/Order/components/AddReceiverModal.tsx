@@ -30,6 +30,8 @@ const AddReceiverModal = ({ onClose, onComplete, initialReceivers }: Props) => {
     }
   };
 
+  const hasErrors = errors.some(error => Object.keys(error).length > 0);
+
   return (
     <div
       css={{
@@ -126,6 +128,7 @@ const AddReceiverModal = ({ onClose, onComplete, initialReceivers }: Props) => {
           <button
             type="button"
             onClick={handleComplete}
+            disabled={hasErrors}
             css={{
               padding: '12px 24px',
               borderRadius: '8px',

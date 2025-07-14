@@ -1,7 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import type { Receiver, ReceiverError } from '../hooks/useReceivers';
 import { horizontalFormStyle, receiverLabelStyle, errorInputStyle, errorMessageStyle } from '../styles/OrderPage.style';
-import { useTheme } from '@emotion/react'; 
+import { useTheme } from '@emotion/react';
+
+type Field = {
+  key: keyof Receiver;
+  label: string;
+  type: 'text' | 'number';
+  placeholder: string;
+  min?: number;
+};
+
+const fields: Field[] = [
+  { key: 'name', label: '이름', type: 'text', placeholder: '이름을 입력하세요' },
+  { key: 'phone', label: '전화번호', type: 'text', placeholder: '전화번호를 입력하세요' },
+  { key: 'quantity', label: '수량', type: 'number', placeholder: '', min: 1 },
+];
 
 type Props = {
   receiver: Receiver;
@@ -29,33 +43,24 @@ const ReceiverForm = ({ receiver, error = {}, index, onChange, onRemove }: Props
         </button>
       </h4>
 
-      {(['name', 'phone', 'quantity'] as const).map((field) => (
-        <div key={field} css={horizontalFormStyle}>
-          <label css={receiverLabelStyle}>
-            {field === 'name' ? '이름' : field === 'phone' ? '전화번호' : '수량'}
-          </label>
+      {fields.map(({ key, label, type, placeholder, min }) => (
+        <div key={key} css={horizontalFormStyle}>
+          <label css={receiverLabelStyle}>{label}</label>
           <div style={{ flex: 1 }}>
             <input
-              type={field === 'quantity' ? 'number' : 'text'}
-              min={field === 'quantity' ? 1 : undefined}
-              placeholder={
-                field === 'name'
-                  ? '이름을 입력하세요'
-                  : field === 'phone'
-                  ? '전화번호를 입력하세요'
-                  : ''
-              }
-              value={typeof receiver[field] === 'undefined' || receiver[field] === null ? '' : receiver[field]}
-              onChange={(e) => onChange(index, field, e.target.value)}
-              css={error?.[field] ? errorInputStyle : undefined}
+              type={type}
+              min={min}
+              placeholder={placeholder}
+              value={receiver[key] ?? ''}
+              onChange={(e) => onChange(index, key, e.target.value)}
+              css={error?.[key] ? errorInputStyle : undefined}
             />
-            {error?.[field] && <p css={errorMessageStyle}>{error[field]}</p>}
+            {error?.[key] && <p css={errorMessageStyle}>{error[key]}</p>}
           </div>
         </div>
       ))}
     </div>
   );
 };
-
 
 export default ReceiverForm;
