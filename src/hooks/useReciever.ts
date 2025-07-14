@@ -76,31 +76,28 @@ function useReciever({ open, onComplete, initialList, append, remove }: useRecie
   };
 
   const handleComplete = () => {
-    const errors: FieldError[] = [];
-    let hasError = false;
-    const phones = newList.map((r) => r.phone);
-    newList.forEach((item, idx) => {
-      const err: FieldError = {};
-      err.name = validators.name(item.name.trim());
-      err.phone = validators.phone(item.phone.trim(), phones, idx);
-      err.count = validators.count(item.count);
-      if (err.name !== '' || err.phone !== '' || err.count !== '') hasError = true;
-      errors[idx] = err;
-    });
-
+    const errors = validateNewList(newList);
     setFieldErrors(errors);
-    if (hasError) return;
-
+    if (errors.some((err) => err.name || err.phone || err.count)) return;
+    updateList();
+    onComplete(newList);
+  };
+  const validateNewList = (list: RecieverType[]): FieldError[] => {
+    const phones = list.map((r) => r.phone);
+    return list.map((item, idx) => ({
+      name: validators.name(item.name.trim()),
+      phone: validators.phone(item.phone.trim(), phones, idx),
+      count: validators.count(item.count),
+    }));
+  };
+  const updateList = () => {
     for (let i = initialList.length - 1; i >= 0; i--) {
       remove(i);
     }
-
     newList.forEach((item) => {
       append(item);
     });
-    onComplete(newList);
   };
-
   useEffect(() => {
     if (open) {
       setNewList([...initialList]);
