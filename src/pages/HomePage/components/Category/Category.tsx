@@ -1,5 +1,5 @@
 import ThemeCard from "./ThemeCard";
-import { CATEGORY_LABELS } from "./constants/labels";
+import { CATEGORY_ERROR_MESSAGE, CATEGORY_LABELS } from "./constants/labels";
 import {
   GiftThemeSection,
   SectionHeader,
@@ -24,7 +24,7 @@ function Category() {
         const response = await axios.get("http://localhost:3000/api/themes");
         setGiftThemes(response.data.data);
       } catch (error) {
-        console.error("선물 테마 데이터 조회 실패", error);
+        console.error(CATEGORY_ERROR_MESSAGE.FETCH_ERROR, error);
       }
     };
 
