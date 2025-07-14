@@ -1,36 +1,40 @@
 import styled from "@emotion/styled";
 import { fetchThemes } from "@src/apis/BackEnd/apiList";
 import ThemeButton from "@src/components/shared/ThemeButton";
+import useFetchState from "@src/hooks/useFetchState";
 import { themeMockData } from "@src/mock/themeMockData";
-import { useEffect, useState } from "react";
+import PendingSpinner from "./shared/PendingSpinner";
+
+type Theme = {
+  themeId: number;
+  name: string;
+  image: string;
+};
 
 function GiftThemePanel() {
-  const [themes, setThemes] = useState(null);
-
-  useEffect(() => {
-    const update = async () => {
-      setThemes(await fetchThemes());
-    };
-    update();
-  }, []);
+  const themes = useFetchState<Theme[]>(fetchThemes);
 
   return (
-    themes && (
-      <GiftThemePanelWrapper>
-        <TitleP>선물 테마</TitleP>
-        <ThemePlaceholder>
-          {themeMockData.map((theme) => {
-            return (
-              <ThemeButton
-                key={theme.themeId}
-                image={theme.image}
-                caption={theme.name}
-              />
-            );
-          })}
-        </ThemePlaceholder>
-      </GiftThemePanelWrapper>
-    )
+    <>
+      {themes.status === "pending" && <PendingSpinner />}
+
+      {themes.status === "done" && themes.data && (
+        <GiftThemePanelWrapper>
+          <TitleP>선물 테마</TitleP>
+          <ThemePlaceholder>
+            {themeMockData.map((theme) => {
+              return (
+                <ThemeButton
+                  key={theme.themeId}
+                  image={theme.image}
+                  caption={theme.name}
+                />
+              );
+            })}
+          </ThemePlaceholder>
+        </GiftThemePanelWrapper>
+      )}
+    </>
   );
 }
 
@@ -54,6 +58,19 @@ const GiftThemePanelWrapper = styled.div`
   align-items: center;
   gap: 10px;
   background-color: white;
+
+  animation: fadeSlideIn 0.4s ease-out;
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 export default GiftThemePanel;
