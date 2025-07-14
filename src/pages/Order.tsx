@@ -1,0 +1,269 @@
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import styled from '@emotion/styled'
+import { OrderFormProvider, useOrderForm } from '@/contexts/order'
+import { orderCardMock, type CardData } from '@/features/order'
+import { productListMock, type Product } from '@/features/product'
+import { ROUTE_PATH } from '@/Router'
+import { OrderCardSection, ReceiverSection, SenderSection } from '@/features/order/components'
+import { theme } from '@/styles/theme'
+import { Button, PageContainer, Typography } from '@/components/ui'
+import { NotFound } from '@/pages/NotFound'
+
+// * 주문하기 페이지 (주문하기 폼 Provider 포함)
+export const Order = () => {
+  return (
+    // * Context API를 통해 전역적으로 관리되는 주문하기 폼 적용
+    <OrderFormProvider>
+      <OrderContent />
+    </OrderFormProvider>
+  )
+}
+
+// * 주문하기 컨텐츠
+export const OrderContent = () => {
+  const navigate = useNavigate()
+  // * URL 파라미터로 부터 상품 id 값 가져오기
+  const { id } = useParams<{ id: string }>()
+  const [productInfo, setProductInfo] = useState<Product>()
+
+  // * 카드 리스트
+  const cardList: CardData[] = orderCardMock
+
+  // * OrderForm 컨텍스트 사용
+  const {
+    form: {
+      handleSubmit,
+      formState: { errors },
+      watch,
+      control,
+    },
+    handleCardSelect,
+    getTotalPrice,
+  } = useOrderForm()
+
+  // * 폼 데이터 실시간 추적
+  const watchedData = watch()
+  const { selectedCard } = watchedData
+
+  // * 상품 데이터 id 를 통한 필터링
+  useEffect(() => {
+    const newProductInfo = productListMock.find((product) => product.id === Number(id))
+    if (newProductInfo) setProductInfo(newProductInfo)
+  }, [id])
+
+  // * 폼 제출 핸들러
+  const onSubmit = handleSubmit((data) => {
+    if (!productInfo) return
+
+    if (data.receivers.length === 0) {
+      alert('받는 사람이 최소 1명 필요합니다.')
+      return
+    }
+
+    // * 받는 사람들 정보를 문자열로 변환
+    const receiverInfo = data.receivers
+      .map(
+        (receiver, index) =>
+          `받는 사람 ${index + 1}: ${receiver.name} (${receiver.phone}) - ${receiver.count}개`,
+      )
+      .join('\n')
+
+    // * 총 수량 계산
+    const totalQuantity = data.receivers.reduce((sum, r) => sum + r.count, 0)
+
+    // * 총 가격 계산
+    const totalPrice = getTotalPrice(productInfo.price.sellingPrice)
+
+    alert(
+      `주문이 완료되었습니다!\n\n` +
+        `상품명: ${productInfo.name}\n` +
+        `총 수량: ${totalQuantity}개\n` +
+        `총 가격: ${totalPrice.toLocaleString()}원\n\n` +
+        `보낸 사람: ${data.sender}\n\n` +
+        `${receiverInfo}\n\n` +
+        `메시지: ${data.cardMessage}`,
+    )
+    navigate(ROUTE_PATH.HOME)
+  })
+
+  // * 주문 총액 계산
+  const totalPrice = productInfo ? getTotalPrice(productInfo.price.sellingPrice) : 0
+
+  // * 상품 정보가 없을 경우 NotFound 페이지로 이동하도록 처리
+  if (!productInfo) return <NotFound />
+
+  // * 상품 정보가 있을 경우
+  return (
+    <OrderContainer>
+      {/* 주문하기 카드 섹션 */}
+      <OrderCardSection
+        cardList={cardList}
+        selectedCard={selectedCard}
+        control={control}
+        onCardSelect={handleCardSelect}
+        messageError={errors.cardMessage?.message}
+      />
+
+      {/* 보내는 사람 폼 섹션 */}
+      <SenderSection control={control} error={errors.sender?.message} />
+
+      {/* 받는 사람 폼 섹션 */}
+      <ReceiverSection />
+
+      {/* 상품 정보 섹션 */}
+      <ProductInfoSection>
+        <SectionTitle variant="title2Bold">상품 정보</SectionTitle>
+        <ProductInfo>
+          <ProductImage src={productInfo.imageURL} alt={productInfo.name} />
+          <ProductDetails>
+            <ProductNameContainer>
+              <ProductName variant="subtitle2Regular">{productInfo.name}</ProductName>
+              <ProductBrand variant="label2Regular">{productInfo.brandInfo.name}</ProductBrand>
+            </ProductNameContainer>
+            <ProductPriceContainer>
+              <ProductPriceLabel
+                variant="label2Regular"
+                css={{
+                  color: theme.semanticColors.text.sub,
+                  fontSize: '0.875rem',
+                  fontWeight: '400',
+                  marginRight: theme.spacing.spacing1,
+                }}
+              >
+                상품가
+              </ProductPriceLabel>
+              {/* 할인되는 경우만 할인율 & 원래 가격(중간 줄) 추가 표시 */}
+              {productInfo.price.discountRate > 0 && (
+                <>
+                  <ProductDiscountRate variant="title2Bold">
+                    {productInfo.price.discountRate}%
+                  </ProductDiscountRate>
+                  <ProductBasicPrice variant="title2Bold" css={{ textDecoration: 'line-through' }}>
+                    {productInfo.price.basicPrice.toLocaleString()}원
+                  </ProductBasicPrice>
+                </>
+              )}
+              <ProductSellingPrice variant="title2Bold">
+                {productInfo.price.sellingPrice.toLocaleString()}원
+              </ProductSellingPrice>
+            </ProductPriceContainer>
+          </ProductDetails>
+        </ProductInfo>
+      </ProductInfoSection>
+
+      {/* 주문하기 버튼 */}
+      <OrderButtonSection>
+        <OrderButton variant="kakao" size="large" onClick={onSubmit}>
+          {totalPrice.toLocaleString()}원 주문하기
+        </OrderButton>
+      </OrderButtonSection>
+    </OrderContainer>
+  )
+}
+
+// * 주문하기 페이지 컨테이너
+const OrderContainer = styled(PageContainer)`
+  justify-content: start;
+  background-color: ${theme.semanticColors.background.disabled};
+  gap: ${theme.spacing.spacing2};
+`
+
+// * 상품 정보 섹션
+const ProductInfoSection = styled.section`
+  width: 100%;
+  padding: ${theme.spacing.spacing4} ${theme.spacing.spacing4};
+  background-color: ${theme.semanticColors.background.default};
+  border-bottom: 1px solid ${theme.semanticColors.border.default};
+
+  display: flex;
+  flex-direction: column;
+`
+
+// * 섹션 제목
+const SectionTitle = styled(Typography)`
+  margin-bottom: ${theme.spacing.spacing3};
+`
+
+// * 상품 정보 컨테이너
+const ProductInfo = styled.div`
+  padding: ${theme.spacing.spacing4};
+
+  border: 1px solid ${theme.semanticColors.border.disabled};
+  border-radius: ${theme.spacing.spacing2};
+
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.spacing3};
+`
+
+// * 상품 이미지
+const ProductImage = styled.img`
+  width: 4rem;
+  height: 4rem;
+  border-radius: ${theme.spacing.spacing1};
+  object-fit: cover;
+`
+
+// * 상품 상세 정보
+const ProductDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.spacing1};
+`
+
+// * 상품 명 컨테이너
+const ProductNameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.spacing1};
+`
+
+// * 상품명
+const ProductName = styled(Typography)`
+  color: ${theme.semanticColors.text.default};
+`
+
+// * 상품 브랜드
+const ProductBrand = styled(Typography)`
+  color: ${theme.semanticColors.text.sub};
+`
+
+// * 상품 가격 컨테이너
+const ProductPriceContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${theme.spacing.spacing1};
+  flex-wrap: wrap;
+`
+
+// * 상품 가격 라벨
+const ProductPriceLabel = styled(Typography)``
+
+// * 상품 할인율
+const ProductDiscountRate = styled(Typography)`
+  color: ${theme.semanticColors.status.info};
+`
+
+// * 상품 원래 가격
+const ProductBasicPrice = styled(Typography)`
+  color: ${theme.semanticColors.text.sub};
+`
+
+// * 상품 판매가
+const ProductSellingPrice = styled(Typography)`
+  color: ${theme.semanticColors.text.default};
+`
+
+// * 주문 버튼 섹션
+const OrderButtonSection = styled.section`
+  width: 100%;
+`
+
+// * 주문 버튼
+const OrderButton = styled(Button)`
+  font-weight: 700;
+`
+
+export default Order
