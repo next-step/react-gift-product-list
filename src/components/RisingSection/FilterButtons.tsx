@@ -5,7 +5,7 @@ type TargetGroupFilter = "ALL" | "FEMALE" | "MALE" | "TEEN";
 type PreferenceFilter = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
 
 import { useSearchParams } from "react-router-dom";
-import SelectableButton from "../common/BaseButton";
+import SelectableButton from "@/components/common/BaseButton";
 
 const TARGET_GROUP_OPTIONS: {
   icon: string;
