@@ -1,12 +1,61 @@
 import styled from "@emotion/styled";
-import { categoryMock } from "@/assets/categoryMock";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loading from "@/components/common/Loading";
+
+interface ThemesData {
+  data: Themes[];
+}
+interface Themes {
+  themeId: number;
+  name: string;
+  image: string;
+}
+interface FetchState<T> {
+  isLoading: boolean;
+  isError: boolean;
+  data: T | null;
+}
 
 const Category = () => {
+  const [fetchState, setFetchState] = useState<FetchState<ThemesData>>({
+    isLoading: true,
+    isError: false,
+    data: null,
+  });
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const response = await axios.get<ThemesData>("http://localhost:3000/api/themes");
+        setFetchState({ isLoading: false, isError: false, data: response.data });
+      } catch (error) {
+        console.error("Error fetching themes data:", error);
+        setFetchState({ isLoading: false, isError: true, data: null });
+      }
+    };
+
+    fetchThemes();
+  }, []);
+
+  if (fetchState.isLoading) {
+    return (
+      <Container>
+        <Title>선물 테마</Title>
+        <Loading height="240px" />
+      </Container>
+    );
+  }
+
+  if (fetchState.isError) {
+    return <></>;
+  }
+
   return (
     <Container>
       <Title>선물 테마</Title>
       <List>
-        {categoryMock.map((category) => (
+        {fetchState.data?.data.map((category) => (
           <Item key={category.themeId}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
