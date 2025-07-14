@@ -50,7 +50,9 @@ export const tabButton = (theme: ThemeType, active: boolean) => css`
   font-size: ${theme.typography.label1Regular.fontSize};
   font-weight: ${theme.typography.label1Regular.fontWeight};
   color: ${active ? theme.color.blue.blue700 : theme.color.gray.gray700};
-  background-color: ${active ? theme.color.blue.blue100 : theme.color.gray.gray100};
+  background-color: ${active
+    ? theme.color.blue.blue100
+    : theme.color.gray.gray100};
   border: none;
   border-radius: ${theme.spacing[5]};
   cursor: pointer;
@@ -86,4 +88,3 @@ export const emptyStateStyle = css`
   font-size: 1.2rem;
   color: #666;
 `;
-

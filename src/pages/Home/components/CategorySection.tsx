@@ -6,7 +6,6 @@ import CategoryItem from './Shared/CategoryItem';
 import theme from '../../../styles/theme';
 import { fetchThemes, type Category } from '../../../apis/theme';
 
-
 const sectionStyle = css`
   padding: ${theme.spacing[6]};
 `;
@@ -26,7 +25,6 @@ const gridStyle = css`
   row-gap: ${theme.spacing[4]};
   padding: 0 ${theme.spacing[4]};
 `;
-
 
 const CategorySection = () => {
   const theme = useTheme();
@@ -61,14 +59,19 @@ const CategorySection = () => {
     return null;
   }
 
-
   return (
     <section css={sectionStyle}>
       <h2 css={titleStyle(theme)}>선물 테마</h2>
 
       <div css={gridStyle}>
         {categories.map(({ themeId, name, image }) => (
-          <CategoryItem key={themeId} themeId={themeId} name={name} image={image} theme={theme} />
+          <CategoryItem
+            key={themeId}
+            themeId={themeId}
+            name={name}
+            image={image}
+            theme={theme}
+          />
         ))}
       </div>
     </section>

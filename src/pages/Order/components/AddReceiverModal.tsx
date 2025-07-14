@@ -30,8 +30,11 @@ const AddReceiverModal = ({ onClose, onComplete, initialReceivers }: Props) => {
     }
   };
 
+<<<<<<< HEAD
   const hasErrors = errors.some(error => Object.keys(error).length > 0);
 
+=======
+>>>>>>> 25a6f46 (0단계 기본 코드 준비)
   return (
     <div
       css={{
