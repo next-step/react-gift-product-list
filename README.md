@@ -1,3 +1,4 @@
+```
 src/
 ├── components/
 │   ├── atoms/           # 기본 UI 컴포넌트 (Button, Input, Text 등)
@@ -10,3 +11,4 @@ src/
 ├── utils/              # 유틸리티 함수 (validation)
 ├── routes/             # 라우팅 설정 (router,protected)
 └── styles/             # 스타일 정의 (spacing,typography,colors)
+```
