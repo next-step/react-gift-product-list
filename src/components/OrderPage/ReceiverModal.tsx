@@ -15,8 +15,8 @@ interface Props {
   errors: FieldErrors<FormValues>
   append: UseFieldArrayAppend<FormValues, 'receivers'>
   remove: UseFieldArrayRemove
-  onClose: () => void
-  onSave: () => void
+  closeModal: () => void
+  confirmModal: () => void
 }
 
 const receiverInputs = useReceiverInput()
@@ -27,8 +27,8 @@ export function ReceiverModal({
   errors,
   append,
   remove,
-  onClose,
-  onSave,
+  closeModal,
+  confirmModal,
 }: Props) {
   return (
     <Overlay>
@@ -67,10 +67,10 @@ export function ReceiverModal({
         )}
 
         <Footer>
-          <button type="button" onClick={onClose}>
+          <button type="button" onClick={closeModal}>
             취소
           </button>
-          <button type="button" onClick={onSave}>
+          <button type="button" onClick={confirmModal}>
             {fields.length}명 완료
           </button>
         </Footer>

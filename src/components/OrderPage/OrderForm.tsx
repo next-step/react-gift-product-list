@@ -93,8 +93,8 @@ export function OrderForm({ product }: OrderFormProps) {
           errors={errors}
           append={append}
           remove={remove}
-          onClose={() => setShowReceiverModal(false)}
-          onSave={validateAndSaveReceivers}
+          closeModal={() => setShowReceiverModal(false)}
+          confirmModal={validateAndSaveReceivers}
         />
       )}
 
