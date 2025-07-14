@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { useTheme } from '@emotion/react';
-import {
-  receiverAddGuideStyle,
-} from '../styles/OrderPage.style';
+import { receiverAddGuideStyle } from '../styles/OrderPage.style';
 import ReceiverForm from './ReceiverForm';
 import { useReceivers } from '../hooks/useReceivers';
 
 type Props = {
   onClose: () => void;
-  onComplete: (receivers: { name: string; phone: string; quantity: number }[]) => void;
+  onComplete: (
+    receivers: { name: string; phone: string; quantity: number }[]
+  ) => void;
   initialReceivers: { name: string; phone: string; quantity: number }[];
 };
 
@@ -30,11 +30,8 @@ const AddReceiverModal = ({ onClose, onComplete, initialReceivers }: Props) => {
     }
   };
 
-<<<<<<< HEAD
-  const hasErrors = errors.some(error => Object.keys(error).length > 0);
+  const hasErrors = errors.some((error) => Object.keys(error).length > 0);
 
-=======
->>>>>>> 25a6f46 (0단계 기본 코드 준비)
   return (
     <div
       css={{
@@ -63,10 +60,17 @@ const AddReceiverModal = ({ onClose, onComplete, initialReceivers }: Props) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-
-        <div css={{ padding: '24px', flexShrink: 0, borderBottom: '1px solid #eee' }}>
+        <div
+          css={{
+            padding: '24px',
+            flexShrink: 0,
+            borderBottom: '1px solid #eee',
+          }}
+        >
           <h3 css={{ margin: 0 }}>받는 사람</h3>
-          <p css={receiverAddGuideStyle(theme)}>* 최대 10명까지 추가 할 수 있어요.</p>
+          <p css={receiverAddGuideStyle(theme)}>
+            * 최대 10명까지 추가 할 수 있어요.
+          </p>
           <p css={receiverAddGuideStyle(theme)}>
             * 받는 사람의 전화번호를 중복으로 입력할 수 없어요.
           </p>
@@ -76,7 +80,9 @@ const AddReceiverModal = ({ onClose, onComplete, initialReceivers }: Props) => {
             disabled={receivers.length >= 10}
             css={{
               backgroundColor:
-                receivers.length >= 10 ? theme.color.gray.gray100 : theme.color.gray.gray300,
+                receivers.length >= 10
+                  ? theme.color.gray.gray100
+                  : theme.color.gray.gray300,
               color: theme.color.gray.gray1000,
               padding: '8px 16px',
               border: 'none',
