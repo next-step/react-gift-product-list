@@ -12,7 +12,9 @@ type Theme = {
 };
 
 export default function CategorySection() {
-  const { data: themes, status } = useApiRequest<Theme[]>("/api/themes");
+  const { data: themes, status } = useApiRequest<Theme[]>({
+    url: "/api/themes",
+  });
   const navigate = useNavigate();
 
   if (status === "loading") return <LoadingSpinner />;
@@ -49,7 +51,7 @@ const Container = styled.div`
 
 const SectionTitle = styled.div`
   font-size: ${({ theme }) => theme.typography.title1Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.title1Regular.fontWeight};
+  font-weight: bold;
   color: ${({ theme }) => theme.colors.textDefault};
   padding: 16px 16px;
 `;

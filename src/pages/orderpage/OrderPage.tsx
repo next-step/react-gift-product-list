@@ -28,7 +28,6 @@ const OrderPage = () => {
   });
   const {
     handleSubmit,
-    setValue,
     formState: { errors },
   } = methods;
 

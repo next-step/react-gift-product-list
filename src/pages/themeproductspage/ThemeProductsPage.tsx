@@ -35,11 +35,13 @@ type ThemeProductResponse = {
 
 export default function ThemeProductsPage() {
   const { themeId } = useParams();
-  const { data: themeInfo, status: themeStatus } = useApiRequest<ThemeInfo>(
-    `/api/themes/${themeId}/info`
-  );
+  const { data: themeInfo, status: themeStatus } = useApiRequest<ThemeInfo>({
+    url: `/api/themes/${themeId}/info`,
+  });
   const { data: productData, status: productStatus } =
-    useApiRequest<ThemeProductResponse>(`/api/themes/${themeId}/products`);
+    useApiRequest<ThemeProductResponse>({
+      url: `/api/themes/${themeId}/products`,
+    });
 
   if (themeStatus === "loading" || productStatus === "loading")
     return <p>로딩 중...</p>;
