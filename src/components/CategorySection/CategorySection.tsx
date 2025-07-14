@@ -1,7 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 import CategoryItem from "@/components/CategorySection/CategoryItem";
 import { useApiRequest } from "@/hooks/useApiRequest";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 type Theme = {
   themeId: number;
@@ -11,16 +13,27 @@ type Theme = {
 
 export default function CategorySection() {
   const { data: themes, status } = useApiRequest<Theme[]>("/api/themes");
+  const navigate = useNavigate();
 
-  if (status === "loading") return <p>로딩 중...</p>;
+  if (status === "loading") return <LoadingSpinner />;
   if (status === "error" || !themes || themes.length === 0) return null;
+
+  const handleClick = (themeId: number) => {
+    navigate(`/themes/${themeId}`);
+  };
 
   return (
     <>
       <SectionTitle>선물 테마</SectionTitle>
       <Container>
         {themes.map(({ themeId, name, image }) => (
-          <CategoryItem key={themeId} name={name} image={image} />
+          <div
+            key={themeId}
+            onClick={() => handleClick(themeId)}
+            style={{ cursor: "pointer" }}
+          >
+            <CategoryItem name={name} image={image} />
+          </div>
         ))}
       </Container>
     </>

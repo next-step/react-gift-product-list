@@ -1,3 +1,4 @@
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms)); // 로딩애니메이션 테스트용
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -14,6 +15,7 @@ export function useApiRequest<T>(endpoint: string) {
     const fetchData = async () => {
       setStatus("loading");
       try {
+        await delay(2000); // 로딩애니메이션 테스트용 지연
         const res = await axios.get<{ data: T }>(
           import.meta.env.VITE_API_BASE_URL + endpoint
         );
