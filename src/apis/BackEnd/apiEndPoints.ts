@@ -2,10 +2,10 @@ const PROTOCOL = "http";
 const ENDPOINT = `localhost:3000`;
 
 const API_SECTIONS = {
-  LOGIN: `/api/login`,
-  THEME: `/api/themes`,
-  PRODUCT: `/api/products`,
-  ORDER: `/api/order`
+  LOGIN: `api/login`,
+  THEME: `api/themes`,
+  PRODUCT: `api/products`,
+  ORDER: `api/order`
 };
 
 const LOGIN_ENTRIES = (() => {
