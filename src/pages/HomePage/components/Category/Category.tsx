@@ -21,7 +21,9 @@ function Category() {
   useEffect(() => {
     const fetchGiftThemes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/themes");
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/themes`
+        );
         setGiftThemes(response.data.data);
       } catch (error) {
         console.error(CATEGORY_ERROR_MESSAGE.FETCH_ERROR, error);
