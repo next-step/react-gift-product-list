@@ -4,6 +4,11 @@ import styled from "@emotion/styled";
 import ErrorMsg from "@/pages/Order/components/ErrorMsg";
 import { useFormContext } from "react-hook-form";
 import type { OrderFormType } from "@/pages/Order/components/Order";
+import type { ComponentPropsWithoutRef } from "react";
+
+interface InputProps extends ComponentPropsWithoutRef<"textarea"> {
+  errorMsg: string | undefined;
+}
 
 const Card = () => {
   const {
@@ -42,7 +47,11 @@ const Card = () => {
       </SelectedCardWrapper>
       <Divider spacing="2.5rem" />
       <CardMsgInputWrapper>
-        <CardMsgInput {...register("message")} placeholder="메세지를 입력해주세요." />
+        <CardMsgInput
+          {...register("message")}
+          placeholder="메세지를 입력해주세요."
+          errorMsg={errors.message?.message}
+        />
         {errors.message && <ErrorMsg>{errors.message.message}</ErrorMsg>}
       </CardMsgInputWrapper>
       <Divider spacing="2rem" />
@@ -92,14 +101,14 @@ const CardMsgInputWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const CardMsgInput = styled.textarea`
+const CardMsgInput = styled.textarea<InputProps>`
   width: 100%;
   max-width: 42.5rem;
   height: 5rem;
   box-sizing: border-box;
   padding: ${({ theme }) => theme.spacing.spacing4};
   font: ${({ theme }) => theme.typography.body1Regular};
-  border: 1px solid ${({ theme }) => theme.color.gray600};
+  border: 1px solid ${({ theme, errorMsg }) => (!!errorMsg ? theme.color.stateColor.critical : theme.color.gray600)};
   border-radius: 0.5rem;
   outline: none;
   resize: none;

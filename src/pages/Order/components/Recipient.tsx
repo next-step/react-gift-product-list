@@ -3,16 +3,16 @@ import styled from "@emotion/styled";
 import RecipientFieldArray from "./RecipientFieldArray";
 
 interface RecipientProps {
-  onOpen: () => void;
+  openModal: () => void;
 }
 
-const Recipient = ({ onOpen }: RecipientProps) => {
+const Recipient = ({ openModal }: RecipientProps) => {
   return (
     <Content>
       <Divider spacing="1rem" />
       <Wrapper>
         <Title>받는 사람</Title>
-        <ModalBtn type="button" onClick={onOpen}>
+        <ModalBtn type="button" onClick={openModal}>
           추가
         </ModalBtn>
       </Wrapper>

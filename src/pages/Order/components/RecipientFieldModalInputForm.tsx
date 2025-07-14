@@ -10,6 +10,27 @@ interface RecipientFieldModalInputFormProps {
   remove: (index: number) => void;
 }
 
+const RECIPIENT_INPUT_CONFIG = [
+  {
+    key: "name",
+    title: "이름",
+    placeholder: "이름을 입력하세요.",
+    type: "text",
+  },
+  {
+    key: "phone",
+    title: "전화번호",
+    placeholder: "전화번호를 입력하세요.",
+    type: "text",
+  },
+  {
+    key: "quantity",
+    title: "수량",
+    placeholder: "수량을 입력하세요.",
+    type: "number",
+  },
+] as const;
+
 const RecipientFieldModalInputForm = ({ index, remove }: RecipientFieldModalInputFormProps) => {
   const {
     register,
@@ -30,35 +51,21 @@ const RecipientFieldModalInputForm = ({ index, remove }: RecipientFieldModalInpu
           <Close />
         </CloseBtn>
       </TitleWrapper>
-      <InputWrapper>
-        <InputTitle>이름</InputTitle>
-        <InputWrapper>
-          <Input
-            {...register(`recipients.${index}.name` as const)}
-            placeholder="이름을 입력하세요."
-            errorMsg={errors.recipients?.[index]?.name?.message}
-          />
-        </InputWrapper>
-      </InputWrapper>
-      <Divider spacing="0.5rem" />
-      <InputWrapper>
-        <InputTitle>전화번호</InputTitle>
-        <Input
-          {...register(`recipients.${index}.phone` as const)}
-          placeholder="전화번호를 입력하세요."
-          errorMsg={errors.recipients?.[index]?.phone?.message}
-        />
-      </InputWrapper>
-      <Divider spacing="0.5rem" />
-      <InputWrapper>
-        <InputTitle>수량</InputTitle>
-        <Input
-          type="number"
-          {...register(`recipients.${index}.quantity` as const)}
-          placeholder="수량을 입력하세요."
-          errorMsg={errors.recipients?.[index]?.quantity?.message}
-        />
-      </InputWrapper>
+      {RECIPIENT_INPUT_CONFIG.map((config) => (
+        <>
+          <InputWrapper key={config.key}>
+            <InputTitle>{config.title}</InputTitle>
+            <InputWrapper>
+              <Input
+                {...register(`recipients.${index}.${config.key}` as const)}
+                placeholder={config.placeholder}
+                errorMsg={errors.recipients?.[index]?.[config.key]?.message}
+              />
+            </InputWrapper>
+          </InputWrapper>
+          <Divider spacing="0.5rem" />
+        </>
+      ))}
     </div>
   );
 };

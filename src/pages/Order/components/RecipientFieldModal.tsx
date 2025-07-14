@@ -7,11 +7,11 @@ import { useEffect, useRef, type ComponentPropsWithoutRef } from "react";
 import ErrorMsg from "./ErrorMsg";
 
 interface RecipientFieldModalProps {
-  onClose: () => void;
+  closeModal: () => void;
   initialRecipients: RecipientType[];
 }
 
-const RecipientFieldModal = ({ onClose, initialRecipients: initialRecipientsProp }: RecipientFieldModalProps) => {
+const RecipientFieldModal = ({ closeModal, initialRecipients: initialRecipientsProp }: RecipientFieldModalProps) => {
   const {
     control,
     trigger,
@@ -34,13 +34,13 @@ const RecipientFieldModal = ({ onClose, initialRecipients: initialRecipientsProp
     const isValid = await trigger("recipients");
     if (isValid) {
       setValue("recipients", getValues("recipients"));
-      onClose();
+      closeModal();
     }
   };
   const cancelRecipients = () => {
     setValue("recipients", initialRecipients.current);
     clearErrors("recipients");
-    onClose();
+    closeModal();
   };
   const isValidAddBtn = fields.length < 10;
   return (

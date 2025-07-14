@@ -15,27 +15,25 @@ const OrderPage = () => {
 
 const OrderPageContent = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { handleSubmit, getValues } = useFormContext();
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const { handleSubmit: createSubmitHandler, getValues } = useFormContext();
+  const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const onSubmit = (data: any) => console.log(data);
   return (
     <Container>
-      <Content onSubmit={handleSubmit(onSubmit)}>
+      <Content onSubmit={createSubmitHandler(onSubmit)}>
         <Order.Card />
         <Divider spacing="0.5rem" fill={false} />
         <Order.Sender />
         <Divider spacing="0.5rem" fill={false} />
-        <Order.Recipient onOpen={openModal} />
+        <Order.Recipient openModal={openModal} />
         <Divider spacing="0.5rem" fill={false} />
         <Order.Product />
         <Divider spacing="3.125rem" />
         <Order.Btn />
       </Content>
       {isModalOpen && (
-        <Order.Modal onClose={closeModal} initialRecipients={JSON.parse(JSON.stringify(getValues("recipients")))} />
+        <Order.Modal closeModal={closeModal} initialRecipients={JSON.parse(JSON.stringify(getValues("recipients")))} />
       )}
     </Container>
   );
