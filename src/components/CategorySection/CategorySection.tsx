@@ -1,14 +1,25 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import CategoryItem from "@/components/CategorySection/CategoryItem";
-import { CATEGORIES } from "@/mocks/categories_mock";
+import { useApiRequest } from "@/hooks/useApiRequest";
+
+type Theme = {
+  themeId: number;
+  name: string;
+  image: string;
+};
 
 export default function CategorySection() {
+  const { data: themes, status } = useApiRequest<Theme[]>("/api/themes");
+
+  if (status === "loading") return <p>로딩 중...</p>;
+  if (status === "error" || !themes || themes.length === 0) return null;
+
   return (
     <>
       <SectionTitle>선물 테마</SectionTitle>
       <Container>
-        {CATEGORIES.map(({ themeId, name, image }) => (
+        {themes.map(({ themeId, name, image }) => (
           <CategoryItem key={themeId} name={name} image={image} />
         ))}
       </Container>
