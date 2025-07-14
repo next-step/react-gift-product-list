@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import UserContext from "@src/contexts/UserContext";
-import useUserInfo, { type UserInfoHook } from "@src/hooks/useUserInfo";
 import theme from "@src/styles/kakaoTheme";
 import { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
