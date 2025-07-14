@@ -23,9 +23,24 @@ export function useStorageState<T>(
       }
     }
 
+    const handleCustomStorage = (event: CustomEvent) => {
+      if (event.detail.key === key) {
+        setValue(event.detail.value)
+      }
+    }
+
     window.addEventListener('storage', handleStorage)
+    window.addEventListener(
+      'local-storage-change',
+      handleCustomStorage as EventListener
+    )
+
     return () => {
       window.removeEventListener('storage', handleStorage)
+      window.removeEventListener(
+        'local-storage-change',
+        handleCustomStorage as EventListener
+      )
     }
   }, [key])
 
@@ -38,9 +53,11 @@ export function useStorageState<T>(
     setValue(newValue)
 
     window.dispatchEvent(
-      new StorageEvent('storage', {
-        key,
-        newValue: newValue === null ? null : JSON.stringify(newValue),
+      new CustomEvent('local-storage-change', {
+        detail: {
+          key,
+          value: newValue,
+        },
       })
     )
   }
