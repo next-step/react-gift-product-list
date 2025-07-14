@@ -56,18 +56,28 @@ export function useOrderForm(
   }
 
   return {
-    fields,
-    append,
-    remove,
-    showReceiverModal,
-    setShowReceiverModal,
-    selectedCard,
-    setSelectedCard,
-    finalReceivers,
-    setFinalReceivers,
-    totalQuantity,
-    totalPrice,
-    onSubmit,
-    validateAndSaveReceivers,
+    card: {
+      selectedCard,
+      setSelectedCard,
+    },
+    modal: {
+      showReceiverModal,
+      setShowReceiverModal,
+    },
+    receiver: {
+      fields,
+      append,
+      remove,
+      finalReceivers,
+      setFinalReceivers,
+      validateAndSaveReceivers,
+    },
+    summary: {
+      totalQuantity,
+      totalPrice,
+    },
+    form: {
+      onSubmit,
+    },
   }
 }

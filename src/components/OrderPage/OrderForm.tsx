@@ -38,17 +38,17 @@ export function OrderForm({ product }: OrderFormProps) {
   })
 
   const {
-    fields,
-    append,
-    remove,
-    showReceiverModal,
-    setShowReceiverModal,
-    selectedCard,
-    setSelectedCard,
-    finalReceivers,
-    totalPrice,
-    onSubmit,
-    validateAndSaveReceivers,
+    card: { selectedCard, setSelectedCard },
+    modal: { showReceiverModal, setShowReceiverModal },
+    receiver: {
+      fields,
+      append,
+      remove,
+      finalReceivers,
+      validateAndSaveReceivers,
+    },
+    summary: { totalPrice },
+    form: { onSubmit },
   } = useOrderForm(form, product)
 
   const {
