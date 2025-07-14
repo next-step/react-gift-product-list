@@ -58,8 +58,13 @@ export function OrderForm({ product }: OrderFormProps) {
     setValue,
   } = form
 
+  const createSubmitHandler = (onValid: (data: FormValues) => void) =>
+    handleSubmit(onValid)
+
+  const handleSubmitForm = createSubmitHandler(onSubmit)
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmitForm}>
       <CardSelector
         selectedCard={selectedCard}
         onSelectCard={(card) => {
