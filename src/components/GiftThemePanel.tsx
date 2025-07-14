@@ -1,23 +1,36 @@
 import styled from "@emotion/styled";
+import { fetchThemes } from "@src/apis/BackEnd/apiList";
 import ThemeButton from "@src/components/shared/ThemeButton";
 import { themeMockData } from "@src/mock/themeMockData";
+import { useEffect, useState } from "react";
 
 function GiftThemePanel() {
+  const [themes, setThemes] = useState(null);
+
+  useEffect(() => {
+    const update = async () => {
+      setThemes(await fetchThemes());
+    };
+    update();
+  }, []);
+
   return (
-    <GiftThemePanelWrapper>
-      <TitleP>선물 테마</TitleP>
-      <ThemePlaceholder>
-        {themeMockData.map((theme) => {
-          return (
-            <ThemeButton
-              key={theme.themeId}
-              image={theme.image}
-              caption={theme.name}
-            />
-          );
-        })}
-      </ThemePlaceholder>
-    </GiftThemePanelWrapper>
+    themes && (
+      <GiftThemePanelWrapper>
+        <TitleP>선물 테마</TitleP>
+        <ThemePlaceholder>
+          {themeMockData.map((theme) => {
+            return (
+              <ThemeButton
+                key={theme.themeId}
+                image={theme.image}
+                caption={theme.name}
+              />
+            );
+          })}
+        </ThemePlaceholder>
+      </GiftThemePanelWrapper>
+    )
   );
 }
 
