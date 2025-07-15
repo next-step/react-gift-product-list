@@ -9,64 +9,19 @@ import {
   SectionTitle,
   ThemeGrid,
 } from "./Category.styles";
-import { useEffect, useState } from "react";
-import type { FetchState } from "@/types/FetchState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { getThemes } from "@/data/api";
-
-interface GiftTheme {
-  themeId: number;
-  name: string;
-  image: string;
-}
+import { useFetch } from "@/hooks/useFetch";
+import type { GiftThemeType } from "@/types/GiftThemeType";
 
 function CategoryContent() {
-  const [fetchState, setFetchState] = useState<FetchState<GiftTheme>>({
-    data: null,
-    isLoading: true,
-    isError: false,
+  const { data, isLoading, isError } = useFetch<GiftThemeType>({
+    fetchFn: getThemes,
+    errorMessage: CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR,
+    validateData: [(data) => data.length > 0],
   });
 
-  useEffect(() => {
-    const fetchGiftThemes = async () => {
-      setFetchState({
-        data: null,
-        isLoading: true,
-        isError: false,
-      });
-
-      try {
-        const giftThemes = await getThemes();
-
-        if (giftThemes.length === 0) {
-          // 빈 데이터도 에러로 처리
-          setFetchState({
-            data: null,
-            isLoading: false,
-            isError: true,
-          });
-          return;
-        }
-
-        setFetchState({
-          data: giftThemes,
-          isLoading: false,
-          isError: false,
-        });
-      } catch (error) {
-        console.error(CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR, error);
-        setFetchState({
-          data: null,
-          isLoading: false,
-          isError: true,
-        });
-      }
-    };
-
-    fetchGiftThemes();
-  }, []);
-
-  if (fetchState.isError) {
+  if (isError) {
     return (
       <ErrorContainer>
         <ErrorMessage>{CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR}</ErrorMessage>
@@ -74,7 +29,7 @@ function CategoryContent() {
     );
   }
 
-  if (fetchState.isLoading) {
+  if (isLoading) {
     return (
       <LoadingContainer>
         <LoadingSpinner />
@@ -84,7 +39,7 @@ function CategoryContent() {
 
   return (
     <ThemeGrid>
-      {fetchState.data?.map((theme) => (
+      {data?.map((theme) => (
         <ThemeCard key={theme.themeId} name={theme.name} image={theme.image} />
       ))}
     </ThemeGrid>

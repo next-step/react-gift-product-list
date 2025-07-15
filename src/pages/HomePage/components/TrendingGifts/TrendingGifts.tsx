@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
 import ProductGrid from "./ProductGrid/ProductGrid";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
@@ -16,59 +15,28 @@ import {
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
-import type { FetchState } from "@/types/FetchState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { TRENDING_GIFTS_TABS, TARGET_TYPE, RANK_TYPE } from "./constants/tabs";
+import { RANK_TYPE, TARGET_TYPE, TRENDING_GIFTS_TABS } from "./constants/tabs";
 import {
   TRENDING_GIFTS_ERROR_MESSAGES,
   TRENDING_GIFTS_LABELS,
 } from "./constants/labels";
 import { getTrendingGifts } from "@/data/api";
+import { useFetch } from "@/hooks/useFetch";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
   const [subTabIdx, setSubTabIdx] = useSubTab();
-  const [fetchState, setFetchState] = useState<FetchState<TrendingGiftsType>>({
-    data: null,
-    isLoading: true,
-    isError: false,
+
+  const { data, isLoading, isError } = useFetch<TrendingGiftsType>({
+    fetchFn: () =>
+      getTrendingGifts(TARGET_TYPE[mainTabIdx], RANK_TYPE[subTabIdx]),
+    errorMessage: TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR,
+    deps: [mainTabIdx, subTabIdx],
   });
 
-  useEffect(() => {
-    const fetchTrendingGifts = async () => {
-      setFetchState({
-        data: null,
-        isLoading: true,
-        isError: false,
-      });
-
-      try {
-        const trendingGifts = await getTrendingGifts(
-          TARGET_TYPE[mainTabIdx],
-          RANK_TYPE[subTabIdx]
-        );
-
-        setFetchState({
-          data: trendingGifts,
-          isLoading: false,
-          isError: false,
-        });
-      } catch (error) {
-        console.error(TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR, error);
-
-        setFetchState({
-          data: null,
-          isLoading: false,
-          isError: true,
-        });
-      }
-    };
-
-    fetchTrendingGifts();
-  }, [mainTabIdx, subTabIdx]);
-
   const renderTrendingGiftsContent = () => {
-    if (fetchState.isError) {
+    if (isError) {
       return (
         <ErrorContainer>
           <ErrorMessage>
@@ -78,7 +46,7 @@ function TrendingGiftsContent() {
       );
     }
 
-    if (fetchState.isLoading) {
+    if (isLoading) {
       return (
         <LoadingContainer>
           <LoadingSpinner />
@@ -86,7 +54,7 @@ function TrendingGiftsContent() {
       );
     }
 
-    return <ProductGrid products={fetchState.data || []} />;
+    return <ProductGrid products={data || []} />;
   };
 
   return (
