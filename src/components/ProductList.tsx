@@ -16,6 +16,7 @@ const Item = styled.li`
   box-shadow: none;
   padding: 12px;
   text-align: center;
+  position: relative;
 `;
 
 const MoreButton = styled.button`
@@ -69,6 +70,30 @@ type Product = {
   rankType: string;
 };
 
+const RankBadge = styled.div<{ rank: number }>`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 830;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ rank }) =>
+    rank === 1
+      ? '#FF3B30' // 1등: 빨강
+      : rank === 2
+        ? '#FF3B30' // 2등: 주황
+        : rank === 3
+          ? '#FF3B30' // 3등: 분홍
+          : '#C4C4C4'}; // 그 외: 회색
+  z-index: 2;
+`;
+
 function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,34 +146,30 @@ function ProductList() {
       ) : (
         <>
           <List>
-            {visibleProducts.map((p) => (
+            {visibleProducts.map((p, idx) => (
               <Item
                 key={p.id}
                 onClick={() => handleItemClick(p.id)}
                 style={{ cursor: 'pointer' }}
               >
-                {/* 상품 이미지 */}
+                <RankBadge rank={idx + 1}>{idx + 1}</RankBadge>
                 <img
                   src={p.imageURL}
                   alt={p.name}
                   style={{ width: '100%', borderRadius: 8 }}
                 />
-                {/* 브랜드명 (회색, 작은 글씨) */}
                 <div style={{ color: '#888', fontSize: 14, marginTop: 8 }}>
                   {p.brandInfo.name}
                 </div>
-                {/* 상품명 (굵은 글씨) */}
                 <div style={{ fontWeight: 700, fontSize: 16, marginTop: 4 }}>
                   {p.name}
                 </div>
-                {/* 가격 (굵고 큰 글씨) */}
                 <div style={{ fontWeight: 700, fontSize: 18, marginTop: 4 }}>
                   {p.price.sellingPrice.toLocaleString()} 원
                 </div>
               </Item>
             ))}
           </List>
-          {/* 더보기/접기 버튼 */}
           {products.length > DEFAULT_VISIBLE && (
             <>
               {!isAllVisible && (
