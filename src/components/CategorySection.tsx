@@ -5,7 +5,7 @@ import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 const CategorySection = () => {
   const { themes, isLoading, isError } = useCategoryThemes();
 
-  const shouldHideGrid = isError || themes.length === 0;
+  if (isError || themes.length === 0) return null;
 
   return (
     <Section>
@@ -15,7 +15,7 @@ const CategorySection = () => {
 
       {isLoading ? (
         <Loading />
-      ) : shouldHideGrid ? null : (
+      ) : (
         <Grid>
           {themes.map(theme => (
             <Item key={theme.themeId}>
