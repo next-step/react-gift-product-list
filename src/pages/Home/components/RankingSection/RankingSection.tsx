@@ -11,6 +11,7 @@ import {
   subTabRow,
   cardGrid,
   moreButton,
+  emptyStateStyle,
 } from './RankingSection.style';
 
 import TabButton from '../Shared/TabButton';
@@ -115,9 +116,9 @@ const RankingSection = () => {
       </div>
 
       {loading ? (
-        <div>로딩 중...</div>
+        <div css={emptyStateStyle}>로딩 중...</div>
       ) : items.length === 0 ? (
-        <div>상품 목록이 없습니다.</div>
+        <div css={emptyStateStyle}>상품 목록이 없습니다.</div>
       ) : (
         <>
           <div css={cardGrid}>
@@ -134,7 +135,6 @@ const RankingSection = () => {
               </div>
             ))}
           </div>
-
           {items.length > 6 && (
             <button onClick={toggleExpanded} css={moreButton(theme)}>
               {isExpanded ? '접기' : '더보기'}
