@@ -174,12 +174,11 @@ function ProductList() {
           </List>
           {products.length > DEFAULT_VISIBLE && (
             <>
-              {!isAllVisible && (
+              {!isAllVisible ? (
                 <MoreButton onClick={() => setVisibleCount(products.length)}>
                   더보기
                 </MoreButton>
-              )}
-              {isAllVisible && (
+              ) : (
                 <MoreButton onClick={() => setVisibleCount(DEFAULT_VISIBLE)}>
                   접기
                 </MoreButton>
