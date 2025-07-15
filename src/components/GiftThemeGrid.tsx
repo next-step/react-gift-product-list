@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { type GiftTheme } from '../data/mock';
 import { useGiftThemes } from '../hooks/useGiftThemes';
 
+
 const Title = styled.h3`
   font-size: ${({ theme }) => theme.typography.title1Bold};
   font-weight: ${({ theme }) => theme.typography.title1Bold};
@@ -15,6 +16,7 @@ const GridWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(3, auto);
+
   gap: ${({ theme }) => theme.typography.spacing.spacing3};
   padding: ${({ theme }) => theme.typography.spacing.spacing4};
   background-color: ${({ theme }) => theme.colors.backgroundDefault};
@@ -34,6 +36,7 @@ const Icon = styled.img`
   height: 48px;
   object-fit: contain;
   border-radius: 18px;
+
 `;
 
 const Label = styled.span`
