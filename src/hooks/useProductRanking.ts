@@ -16,7 +16,7 @@ export const useProductRanking = (
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
         const data = await fetchProductRanking(targetType, rankType);
         setProducts(data);
@@ -25,9 +25,7 @@ export const useProductRanking = (
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
+    })();
   }, [targetType, rankType]);
 
   return { products, loading, error };
