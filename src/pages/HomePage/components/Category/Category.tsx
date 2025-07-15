@@ -19,7 +19,7 @@ interface GiftTheme {
   image: string;
 }
 
-function Category() {
+function CategoryContent() {
   const [giftThemes, setGiftThemes] = useState<GiftTheme[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -30,12 +30,14 @@ function Category() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/api/themes`
         );
+
         if (response.data.data.length === 0) {
           setIsError(true);
-        } else {
-          setGiftThemes(response.data.data);
-          setIsError(false);
+          return;
         }
+
+        setGiftThemes(response.data.data);
+        setIsError(false);
       } catch (error) {
         console.error(CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR, error);
         setIsError(true);
@@ -47,32 +49,38 @@ function Category() {
     fetchGiftThemes();
   }, []);
 
+  if (isError) {
+    return (
+      <ErrorContainer>
+        <ErrorMessage>{CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR}</ErrorMessage>
+      </ErrorContainer>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <LoadingContainer>
+        <LoadingSpinner />
+      </LoadingContainer>
+    );
+  }
+
+  return (
+    <ThemeGrid>
+      {giftThemes.map((theme) => (
+        <ThemeCard key={theme.themeId} name={theme.name} image={theme.image} />
+      ))}
+    </ThemeGrid>
+  );
+}
+
+function Category() {
   return (
     <GiftThemeSection>
       <SectionHeader>
         <SectionTitle>{CATEGORY_LABELS.SECTION_TITLE}</SectionTitle>
       </SectionHeader>
-      {isError ? (
-        <ErrorContainer>
-          <ErrorMessage>
-            {CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR}
-          </ErrorMessage>
-        </ErrorContainer>
-      ) : isLoading ? (
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
-      ) : (
-        <ThemeGrid>
-          {giftThemes.map((theme) => (
-            <ThemeCard
-              key={theme.themeId}
-              name={theme.name}
-              image={theme.image}
-            />
-          ))}
-        </ThemeGrid>
-      )}
+      <CategoryContent />
     </GiftThemeSection>
   );
 }
