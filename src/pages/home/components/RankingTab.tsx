@@ -9,13 +9,13 @@ type RankingTabProps = {
 export const RankingTab = ({ selected, onChange }: RankingTabProps) => {
   return (
     <TabWrapper>
-      {RANKING_TABS.map((tab) => (
+      {RANKING_TABS.map(({ label, value }) => (
         <TabButton
-          key={tab}
-          active={selected === tab}
-          onClick={() => onChange(tab)}
+          key={value}
+          active={selected === value}
+          onClick={() => onChange(value)}
         >
-          {tab}
+          {label}
         </TabButton>
       ))}
     </TabWrapper>

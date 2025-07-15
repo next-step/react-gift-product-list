@@ -9,13 +9,13 @@ type RankingFilterProps = {
 export const RankingFilter = ({ selected, onChange }: RankingFilterProps) => {
   return (
     <Wrapper>
-      {GENDER_FILTERS.map((filter) => (
+      {GENDER_FILTERS.map(({ label, value }) => (
         <FilterButton
-          key={filter}
-          active={selected === filter}
-          onClick={() => onChange(filter)}
+          key={value}
+          active={selected === value}
+          onClick={() => onChange(value)}
         >
-          {filter}
+          {label}
         </FilterButton>
       ))}
     </Wrapper>
