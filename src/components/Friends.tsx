@@ -3,9 +3,22 @@ import { FiPlus } from "react-icons/fi";
 
 const STORAGE_KEY = "userInfo";
 
+function userIdFromSession(): string | null {
+  try {
+    const userInfo = sessionStorage.getItem(STORAGE_KEY);
+    if (!userInfo) return null;
+
+    const parsed = JSON.parse(userInfo);
+    if (!parsed.email || typeof parsed.email !== "string") return null;
+
+    return parsed.email.split("@")[0];
+  } catch (e) {
+    return null;
+  }
+}
+
 export default function Friends() {
-  const userInfo = sessionStorage.getItem(STORAGE_KEY);
-  const userId = userInfo ? JSON.parse(userInfo).email.split("@")[0] : null;
+  const userId = userIdFromSession();
 
   return (
     <Wrapper>
