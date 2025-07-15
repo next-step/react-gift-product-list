@@ -1,24 +1,30 @@
 import styled from '@emotion/styled';
+import Loading from '@/components/common/Loading';
 import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 
 const CategorySection = () => {
   const { themes, isLoading, isError } = useCategoryThemes();
 
-  if (isLoading || isError || themes.length === 0) return null;
+  const shouldHideGrid = isError || themes.length === 0;
 
   return (
     <Section>
       <TitleWrapper>
         <Title>선물 테마</Title>
       </TitleWrapper>
-      <Grid>
-        {themes.map(theme => (
-          <Item key={theme.themeId}>
-            <CategoryImage src={theme.image} alt={theme.name} />
-            <CategoryText>{theme.name}</CategoryText>
-          </Item>
-        ))}
-      </Grid>
+
+      {isLoading ? (
+        <Loading />
+      ) : shouldHideGrid ? null : (
+        <Grid>
+          {themes.map(theme => (
+            <Item key={theme.themeId}>
+              <CategoryImage src={theme.image} alt={theme.name} />
+              <CategoryText>{theme.name}</CategoryText>
+            </Item>
+          ))}
+        </Grid>
+      )}
     </Section>
   );
 };
