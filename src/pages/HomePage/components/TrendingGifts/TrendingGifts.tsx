@@ -18,9 +18,7 @@ import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
 import axios from "axios";
 import type { FetchState } from "@/types/FetchState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-
-const TARGET_TYPE = ["ALL", "FEMALE", "MALE", "TEEN"];
-const RANK_TYPE = ["MANY_WISH", "MANY_RECEIVE", "MANY_WISH_RECEIVE"];
+import { RANK_TYPE, TARGET_TYPE } from "./constants/tabs";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
@@ -79,15 +77,15 @@ function TrendingGiftsContent() {
         ))}
       </TabsWrapper>
 
-      {fetchState.isLoading ? (
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
-      ) : (
-        <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
+      <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
+        {fetchState.isLoading ? (
+          <LoadingContainer>
+            <LoadingSpinner />
+          </LoadingContainer>
+        ) : (
           <ProductGrid products={fetchState.data || []} />
-        </TabContentWrapper>
-      )}
+        )}
+      </TabContentWrapper>
     </TrendingGiftsSection>
   );
 }

@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
 
 export const LoadingSpinner = styled.div`
-  width: ${({ theme }) => theme.spacing[8]};
-  height: ${({ theme }) => theme.spacing[8]};
+  width: ${({ theme }) => theme.spacing[7]};
+  height: ${({ theme }) => theme.spacing[7]};
   border-top: ${({ theme }) => theme.spacing[1]} solid
-    ${({ theme }) => theme.colors.gray[800]};
+    ${({ theme }) => theme.colors.gray[700]};
   border-bottom: ${({ theme }) => theme.spacing[1]} solid
-    ${({ theme }) => theme.colors.gray[800]};
+    ${({ theme }) => theme.colors.gray[700]};
   border-left: ${({ theme }) => theme.spacing[1]} solid
     ${({ theme }) => theme.colors.gray[0]};
   border-right: ${({ theme }) => theme.spacing[1]} solid
