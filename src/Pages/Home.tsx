@@ -1,17 +1,44 @@
-import Header from '@/components/Common/Header';
-import styled from '@emotion/styled';
-import { FiPlus } from 'react-icons/fi';
-import { mockThemeList } from '@/mocks/themeListMock';
-import ThemeItem from '@/components/ThemeItem';
-import type { ThemeItemType } from '@/types/theme';
-import RankingSection from '@/components/RankingSection';
-import { SectionContainer, SectionTitle } from '@/components/Common/SectionLayout';
-import { parseNickname } from '@/utils/parseNickName';
-import { useAuthContext } from '@/contexts/useAuthContext';
+import Header from "@/components/Common/Header";
+import styled from "@emotion/styled";
+import { FiPlus } from "react-icons/fi";
+import ThemeItem from "@/components/ThemeItem";
+import type { ThemeType } from "@/types/theme";
+import RankingSection from "@/components/RankingSection";
+import {
+  SectionContainer,
+  SectionTitle,
+} from "@/components/Common/SectionLayout";
+import { parseNickname } from "@/utils/parseNickName";
+import { useAuthContext } from "@/contexts/useAuthContext";
+import { getThemes } from "@/api/themes";
+import { useEffect, useState } from "react";
 
 const Home = () => {
   const { user } = useAuthContext();
-  const nickname = user ? parseNickname(user.email) : '';
+  const nickname = user ? parseNickname(user.email) : "";
+  const [themes, setThemes] = useState<ThemeType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const res = await getThemes();
+        setThemes(res.data.data);
+      } catch (err) {
+        console.error(err);
+        setError("테마를 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchThemes();
+  }, []);
+
+  if (loading) return <p>불러오는 중...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <>
       <Header title="선물하기" />
@@ -20,15 +47,19 @@ const Home = () => {
           <SelectFriend>
             <FiPlusIcon size={16} />
             <SelectFriendText>
-              {nickname ? `${nickname}님! ` : ''}선물할 친구를 선택해 주세요.
+              {nickname ? `${nickname}님! ` : ""}선물할 친구를 선택해 주세요.
             </SelectFriendText>
           </SelectFriend>
         </SelectFriendSection>
         <SectionContainer>
           <SectionTitle>선물 테마</SectionTitle>
           <ThemeGrid>
-            {mockThemeList.slice(0, 15).map((item: ThemeItemType) => (
-              <ThemeItem key={item.themeId} {...item} />
+            {themes.map((theme) => (
+              <ThemeItem
+                key={theme.themeId}
+                name={theme.name}
+                image={theme.image}
+              />
             ))}
           </ThemeGrid>
         </SectionContainer>
