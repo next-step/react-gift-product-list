@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { get } from "@/services/request";
 
-export function useFetch<T>(url: string, queryParams?: any) {
+export function useFetch<T>(url: string, queryParams?: Record<string, string>) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const queryKey = useMemo(() => JSON.stringify(queryParams), [queryParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +15,7 @@ export function useFetch<T>(url: string, queryParams?: any) {
       try {
         const response = await get<{ data: T }>(url, { queryParams });
         setData(response.data);
-      } catch (err) {
+      } catch {
         setError(true);
       } finally {
         setLoading(false);
@@ -21,7 +23,7 @@ export function useFetch<T>(url: string, queryParams?: any) {
     };
 
     fetchData();
-  }, [url, JSON.stringify(queryParams)]);
+  }, [url, queryKey]);
 
   return { data, loading, error };
 }

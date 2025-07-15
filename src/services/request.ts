@@ -22,11 +22,12 @@ export async function request<T>(
 
     return data
   } catch (error) {
-    throw error
+    console.error('[API ERROR]', error);
+    throw error;
   }
 }
 
-export function get<T>(url: string, paramsData?: { queryParams?: any }) {
+export function get<T>(url: string, paramsData?: { queryParams?: Record<string, string> }) {
   return baseHttp
     .get<T>(url, {
       params: paramsData?.queryParams,

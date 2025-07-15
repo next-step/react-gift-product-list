@@ -30,7 +30,6 @@ const ReceiverAdder = forwardRef<ReceiverAdderHandle, ReceiverAdderProps>(
       control,
       register,
       handleSubmit,
-      watch,
       formState: { errors },
     } = useForm({
       resolver: zodResolver(receiverSchema),
@@ -58,11 +57,9 @@ const ReceiverAdder = forwardRef<ReceiverAdderHandle, ReceiverAdderProps>(
       },
     }));
 
-    const receivers = watch("receivers");
-
     useEffect(() => {
       onValidCountChange?.(fields.length);
-    }, [fields.length]);
+    }, [fields.length, onValidCountChange]);
 
     return (
       <form

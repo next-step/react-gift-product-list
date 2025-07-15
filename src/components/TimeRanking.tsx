@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Spacing from "./Spacing";
-import { get } from "@/services/request";
 import { useFetch } from "@/hooks/useFetch";
 
 const genderOptions = [
@@ -72,7 +71,6 @@ export default function TimeRanking() {
   const {
     data,
     loading,
-    error,
   } = useFetch<Product[]>("/products/ranking", {
     targetType: searchTargetType(selectedGender),
     rankType: searchRankType(selectedRankType),

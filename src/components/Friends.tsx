@@ -12,7 +12,7 @@ function userIdFromSession(): string | null {
     if (!parsed.email || typeof parsed.email !== "string") return null;
 
     return parsed.email.split("@")[0];
-  } catch (e) {
+  } catch {
     return null;
   }
 }

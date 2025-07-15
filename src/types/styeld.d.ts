@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import "@emotion/react";
 import type { AppTheme } from "@/styles/theme";
 

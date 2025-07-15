@@ -1,8 +1,8 @@
-import { css } from "@emotion/react";
+import { css, type CSSObject,  } from "@emotion/react";
 import reset from "styled-reset";
 
 export const resetStyle = css`
-  ${reset as any}
+  ${reset as unknown as CSSObject}
 
   * {
     box-sizing: border-box;

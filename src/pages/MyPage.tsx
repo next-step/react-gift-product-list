@@ -20,7 +20,7 @@ export default function MyPage() {
     const id = user.email.split("@")[0];
     setUserId(id);
     setEmail(user.email);
-  }, []);
+  }, [navigate]);
 
   const LogOut = () => {
     sessionStorage.removeItem(STORAGE_KEY.USER_INFO);

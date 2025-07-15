@@ -38,7 +38,7 @@ export default function ReceiverForm({ receiverList, setReceiverList }: Receiver
             <HeaderText>수량</HeaderText>
           </TableHeader>
           <TableBody>
-            {receiverList.map((r, i) => (
+            {receiverList.map((r) => (
               <>
                 <BodyText>{r.name}</BodyText>
                 <BodyText>{r.phone}</BodyText>

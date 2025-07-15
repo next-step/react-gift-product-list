@@ -11,15 +11,14 @@ import type { Receiver } from "@/types/order";
 
 export default function OrderPage() {
   const navigate = useNavigate();
-
   const { itemId } = useParams();
-  const card = ranking.find((card) => card.id === Number(itemId));
-  if (!card) return null;
-
+  
   const message = useOrderForm();
   const sender = useOrderForm();
-
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
+
+  const card = ranking.find((card) => card.id === Number(itemId));
+  if (!card) return null;
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
@@ -42,7 +41,7 @@ export default function OrderPage() {
 받는 사람 수: ${receiverList.length}명
 발신자 이름: ${sender.value}
 메시지: ${message.value}`);
-    
+
     navigate("/");
   };
 
@@ -72,7 +71,6 @@ export default function OrderPage() {
     </Wrapper>
   );
 }
-
 
 const Wrapper = styled.div`
   max-width: 720px;

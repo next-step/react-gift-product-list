@@ -1,6 +1,6 @@
 import { ThemeProvider, Global } from "@emotion/react";
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
-import { resetStyle } from "@/styles/reset";
+import { resetStyle } from "@/styles/resetStyle";
 import theme from "@/styles/theme";
 import { PATH } from "@/paths";
 import { MainLayout } from "@/components/MainLayout";
