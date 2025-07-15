@@ -11,7 +11,7 @@ const Home = () => {
   const nickname = user ? parseNickname(user.email) : "";
 
   return (
-    <>
+    <Wrapper>
       <Header title="선물하기" />
       <HomeContainer>
         <SelectFriendSection>
@@ -31,12 +31,22 @@ const Home = () => {
         </CheerBannerSection>
         <RankingSection />
       </HomeContainer>
-    </>
+    </Wrapper>
   );
 };
 
 export default Home;
 
+const Wrapper = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-itmes: center;
+  justify-content: flex-start;
+  backgorund-color: ${({ theme }) => theme.colors.backgroundDefault};
+`;
 const HomeContainer = styled.main`
   width: 100%;
   max-width: 720px;
