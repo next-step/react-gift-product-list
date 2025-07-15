@@ -4,8 +4,6 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import Spacing from "./Spacing";
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
 const genderOptions = [
   { label: "ALL", icon: "ALL", value: "ALL" },
   { label: "여성이", icon: "👩🏻", value: "여성" },
@@ -56,7 +54,7 @@ export default function TimeRanking() {
       setError(false);
       try {
         const [res] = await Promise.all([
-          axios.get<{ data: Product[] }>(`${API_BASE_URL}/products/ranking`, {
+          axios.get<{ data: Product[] }>("http://localhost:3000/api/products/ranking", {
             params: {
               targetType: searchTargetType(selectedGender),
               rankType: searchRankType(selectedRankType),

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 type Theme = {
   themeId: number;
@@ -17,7 +16,7 @@ export default function Category() {
 
   useEffect(() => {
     axios
-      .get<{ data: Theme[] }>(`${API_BASE_URL}/themes`)
+      .get<{ data: Theme[] }>("http://localhost:3000/api/themes")
       .then((res) => {
         setCategories(res.data.data);
       })
