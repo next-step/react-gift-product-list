@@ -5,7 +5,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { MdFace2, MdFace, MdFace6 } from 'react-icons/md';
 
-import { mockItems } from '../../../../data/mockItems';
+
 
 import {
   sectionWrapper,
@@ -13,11 +13,17 @@ import {
   subTabRow,
   cardGrid,
   moreButton,
+
+  emptyStateStyle,
+
 } from './RankingSection.style';
 
 import TabButton from '../Shared/TabButton';
 import RankingCard from '../Shared/RankingCard';
 import { UserManagement } from '../../../Login/contexts/UserManagement';
+
+
+import { fetchRanking, type RankingItem } from '../../../../apis/ranking';
 
 const genderTabs = [
   { label: '전체', icon: <FaUser /> },
@@ -39,7 +45,12 @@ const RankingSection = () => {
 
   const [gender, setGender] = useState(initialGender);
   const [giftType, setGiftType] = useState(initialGiftType);
+
+  const [items, setItems] = useState<RankingItem[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [, setError] = useState(false);
+
 
   const updateFilters = (newGender: string, newGiftType: string) => {
     setSearchParams({ gender: newGender, giftType: newGiftType });
@@ -49,14 +60,31 @@ const RankingSection = () => {
   };
 
   useEffect(() => {
-    setGender(initialGender);
-    setGiftType(initialGiftType);
-  }, [initialGender, initialGiftType]);
 
-  const visibleItems = isExpanded ? mockItems : mockItems.slice(0, 6);
+    const loadRanking = async () => {
+      setLoading(true);
+      setError(false);
+
+      try {
+        const data = await fetchRanking(gender, giftType);
+        setItems(data);
+      } catch {
+        setError(true);
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRanking();
+  }, [gender, giftType]);
+
+  const visibleItems = isExpanded ? items : items.slice(0, 6);
+
   const toggleExpanded = () => setIsExpanded((prev) => !prev);
 
-  const handleCardClick = (itemId: string) => {
+  const handleCardClick = (itemId: number) => {
+
     if (user) {
       navigate(`/order?id=${itemId}`);
     } else {
@@ -96,24 +124,34 @@ const RankingSection = () => {
         ))}
       </div>
 
-      <div css={cardGrid}>
-        {visibleItems.map((item, i) => (
-          <div key={item.id} onClick={() => handleCardClick(item.id.toString())}>
-            <RankingCard
-              rank={i + 1}
-              imageURL={item.imageURL}
-              brand={item.brand}
-              name={item.name}
-              price={item.price}
-              theme={theme}
-            />
-          </div>
-        ))}
-      </div>
-
+      {loading ? (
+        <div>로딩 중...</div>
+      ) : items.length === 0 ? (
+  <div css={emptyStateStyle}>상품 목록이 없습니다.</div>
+) : (
+  <>
+    <div css={cardGrid}>
+      {visibleItems.map((item, i) => (
+        <div key={item.id} onClick={() => handleCardClick(item.id)}>
+          <RankingCard
+            rank={i + 1}
+            imageURL={item.imageURL}
+            brand={item.brandInfo.name}
+            name={item.name}
+            price={item.price.sellingPrice}
+            theme={theme}
+          />
+        </div>
+      ))}
+    </div>
+    {items.length > 6 && (
       <button onClick={toggleExpanded} css={moreButton(theme)}>
         {isExpanded ? '접기' : '더보기'}
       </button>
+    )}
+  </>
+)}
+
     </section>
   );
 };

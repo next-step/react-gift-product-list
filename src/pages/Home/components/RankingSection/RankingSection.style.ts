@@ -77,3 +77,13 @@ export const subTabButton = (theme: ThemeType, active: boolean) => css`
 export const iconStyle = css`
   font-size: 24px;
 `;
+
+export const emptyStateStyle = css`
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #666;
+`;
+
