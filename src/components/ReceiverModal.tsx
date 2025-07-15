@@ -323,7 +323,7 @@ const ReceiverModal: React.FC<ReceiverModalProps> = ({
                     })}
                     hasError={!!errors.receivers?.[idx]?.phone}
                     placeholder="전화번호를 입력하세요."
-                    onChange={(e) => {
+                    onChange={() => {
                       checkDuplicatePhone(
                         getValues('receivers'),
                         setError,
