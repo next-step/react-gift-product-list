@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import type { personProps } from "./types";
+//TODO: 클릭했을 때 사람 아이콘 UI 변경
 
 const PersonCategoryWrapper = styled.div`
   display: flex;
@@ -33,8 +34,8 @@ const PersonCategory = ({ options, selected, onSelect }: personProps) => {
   return (
     <PersonCategoryWrapper>
       {options.map((o) => (
-        <PersonBtn key={o.label} onClick={() => onSelect(o.label)}>
-          <PersonImage selected={selected === o.label}>
+        <PersonBtn key={o.label} onClick={() => onSelect(o.param)}>
+          <PersonImage selected={selected === o.param}>
             {o.emoji}
           </PersonImage>
           <p>{o.label}</p>
