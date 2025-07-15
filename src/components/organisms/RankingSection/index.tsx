@@ -67,13 +67,6 @@ const RankingSection = () => {
     navigate(`/order/${item.id}`);
   };
 
-  if (fetchState.isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (fetchState.isError) {
-    return <div>Error loading data.</div>;
-  }
-
   return (
     <S.Section>
       <S.Title>실시간 급상승 선물랭킹</S.Title>
@@ -106,22 +99,37 @@ const RankingSection = () => {
       </S.FilterContainer>
       
       <S.Grid>
-        {(isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
-          <RankingItemCard
-            key={item.id}
-            imageUrl={item.imageURL}
-            title={item.name}
-            subtitle={item.brandInfo.name}
-            price={item.price.sellingPrice}
-            rank={index + 1}
-            onClick={() => handleItemCardClick(item)}
-          />
-        ))}
+        {fetchState.isLoading ? (
+          Array.from({ length: 6 }, (_, index) => (
+            <S.LoadingCard key={`loading-${index}`}>
+              <S.LoadingSpinner />
+              <span>Loading...</span>
+            </S.LoadingCard>
+          ))
+        ) : fetchState.isError ? (
+          <S.EmptyMessage>Error loading data.</S.EmptyMessage>
+        ) : rankingProducts.length === 0 ? (
+          <S.EmptyMessage>상품이 없습니다.</S.EmptyMessage>
+        ) : (
+          (isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
+            <RankingItemCard
+              key={item.id}
+              imageUrl={item.imageURL}
+              title={item.name}
+              subtitle={item.brandInfo.name}
+              price={item.price.sellingPrice}
+              rank={index + 1}
+              onClick={() => handleItemCardClick(item)}
+            />
+          ))
+        )}
       </S.Grid>
 
-      <S.MoreButton onClick={() => setIsExpanded(!isExpanded)}>
-        {isExpanded ? '접기' : '더보기'}
-      </S.MoreButton>
+      {!fetchState.isLoading && !fetchState.isError && rankingProducts.length > 0 && (
+        <S.MoreButton onClick={() => setIsExpanded(!isExpanded)}>
+          {isExpanded ? '접기' : '더보기'}
+        </S.MoreButton>
+      )}
     </S.Section>
   );
 };

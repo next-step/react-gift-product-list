@@ -89,3 +89,44 @@ export const MoreButton = styled.button`
   display: block;
   margin: ${({ theme }) => theme.spacing.spacing10} auto ${({ theme }) => theme.spacing.spacing8};
 `; 
+
+export const EmptyMessage = styled.div`
+  grid-column: 1 / -1; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px; 
+  font-size: 1rem;
+`;
+
+export const LoadingSpinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid ${({ theme }) => theme.colors.gray[300]};
+  border-top: 4px solid ${({ theme }) => theme.colors.blue[600]};
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+export const LoadingCard = styled.div`
+  width: 100%;
+  height: 200px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.gray[100]};
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.colors.gray[200]};
+  gap: ${({ theme }) => theme.spacing.spacing2};
+  
+  span {
+    font-size: 0.875rem;
+    color: ${({ theme }) => theme.colors.gray[600]};
+  }
+`;
