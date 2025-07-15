@@ -2,16 +2,59 @@ import styled from '@emotion/styled';
 import { filters, generations } from '@/data/categoryDatas';
 import useSearchParamState from '../hooks/useSearchParamState';
 import useToggleCollapse from '../hooks/useToggleCollapse';
-import { rankingDatas } from '@/data/rankingDatas.ts';
+
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/api';
+import Loading from '@/components/Loading';
 
 interface ButtonProps {
   isActive: boolean;
 }
 
+interface BrandInfo {
+  id: number;
+  name: string;
+  imageURL: string;
+}
+
+interface PriceInfo {
+  basicPrice: number;
+  sellingPrice: number;
+  discountRate: number;
+}
+
+interface GiftRankingItem {
+  id: number;
+  name: string;
+  price: PriceInfo;
+  imageURL: string;
+  brandInfo: BrandInfo;
+}
+
 const GiftRankingSection = () => {
+  const [rankingDatas, setrankingDatas] = useState<GiftRankingItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/products/ranking`);
+        const { data } = response;
+        console.log(data.data);
+        setrankingDatas(data.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const {
     handleGenerationGroupClick,
     handleFilterGroupClick,
@@ -30,6 +73,8 @@ const GiftRankingSection = () => {
       navigate(ROUTES.LOGIN);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <Section>
@@ -63,15 +108,15 @@ const GiftRankingSection = () => {
       </CatContainer>
 
       <RankContainer>
-        {rankingDatas.slice(0, visibleItemsCount).map(rank => (
+        {rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
           <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
-            <RankNumber>{rank.id}</RankNumber>
+            <RankNumber>{index + 1}</RankNumber>
 
             <ItemContainer>
-              <Image src={rank.image} alt={rank.name} />
+              <Image src={rank.imageURL} alt={rank.name} />
               <ItemName>{rank.name}</ItemName>
-              <ItemSubName>{rank.subName}</ItemSubName>
-              <ItemPrice>{rank.price} 원</ItemPrice>
+              <ItemSubName>{rank.name}</ItemSubName>
+              <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
             </ItemContainer>
           </RankItem>
         ))}
