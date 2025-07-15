@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import CategoryCard from "@/components/CategoryCard";
 import { useThemes } from "@/hooks/useThemes";
-import Spinner from "@/components/Spinner";
+import AsyncBoundary from "@/components/AsyncBoundary";
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing5} 0;
@@ -21,17 +21,19 @@ const Grid = styled.div`
 
 export default function CategorySection() {
   const { themes, loading, error } = useThemes();
-  if (loading) return <Spinner />;
-  if (error || !themes?.length) return null;
 
   return (
     <Section>
       <SectionTitle>선물 테마</SectionTitle>
-      <Grid>
-        {themes.map(({ themeId, name, image }) => (
-          <CategoryCard key={themeId} name={name} image={image} />
-        ))}
-      </Grid>
+      <AsyncBoundary loading={loading} error={error} errorFallback={null}>
+        {themes && themes.length > 0 && (
+          <Grid>
+            {themes.map(({ themeId, name, image }) => (
+              <CategoryCard key={themeId} name={name} image={image} />
+            ))}
+          </Grid>
+        )}
+      </AsyncBoundary>
     </Section>
   );
 }

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import ProductCard from "@/components/ProductCard";
 import { useSearchParams } from "react-router";
 import { useGiftRanking } from "@/hooks/useGiftRanking";
-import Spinner from "@/components/Spinner";
+import AsyncBoundary from "@/components/AsyncBoundary";
 
 const Wrapper = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing5};
@@ -170,28 +170,28 @@ export default function GiftRankingSection() {
         ))}
       </TabWrapper>
 
-      {loading && <Spinner />}
-      {!loading && error && <Message>상품을 불러오는 데 실패했어요.</Message>}
-      {!loading && !error && data?.length === 0 && <Message>상품이 없습니다.</Message>}
-
-      {!loading && !error && data && (
-        <>
-          <Grid>
-            {visibleData.map((item, index) => (
-              <ProductCard
-                key={item.id}
-                item={item}
-                rank={index + 1}
-              />
-            ))}
-          </Grid>
-          {data.length > DEFAULT_VISIBLE_COUNT && (
-            <LoadMore onClick={() => setShowAll(!showAll)}>
-              {showAll ? "접기" : "더보기"}
-            </LoadMore>
-          )}
-        </>
-      )}
+      <AsyncBoundary loading={loading} error={error} errorFallback={<Message>상품을 불러오는 데 실패했어요.</Message>}>
+        {data?.length === 0 ? (
+          <Message>상품이 없습니다.</Message>
+        ) : (
+          <>
+            <Grid>
+              {visibleData.map((item, index) => (
+                <ProductCard
+                  key={item.id}
+                  item={item}
+                  rank={index + 1}
+                />
+              ))}
+            </Grid>
+            {data && data.length > DEFAULT_VISIBLE_COUNT && (
+              <LoadMore onClick={() => setShowAll(!showAll)}>
+                {showAll ? "접기" : "더보기"}
+              </LoadMore>
+            )}
+          </>
+        )}
+      </AsyncBoundary>
     </Wrapper>
   );
 }
