@@ -4,12 +4,12 @@ import { useSearchParams } from 'react-router-dom';
 const useSearchParamState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [activeGenerationButton, setActiveGenerationButton] = useState<string>('');
-  const [activeFilterButton, setActiveFilterButton] = useState<string>('');
+  const [activeGenerationButton, setActiveGenerationButton] = useState<string>('ALL');
+  const [activeFilterButton, setActiveFilterButton] = useState<string>('MANY_WISH');
 
   useEffect(() => {
-    const generation = searchParams.get('generation') ?? 'ALL';
-    const filter = searchParams.get('filter') ?? 'MANY_WISH';
+    const generation = searchParams.get('targetType') ?? 'ALL';
+    const filter = searchParams.get('rankType') ?? 'MANY_WISH';
 
     setActiveGenerationButton(generation);
     setActiveFilterButton(filter);
@@ -17,13 +17,13 @@ const useSearchParamState = () => {
 
   const handleGenerationGroupClick = (id: string) => {
     setActiveGenerationButton(id);
-    searchParams.set('generation', id);
+    searchParams.set('targetType', id);
     setSearchParams(searchParams, { replace: true });
   };
 
   const handleFilterGroupClick = (id: string) => {
     setActiveFilterButton(id);
-    searchParams.set('filter', id);
+    searchParams.set('rankType', id);
     setSearchParams(searchParams, { replace: true });
   };
 

@@ -36,13 +36,22 @@ interface GiftRankingItem {
 }
 
 const GiftRankingSection = () => {
+  const {
+    handleGenerationGroupClick,
+    handleFilterGroupClick,
+    activeGenerationButton,
+    activeFilterButton,
+  } = useSearchParamState();
+
   const [rankingDatas, setrankingDatas] = useState<GiftRankingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/products/ranking`);
+        const response = await axios.get(
+          `${API_BASE_URL}/api/products/ranking?targetType=${activeGenerationButton}&rankType=${activeFilterButton}`
+        );
         const { data } = response;
         console.log(data.data);
         setrankingDatas(data.data);
@@ -53,14 +62,7 @@ const GiftRankingSection = () => {
       }
     };
     fetchData();
-  }, []);
-
-  const {
-    handleGenerationGroupClick,
-    handleFilterGroupClick,
-    activeGenerationButton,
-    activeFilterButton,
-  } = useSearchParamState();
+  }, [activeGenerationButton, activeFilterButton]);
 
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
   const { isLoggedIn } = useUserInfo();
