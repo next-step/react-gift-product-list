@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getRankingProduct } from "@/api/product";
 import type { ProductType } from "@/types";
+import type {
+  RankingRankType,
+  RankingTargetType,
+} from "@/api/product/get-ranking-products";
 
 export const useRankingProducts = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -9,8 +13,10 @@ export const useRankingProducts = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
 
-  const selectedTag = searchParams.get("targetType") || "ALL";
-  const selectedTab = searchParams.get("rankType") || "MANY_WISH";
+  const selectedTag: RankingTargetType = (searchParams.get("targetType") ||
+    "ALL") as RankingTargetType;
+  const selectedTab: RankingRankType = (searchParams.get("rankType") ||
+    "MANY_WISH") as RankingRankType;
 
   useEffect(() => {
     const fetchRankingProducts = async () => {
@@ -19,11 +25,8 @@ export const useRankingProducts = () => {
         setError(null);
 
         const data = await getRankingProduct({
-          targetType: selectedTag as "ALL" | "FEMALE" | "MALE" | "TEEN",
-          rankType: selectedTab as
-            | "MANY_WISH"
-            | "MANY_RECEIVE"
-            | "MANY_WISH_RECEIVE",
+          targetType: selectedTag as RankingTargetType,
+          rankType: selectedTab as RankingRankType,
         });
 
         setProducts(data);
