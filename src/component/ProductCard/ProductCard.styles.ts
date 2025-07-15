@@ -20,6 +20,18 @@ export const ProductImage = styled.img`
   border-radius: ${theme.spacing[2]};
 `
 
+export const ProductName = styled.div`
+  ${theme.typography.label1Regular};
+  color: ${theme.colors.colorScale.gray[1000]};
+  margin-bottom: ${theme.spacing[2]};
+  margin-top: ${theme.spacing[1]};
+`
+export const BrandName = styled.div`
+  ${theme.typography.label2Regular};
+  color: ${theme.colors.colorScale.gray[700]};
+  margin-top: ${theme.spacing[2]};
+`
+
 export const Rank = styled.div<{ rank: number }>`
   position: absolute;
   top: ${theme.spacing[2]};

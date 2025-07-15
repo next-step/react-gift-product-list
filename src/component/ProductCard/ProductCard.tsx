@@ -1,5 +1,5 @@
 import * as S from './ProductCard.styles'
-import type { Product } from '@/data/products'
+import type { Product } from '@/features/Gift/hooks/useProductsRanking'
 import MyButton from '@/component/Button/Button'
 
 interface ProductCardProps {
@@ -24,8 +24,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <S.ProductItem key={item.id} onClick={() => onProductSelect(item)}>
             <S.Rank rank={index + 1}>{index + 1}</S.Rank>
             <S.ProductImage src={item.imageURL} alt={item.name} />
-            <p>{item.brandInfo.name}</p>
-            <p>{item.name}</p>
+            <S.BrandName>{item.brandInfo.name}</S.BrandName>
+            <S.ProductName>{item.name}</S.ProductName>
             <strong>{item.price.sellingPrice.toLocaleString()} 원</strong>
           </S.ProductItem>
         ))}
