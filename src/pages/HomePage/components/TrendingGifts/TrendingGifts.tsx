@@ -66,11 +66,27 @@ function TrendingGiftsContent() {
     fetchTrendingGifts();
   }, [mainTabIdx, subTabIdx]);
 
+  const renderContent = () => {
+    if (fetchState.isError) {
+      return (
+        <ErrorContainer>
+          <ErrorMessage>
+            {TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR}
+          </ErrorMessage>
+        </ErrorContainer>
+      );
+    } else if (fetchState.isLoading) {
+      return (
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
+      );
+    }
+    return <ProductGrid products={fetchState.data || []} />;
+  };
+
   return (
-    <TrendingGiftsSection>
-      <TitleWarpper>
-        <SectionTitle>{TRENDING_GIFTS_LABELS.SECTION_TITLE}</SectionTitle>
-      </TitleWarpper>
+    <>
       <TabsWrapper>
         {TRENDING_GIFTS_TABS.map((el, idx) => (
           <MainTabButton key={idx} onClick={() => setMainTabIdx(idx)}>
@@ -81,30 +97,22 @@ function TrendingGiftsContent() {
           </MainTabButton>
         ))}
       </TabsWrapper>
-
       <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
-        {fetchState.isError ? (
-          <ErrorContainer>
-            <ErrorMessage>
-              {TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR}
-            </ErrorMessage>
-          </ErrorContainer>
-        ) : fetchState.isLoading ? (
-          <LoadingContainer>
-            <LoadingSpinner />
-          </LoadingContainer>
-        ) : (
-          <ProductGrid products={fetchState.data || []} />
-        )}
+        {renderContent()}
       </TabContentWrapper>
-    </TrendingGiftsSection>
+    </>
   );
 }
 
 function TrendingGifts() {
   return (
     <LocalStorageProvider>
-      <TrendingGiftsContent />
+      <TrendingGiftsSection>
+        <TitleWarpper>
+          <SectionTitle>{TRENDING_GIFTS_LABELS.SECTION_TITLE}</SectionTitle>
+        </TitleWarpper>
+        <TrendingGiftsContent />
+      </TrendingGiftsSection>
     </LocalStorageProvider>
   );
 }
