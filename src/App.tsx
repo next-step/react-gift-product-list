@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Navigation from '@/layouts/Navigation';
+import GlobalStyle from '@/styles/global';
+import { ThemeProvider } from '@emotion/react';
+import { theme } from '@/styles/theme';
+import styled from '@emotion/styled';
+import AppRouter from './routes/Routers';
+import { UserInfoProvider } from './contexts/UserInfoContext';
+
+const AppContainer = styled.div`
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  background-color: ${({ theme }) => theme.colors.semantic.background.default};
+  padding-top: 2.75rem;
+`;
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <UserInfoProvider>
+        <AppContainer>
+          <Navigation />
+          <AppRouter />
+        </AppContainer>
+      </UserInfoProvider>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
