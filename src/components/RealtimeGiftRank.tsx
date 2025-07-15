@@ -89,6 +89,14 @@ const RankingTypeSelectorBtn = styled.div<{ isSelected?: boolean }>`
 
 // Item 영역 시작
 const RealtimeRankItemWrapper = styled.div`
+  width: 100%;
+  height: auto;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const RealtimeRankItemGrid =  styled.div`
   width: auto;
   height: auto;
   margin-top: ${({ theme }) => theme.spacing.spacing4};
@@ -97,8 +105,9 @@ const RealtimeRankItemWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   row-gap: ${({ theme }) => theme.spacing.spacing5};
+  column-gap: ${({ theme }) => theme.spacing.spacing3};
   justify-items: center; 
-`;
+`
 
 const RealtimeRankItem = styled.div`
   width: auto;
@@ -169,15 +178,29 @@ const ExtraBtn = styled.button`
   cursor: pointer;
 `;
 
+const Spinner = styled.div`
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #333;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 // 메인 컴포넌트 시작
 function RealtimeGiftRank() {
-  const [selectedGroup, setSelectedGroup] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('ALL');
+  const [selectedType, setSelectedType] = useState('MANY_WISH');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const {getId} = useUser();
 
   const [ranking, setRanking] = useState([]);
-  const [isLoding, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
@@ -295,11 +318,11 @@ function RealtimeGiftRank() {
           </RankingTypeSelectorBtn>
         ))}
       </RankingTypeSelectorWrapper>
-
+        
       {/* 여길 수정해야함 */}
       {/* 아이템 리스트 */}
       <RealtimeRankItemWrapper>
-        {(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
+        {!isError && (isLoading ? <Spinner/> : <RealtimeRankItemGrid>{(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
         <RealtimeRankItem
           key={item.id}
           onClick={() =>
@@ -323,7 +346,7 @@ function RealtimeGiftRank() {
             {item.price.sellingPrice} 원
           </RealtimeItemPriceTxt>
         </RealtimeRankItem>
-      ))}
+      ))}</RealtimeRankItemGrid>)}
       </RealtimeRankItemWrapper>
 
       {/* 더보기 접기 버튼 */}

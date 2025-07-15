@@ -75,7 +75,6 @@ const GiftCategorySelectorItemText = styled.p`
 `;
 
 
-
 function GiftCategorySelectorItemBox() {
   const [themes, setThemes] = useState([]);
   const [isLoding, setIsLoading] = useState(true);
