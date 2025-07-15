@@ -480,7 +480,7 @@ function OrderPage() {
       </OrderButton>
       {isReceiverModalOpen && (
         <ReceiverModal
-          receivers={receivers}
+          initialReceivers={receivers}
           setReceivers={setReceivers}
           onClose={() => setIsReceiverModalOpen(false)}
         />
