@@ -1,33 +1,23 @@
 import { CategoryItemCard } from '@/components';
 import * as S from './styles';
 import { getThemes } from '@/lib/api';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { type Theme } from '@/types/api';
-
-interface FetchState<T> {
-  isLoading: boolean;
-  isError: boolean;
-  data: T | null;
-}
+import { useFetchState } from '@/hooks/useFetchState';
 
 const CategoryField = () => {
-  const [themes, setThemes] = useState<Theme[]>([]);
-  const [fetchState, setFetchState] = useState<FetchState<Theme[]>>({
-    isLoading: true,
-    isError: false,
-    data: null,
-  });
-
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<Theme[]>(true);
+  
   useEffect(() => {
+    setLoading();
+    
     getThemes()
-    .then((data) => {
-      setThemes(data);
-      setFetchState({
-        isLoading: false,
-        isError: false,
-        data,
+      .then((data) => {
+        setSuccess(data);
+      })
+      .catch(() => {
+        setError();
       });
-    })
   }, []);
 
   if (fetchState.isLoading) {
@@ -41,7 +31,7 @@ const CategoryField = () => {
     <S.Container>
       <S.Title>선물 테마</S.Title>
       <S.Grid>
-        {themes.map((theme) => (
+        {fetchState.data?.map((theme) => (
           <CategoryItemCard
             key={theme.themeId}
             imageUrl={theme.image}

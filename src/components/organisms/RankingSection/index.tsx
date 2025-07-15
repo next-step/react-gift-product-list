@@ -3,47 +3,28 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { genderItems, actionItems } from '@/data/ranking';
 import { getRankingProducts } from '@/lib/api';
 import { type RankingProduct, type TargetType, type RankType } from '@/types/api';
+import { useFetchState } from '@/hooks/useFetchState';
 import { RankingItemCard } from '@/components';
 import * as S from './styles';
-
-interface FetchState<T> {
-  isLoading: boolean;
-  isError: boolean;
-  data: T | null;
-}
 
 const RankingSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [rankingProducts, setRankingProducts] = useState<RankingProduct[]>([]);
-  const [fetchState, setFetchState] = useState<FetchState<RankingProduct[]>>({
-    isLoading: true,
-    isError: false,
-    data: null,
-  });
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct[]>(true);
   const navigate = useNavigate();
 
   const selectedGender = searchParams.get('gender') || 'ALL';
   const selectedAction = searchParams.get('action') || 'MANY_WISH';
 
   useEffect(() => {
-    setFetchState(prev => ({ ...prev, isLoading: true }));
+    setLoading();
     
     getRankingProducts(selectedGender as TargetType, selectedAction as RankType)
       .then((data) => {
-        setRankingProducts(data);
-        setFetchState({
-          isLoading: false,
-          isError: false,
-          data,
-        });
+        setSuccess(data);
       })
       .catch(() => {
-        setFetchState({
-          isLoading: false,
-          isError: true,
-          data: null,
-        });
+        setError();
       });
   }, [selectedGender, selectedAction]);
 
@@ -66,6 +47,8 @@ const RankingSection = () => {
   const handleItemCardClick = (item: RankingProduct) => {
     navigate(`/order/${item.id}`);
   };
+
+  const rankingProducts = fetchState.data || [];
 
   return (
     <S.Section>
