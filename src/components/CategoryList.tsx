@@ -84,20 +84,27 @@ function CategoryList({ onHide }: { onHide?: () => void }) {
   return (
     <Box>
       <Title>선물 테마</Title>
-      {loading ? (
-        <div>로딩 중 ... </div>
-      ) : error ? (
-        <div>{error}</div>
-      ) : themes.length === 0 ? null : (
-        <List>
-          {themes.map((cat) => (
-            <Item key={cat.themeId}>
-              <Img src={cat.image} alt={cat.name} />
-              <Name>{cat.name}</Name>
-            </Item>
-          ))}
-        </List>
-      )}
+      {(() => {
+        if (loading) {
+          return <div>로딩 중 ... </div>;
+        }
+        if (error) {
+          return <div>{error}</div>;
+        }
+        if (themes.length === 0) {
+          return null;
+        }
+        return (
+          <List>
+            {themes.map((cat) => (
+              <Item key={cat.themeId}>
+                <Img src={cat.image} alt={cat.name} />
+                <Name>{cat.name}</Name>
+              </Item>
+            ))}
+          </List>
+        );
+      })()}
     </Box>
   );
 }
