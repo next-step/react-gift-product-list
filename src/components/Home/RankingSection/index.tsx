@@ -1,15 +1,18 @@
-import RankingCategory from './RankingCategory';
-import RankingTextCategory from './RankingTextCategory';
-import RankingItem from './RankingItem';
-import styled from '@emotion/styled';
-import { mockGiftItems } from '@/mocks/itemListMock';
-import { useState } from 'react';
-import { SectionContainer, SectionTitle } from '@/components/Common/SectionLayout';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useAuthContext } from '@/contexts/useAuthContext';
+import TargetCategory from "./TargetCategory";
+import RankingCategory from "./RankingCategory";
+import RankingItem from "./RankingItem";
+import styled from "@emotion/styled";
+import { mockGiftItems } from "@/mocks/itemListMock";
+import { useState } from "react";
+import {
+  SectionContainer,
+  SectionTitle,
+} from "@/components/Common/SectionLayout";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/contexts/useAuthContext";
 
-const DEFAULT_GENDER = '전체';
-const DEFAULT_CATEGORY = '받고싶어한';
+const DEFAULT_GENDER = "전체";
+const DEFAULT_CATEGORY = "받고싶어한";
 
 const RankingSection = () => {
   const [showAll, setShowAll] = useState(false);
@@ -19,13 +22,13 @@ const RankingSection = () => {
   const isLoggedIn = useAuthContext();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const gender = searchParams.get('gender') || DEFAULT_GENDER;
-  const category = searchParams.get('category') || DEFAULT_CATEGORY;
+  const gender = searchParams.get("gender") || DEFAULT_GENDER;
+  const category = searchParams.get("category") || DEFAULT_CATEGORY;
 
   const handleGenderChange = (newGender: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set('gender', newGender);
+      newParams.set("gender", newGender);
       return newParams;
     });
   };
@@ -33,14 +36,14 @@ const RankingSection = () => {
   const handleCategoryChange = (newCategory: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set('category', newCategory);
+      newParams.set("category", newCategory);
       return newParams;
     });
   };
 
   const handleClickItem = (itemId: number) => {
     if (!isLoggedIn) {
-      navigate('/login', { state: { from: { pathname: `/order/${itemId}` } } });
+      navigate("/login", { state: { from: { pathname: `/order/${itemId}` } } });
     } else {
       navigate(`/order/${itemId}`);
     }
@@ -49,8 +52,8 @@ const RankingSection = () => {
   return (
     <SectionContainer>
       <SectionTitle>실시간 급상승 선물랭킹</SectionTitle>
-      <RankingCategory selected={gender} onChange={handleGenderChange} />
-      <RankingTextCategory selected={category} onChange={handleCategoryChange} />
+      <TargetCategory selected={gender} onChange={handleGenderChange} />
+      <RankingCategory selected={category} onChange={handleCategoryChange} />
       <RankingGrid>
         {mockGiftItems.slice(0, RANK_COUNT).map((item, index) => (
           <RankingItem
@@ -61,7 +64,9 @@ const RankingSection = () => {
           />
         ))}
       </RankingGrid>
-      <MoreButton onClick={toggleShowAll}>{showAll ? '접기' : '더보기'}</MoreButton>
+      <MoreButton onClick={toggleShowAll}>
+        {showAll ? "접기" : "더보기"}
+      </MoreButton>
     </SectionContainer>
   );
 };
