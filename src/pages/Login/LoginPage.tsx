@@ -26,7 +26,7 @@ export default function LoginPage() {
     const userInfo = {
       email,
     };
-    
+
     sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
 
     navigate(from, { replace: true });

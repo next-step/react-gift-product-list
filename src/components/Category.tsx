@@ -1,4 +1,4 @@
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -17,7 +17,7 @@ export default function Category() {
 
   useEffect(() => {
     axios
-      .get<{ data: Theme[]}>(`${API_BASE_URL}/themes`)
+      .get<{ data: Theme[] }>(`${API_BASE_URL}/themes`)
       .then((res) => {
         setCategories(res.data.data);
       })
@@ -49,7 +49,7 @@ export default function Category() {
       </Section>
       <Block />
     </>
-  )
+  );
 }
 
 function CategoryCard({ image, name }: { image: string; name: string }) {
@@ -58,18 +58,18 @@ function CategoryCard({ image, name }: { image: string; name: string }) {
       <Image src={image} alt={name} />
       <Label>{name}</Label>
     </CategoryItem>
-  )
+  );
 }
 
 const Block = styled.section`
   width: 100%;
   height: 24px;
   background-color: transparent;
-`
+`;
 
 const Section = styled.section`
   padding: 8px 0;
-`
+`;
 
 const Title = styled.h2`
   ${({ theme }) => theme.typography.title1Bold};
@@ -77,7 +77,7 @@ const Title = styled.h2`
   margin: 0px;
   width: 100px;
   text-align: left;
-`
+`;
 
 const Grid = styled.div`
   display: grid;
@@ -87,7 +87,7 @@ const Grid = styled.div`
   @media (max-width: 480px) {
     grid-template-columns: repeat(4, 1fr); // 모바일은 4개씩
   }
-`
+`;
 
 const CategoryItem = styled.div`
   display: flex;
@@ -96,7 +96,7 @@ const CategoryItem = styled.div`
   justify-content: center;
   gap: 4px;
   cursor: pointer;
-`
+`;
 
 const Image = styled.img`
   max-width: 50px;
@@ -105,10 +105,10 @@ const Image = styled.img`
   border-radius: 18px;
   object-fit: cover;
   overflow: hidden;
-`
+`;
 
 const Label = styled.span`
   ${({ theme }) => theme.typography.label2Regular};
   margin: 0px;
   text-align: left;
-`
+`;

@@ -4,11 +4,15 @@ import ErrorMessage from "./ErrorMessage";
 
 type Props = {
   name: string;
-  onChangeName: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChangeName: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
   nameError: boolean;
 
   phone: string;
-  onChangePhone: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChangePhone: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
   phoneError: boolean;
 
   quantity: number;
@@ -57,7 +61,9 @@ export default function ReceiverForm({
             onChange={onChangePhone}
             error={phoneError}
           />
-          {phoneError && <ErrorMessage>올바른 전화번호 형식이 아닙니다.</ErrorMessage>}
+          {phoneError && (
+            <ErrorMessage>올바른 전화번호 형식이 아닙니다.</ErrorMessage>
+          )}
         </RecevierInputWrapper>
       </ReceiverInputBox>
 
@@ -72,7 +78,9 @@ export default function ReceiverForm({
             onChange={(e) => onChangeQuantity(Number(e.target.value))}
             error={quantityError}
           />
-          {quantityError && <ErrorMessage>구매 수량은 1개 이상이어야 합니다.</ErrorMessage>}
+          {quantityError && (
+            <ErrorMessage>구매 수량은 1개 이상이어야 합니다.</ErrorMessage>
+          )}
         </RecevierInputWrapper>
       </ReceiverInputBox>
 
@@ -80,7 +88,6 @@ export default function ReceiverForm({
     </ReceiverBox>
   );
 }
-
 
 const ReceiverBox = styled.div`
   width: 100%;
@@ -116,7 +123,7 @@ const RecevierInputWrapper = styled.div`
   width: 100%;
 `;
 
-const ReceiverInput = styled.input< { error?: boolean} >`
+const ReceiverInput = styled.input<{ error?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   color: ${({ theme }) => theme.colors.gray[900]};
@@ -127,9 +134,8 @@ const ReceiverInput = styled.input< { error?: boolean} >`
   padding: 8px 12px;
   border-width: 1px;
   border-radius: 8px;
-  border-color: ${({ theme, error }) => 
-    error? theme.colors.state.critical 
-  : theme.colors.gray[400]};
+  border-color: ${({ theme, error }) =>
+    error ? theme.colors.state.critical : theme.colors.gray[400]};
 
   &:focus {
     outline: none;
@@ -137,7 +143,7 @@ const ReceiverInput = styled.input< { error?: boolean} >`
   }
 `;
 
-const ReceiverNumberInput = styled.input< { error?: boolean} >`
+const ReceiverNumberInput = styled.input<{ error?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   color: ${({ theme }) => theme.colors.gray[900]};
@@ -148,9 +154,8 @@ const ReceiverNumberInput = styled.input< { error?: boolean} >`
   padding: 8px 12px;
   border-width: 1px;
   border-radius: 8px;
-  border-color: ${({ theme, error }) => 
-    error? theme.colors.state.critical 
-  : theme.colors.gray[400]};
+  border-color: ${({ theme, error }) =>
+    error ? theme.colors.state.critical : theme.colors.gray[400]};
   appearance: textfield;
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {

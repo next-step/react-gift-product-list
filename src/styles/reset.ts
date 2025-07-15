@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
-import reset from 'styled-reset';
+import { css } from "@emotion/react";
+import reset from "styled-reset";
 
 export const resetStyle = css`
   ${reset as any}
@@ -9,7 +9,7 @@ export const resetStyle = css`
   }
 
   body {
-    font-family: 'Pretendard', sans-serif;
+    font-family: "Pretendard", sans-serif;
     background-color: #fff;
     color: #222;
     line-height: 1.5;

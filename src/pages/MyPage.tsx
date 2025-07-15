@@ -22,9 +22,9 @@ export default function MyPage() {
   }, []);
 
   const LogOut = () => {
-    sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem("userInfo");
     navigate("/login");
-  }
+  };
 
   return (
     <>
@@ -80,7 +80,9 @@ const LogoutBtn = styled.button`
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  transition: background-color 200ms, opacity 200ms;
+  transition:
+    background-color 200ms,
+    opacity 200ms;
   padding: 0px 12px;
 
   &:hover {
@@ -89,4 +91,4 @@ const LogoutBtn = styled.button`
   &:active {
     background-color: ${({ theme }) => theme.colors.gray[500]};
   }
-`
+`;

@@ -1,7 +1,7 @@
-import Category from '../components/Category'
-import Friends from '../components/Friends'
-import Banner from '../components/Banner'
-import TimeRanking from '../components/TimeRanking'
+import Category from "../components/Category";
+import Friends from "../components/Friends";
+import Banner from "../components/Banner";
+import TimeRanking from "../components/TimeRanking";
 
 function HomePage() {
   return (
@@ -11,7 +11,7 @@ function HomePage() {
       <Banner />
       <TimeRanking />
     </>
-  )
+  );
 }
 
-export default HomePage
+export default HomePage;

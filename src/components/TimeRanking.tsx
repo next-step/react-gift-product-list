@@ -39,10 +39,10 @@ export default function TimeRanking() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [selectedGender, setSelectedGender] = useState(
-    () => searchParams.get("gender") || "ALL"
+    () => searchParams.get("gender") || "ALL",
   );
   const [selectedRankType, setSelectedRankType] = useState(
-    () => searchParams.get("rankType") || "받고 싶어한"
+    () => searchParams.get("rankType") || "받고 싶어한",
   );
   const [showAll, setShowAll] = useState(false);
 
@@ -56,15 +56,12 @@ export default function TimeRanking() {
       setError(false);
       try {
         const [res] = await Promise.all([
-          axios.get<{ data: Product[] }>(
-            `${API_BASE_URL}/products/ranking`,
-            {
-              params: {
-                targetType: searchTargetType(selectedGender),
-                rankType: searchRankType(selectedRankType),
-              },
-            }
-          ),
+          axios.get<{ data: Product[] }>(`${API_BASE_URL}/products/ranking`, {
+            params: {
+              targetType: searchTargetType(selectedGender),
+              rankType: searchRankType(selectedRankType),
+            },
+          }),
           new Promise((resolve) => setTimeout(resolve, 500)), // 로딩중 확인
         ]);
         setRankings(res.data.data || []);

@@ -1,5 +1,5 @@
-import colors from './tokens/colors';
-import typography from './tokens/typography';
+import colors from "./tokens/colors";
+import typography from "./tokens/typography";
 
 const theme = {
   colors,

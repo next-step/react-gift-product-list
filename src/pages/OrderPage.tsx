@@ -27,21 +27,26 @@ export default function OrderPage() {
     const isMessageValid = message.validate();
     const isSenderValid = sender.validate();
     const isReceiverValid = receiver.validate();
-    const isPhoneValid = phone.phonevalidate(); 
+    const isPhoneValid = phone.phonevalidate();
     const isQuantityValid = quantity >= 1;
     setQuantityError(!isQuantityValid);
 
-    if (!isMessageValid || !isSenderValid || !isReceiverValid || !isPhoneValid || !isQuantityValid) {
-    return;
+    if (
+      !isMessageValid ||
+      !isSenderValid ||
+      !isReceiverValid ||
+      !isPhoneValid ||
+      !isQuantityValid
+    ) {
+      return;
     }
 
     alert(`주문이 완료되었습니다.
 상품명: ${card.name}
 구매 수량: ${quantity}
 발신자 이름: ${receiver.value}
-메시지: ${message.value}`
-);
-  navigate("/");
+메시지: ${message.value}`);
+    navigate("/");
   };
 
   return (

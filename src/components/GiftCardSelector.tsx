@@ -12,7 +12,7 @@ type Props = {
 
 export default function GiftCardSelector({ value, onChange, error }: Props) {
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-  
+
   useEffect(() => {
     onChange({
       target: {
@@ -58,9 +58,7 @@ export default function GiftCardSelector({ value, onChange, error }: Props) {
             onChange={onChange}
             error={error}
           />
-          {error && (
-            <ErrorMessage>메시지를 입력해주세요.</ErrorMessage>
-          )}
+          {error && <ErrorMessage>메시지를 입력해주세요.</ErrorMessage>}
         </TextWrapper>
       </TextBox>
       <Spacing height="32px" />
@@ -173,9 +171,8 @@ const Text = styled.textarea<{ error?: boolean }>`
   padding: 8px 12px;
   border-width: 1px;
   border-radius: 8px;
-  border-color: ${({ theme, error }) => 
-    error? theme.colors.state.critical 
-  : theme.colors.gray[400]};
+  border-color: ${({ theme, error }) =>
+    error ? theme.colors.state.critical : theme.colors.gray[400]};
 
   &:focus {
     outline: none;
