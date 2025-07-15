@@ -1,28 +1,55 @@
-import { categoryData } from "@/data/categoryData.ts";
 import type { Theme } from "@emotion/react";
 import { css } from "@emotion/react";
 import { useTheme } from "@emotion/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const themeURL = import.meta.env.VITE_API_BASE_URL_THEME;
+
+type ThemeItem = {
+  themeId: string;
+  image: string;
+  name: string;
+};
 
 const Category = () => {
   const theme = useTheme();
+  const [themeData, setThemeData] = useState<ThemeItem[] | null>(null);
+
+  useEffect(() => {
+    const fetchTheme = async () => {
+      try {
+        const response = await axios.get(themeURL);
+
+        setThemeData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+      }
+    };
+
+    fetchTheme();
+  }, []);
+
+  console.log(themeData);
 
   return (
     <div css={categoryStyle(theme)}>
-      {categoryData.map((category) => (
-        <div
-          css={categoryItemStyle(theme)}
-          key={category.themeId}
-          className="category-item"
-        >
-          <img
-            src={category.image}
-            alt={category.name}
-            className="category-image"
-            css={imageStyle}
-          />
-          <h3 className="category-name">{category.name}</h3>
-        </div>
-      ))}
+      {themeData &&
+        themeData.map((themeInfo) => (
+          <div
+            css={categoryItemStyle(theme)}
+            key={themeInfo.themeId}
+            className="category-item"
+          >
+            <img
+              src={themeInfo.image}
+              alt={themeInfo.name}
+              className="category-image"
+              css={imageStyle}
+            />
+            <h3 className="category-name">{themeInfo.name}</h3>
+          </div>
+        ))}
     </div>
   );
 };
