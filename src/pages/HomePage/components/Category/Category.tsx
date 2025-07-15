@@ -12,6 +12,7 @@ import {
 } from "./Category.styles";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import type { FetchState } from "@/types/FetchState";
 
 interface GiftTheme {
   themeId: number;
@@ -20,9 +21,11 @@ interface GiftTheme {
 }
 
 function CategoryContent() {
-  const [giftThemes, setGiftThemes] = useState<GiftTheme[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [fetchState, setFetchState] = useState<FetchState<GiftTheme>>({
+    data: null,
+    isLoading: true,
+    isError: false,
+  });
 
   useEffect(() => {
     const fetchGiftThemes = async () => {
@@ -30,26 +33,36 @@ function CategoryContent() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/api/themes`
         );
+        const giftThemes = response.data.data;
 
-        if (response.data.data.length === 0) {
-          setIsError(true);
+        if (giftThemes.length === 0) {
+          setFetchState({
+            data: null,
+            isLoading: false,
+            isError: true,
+          });
           return;
         }
 
-        setGiftThemes(response.data.data);
-        setIsError(false);
+        setFetchState({
+          data: giftThemes,
+          isLoading: false,
+          isError: false,
+        });
       } catch (error) {
         console.error(CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR, error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
+        setFetchState({
+          data: null,
+          isLoading: false,
+          isError: true,
+        });
       }
     };
 
     fetchGiftThemes();
   }, []);
 
-  if (isError) {
+  if (fetchState.isError) {
     return (
       <ErrorContainer>
         <ErrorMessage>{CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR}</ErrorMessage>
@@ -57,7 +70,7 @@ function CategoryContent() {
     );
   }
 
-  if (isLoading) {
+  if (fetchState.isLoading) {
     return (
       <LoadingContainer>
         <LoadingSpinner />
@@ -67,7 +80,7 @@ function CategoryContent() {
 
   return (
     <ThemeGrid>
-      {giftThemes.map((theme) => (
+      {fetchState.data?.map((theme) => (
         <ThemeCard key={theme.themeId} name={theme.name} image={theme.image} />
       ))}
     </ThemeGrid>
