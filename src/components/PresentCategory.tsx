@@ -1,15 +1,32 @@
 import styled from "@emotion/styled";
-import { presentThemes } from "@/data/present";
 import PresentTheme from "./PresentTheme";
+import { useEffect, useState } from "react";
+import { fetchTheme } from "@/api/theme";
+import type { Theme } from "@/types/theme";
 
 const PresentCategory = () => {
+  const [presentThemes, setPresentThemes] = useState<Theme[] | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    fetchTheme()
+      .then(data => {
+        setPresentThemes(data.data);
+      })
+      .catch(error => {
+        console.error("error: ", error);
+      });
+  }, []);
+
   return (
     <Background>
       <CategoryTitle>선물 테마</CategoryTitle>
       <ThemeGrid>
-        {presentThemes.map(theme => (
-          <PresentTheme key={theme.themeId} theme={theme} />
-        ))}
+        {presentThemes &&
+          presentThemes.map(theme => (
+            <PresentTheme key={theme.themeId} theme={theme} />
+          ))}
       </ThemeGrid>
     </Background>
   );
