@@ -1,7 +1,7 @@
 import { CategoryTab, TabCircle, TabRow, SortRow, SortTab } from '@/components/GiftRanking/GiftRanking.styles';
 
-const categoryTabs = ['전체', '여성', '남성', '10대'] as const;
-const sortTabs = ['많이 찜한', '많이 받은', '많이 찜하고 받은'] as const;
+export const categoryTabs = ['전체', '여성', '남성', '10대'] as const;
+export const sortTabs = ['많이 찜한', '많이 받은', '많이 찜하고 받은'] as const;
 
 type Category = typeof categoryTabs[number];
 type Sort = typeof sortTabs[number];
@@ -20,7 +20,7 @@ type Props = {
     onChangeSort: (tab: Sort) => void;
 };
 
-const GiftRankingFilter = ({
+export const GiftRankingFilter = ({
     selectedCategory,
     selectedSort,
     onChangeCategory,
@@ -56,4 +56,3 @@ const GiftRankingFilter = ({
     </>
 );
 
-export default GiftRankingFilter;

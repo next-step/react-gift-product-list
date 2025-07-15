@@ -116,3 +116,10 @@ export const Button = styled.button`
   cursor: pointer;
   display: block;
 `;
+
+export const None = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 100px;
+`;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Section, Heading } from '@/components/GiftRanking/GiftRanking.styles';
-import GiftRankingFilter, { categoryTabs, sortTabs } from '@/components/GiftRanking/GiftRankingFilter';
+import { Section, Heading, None } from '@/components/GiftRanking/GiftRanking.styles';
+import { GiftRankingFilter, categoryTabs, sortTabs } from '@/components/GiftRanking/GiftRankingFilter';
 import GiftRankingGrid from '@/components/GiftRanking/GiftRankingGrid';
 import useGetRanking from './useGetRanking';
 
@@ -54,6 +54,7 @@ const GiftRankingSection = () => {
           localStorage.setItem('selectedSort', tab);
         }}
       />
+      {products.length === 0 && <None>'상품이 없습니다.'</None>}
       <GiftRankingGrid products={products} />
     </Section>
   );
