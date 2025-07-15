@@ -1,17 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css, useTheme, type Theme as ThemeType } from '@emotion/react';
-import CategoryItem from './Shared/CategoryItem'; 
+import { useEffect, useState } from 'react';
+import CategoryItem from './Shared/CategoryItem';
 import theme from '../../../styles/theme';
-
-type Category = {
-  themeId: number;
-  name: string;
-  image: string;
-};
-
-type Props = {
-  categories: Category[];
-};
+import { fetchThemes, type Category } from '../../../apis/theme';
 
 const sectionStyle = css`
   padding: ${theme.spacing[6]};
@@ -33,13 +25,42 @@ const gridStyle = css`
   padding: 0 ${theme.spacing[4]};
 `;
 
-const CategorySection = ({ categories }: Props) => {
+const CategorySection = () => {
   const theme = useTheme();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchThemes();
+        if (data.length === 0) {
+          setError(true);
+        } else {
+          setCategories(data);
+          setError(false);
+        }
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (error || categories.length === 0) {
+    return null;
+  }
 
   return (
     <section css={sectionStyle}>
       <h2 css={titleStyle(theme)}>선물 테마</h2>
-
       <div css={gridStyle}>
         {categories.map(({ themeId, name, image }) => (
           <CategoryItem key={themeId} themeId={themeId} name={name} image={image} theme={theme} />
