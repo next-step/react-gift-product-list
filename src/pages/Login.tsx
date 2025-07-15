@@ -65,6 +65,7 @@ const Login = () => {
   const password = useInput({ validator: passwordValidator });
   const username = email.value.split("@")[0];
   const isActivatedBtn = email.isValid && password.isValid;
+
   const handleLoginClick = () => {
     if (isActivatedBtn) {
       password.reset();

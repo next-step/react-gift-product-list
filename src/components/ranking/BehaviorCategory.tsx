@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import type { behaviorProps } from './types';
+
 const BehaviorCategoryWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.state.infoBackground};
   color: ${({ theme }) => theme.colors.blue.blue400};
@@ -22,12 +23,12 @@ const BehaviorTextButton = styled.button<{selected:boolean}>`
 `;
 
 const BehaviorCategory = ({ options, selected, onSelect }: behaviorProps) => {
-  console.log(options)
   return (
     <BehaviorCategoryWrapper>
       {options.map((o) => (
         <BehaviorTextButton key={o.label} onClick={()=>onSelect(o.param)} selected={selected===o.param}>{o.label}</BehaviorTextButton>
       ))}
+
     </BehaviorCategoryWrapper>
   );
 };

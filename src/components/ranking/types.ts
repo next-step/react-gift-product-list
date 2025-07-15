@@ -8,6 +8,7 @@ export type BehaviorFilterLabels = (typeof BEHAVIOR_FILTER_LABELS)[number];
 export type PersonParam = 'ALL' | 'MALE' | 'FEMALE' | 'TEEN';
 export type BehaviorParam = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
 
+
 //옵션 객체 타입
 export type personFilterType = {
   label: PersonFilterLabels;
@@ -17,15 +18,18 @@ export type personFilterType = {
 
 export type behaviorFilterType = { label: BehaviorFilterLabels; param: BehaviorParam };
 
+
 // props에서도 타입을 이용
 export type personProps = {
   options: readonly personFilterType[];
   selected: PersonParam| null;
   onSelect: (option: PersonParam) => void;
+
 };
 
 export type behaviorProps = {
   options: readonly behaviorFilterType[];
   selected: BehaviorParam | null;
   onSelect: (option: BehaviorParam) => void;
+
 };
