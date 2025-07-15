@@ -1,35 +1,39 @@
 import SexItem from '@/components/SexItem';
-import { useState } from 'react';
 import { SexContainerWrapper } from '@/styles/Sex/SexContainer.styles';
+import type { SexType } from '@/types/sex';
+import { SEX_TYPE } from '@/types/sex';
 
-type SexType = 'All' | '남성' | '여성' | '청소년';
-const SEX_TYPE = {
-  All: 'All',
-  남성: '남성',
-  여성: '여성',
-  청소년: '청소년',
-} as const;
-
-function SexContainer() {
-  function getInitialSex(): SexType {
-    const saved = localStorage.getItem('selectedSex');
-    if (saved && Object.values(SEX_TYPE).includes(saved as SexType)) return saved as SexType;
-    return SEX_TYPE.All;
-  }
-
-  const [selectSex, setSelectsex] = useState<SexType>(getInitialSex);
-
-  function handleSelect(sex: SexType) {
-    setSelectsex(sex);
-    localStorage.setItem('selectedSex', sex);
-  }
-
+type SexContainerProps = {
+  selectedSex: SexType;
+  handleSelect: (sex: SexType) => void;
+};
+function SexContainer({ selectedSex, handleSelect }: SexContainerProps) {
   return (
     <SexContainerWrapper>
-      <SexItem sex="All" selectSex={selectSex} onClick={() => handleSelect(SEX_TYPE.All)} />
-      <SexItem sex="남성" selectSex={selectSex} onClick={() => handleSelect(SEX_TYPE.남성)} />
-      <SexItem sex="여성" selectSex={selectSex} onClick={() => handleSelect(SEX_TYPE.여성)} />
-      <SexItem sex="청소년" selectSex={selectSex} onClick={() => handleSelect(SEX_TYPE.청소년)} />
+      <SexItem
+        sex={SEX_TYPE.ALL}
+        sexName={'전체'}
+        selectSex={selectedSex}
+        onClick={() => handleSelect(SEX_TYPE.ALL)}
+      />
+      <SexItem
+        sex={SEX_TYPE.MALE}
+        sexName={'남성'}
+        selectSex={selectedSex}
+        onClick={() => handleSelect(SEX_TYPE.MALE)}
+      />
+      <SexItem
+        sex={SEX_TYPE.FEMALE}
+        sexName={'여성'}
+        selectSex={selectedSex}
+        onClick={() => handleSelect(SEX_TYPE.FEMALE)}
+      />
+      <SexItem
+        sex={SEX_TYPE.TEEN}
+        sexName={'청소년'}
+        selectSex={selectedSex}
+        onClick={() => handleSelect(SEX_TYPE.TEEN)}
+      />
     </SexContainerWrapper>
   );
 }
