@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import ApiErrorHandler from "@/api/ErrorHandler";
+import { executeApi } from "@/api/ErrorHandler";
 
 export interface GetThemesResponseBody {
   themeId: number;
@@ -7,7 +7,7 @@ export interface GetThemesResponseBody {
   image: string;
 }
 export const getThemes = async (): Promise<GetThemesResponseBody[]> => {
-  return ApiErrorHandler.executeApi(async () => {
+  return executeApi(async () => {
     const { data: response } =
       await api.get<BaseResponse<GetThemesResponseBody[]>>("/themes");
     return response.data;

@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import ApiErrorHandler from "@/api/ErrorHandler";
+import { executeApi } from "@/api/ErrorHandler";
 import type { TAB_DATA, TAGS } from "@/constants";
 import type { ProductType } from "@/types";
 
@@ -16,7 +16,7 @@ export const getRankingProduct = async (
     rankType: "MANY_WISH",
   },
 ): Promise<ProductType[]> => {
-  return ApiErrorHandler.executeApi(async () => {
+  return executeApi(async () => {
     const { data: response } = await api.get<BaseResponse<ProductType[]>>(
       "/products/ranking",
       {

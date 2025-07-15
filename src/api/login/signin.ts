@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import ApiErrorHandler from "@/api/ErrorHandler";
+import { executeApi } from "@/api/ErrorHandler";
 
 interface SignInRequestBody {
   email: string;
@@ -15,7 +15,7 @@ interface SignInResponseBody {
 export const signin = async (
   requestBody: SignInRequestBody,
 ): Promise<SignInResponseBody> => {
-  return ApiErrorHandler.executeApi(async () => {
+  return executeApi(async () => {
     const { data: response } = await api.post<BaseResponse<SignInResponseBody>>(
       "/login",
       requestBody,
