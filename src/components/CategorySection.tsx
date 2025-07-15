@@ -2,35 +2,49 @@ import styled from '@emotion/styled';
 import Loading from '@/components/common/Loading';
 import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 
+const GRID_MIN_HEIGHT = 250;
+const CATEGORY_IMAGE_SIZE = 50;
+
 const CategorySection = () => {
   const { themes, isLoading, isError } = useCategoryThemes();
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <Grid>
+          <LoadingWrapper>
+            <Loading />
+          </LoadingWrapper>
+        </Grid>
+      );
+    }
+
+    if (isError) {
+      return <EmptyText>테마를 불러오지 못했어요.</EmptyText>;
+    }
+
+    if (themes.length === 0) {
+      return <EmptyText>테마가 없습니다.</EmptyText>;
+    }
+
+    return (
+      <Grid>
+        {themes.map(theme => (
+          <Item key={theme.themeId}>
+            <CategoryImage src={theme.image} alt={theme.name} />
+            <CategoryText>{theme.name}</CategoryText>
+          </Item>
+        ))}
+      </Grid>
+    );
+  };
 
   return (
     <Section>
       <TitleWrapper>
         <Title>선물 테마</Title>
       </TitleWrapper>
-
-      {isLoading ? (
-        <Grid>
-          <LoadingWrapper>
-            <Loading />
-          </LoadingWrapper>
-        </Grid>
-      ) : isError ? (
-        <EmptyText>테마를 불러오지 못했어요.</EmptyText>
-      ) : themes.length === 0 ? (
-        <EmptyText>테마가 없습니다.</EmptyText>
-      ) : (
-        <Grid>
-          {themes.map(theme => (
-            <Item key={theme.themeId}>
-              <CategoryImage src={theme.image} alt={theme.name} />
-              <CategoryText>{theme.name}</CategoryText>
-            </Item>
-          ))}
-        </Grid>
-      )}
+      {renderContent()}
     </Section>
   );
 };
@@ -55,7 +69,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: ${({ theme }) => `${theme.spacing[5]} ${theme.spacing[1]}`};
-  min-height: 250px;
+  min-height: ${GRID_MIN_HEIGHT}px;
 `;
 
 const LoadingWrapper = styled.div`
@@ -85,8 +99,8 @@ const Item = styled.div`
 `;
 
 const CategoryImage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: ${CATEGORY_IMAGE_SIZE}px;
+  height: ${CATEGORY_IMAGE_SIZE}px;
   border-radius: 40%;
   object-fit: cover;
 `;
