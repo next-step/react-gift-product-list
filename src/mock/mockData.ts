@@ -120,18 +120,18 @@ export const products: Product[] = Array.from({ length: 12 }, (_, i) => ({
 }));
 
 export const tabs = [
-  { id: 'all', label: '전체', icon: 'ALL' },
-  { id: 'female', label: '여성이', icon: '👩' },
-  { id: 'male', label: '남성이', icon: '👨' },
-  { id: 'teen', label: '청소년이', icon: '🧑' },
+  { id: 'ALL', label: '전체', icon: 'ALL' },
+  { id: 'FEMALE', label: '여성이', icon: '👩' },
+  { id: 'MALE', label: '남성이', icon: '👨' },
+  { id: 'TEEN', label: '청소년이', icon: '🧑' },
 ] as const;
 export type Tab = (typeof tabs)[number];
 export type TabId = Tab['id'];
 
 export const filters = [
-  { id: 'wanted', label: '받고 싶어한' },
-  { id: 'gifted', label: '많이 선물한' },
-  { id: 'wished', label: '위시로 받은' },
+  { id: 'MANY_WISH', label: '받고 싶어한' },
+  { id: 'MANY_RECEIVE', label: '많이 선물한' },
+  { id: 'MANY_WISH_RECEIVE', label: '위시로 받은' },
 ] as const;
 export type Filter = (typeof filters)[number];
 export type FilterId = Filter['id'];
