@@ -1,6 +1,8 @@
 import ThemeCard from "./ThemeCard";
 import { CATEGORY_ERROR_MESSAGE, CATEGORY_LABELS } from "./constants/labels";
 import {
+  ErrorContainer,
+  ErrorMessage,
   GiftThemeSection,
   LoadingContainer,
   LoadingSpinner,
@@ -10,28 +12,12 @@ import {
 } from "./Category.styles";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import styled from "@emotion/styled";
 
 interface GiftTheme {
   themeId: number;
   name: string;
   image: string;
 }
-
-const ErrorContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  margin-top: 124px;
-  margin-bottom: 124px;
-`;
-
-const ErrorMessage = styled.p`
-  font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
-  font-weight: ${({ theme }) =>
-    theme.typography.label.label1Regular.fontWeight};
-`;
 
 function Category() {
   const [giftThemes, setGiftThemes] = useState<GiftTheme[]>([]);
@@ -51,7 +37,7 @@ function Category() {
           setIsError(false);
         }
       } catch (error) {
-        console.error(CATEGORY_ERROR_MESSAGE.FETCH_ERROR, error);
+        console.error(CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR, error);
         setIsError(true);
       } finally {
         setIsLoading(false);
@@ -68,7 +54,9 @@ function Category() {
       </SectionHeader>
       {isError ? (
         <ErrorContainer>
-          <ErrorMessage>데이터를 불러오는 중 에러가 발생했어요</ErrorMessage>
+          <ErrorMessage>
+            {CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR}
+          </ErrorMessage>
         </ErrorContainer>
       ) : isLoading ? (
         <LoadingContainer>
