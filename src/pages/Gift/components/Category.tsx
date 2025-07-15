@@ -19,7 +19,7 @@ const Category = () => {
     return (
       <Container>
         <Title>선물 테마</Title>
-        <Loading height="238px" />
+        <Loading height="250px" />
       </Container>
     );
   }
@@ -71,7 +71,7 @@ const Item = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.25;
+  gap: 0.25rem;
   cursor: pointer;
 `;
 const Img = styled.img`
