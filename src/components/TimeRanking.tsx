@@ -150,7 +150,7 @@ export default function TimeRanking() {
           <CardGrid>
             {itemsToShow.map((item, index) => (
               <Card
-                key={`${item.id}-${index}`}
+                key={`${item.id}`}
                 onClick={() => goToOrder(item.id)}
               >
                 <RankLabel>{index + 1}</RankLabel>
