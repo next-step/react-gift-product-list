@@ -1,14 +1,20 @@
 import { api } from "@/api/api";
 import ApiErrorHandler from "@/api/ErrorHandler";
+import type { TAB_DATA, TAGS } from "@/constants";
 import type { ProductType } from "@/types";
 
+export type RankingTargetType = (typeof TAGS)[number]["id"];
+export type RankingRankType = (typeof TAB_DATA)[number]["id"];
 interface GetRankingProductParams {
-  targetType?: "ALL" | "FEMALE" | "MALE" | "TEEN";
-  rankType?: "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
+  targetType: RankingTargetType;
+  rankType: RankingRankType;
 }
 
 export const getRankingProduct = async (
-  params: GetRankingProductParams = {},
+  params: GetRankingProductParams = {
+    targetType: "ALL",
+    rankType: "MANY_WISH",
+  },
 ): Promise<ProductType[]> => {
   return ApiErrorHandler.executeApi(async () => {
     const { data: response } = await api.get<BaseResponse<ProductType[]>>(

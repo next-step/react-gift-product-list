@@ -1,3 +1,5 @@
+import type { RankingRankType } from "@/api/product/get-ranking-products";
+import { TAB_DATA } from "@/constants";
 import styled from "@emotion/styled";
 
 const HotGiftTabContainer = styled.div(({ theme }) => ({
@@ -36,15 +38,9 @@ const HotGiftTabTag = styled.button<{ isSelected: boolean }>(
 );
 
 interface HotGiftRankingTabProp {
-  selectedTab: string;
-  onTabChange: (tabId: string) => void;
+  selectedTab: RankingRankType;
+  onTabChange: (tabId: RankingRankType) => void;
 }
-
-const tabData = [
-  { id: "MANY_WISH", text: "받고 싶어한" },
-  { id: "MANY_RECEIVE", text: "많이 선물한" },
-  { id: "MANY_WISH_RECEIVE", text: "위시로 받은" },
-];
 
 export const HotGiftRankingTab = ({
   onTabChange,
@@ -52,7 +48,7 @@ export const HotGiftRankingTab = ({
 }: HotGiftRankingTabProp) => {
   return (
     <HotGiftTabContainer>
-      {tabData.map(tab => (
+      {TAB_DATA.map(tab => (
         <HotGiftTabTag
           key={tab.id}
           isSelected={selectedTab === tab.id}
