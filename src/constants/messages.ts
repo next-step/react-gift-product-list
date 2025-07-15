@@ -24,5 +24,11 @@ export const ERROR_MESSAGES = {
   THEME: {
     FAIL_TO_LOAD: "테마 정보를 불러오지 못했습니다.",
     LOAD: "테마 정보를 불러오고 있습니다.",
+    NONE: "테마가 없습니다.",
+  },
+  PRODUCT: {
+    FAIL_TO_LOAD: "상품 정보를 불러오지 못했습니다.",
+    LOAD: "상품 정보를 불러오고 있습니다.",
+    NONE: "상품이 없습니다,",
   },
 };

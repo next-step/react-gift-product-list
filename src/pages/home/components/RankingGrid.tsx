@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { useProductRanking } from "@/hooks/useProductRanking";
 import { RankingCard } from "@/pages/home/components/RankingCard";
 import { type TabType, type GenderType } from "@/constants/ranking";
-import { mockRankingData } from "@/mock/mockData";
 import { INITIAL_RANKING_COUNT } from "@/constants/grid";
+import { ERROR_MESSAGES } from "@/constants/messages";
 
 type RankingGridProps = {
   gender: GenderType;
@@ -11,19 +12,21 @@ type RankingGridProps = {
 };
 
 export const RankingGrid = ({ gender, tab }: RankingGridProps) => {
-  void gender;
-  void tab;
+  const { products, loading, error } = useProductRanking(gender, tab);
 
   const [showAll, setShowAll] = useState(false);
-
   const visibleItems = showAll
-    ? mockRankingData
-    : mockRankingData.slice(0, INITIAL_RANKING_COUNT);
-  const canToggle = mockRankingData.length > INITIAL_RANKING_COUNT;
+    ? products
+    : products.slice(0, INITIAL_RANKING_COUNT);
+  const canToggle = products.length > INITIAL_RANKING_COUNT;
 
-  const handleToggle = () => setShowAll((prev) => !prev);
+  if (error) return null;
 
-  return (
+  return loading ? (
+    <Placeholder>{ERROR_MESSAGES.PRODUCT.LOAD}</Placeholder>
+  ) : products.length === 0 ? (
+    <Placeholder>{ERROR_MESSAGES.PRODUCT.NONE}</Placeholder>
+  ) : (
     <>
       <Grid>
         {visibleItems.map((item, idx) => (
@@ -39,9 +42,8 @@ export const RankingGrid = ({ gender, tab }: RankingGridProps) => {
           />
         ))}
       </Grid>
-
       {canToggle && (
-        <ToggleButton onClick={handleToggle}>
+        <ToggleButton onClick={() => setShowAll((prev) => !prev)}>
           {showAll ? "접기" : "더보기"}
         </ToggleButton>
       )}
@@ -51,7 +53,7 @@ export const RankingGrid = ({ gender, tab }: RankingGridProps) => {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px 12px;
   margin-top: 16px;
 `;
@@ -66,4 +68,11 @@ const ToggleButton = styled.button`
   background-color: #f7f8f9;
   color: #2a3038;
   border: 1px solid #dcdee3;
+`;
+
+const Placeholder = styled.div`
+  text-align: center;
+  padding: 40px 0;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.semantic.text.disabled};
 `;

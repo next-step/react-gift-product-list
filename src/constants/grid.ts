@@ -1,1 +1,1 @@
-export const INITIAL_RANKING_COUNT = 4;
+export const INITIAL_RANKING_COUNT = 6;
