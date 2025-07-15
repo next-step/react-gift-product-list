@@ -10,6 +10,7 @@ const PresentCategory = () => {
     undefined,
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     fetchTheme()
@@ -17,11 +18,15 @@ const PresentCategory = () => {
         setPresentThemes(data.data);
         setIsLoading(false);
       })
-      .catch(error => {
-        console.error("error: ", error);
+      .catch(() => {
+        setIsError(true);
         setIsLoading(false);
       });
   }, []);
+
+  if (isError) {
+    return <></>;
+  }
 
   return (
     <Background>
