@@ -27,3 +27,12 @@ export const getRankingProducts = async (targetType: TargetType = 'ALL', rankTyp
         throw error;
     }
 }
+
+export const getProductById = async (productId: number): Promise<RankingProduct> => {
+    try {
+        const response = await api.get<{data: RankingProduct}>(`/products/${productId}`);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+}
