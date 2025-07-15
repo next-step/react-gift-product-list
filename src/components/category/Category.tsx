@@ -1,60 +1,65 @@
-import { categoryMockData } from '@/mocks/category';
 import { css } from '@emotion/react';
-import styled from "@emotion/styled";
-
-const CategoryWrapper = styled.section`
-  padding: ${({ theme }) => theme.spacing.spacing2};
-  background-color: ${({ theme }) => theme.colors.gray.gray00};
-`;
-
-const CategoryHeader = styled.div`
-  padding: 0 ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing5};
-`;
-const CategoryTitle=styled.h3`
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 27px;
-`
-const CategoryGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: ${({ theme }) => theme.spacing.spacing5} ${({ theme }) => theme.spacing.spacing2};
-`;
-
-const CategoryItem = styled.div`
-  width:100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-`;
-
-const CategoryImage = styled.img`
-  max-width: 3.125rem;
-    max-height: 3.125rem;
-    width: 100%;
-    object-fit: cover;
-  border-radius: 18px;
-`;
+import {
+  CategoryWrapper,
+  CategoryHeader,
+  CategoryTitle,
+  CategoryGrid,
+  CategoryItem,
+  CategoryImage,
+} from './Category.styles';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import type { CategoryType } from '@/types/category';
 
 const Category = () => {
+  const [category, setCategory] = useState<CategoryType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/themes');
+        const data = res.data.data;
+        if (data.length > 0) {
+          setCategory(data);
+          setIsLoading(false);
+        } else {
+          //데이터가 빈 배열일때
+          setCategory([]);
+        }
+      } catch (e) {
+        console.error(e);
+        setCategory([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchThemes();
+  }, []);
+  if (isLoading) {
+    return <div>📢카테고리가 로딩중입니다..</div>;
+  }
+
+  if (category.length === 0) {
+    return <div>📭 선물 테마가 없습니다.</div>;
+  }
   return (
     <CategoryWrapper>
       <CategoryHeader>
         <CategoryTitle>선물 테마</CategoryTitle>
       </CategoryHeader>
-
       <CategoryGrid>
-        {categoryMockData.map((item) => (
+        {category.map((item) => (
           <CategoryItem key={item.themeId}>
             <CategoryImage src={item.image} alt={item.name} />
-            <p css={css`
+            <p
+              css={css`
                 font-size: 0.75rem;
                 font-weight: 400;
                 line-height: 1rem;
-            `}>{item.name}</p>
+              `}
+            >
+              {item.name}
+            </p>
           </CategoryItem>
         ))}
       </CategoryGrid>
