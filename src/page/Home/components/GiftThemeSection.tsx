@@ -18,6 +18,7 @@ interface ThemesResponse {
 const GiftThemeSection = () => {
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,7 +27,8 @@ const GiftThemeSection = () => {
         const { data } = response;
         setThemes(data.data);
       } catch (error) {
-        console.error(error);
+        setError(true);
+        console.error('Error fetching themes:', error);
       } finally {
         setLoading(false);
       }
@@ -34,7 +36,7 @@ const GiftThemeSection = () => {
     fetchData();
   }, []);
 
-  // if (loading) return <Loading />;
+  if (loading || error) return <></>;
 
   return (
     <section>
