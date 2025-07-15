@@ -1,9 +1,11 @@
 import type { ThemeType } from "@/types/theme";
 import { useState, useEffect } from "react";
+import type { CSSProperties } from "react";
 import { SectionContainer, SectionTitle } from "../../Common/SectionLayout";
 import { getThemes } from "@/api/themes";
 import styled from "@emotion/styled";
 import ThemeItem from "./ThemeItem";
+import { ClipLoader } from "react-spinners";
 
 const ThemeSection = () => {
   const [themes, setThemes] = useState<ThemeType[]>([]);
@@ -14,6 +16,7 @@ const ThemeSection = () => {
     const fetchThemes = async () => {
       try {
         const res = await getThemes();
+        await new Promise((resolve) => setTimeout(resolve, 3000));
         setThemes(res.data.data);
       } catch (err) {
         console.error(err);
@@ -26,17 +29,26 @@ const ThemeSection = () => {
     fetchThemes();
   }, []);
 
-  if (loading) return <p>불러오는 중...</p>;
-  if (error) return <p>{error}</p>;
-
   return (
     <SectionContainer>
       <SectionTitle>선물 테마</SectionTitle>
-      <ThemeGrid>
-        {themes.map((t) => (
-          <ThemeItem key={t.themeId} name={t.name} image={t.image} />
-        ))}
-      </ThemeGrid>
+      {loading ? (
+        <ClipLoader
+          color="#000000"
+          loading={loading}
+          cssOverride={override}
+          size={35}
+          data-testid="loader"
+        />
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <ThemeGrid>
+          {themes.map((t) => (
+            <ThemeItem key={t.themeId} name={t.name} image={t.image} />
+          ))}
+        </ThemeGrid>
+      )}
     </SectionContainer>
   );
 };
@@ -49,3 +61,8 @@ const ThemeGrid = styled.div`
   gap: ${({ theme }) => theme.spacing.spacing4};
   margin-top: ${({ theme }) => theme.spacing.spacing4};
 `;
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "100px auto",
+};
