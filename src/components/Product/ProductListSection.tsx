@@ -1,40 +1,27 @@
 import styled from '@emotion/styled'
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { ProductItem } from '@/components/Product/ProductItem'
-import { productMock } from '@/components/Product/productMock'
+import { useProductRanking } from '@/hooks/useProductRanking'
 
 const genderOptions = ['전체', '여성이', '남성이', '청소년이']
 const topicOptions = ['받고 싶어한', '많이 선물한', '위시로 받은']
 
 export function ProductListSection() {
+  const {
+    products,
+    loading,
+    error,
+    selectedGender,
+    selectedTopic,
+    selectGender,
+    selectTopic,
+  } = useProductRanking()
+
   const [showAll, setShowAll] = useState(false)
-  const [selectedGender, setSelectedGender] = useState('전체')
-  const [selectedTopic, setSelectedTopic] = useState('받고 싶어한')
-
-  useEffect(() => {
-    const savedGender = localStorage.getItem('selectedGender')
-    const savedTopic = localStorage.getItem('selectedTopic')
-    if (savedGender && genderOptions.includes(savedGender)) {
-      setSelectedGender(savedGender)
-    }
-    if (savedTopic && topicOptions.includes(savedTopic)) {
-      setSelectedTopic(savedTopic)
-    }
-  }, [])
-
-  const selectGender = (option: string) => {
-    setSelectedGender(option)
-    localStorage.setItem('selectedGender', option)
-  }
-
-  const selectTopic = (option: string) => {
-    setSelectedTopic(option)
-    localStorage.setItem('selectedTopic', option)
-  }
 
   const displayedProducts = useMemo(() => {
-    return showAll ? productMock : productMock.slice(0, 6)
-  }, [showAll])
+    return showAll ? products : products.slice(0, 6)
+  }, [showAll, products])
 
   return (
     <SectionWrapper>
@@ -64,15 +51,25 @@ export function ProductListSection() {
         ))}
       </SubTab>
 
-      <ProductListWrapper>
-        {displayedProducts.map((product, index) => (
-          <ProductItem key={product.id} {...product} rank={index + 1} />
-        ))}
-      </ProductListWrapper>
+      {loading && <p>선물랭킹 로딩중...</p>}
 
-      <ToggleButton onClick={() => setShowAll(!showAll)}>
-        {showAll ? '접기' : '더보기'}
-      </ToggleButton>
+      {!loading && (error || !products || products.length === 0) && (
+        <p>상품 목록이 없습니다.</p>
+      )}
+
+      {!loading && !error && products.length > 0 && (
+        <>
+          <ProductListWrapper>
+            {displayedProducts.map((product, index) => (
+              <ProductItem key={product.id} {...product} rank={index + 1} />
+            ))}
+          </ProductListWrapper>
+
+          <ToggleButton onClick={() => setShowAll(!showAll)}>
+            {showAll ? '접기' : '더보기'}
+          </ToggleButton>
+        </>
+      )}
     </SectionWrapper>
   )
 }

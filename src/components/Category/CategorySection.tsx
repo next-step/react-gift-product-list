@@ -1,9 +1,47 @@
 import styled from '@emotion/styled'
-import { categoryMock } from '@/components/Category/categoryMock'
 import { CategoryItem } from '@/components/Category/CategoryItem'
 import { FiPlus } from 'react-icons/fi'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+
+interface Theme {
+  themeId: number
+  name: string
+  image: string
+}
 
 export function CategorySection() {
+  const [themes, setThemes] = useState<Theme[] | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const response = await axios.get<{ data: Theme[] }>(
+          'http://localhost:3000/api/themes'
+        )
+        console.log('theme data:', response.data.data)
+        setThemes(response.data.data)
+      } catch (err) {
+        console.error('테마 목록 불러오기 실패:', err)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchThemes()
+  }, [])
+
+  if (loading) {
+    return <p>선물 테마 로딩중...</p>
+  }
+
+  if (error || !themes || themes.length === 0) {
+    return null
+  }
+
   return (
     <SectionWrapper>
       <MessageBox>
@@ -16,7 +54,7 @@ export function CategorySection() {
       <Title>선물 테마</Title>
 
       <GridWrapper>
-        {categoryMock.map(({ themeId, name, image }) => (
+        {themes.map(({ themeId, name, image }) => (
           <CategoryItem key={themeId} name={name} image={image} />
         ))}
       </GridWrapper>
