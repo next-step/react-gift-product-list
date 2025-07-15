@@ -1,5 +1,6 @@
 import { fetchThemes } from '@/api/services/theme'
 import type { Theme } from '@/api/types/theme'
+import { Loading } from '@/components/ui'
 import { useFetch } from '@/hooks/useFetch'
 import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
@@ -9,7 +10,18 @@ import { Link } from 'react-router-dom'
 export const Category = () => {
   const { isLoading, isError, data: categories } = useFetch<Theme[]>(fetchThemes)
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading)
+    return (
+      // 외부 컨테이너
+      <Container>
+        {/* 카테고리 타이틀 */}
+        <h1 css={theme.typography.title.title1Bold}>선물 테마</h1>
+        {/* 로딩 서브 컨테이너 */}
+        <LoadingSubContainer>
+          <Loading />
+        </LoadingSubContainer>
+      </Container>
+    )
   if (isError || !categories || categories.length === 0) return null
 
   return (
@@ -73,4 +85,10 @@ const Image = styled.img`
   height: 50px;
 
   border-radius: ${theme.spacing.spacing4};
+`
+
+// * 로딩 서브 컨테이너
+const LoadingSubContainer = styled.div`
+  width: 100%;
+  height: 15.625rem;
 `
