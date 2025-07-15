@@ -22,7 +22,7 @@ export const useProductRanking = (
       setIsError(false);
       try {
         const res = await axios.get<{ data: Product[] }>(
-          'http://localhost:3000/api/products/ranking',
+          `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking`,
           {
             params: { targetType, rankType },
           }
