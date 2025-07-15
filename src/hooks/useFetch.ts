@@ -59,6 +59,7 @@ export function useFetch<T>({
       }
     };
 
+    // deps가 배열 리터럴이 아닌 변수이기 때문에 생기는 경고
     executeFetch();
   }, deps);
 
