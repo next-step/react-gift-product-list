@@ -1,16 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { rankingItems, genderItems, actionItems, type RankingItem } from '@/data/ranking';
-import { ItemCard } from '@/components';
+import { genderItems, actionItems } from '@/data/ranking';
+import { getRankingProducts } from '@/lib/api';
+import { type RankingProduct, type TargetType, type RankType } from '@/types/api';
+import { useFetchState } from '@/hooks/useFetchState';
+import { RankingItemCard, Loading, ErrorMessage } from '@/components';
 import * as S from './styles';
 
 const RankingSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExpanded, setIsExpanded] = useState(false);
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct[]>(true);
   const navigate = useNavigate();
 
   const selectedGender = searchParams.get('gender') || 'ALL';
-  const selectedAction = searchParams.get('action') || '받고 싶어한';
+  const selectedAction = searchParams.get('action') || 'MANY_WISH';
+
+  useEffect(() => {
+    setLoading();
+    
+    getRankingProducts(selectedGender as TargetType, selectedAction as RankType)
+      .then((data) => {
+        setSuccess(data);
+      })
+      .catch(() => {
+        setError();
+      });
+  }, [selectedGender, selectedAction]);
 
   const handleGenderChange = (gender: string) => {
     setSearchParams(prev => {
@@ -28,9 +44,11 @@ const RankingSection = () => {
     });
   };
 
-  const handleItemCardClick = (item: RankingItem) => {
+  const handleItemCardClick = (item: RankingProduct) => {
     navigate(`/order/${item.id}`);
   };
+
+  const rankingProducts = fetchState.data || [];
 
   return (
     <S.Section>
@@ -53,34 +71,43 @@ const RankingSection = () => {
         <S.ActionFilterContainer>
           {actionItems.map(action => (
             <S.ActionButton 
-              key={action} 
-              isSelected={selectedAction === action}
-              onClick={() => handleActionChange(action)}
+              key={action.key} 
+              isSelected={selectedAction === action.key}
+              onClick={() => handleActionChange(action.key)}
             >
-              {action}
+              {action.label}
             </S.ActionButton>
           ))}
         </S.ActionFilterContainer>
       </S.FilterContainer>
       
-      <S.Grid>
-        {(isExpanded ? rankingItems : rankingItems.slice(0, 6)).map((item, index) => (
-          <ItemCard
-            key={item.id}
-            imageUrl={item.imageURL}
-            title={item.name}
-            subtitle={item.brandInfo.name}
-            price={item.price.sellingPrice}
-            rank={index + 1}
-            variant="product"
-            onClick={() => handleItemCardClick(item)}
-          />
-        ))}
-      </S.Grid>
+      {fetchState.isLoading ? (
+        <Loading height="400px" />
+      ) : fetchState.isError ? (
+        <ErrorMessage height="400px" />
+      ) : rankingProducts.length === 0 ? (
+        <S.EmptyMessage>상품이 없습니다.</S.EmptyMessage>
+      ) : (
+        <>
+          <S.Grid>
+            {(isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
+              <RankingItemCard
+                key={item.id}
+                imageUrl={item.imageURL}
+                title={item.name}
+                subtitle={item.brandInfo.name}
+                price={item.price.sellingPrice}
+                rank={index + 1}
+                onClick={() => handleItemCardClick(item)}
+              />
+            ))}
+          </S.Grid>
 
-      <S.MoreButton onClick={() => setIsExpanded(!isExpanded)}>
-        {isExpanded ? '접기' : '더보기'}
-      </S.MoreButton>
+          <S.MoreButton onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? '접기' : '더보기'}
+          </S.MoreButton>
+        </>
+      )}
     </S.Section>
   );
 };

@@ -1,8 +1,8 @@
-import { type RankingItem } from '@/data/ranking';
+import { type RankingProduct } from '@/types/api';
 import * as S from './styles';
 
 interface ProductInfoProps {
-  product: RankingItem;
+  product: RankingProduct;
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
@@ -12,7 +12,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
       <S.Divider />
       
       <S.ProductContent>
-        <S.ProductImage src={product.imageURL} alt="product" />
+        <S.ProductImage src={product.imageURL} alt={product.name} />
         <S.ProductDetails>
           <S.ProductName>{product.name}</S.ProductName>
           <S.BrandName>{product.brandInfo.name}</S.BrandName>

@@ -1,21 +1,43 @@
-import { categories } from '@/data/categories';
-import { ItemCard } from '@/components';
+import { CategoryItemCard } from '@/components';
 import * as S from './styles';
+import { getThemes } from '@/lib/api';
+import { useEffect } from 'react';
+import { type Theme } from '@/types/api';
+import { useFetchState } from '@/hooks/useFetchState';
+import { Loading, ErrorMessage } from '@/components';
 
 const CategoryField = () => {
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<Theme[]>(true);
+  
+  useEffect(() => {
+    setLoading(); 
+      getThemes()
+        .then((data) => {
+          setSuccess(data);
+        })
+        .catch(() => {
+          setError();
+        });
+  }, []);
+
   return (
     <S.Container>
       <S.Title>선물 테마</S.Title>
-      <S.Grid>
-        {categories.slice(0, 15).map((category) => (
-          <ItemCard
-            key={category.themeId}
-            imageUrl={category.image}
-            title={category.name}
-            variant="category"
-          />
-        ))}
-      </S.Grid>
+      {fetchState.isLoading ? (
+        <Loading height="200px" />  
+      ) : fetchState.isError ? (
+        <ErrorMessage height="200px" />
+      ) : (
+        <S.Grid>
+          {fetchState.data?.map((theme) => (
+            <CategoryItemCard
+              key={theme.themeId}
+              imageUrl={theme.image}
+              title={theme.name}
+            />
+          ))}
+        </S.Grid>
+      )}
     </S.Container>
   );
 };

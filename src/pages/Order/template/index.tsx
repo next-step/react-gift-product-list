@@ -3,8 +3,8 @@ import {
   SenderSection, ReceiverSection, type InputChangeHandler, type TextAreaChangeHandler
 } from '@/components';
 import { useReceiver } from '@/contexts/ReceiverContext';
-import { type RankingItem } from '@/data/ranking';
 import { type Order } from '@/data/orders';
+import { type RankingProduct } from '@/types/api';
 import * as S from './styles';
 
 interface CardState {
@@ -30,7 +30,7 @@ interface OrderTemplateProps {
   formData: FormData;
   onSenderNameChange: InputChangeHandler;
   errors: ValidationErrors;
-  product?: RankingItem;
+  product?: RankingProduct;
   onSubmit: () => void;
 }
 
