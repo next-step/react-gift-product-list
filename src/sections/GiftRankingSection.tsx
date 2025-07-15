@@ -139,8 +139,8 @@ export default function GiftRankingSection() {
   };
 
   const DEFAULT_VISIBLE_COUNT = 6;
-  const visibleData = showAll ? data ?? [] : (data ?? []).slice(0, DEFAULT_VISIBLE_COUNT);
-
+  const visibleProducts = data ?? [];
+  const productToShow = showAll ? visibleProducts : visibleProducts.slice(0, DEFAULT_VISIBLE_COUNT);
   return (
     <Wrapper>
       <Title>실시간 급상승 선물랭킹</Title>
@@ -176,7 +176,7 @@ export default function GiftRankingSection() {
         ) : (
           <>
             <Grid>
-              {visibleData.map((item, index) => (
+              {productToShow.map((item, index) => (
                 <ProductCard
                   key={item.id}
                   item={item}
