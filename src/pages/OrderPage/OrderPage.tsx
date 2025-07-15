@@ -58,7 +58,7 @@ const OrderPage = () => {
           <SectionDivider />
           <SenderInfo />
           <SectionDivider />
-          <ReceiverSection/>
+          <ReceiverSection />
           <SectionDivider />
           <SectionTitle title="상품 정보" />
           <ProductSummary />

@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReceiverSchema } from '@/pages/OrderPage/schemas/orderSchema';
 import { z } from 'zod';
+import * as S from './ReceiverModal.styles';
 
 type ReceiverFormType = z.infer<typeof ReceiverSchema>;
 
@@ -25,28 +26,42 @@ const ReceiverModal = ({ onClose, onAdd, disabled }: ReceiverModalProps) => {
   };
 
   return (
-    <div className="modal">
-      <h2>받는 사람 추가</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>이름</label>
-          <input {...register('receiverName')} />
-          {errors.receiverName && <p>{errors.receiverName.message}</p>}
-        </div>
-        <div>
-          <label>전화번호</label>
-          <input {...register('receiverPhone')} />
-          {errors.receiverPhone && <p>{errors.receiverPhone.message}</p>}
-        </div>
-        <div>
-          <label>수량</label>
-          <input type="number" defaultValue={1} {...register('quantity', { valueAsNumber: true })} />
-          {errors.quantity && <p>{errors.quantity.message}</p>}
-        </div>
-        <button type="submit" disabled={disabled}>추가하기</button>
-        <button type="button" onClick={onClose}>닫기</button>
-      </form>
-    </div>
+    <S.Overlay onClick={onClose}>
+      <S.ModalBox onClick={(e) => e.stopPropagation()}>
+        <S.Title>받는 사람 추가</S.Title>
+        <S.StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <S.Field>
+            <S.Label>이름</S.Label>
+            <S.Input {...register('receiverName')} />
+            {errors.receiverName && <S.ErrorMessage>{errors.receiverName.message}</S.ErrorMessage>}
+          </S.Field>
+          <S.Field>
+            <S.Label>전화번호</S.Label>
+            <S.Input {...register('receiverPhone')} />
+            {errors.receiverPhone && (
+              <S.ErrorMessage>{errors.receiverPhone.message}</S.ErrorMessage>
+            )}
+          </S.Field>
+          <S.Field>
+            <S.Label>수량</S.Label>
+            <S.Input
+              type="number"
+              defaultValue={1}
+              {...register('quantity', { valueAsNumber: true })}
+            />
+            {errors.quantity && <S.ErrorMessage>{errors.quantity.message}</S.ErrorMessage>}
+          </S.Field>
+          <S.ButtonRow>
+            <S.Button type="submit" disabled={disabled}>
+              추가하기
+            </S.Button>
+            <S.Button type="button" variant="secondary" onClick={onClose}>
+              닫기
+            </S.Button>
+          </S.ButtonRow>
+        </S.StyledForm>
+      </S.ModalBox>
+    </S.Overlay>
   );
 };
 
