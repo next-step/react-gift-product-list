@@ -22,10 +22,6 @@ const validatePassword = (value: string) => {
     return `PW는 최소 ${MIN_PASSWORD_LENGTH}글자 이상이어야 합니다.`;
   return '';
 };
-// 이메일, 비밀번호의 유효성 검사 로직의 실행은 매 렌더링마다 하는 것이 맞지만
-// 유효성 검사 함수의 정의를 매 렌더링마다 하는 것은 좋지 않음
-// 따라서 함수를 커스텀 훅 바깥에 정의함
-// useLoginForm이 호출될 때(컴포넌트가 리렌더될 떄) 함수가 한 번만 만들어지고, 리렌더링과 상관없이 재사용됨
 
 function useLoginForm({ onSuccess }: UseLoginFormProps) {
   const [form, setForm] = useState({
@@ -34,22 +30,25 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
     emailError: '',
     pwError: '',
   });
-  const [isButtonActive, setIsButtonActive] = useState(false);
 
   const { login } = useAuth();
 
   const isValidEmail = validateEmail(form.email) === '';
   const isValidPassword = validatePassword(form.password) === '';
 
-  // 입력값 변경 시마다 상태 및 에러 메시지, 버튼 활성화 상태 업데이트
+  const isButtonActive =
+    isValidEmail &&
+    isValidPassword &&
+    form.emailError === '' &&
+    form.pwError === '' &&
+    form.email.length > 0 &&
+    form.password.length >= MIN_PASSWORD_LENGTH;
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setForm((prev) => ({ ...prev, email: value }));
     const error = validateEmail(value);
     setForm((prev) => ({ ...prev, emailError: error }));
-    setIsButtonActive(
-      !error && !form.pwError && form.password.length >= MIN_PASSWORD_LENGTH,
-    );
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,10 +56,8 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
     setForm((prev) => ({ ...prev, password: value }));
     const error = validatePassword(value);
     setForm((prev) => ({ ...prev, pwError: error }));
-    setIsButtonActive(!form.emailError && !error && form.email.length > 0);
   };
 
-  // 포커스 아웃 시 에러 메시지 표시
   const handleEmailBlur = () => {
     setForm((prev) => ({ ...prev, emailError: validateEmail(form.email) }));
   };
@@ -68,12 +65,10 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
     setForm((prev) => ({ ...prev, pwError: validatePassword(form.password) }));
   };
 
-  // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isValidEmail && isValidPassword) {
-      // email에서 @ 앞부분을 name으로 사용
       const name = form.email.split('@')[0];
       login({ email: form.email, name });
       onSuccess();
