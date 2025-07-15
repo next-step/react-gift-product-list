@@ -24,6 +24,7 @@ export const Item = styled.div`
 export const Image = styled.img`
   width: ${({ theme }) => theme.spacing.spacing13};
   height: ${({ theme }) => theme.spacing.spacing13};
+  border-radius: ${({ theme }) => theme.spacing.spacing5};
   object-fit: contain;
   margin: 0 auto;
 `;
