@@ -16,7 +16,6 @@ import {
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
-import axios from "axios";
 import type { FetchState } from "@/types/FetchState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { TRENDING_GIFTS_TABS, TARGET_TYPE, RANK_TYPE } from "./constants/tabs";
@@ -24,6 +23,7 @@ import {
   TRENDING_GIFTS_ERROR_MESSAGES,
   TRENDING_GIFTS_LABELS,
 } from "./constants/labels";
+import { getTrendingGifts } from "@/data/api";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
@@ -43,10 +43,10 @@ function TrendingGiftsContent() {
       });
 
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking?targetType=${TARGET_TYPE[mainTabIdx]}&rankType=${RANK_TYPE[subTabIdx]}`
+        const trendingGifts = await getTrendingGifts(
+          TARGET_TYPE[mainTabIdx],
+          RANK_TYPE[subTabIdx]
         );
-        const trendingGifts = response.data.data;
 
         setFetchState({
           data: trendingGifts,
@@ -55,6 +55,7 @@ function TrendingGiftsContent() {
         });
       } catch (error) {
         console.error(TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR, error);
+
         setFetchState({
           data: null,
           isLoading: false,
@@ -66,7 +67,7 @@ function TrendingGiftsContent() {
     fetchTrendingGifts();
   }, [mainTabIdx, subTabIdx]);
 
-  const renderContent = () => {
+  const renderTrendingGiftsContent = () => {
     if (fetchState.isError) {
       return (
         <ErrorContainer>
@@ -98,7 +99,7 @@ function TrendingGiftsContent() {
         ))}
       </TabsWrapper>
       <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
-        {renderContent()}
+        {renderTrendingGiftsContent()}
       </TabContentWrapper>
     </>
   );

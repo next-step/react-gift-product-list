@@ -10,9 +10,9 @@ import {
   ThemeGrid,
 } from "./Category.styles";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import type { FetchState } from "@/types/FetchState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { getThemes } from "@/data/api";
 
 interface GiftTheme {
   themeId: number;
@@ -29,13 +29,17 @@ function CategoryContent() {
 
   useEffect(() => {
     const fetchGiftThemes = async () => {
+      setFetchState({
+        data: null,
+        isLoading: true,
+        isError: false,
+      });
+
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/themes`
-        );
-        const giftThemes = response.data.data;
+        const giftThemes = await getThemes();
 
         if (giftThemes.length === 0) {
+          // 빈 데이터도 에러로 처리
           setFetchState({
             data: null,
             isLoading: false,
