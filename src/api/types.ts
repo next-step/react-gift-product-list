@@ -1,13 +1,12 @@
 // 테마 관련 타입
 export interface Theme {
-  id: number;
-  title: string;
-  imageUrl: string;
-  description?: string;
+  themeId: number;
+  name: string;
+  image: string;
 }
 
 export interface ThemeResponse {
-  themes: Theme[];
+  data: Theme[];
 }
 
 // 상품 관련 타입
@@ -22,7 +21,7 @@ export interface Product {
 }
 
 export interface RankingResponse {
-  products: Product[];
+  data: Product[];
 }
 
 // 필터 옵션 타입

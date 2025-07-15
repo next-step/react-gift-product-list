@@ -35,7 +35,6 @@ function useFetch<T>(url: string, options?: AxiosRequestConfig) {
         isLoading: false,
         error: error as Error,
       });
-      console.error('Fetch error:', error);
     }
   };
 

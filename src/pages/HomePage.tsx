@@ -2,7 +2,6 @@ import { Main, Section } from '@/components/layout';
 import { CategorySection } from '@/components/category';
 import { FriendSelectSection, PromoSection } from '@/components/misc';
 import { RankingSection } from '@/components/ranking';
-import { categories } from '@/data';
 
 const HomePage = () => {
   const handleSelectFriend = () => {
@@ -19,10 +18,7 @@ const HomePage = () => {
         <FriendSelectSection onSelectFriend={handleSelectFriend} />
       </Section>
 
-      <CategorySection
-        categories={categories}
-        onCategoryClick={handleCategoryClick}
-      />
+      <CategorySection onCategoryClick={handleCategoryClick} />
 
       <Section spacing="md">
         <PromoSection
