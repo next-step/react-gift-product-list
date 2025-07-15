@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
-import { mockProducts } from '@/data/products';
 import RankingFilter from '@/components/RankingSection/RankingFilter';
 import RankingSort from '@/components/RankingSection/RankingSort';
 import ProductGrid from '@/components/RankingSection/ProductGrid';
 import ExpandButton from '@/components/RankingSection/ExpandButton';
+import Loading from '@/components/common/Loading';
 import { useState } from 'react';
+import { useProductRanking } from '@/hooks/useProductRanking';
 
 const INITIAL_VISIBLE_COUNT = 6;
 
@@ -26,27 +27,44 @@ const RankingGroup = () => {
     setSearchParams(searchParams);
   };
 
-  const isExpanded = visibleCount === mockProducts.length;
+  const { products, isLoading, isError } = useProductRanking(
+    targetType,
+    rankType
+  );
+
+  const isExpanded = products !== null && visibleCount === products.length;
   const toggleVisibleCount = () => {
-    setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : mockProducts.length);
+    if (products) {
+      setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : products.length);
+    }
   };
 
   return (
     <Section>
       <Title>실시간 급상승 선물랭킹</Title>
+
       <RankingFilter
         selectedFilter={targetType}
         onSelect={handleFilterChange}
       />
       <RankingSort selectedSort={rankType} onSelect={handleSortChange} />
-      <ProductGrid
-        products={
-          isExpanded
-            ? mockProducts
-            : mockProducts.slice(0, INITIAL_VISIBLE_COUNT)
-        }
-      />
-      <ExpandButton isExpanded={isExpanded} onToggle={toggleVisibleCount} />
+
+      {isLoading ? (
+        <Loading />
+      ) : isError || !products ? (
+        <EmptyText>상품을 불러오지 못했어요 😢</EmptyText>
+      ) : products.length === 0 ? (
+        <EmptyText>상품이 없습니다.</EmptyText>
+      ) : (
+        <>
+          <ProductGrid
+            products={
+              isExpanded ? products : products.slice(0, INITIAL_VISIBLE_COUNT)
+            }
+          />
+          <ExpandButton isExpanded={isExpanded} onToggle={toggleVisibleCount} />
+        </>
+      )}
     </Section>
   );
 };
@@ -61,4 +79,11 @@ const Section = styled.section`
 const Title = styled.h3`
   ${({ theme }) => theme.typography.title.title1Bold};
   margin-bottom: ${({ theme }) => theme.spacing[4]};
+`;
+
+const EmptyText = styled.p`
+  ${({ theme }) => theme.typography.body.body2Regular};
+  color: ${({ theme }) => theme.color.gray[600]};
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing[6]} 0;
 `;
