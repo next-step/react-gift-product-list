@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { categories } from '@/data/categories';
+import { useEffect, useState } from 'react';
 
 const Box = styled.div`
   background-color: white;
@@ -10,9 +10,9 @@ const List = styled.ul`
   display: flex;
   gap: 17px;
 
-  flex-direction: row; // 가로로 배치
+  flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between; // 항목들이 균등하게 배치
+  justify-content: space-between;
 `;
 
 const Title = styled.h1`
@@ -27,7 +27,7 @@ const Title = styled.h1`
 `;
 
 const Item = styled.li`
-  width: calc(16% - 17px); // 화면이 좁아져도 5개씩 배치되도록 설정
+  width: calc(16% - 17px);
   text-align: center;
 
   cursor: pointer;
@@ -44,18 +44,58 @@ const Name = styled.div`
   font-size: 12px;
 `;
 
+type Theme = {
+  themeId: number;
+  name: string;
+  image: string;
+};
+
 function CategoryList() {
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetch(`${import.meta.env.VITE_API_URL}/api/themes`)
+      .then((res) => {
+        if (!res.ok) throw new Error('서버 에러');
+        return res.json();
+      })
+      .then((data) => {
+        // 항상 배열로 세팅
+        if (Array.isArray(data)) {
+          setThemes(data);
+        } else {
+          setThemes([]);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('데이터를 불러오지 못했습니다.');
+        setLoading(false);
+      });
+  }, []);
   return (
     <Box>
       <Title>선물 테마</Title>
-      <List>
-        {categories.map((cat) => (
-          <Item key={cat.themeId}>
-            <Img src={cat.image} alt={cat.name} />
-            <Name>{cat.name}</Name>
-          </Item>
-        ))}
-      </List>
+      {loading ? (
+        <div>로딩 중 ... </div>
+      ) : error ? (
+        <div>{error}</div>
+      ) : themes.length === 0 ? (
+        <div>테마가 없습니다.</div>
+      ) : (
+        <List>
+          {themes.map((cat) => (
+            <Item key={cat.themeId}>
+              <Img src={cat.image} alt={cat.name} />
+              <Name>{cat.name}</Name>
+            </Item>
+          ))}
+        </List>
+      )}
     </Box>
   );
 }
