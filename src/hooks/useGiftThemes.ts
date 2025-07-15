@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchGiftThemes } from '../api/gift';
+import { fetchGiftThemes } from '../api/giftTheme';
 
 export const useGiftThemes = () => {
   return useQuery({

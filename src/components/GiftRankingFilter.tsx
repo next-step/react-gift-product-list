@@ -2,6 +2,8 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { theme } from '../styles/theme';
 import { IconFilterItem } from './common/IconFilterItem';
+import { useGiftRanking } from '../hooks/useGiftRanking';
+import { RankingGrid } from './RankingGrid';
 
 const filters = [
   { key: 'all', label: '전체', icon: 'ALL' },
@@ -55,6 +57,12 @@ const TabButton = styled.button<{ selected: boolean }>`
   border: none;
 `;
 
+const Message = styled.div`
+  padding: 32px 0;
+  text-align: center;
+  color: ${theme.colors.gray600};
+`;
+
 function getValidStoredValue<T>(
   key: string,
   validValues: T[],
@@ -79,6 +87,12 @@ export default function GiftRankingFilter() {
     getValidStoredValue(LOCAL_TAB_KEY, tabOptions, tabOptions[0])
   );
 
+  const {
+    data: products,
+    isLoading,
+    isError,
+  } = useGiftRanking(selected, selectedTab);
+
   const handleFilterChange = (key: FilterKey) => {
     setSelected(key);
     localStorage.setItem(LOCAL_FILTER_KEY, key);
@@ -88,6 +102,8 @@ export default function GiftRankingFilter() {
     setSelectedTab(tab);
     localStorage.setItem(LOCAL_TAB_KEY, tab);
   };
+
+  const hasProducts = products && products.length > 0;
 
   return (
     <Container>
@@ -116,6 +132,12 @@ export default function GiftRankingFilter() {
           </TabButton>
         ))}
       </TabBar>
+      {isLoading && <Message>상품을 불러오는 중입니다...</Message>}
+      {isError && <Message>상품을 불러오지 못했습니다.</Message>}
+      {!isLoading && !products?.length && (
+        <Message>상품 목록이 없습니다.</Message>
+      )}
+      {hasProducts && <RankingGrid />}
     </Container>
   );
 }

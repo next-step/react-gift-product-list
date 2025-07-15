@@ -3,12 +3,12 @@ import { Header } from '../components/common/Header';
 import MessageCard from '../components/MessageCard';
 import styled from '@emotion/styled';
 import { orderCardTemplates } from '../data/orderCardTemplateMock';
-import { giftItem } from '../components/RankingGrid';
 import ReceiverModal, {
   type Receiver,
 } from '../components/ReceiverModal';
 import { useReceiverForm } from '../hooks/useReceiverForm';
-
+import { useParams } from 'react-router-dom';
+import { useGiftProductById } from '../hooks/useGiftProductById';
 
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
@@ -77,7 +77,6 @@ const Section = styled.div`
   background-color: ${({ theme }) => theme.colors.gray00};
   padding: 20px;
   border-bottom: 8px solid ${({ theme }) => theme.colors.gray200};
-
 `;
 
 const Label = styled.div`
@@ -195,14 +194,19 @@ const QuantityCell = styled(TableCell)`
   text-align: center;
 `;
 
-
 const Order = () => {
+  const { id } = useParams<{ id: string }>();
+  const productId = Number(id);
+
+  const {
+    data: product,
+    isLoading,
+    isError,
+  } = useGiftProductById(productId);
   const [selected, setSelected] = useState(orderCardTemplates[0].id);
   const selectedCard = orderCardTemplates.find(
     card => card.id === selected
   );
-  const product = giftItem;
-
   const [message, setMessage] = useState('축하해요.');
 
   const { nameInput } = useReceiverForm();
@@ -214,30 +218,43 @@ const Order = () => {
     (sum, r) => sum + Number(r.quantity),
     0
   );
-  const priceSum = product.price.sellingPrice * totalQuantity;
+
+  const priceSum = product
+    ? product.price.sellingPrice * totalQuantity
+    : 0;
 
   const handleOrder = () => {
-    if (!sendorNameInput.isValid) return;
+    if (!sendorNameInput.isValid || !product) return;
 
     alert(
       `주문이 완료되었습니다.\n 상품명: ${product.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
-
     );
   };
 
+  if (isLoading)
+    return (
+      <div style={{ padding: 20 }}>
+        상품 정보를 불러오는 중입니다...
+      </div>
+    );
+  if (isError || !product)
+    return (
+      <div style={{ padding: 20 }}>
+        상품 정보를 불러오지 못했습니다.
+      </div>
+    );
+
   return (
     <>
-      <Header></Header>
+      <Header />
       <MessaageWrapper>
         <SectionBox>
-          {' '}
           <MessageCard
             selected={selected}
             onCardSelect={setSelected}
-          ></MessageCard>
+          />
           <MainWrapper>
             <MainImg src={selectedCard?.imageUrl} />
-
             <MessageInput
               placeholder="메시지를 입력해주세요."
               value={message}
@@ -312,6 +329,7 @@ const Order = () => {
             onClose={() => setModalOpen(false)}
             onComplete={data => setReceiverList(data)}
           />
+
           <Label>상품 정보</Label>
           <ProductInfo>
             <img
@@ -334,12 +352,12 @@ const Order = () => {
           </ProductInfo>
         </Section>
       </OrderInfoWrapper>
+
       <BottomOrderButton
         disabled={!sendorNameInput.isValid}
         onClick={handleOrder}
       >
         {priceSum.toLocaleString()}원 주문하기
-
       </BottomOrderButton>
     </>
   );
