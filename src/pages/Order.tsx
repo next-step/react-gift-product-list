@@ -6,7 +6,6 @@ import ProductInfo from '@/components/order/ProductInfo';
 import OrderBtn from '@/components/order/OrderBtn';
 import { useParams } from 'react-router-dom';
 import { allProducts } from '@/mocks/product';
-
 import CardSelector from '@/components/order/CardSelector';
 import ReceiverModal from '@/components/order/receivermodal/ReceiverModal';
 import { useForm } from 'react-hook-form';

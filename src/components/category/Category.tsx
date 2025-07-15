@@ -42,6 +42,7 @@ const Category = () => {
   if (category.length === 0) {
     return <div>📭 선물 테마가 없습니다.</div>;
   }
+
   return (
     <CategoryWrapper>
       <CategoryHeader>
@@ -60,6 +61,7 @@ const Category = () => {
             >
               {item.name}
             </p>
+
           </CategoryItem>
         ))}
       </CategoryGrid>
@@ -68,3 +70,4 @@ const Category = () => {
 };
 
 export default Category;
+

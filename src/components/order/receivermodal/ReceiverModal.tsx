@@ -47,6 +47,7 @@ const ReceiverModal = ({
   };
 
   const handleClose = (key: number) => {
+
     remove(key);
   };
   const onValid = () => {
