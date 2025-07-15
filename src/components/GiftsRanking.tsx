@@ -4,8 +4,8 @@ import { targetType, rankType } from "@/data/giftType";
 import type { Gift, RankType, TargetType } from "@/types/gift";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
-import GiftsList from "./GiftsList";
 import { fetchProductsRanking } from "@/api/products";
+import GiftsRender from "./GiftsRender";
 
 const GiftsRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,7 +14,10 @@ const GiftsRanking = () => {
       targetType[0].id) as TargetType,
     rankType: (searchParams.get("rankType") ?? rankType[0].id) as RankType,
   });
+
   const [gifts, setGifts] = useState<Gift[] | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const handleFilterChange = (key: string, selectedType: string) => {
     const newSelectedTypes = { ...selectedTypes, [key]: selectedType };
@@ -28,9 +31,11 @@ const GiftsRanking = () => {
     fetchProductsRanking(selectedTypes.targetType, selectedTypes.rankType)
       .then(data => {
         setGifts(data.data);
+        setIsLoading(false);
       })
-      .catch(error => {
-        console.error("Failed to fetch gifts ranking:", error);
+      .catch(() => {
+        setIsError(true);
+        setIsLoading(false);
       });
   }, [selectedTypes]);
 
@@ -59,8 +64,7 @@ const GiftsRanking = () => {
           </GiftRankType>
         ))}
       </GiftRankTypeFlex>
-      {gifts && <GiftsList gifts={gifts} />}
-      {!gifts && <p>선물 랭킹을 불러오는 중입니다...</p>}
+      <GiftsRender gifts={gifts} isLoading={isLoading} isError={isError} />
     </Background>
   );
 };
