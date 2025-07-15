@@ -17,6 +17,7 @@ const Category = () => {
   const theme = useTheme();
   const [themeData, setThemeData] = useState<ThemeItem[] | null>(null);
   const [isThemeLoading, setIsThemeLoading] = useState(true);
+  const [isThemeError, setIsThemeError] = useState(false);
 
   useEffect(() => {
     const fetchTheme = async () => {
@@ -26,6 +27,7 @@ const Category = () => {
         setIsThemeLoading(false);
       } catch (error) {
         console.error("Error fetching theme data:", error);
+        setIsThemeError(true);
         setIsThemeLoading(false);
       }
     };
@@ -35,7 +37,9 @@ const Category = () => {
 
   return (
     <div css={categoryStyle(theme)}>
-      {isThemeLoading ? (
+      {isThemeError ? (
+        <div></div>
+      ) : isThemeLoading ? (
         <div css={spinnerWrapperStyle}>
           <ClipLoader color="#333" size={40} />
         </div>
