@@ -23,10 +23,26 @@ export async function fetchThemes() {
     return null;
   }
 
-  function delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  // function delay(ms: number) {
+  //   return new Promise((resolve) => setTimeout(resolve, ms));
+  // }
+  // await delay(1000); // For testing pending state rendering... remove on production
+
+  return body.data;
+}
+
+export async function fetchRealTimeRankings(
+  targetType: string,
+  rankType: string
+) {
+  const response = await fetch(
+    BE.API.PRODUCT.RANKING + `?targetType=${targetType}&rankType=${rankType}`
+  );
+  if (!response.ok) {
+    return null;
   }
-  await delay(1000); // For testing pending state rendering... remove on production
+
+  const body = await response.json();
 
   return body.data;
 }

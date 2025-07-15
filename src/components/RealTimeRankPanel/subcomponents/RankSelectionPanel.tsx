@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom";
 function RankSelectionPanel() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState<RankType>(() => {
-    const q = searchParams.get("rankType") ?? "ALL";
+    const q = searchParams.get("rankType") ?? "MANY_WISH";
     return Object.values(rank).find((r) => r.query === q) ?? rank.MANY_WISH;
   });
 
