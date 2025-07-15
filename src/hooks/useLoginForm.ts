@@ -28,42 +28,44 @@ const validatePassword = (value: string) => {
 // useLoginForm이 호출될 때(컴포넌트가 리렌더될 떄) 함수가 한 번만 만들어지고, 리렌더링과 상관없이 재사용됨
 
 function useLoginForm({ onSuccess }: UseLoginFormProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [pwError, setPwError] = useState('');
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+    emailError: '',
+    pwError: '',
+  });
   const [isButtonActive, setIsButtonActive] = useState(false);
 
   const { login } = useAuth();
 
-  const isValidEmail = validateEmail(email) === '';
-  const isValidPassword = validatePassword(password) === '';
+  const isValidEmail = validateEmail(form.email) === '';
+  const isValidPassword = validatePassword(form.password) === '';
 
   // 입력값 변경 시마다 상태 및 에러 메시지, 버튼 활성화 상태 업데이트
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setEmail(value);
+    setForm((prev) => ({ ...prev, email: value }));
     const error = validateEmail(value);
-    setEmailError(error);
+    setForm((prev) => ({ ...prev, emailError: error }));
     setIsButtonActive(
-      !error && !pwError && password.length >= MIN_PASSWORD_LENGTH,
+      !error && !form.pwError && form.password.length >= MIN_PASSWORD_LENGTH,
     );
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setPassword(value);
+    setForm((prev) => ({ ...prev, password: value }));
     const error = validatePassword(value);
-    setPwError(error);
-    setIsButtonActive(!emailError && !error && email.length > 0);
+    setForm((prev) => ({ ...prev, pwError: error }));
+    setIsButtonActive(!form.emailError && !error && form.email.length > 0);
   };
 
   // 포커스 아웃 시 에러 메시지 표시
   const handleEmailBlur = () => {
-    setEmailError(validateEmail(email));
+    setForm((prev) => ({ ...prev, emailError: validateEmail(form.email) }));
   };
   const handlePasswordBlur = () => {
-    setPwError(validatePassword(password));
+    setForm((prev) => ({ ...prev, pwError: validatePassword(form.password) }));
   };
 
   // 폼 제출 핸들러
@@ -72,17 +74,14 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
 
     if (isValidEmail && isValidPassword) {
       // email에서 @ 앞부분을 name으로 사용
-      const name = email.split('@')[0];
-      login({ email, name });
+      const name = form.email.split('@')[0];
+      login({ email: form.email, name });
       onSuccess();
     }
   };
 
   return {
-    email,
-    password,
-    emailError,
-    pwError,
+    form,
     isButtonActive,
     handleEmailChange,
     handlePasswordChange,
