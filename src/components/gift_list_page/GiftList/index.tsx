@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import type { GiftItemDataType } from '@/types/giftItems';
-import giftItemData from '@/mock_data/giftItems';
 import { GiftItemCard } from './GiftItemCard';
 import { Header } from './Header';
 import { MoreButton } from './MoreButton';
+import apiClient from '@/api/apiClient';
+import { keyframes } from '@emotion/react';
 
 const Container = styled.div`
   width: 100%;
-  height: auto;
+  min-height: 16rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -26,14 +27,66 @@ const List = styled.div`
   background-color: white;
 `;
 
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.div`
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 0.2rem solid #ccc;
+  border-top-color: ${({ theme }) => theme.colors.gray900};
+  border-radius: 50%;
+  animation: ${spin} 0.7s linear infinite;
+`;
+
+const ErrorText = styled.div`
+  position: absolute;
+  justify-self: center;
+  align-self: center;
+  font-size: 1rem;
+  font-weight: 500;
+`;
+
 export const GiftList = () => {
+  const [loading, setLoading] = useState(true);
+  const [isDataReady, setIsDataReady] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [giftItemList, getGiftItemList] = useState<GiftItemDataType[]>([]);
+  const isEmpty = giftItemList.length === 0;
   const [giftItems, setGiftItems] = useState<GiftItemDataType[]>([]);
   const [isViewMore, setIsViewMore] = useState(false);
+  const [targetType, setTargetType] = useState('ALL');
+  const [rankType, setRankType] = useState('MANY_WISH');
 
   useEffect(() => {
-    getGiftItemList(giftItemData);
-  }, []);
+    const getData = async () => {
+      try {
+        const response = await apiClient.get(
+          `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
+        );
+        console.log(response.data.data);
+        getGiftItemList(response.data.data);
+        setIsDataReady(true);
+        setIsError(false);
+      } catch (error) {
+        setIsError(true);
+        setLoading(false);
+        console.log('⚠️ 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. ', error);
+      }
+    };
+    setTimeout(() => {
+      getData();
+    }, 1000);
+  }, [targetType, rankType]);
+
+  useEffect(() => {
+    if (!isDataReady) return;
+
+    setLoading(false);
+  }, [isDataReady]);
 
   useEffect(() => {
     if (isViewMore) {
@@ -45,23 +98,40 @@ export const GiftList = () => {
 
   return (
     <>
-      <Header />
+      <Header
+        setIsError={setIsError}
+        setTargetType={setTargetType}
+        setRankType={setRankType}
+        setLoading={setLoading}
+        setIsDataReady={setIsDataReady}
+      />
       <Container>
-        <List>
-          {giftItems.map((item, i) => {
-            return (
-              <GiftItemCard
-                key={i}
-                id={i + 1}
-                image={item.imageURL}
-                brandName={item.brandInfo.name}
-                price={item.price.basicPrice}
-              />
-            );
-          })}
-        </List>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <List>
+            {giftItems.map((item, i) => {
+              return (
+                <GiftItemCard
+                  key={item.id}
+                  id={i + 1}
+                  name={item.name}
+                  image={item.imageURL}
+                  brandName={item.brandInfo.name}
+                  price={item.price.basicPrice}
+                />
+              );
+            })}
+          </List>
+        )}
+        {isError && (
+          <ErrorText>⚠️ 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</ErrorText>
+        )}
+        {!loading && isEmpty && <ErrorText>상품이 없습니다.</ErrorText>}
       </Container>
-      <MoreButton isViewMore={isViewMore} setIsViewMore={setIsViewMore} />
+      {!loading && !isError && !isEmpty && (
+        <MoreButton isViewMore={isViewMore} setIsViewMore={setIsViewMore} />
+      )}
     </>
   );
 };

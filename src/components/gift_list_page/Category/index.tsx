@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import categoryData from '@/mock_data/category';
 import type { CategoryDataType } from '@/types/category';
 import { CategoryCard } from '@/components/gift_list_page/Category/CategoryCard';
+import apiClient from '@/api/apiClient';
+import { keyframes } from '@emotion/react';
 
 const Container = styled.div`
   position: relative;
@@ -27,7 +28,7 @@ const Body = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: auto;
+  height: 16.92rem;
   margin-top: ${({ theme }) => theme.spacing.spacing5};
 `;
 
@@ -38,22 +39,75 @@ const CategoryList = styled.div`
   height: fit-content;
 `;
 
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const ErrorText = styled.div`
+  position: absolute;
+  justify-self: center;
+  align-self: center;
+  font-size: 1rem;
+  font-weight: 500;
+`;
+
+const Spinner = styled.div`
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 0.2rem solid #ccc;
+  border-top-color: ${({ theme }) => theme.colors.gray900};
+  border-radius: 50%;
+  animation: ${spin} 0.7s linear infinite;
+`;
+
 export const Category = () => {
+  const [loading, setLoading] = useState(true);
+  const [isDataReady, setIsDataReady] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [categories, setCategories] = useState<CategoryDataType[]>([]);
 
   useEffect(() => {
-    setCategories(categoryData);
+    const getData = async () => {
+      try {
+        const response = await apiClient.get('/api/themes');
+        setCategories(response.data.data);
+        setIsDataReady(true);
+        setIsError(false);
+      } catch (error) {
+        setIsError(true);
+        setLoading(false);
+        console.log('⚠️ 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. ', error);
+      }
+    };
+    setTimeout(() => {
+      getData();
+    }, 1000);
   }, []);
+
+  useEffect(() => {
+    if (!isDataReady) return;
+
+    setLoading(false);
+  }, [isDataReady]);
 
   return (
     <Container>
       <Title>선물 테마</Title>
       <Body>
-        <CategoryList>
-          {categories.map((item, i) => {
-            return <CategoryCard key={i} name={item.name} image={item.image} />;
-          })}
-        </CategoryList>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <CategoryList>
+            {categories.map((item) => {
+              return <CategoryCard key={item.themeId} name={item.name} image={item.image} />;
+            })}
+          </CategoryList>
+        )}
+        {isError && (
+          <ErrorText>⚠️ 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</ErrorText>
+        )}
       </Body>
     </Container>
   );

@@ -53,7 +53,7 @@ const Price = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.spacing5};
 `;
 
-export const GiftItemCard = ({ id, image, brandName, price }: GiftItemCardType) => {
+export const GiftItemCard = ({ id, name, image, brandName, price }: GiftItemCardType) => {
   const navigate = useNavigate();
   const { user } = useUserInfo();
 
@@ -70,7 +70,7 @@ export const GiftItemCard = ({ id, image, brandName, price }: GiftItemCardType) 
       <Rank rank={id}>{id}</Rank>
       <Image src={image} />
       <Name1>{brandName}</Name1>
-      <Name2>{brandName}</Name2>
+      <Name2>{name}</Name2>
       <Price>{price} 원</Price>
     </Card>
   );

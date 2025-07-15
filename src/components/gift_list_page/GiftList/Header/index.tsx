@@ -1,7 +1,15 @@
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TargetButton } from './TargetButton';
 import { TopicButton } from './TopicButton';
+
+interface Header {
+  setTargetType: React.Dispatch<React.SetStateAction<string>>;
+  setRankType: React.Dispatch<React.SetStateAction<string>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDataReady: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const Container = styled.div`
   position: relative;
@@ -58,7 +66,13 @@ const Wrapper = styled.div`
   border-color: ${({ theme }) => theme.colors.blue300};
 `;
 
-export const Header = () => {
+export const Header = ({
+  setTargetType,
+  setRankType,
+  setLoading,
+  setIsDataReady,
+  setIsError,
+}: Header) => {
   // Target State
   const [currentTarget, setCurrentTarget] = useState('');
   const [allIsClicked, setAllIsClicked] = useState(false);
@@ -70,6 +84,76 @@ export const Header = () => {
   const [isWanted, setIsWanted] = useState(false);
   const [isMostGifted, setIsMostGifted] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const handleTargetClick = useCallback(
+    (type: string) => {
+      setLoading(true);
+      setIsDataReady(false);
+      setIsError(false);
+      if (type === 'All') {
+        setAllIsClicked(true);
+        setFemaleIsClicked(false);
+        setMaleIsClicked(false);
+        setYouthIsClicked(false);
+        localStorage.setItem('currentTarget', 'All');
+        setTargetType('ALL');
+      } else if (type === 'Female') {
+        setAllIsClicked(false);
+        setFemaleIsClicked(true);
+        setMaleIsClicked(false);
+        setYouthIsClicked(false);
+        localStorage.setItem('currentTarget', 'Female');
+        setTargetType('FEMALE');
+      } else if (type === 'Male') {
+        setAllIsClicked(false);
+        setFemaleIsClicked(false);
+        setMaleIsClicked(true);
+        setYouthIsClicked(false);
+        setTargetType('MALE');
+        localStorage.setItem('currentTarget', 'Male');
+      } else if (type === 'Youth') {
+        setAllIsClicked(false);
+        setFemaleIsClicked(false);
+        setMaleIsClicked(false);
+        setYouthIsClicked(true);
+        localStorage.setItem('currentTarget', 'Youth');
+        setTargetType('TEEN');
+      }
+    },
+    [setTargetType, setLoading, setIsDataReady, setIsError]
+  );
+
+  useEffect(() => {
+    handleTargetClick(currentTarget);
+  }, [handleTargetClick, currentTarget]);
+
+  const handleTopicClick = useCallback(
+    (type: string) => {
+      setLoading(true);
+      setIsDataReady(false);
+      setIsError(false);
+      if (type === 'Wanted') {
+        setIsWanted(true);
+        setIsMostGifted(false);
+        setIsWishlisted(false);
+        localStorage.setItem('currentTopic', 'Wanted');
+        setRankType('MANY_WISH');
+      } else if (type === 'MostGifted') {
+        setIsWanted(false);
+        setIsMostGifted(true);
+        setIsWishlisted(false);
+        localStorage.setItem('currentTopic', 'MostGifted');
+        setRankType('MANY_RECEIVE');
+      } else if (type === 'Wishlisted') {
+        setIsWanted(false);
+        setIsMostGifted(false);
+        setIsWishlisted(true);
+        localStorage.setItem('currentTopic', 'Wishlisted');
+        setRankType('MANY_WISH_RECEIVE');
+      }
+    },
+    [setRankType, setLoading, setIsDataReady, setIsError]
+  );
 
   useEffect(() => {
     if ('currentTarget' in localStorage) {
@@ -87,62 +171,11 @@ export const Header = () => {
       handleTopicClick('Wanted');
       localStorage.setItem('currentTopic', 'Wanted');
     }
-  }, []);
-
-  const handleTargetClick = (type: string) => {
-    if (type === 'All') {
-      setAllIsClicked(true);
-      setFemaleIsClicked(false);
-      setMaleIsClicked(false);
-      setYouthIsClicked(false);
-      localStorage.setItem('currentTarget', 'All');
-    } else if (type === 'Female') {
-      setAllIsClicked(false);
-      setFemaleIsClicked(true);
-      setMaleIsClicked(false);
-      setYouthIsClicked(false);
-      localStorage.setItem('currentTarget', 'Female');
-    } else if (type === 'Male') {
-      setAllIsClicked(false);
-      setFemaleIsClicked(false);
-      setMaleIsClicked(true);
-      setYouthIsClicked(false);
-      localStorage.setItem('currentTarget', 'Male');
-    } else if (type === 'Youth') {
-      setAllIsClicked(false);
-      setFemaleIsClicked(false);
-      setMaleIsClicked(false);
-      setYouthIsClicked(true);
-      localStorage.setItem('currentTarget', 'Youth');
-    }
-  };
-
-  useEffect(() => {
-    handleTargetClick(currentTarget);
-  }, [currentTarget]);
-
-  const handleTopicClick = (type: string) => {
-    if (type === 'Wanted') {
-      setIsWanted(true);
-      setIsMostGifted(false);
-      setIsWishlisted(false);
-      localStorage.setItem('currentTopic', 'Wanted');
-    } else if (type === 'MostGifted') {
-      setIsWanted(false);
-      setIsMostGifted(true);
-      setIsWishlisted(false);
-      localStorage.setItem('currentTopic', 'MostGifted');
-    } else if (type === 'Wishlisted') {
-      setIsWanted(false);
-      setIsMostGifted(false);
-      setIsWishlisted(true);
-      localStorage.setItem('currentTopic', 'Wishlisted');
-    }
-  };
+  }, [handleTargetClick, handleTopicClick]);
 
   useEffect(() => {
     handleTopicClick(currentTopic);
-  }, [currentTopic]);
+  }, [handleTopicClick, currentTopic]);
 
   return (
     <Container>
