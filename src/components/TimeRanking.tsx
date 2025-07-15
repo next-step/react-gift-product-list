@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Spacing from "./Spacing";
-import axios from "axios";
+import { get } from "@/services/request";
 
 const genderOptions = [
   { label: "ALL", icon: "ALL", value: "ALL" },
@@ -53,16 +53,16 @@ export default function TimeRanking() {
       setLoading(true);
       setError(false);
       try {
-        const [res] = await Promise.all([
-          axios.get<{ data: Product[] }>("http://localhost:3000/api/products/ranking", {
-            params: {
+        const [data] = await Promise.all([
+          get<{ data: Product[] }>("/products/ranking", {
+            queryParams: {
               targetType: searchTargetType(selectedGender),
               rankType: searchRankType(selectedRankType),
             },
           }),
-          new Promise((resolve) => setTimeout(resolve, 500)), // 로딩중 확인
+          new Promise((resolve) => setTimeout(resolve, 300)),
         ]);
-        setRankings(res.data.data || []);
+        setRankings(data.data || []);
       } catch (err) {
         setError(true);
       } finally {

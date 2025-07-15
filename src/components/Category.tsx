@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import axios from "axios";
-
+import { get } from "@/services/request";
 
 type Theme = {
   themeId: number;
@@ -15,18 +14,22 @@ export default function Category() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    axios
-      .get<{ data: Theme[] }>("http://localhost:3000/api/themes")
-      .then((res) => {
-        setCategories(res.data.data);
-      })
-      .catch(() => {
-        setError(true);
-      })
-      .then(() => {
-        setLoading(false);
-      });
-  }, []);
+  const fetchThemes = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await get<{ data: Theme[] }>("/themes");
+      setCategories(res.data|| []);
+    } catch (err) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchThemes();
+}, []);
+
 
   if (loading) return <div>로딩 중...</div>;
   if (error || categories.length === 0) return null; // 데이터 없거나 에러면 렌더링 안함
