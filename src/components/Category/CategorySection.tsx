@@ -19,7 +19,7 @@ export function CategorySection() {
     const fetchThemes = async () => {
       try {
         const response = await axios.get<{ data: Theme[] }>(
-          'http://localhost:3000/api/themes'
+          `${import.meta.env.VITE_API_BASE_URL}/api/themes`
         )
         console.log('theme data:', response.data.data)
         setThemes(response.data.data)
