@@ -206,8 +206,10 @@ function RealtimeGiftRank() {
   useEffect(() => {
     const fetchThemes = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(`http://localhost:3000/api/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
         setRanking(response.data.data);
+        setIsError(false);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching weather data:', error);
@@ -347,6 +349,7 @@ function RealtimeGiftRank() {
           </RealtimeItemPriceTxt>
         </RealtimeRankItem>
       ))}</RealtimeRankItemGrid>)}
+      {(isError || ranking.length === 0) && <div>상품이 없습니다</div>}
       </RealtimeRankItemWrapper>
 
       {/* 더보기 접기 버튼 */}
