@@ -15,7 +15,7 @@ type FormValues = {
 };
 
 interface ReceiverModalProps {
-  receivers: Receiver[];
+  initialReceivers: Receiver[];
   setReceivers: (receivers: Receiver[]) => void;
   onClose: () => void;
 }
@@ -198,11 +198,11 @@ function checkDuplicatePhone(
   });
 }
 
-const ReceiverModal: React.FC<ReceiverModalProps> = ({
-  receivers: initialReceivers,
+const ReceiverModal = ({
+  initialReceivers,
   setReceivers,
   onClose,
-}) => {
+}: ReceiverModalProps) => {
   const {
     control,
     handleSubmit,
