@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import CategoryCard from "@/components/CategoryCard";
 import { useThemes } from "@/hooks/useThemes";
+import Spinner from "@/components/Spinner";
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing5} 0;
@@ -18,14 +19,9 @@ const Grid = styled.div`
   gap: ${({ theme }) => theme.spacing.spacing3};
 `;
 
-const Message = styled.p`
-  text-align: center;
-  margin-top: ${({ theme }) => theme.spacing.spacing4};
-`;
-
 export default function CategorySection() {
   const { themes, loading, error } = useThemes();
-  if (loading) return <Message>로딩 중...</Message>;
+  if (loading) return <Spinner />;
   if (error || !themes?.length) return null;
 
   return (
