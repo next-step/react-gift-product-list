@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { Section } from '@/components/layout';
 import Container from '@/components/layout/Container';
 import { RecipientList, RecipientModal } from '@/components/order';
-import { products } from '@/data/products';
+import { useProduct } from '@/hooks';
 import { cardTemplates } from '@/data/cardTemplates';
 import type { Recipient } from '@/types';
 
@@ -82,11 +82,6 @@ const Input = styled.input<{ error?: boolean }>`
   font-size: 16px;
   margin-bottom: 8px;
 `;
-const InputHelper = styled.div`
-  color: #aaa;
-  font-size: 12px;
-  margin-top: 4px;
-`;
 const ErrorText = styled.div`
   color: #fa342c;
   font-size: 13px;
@@ -154,10 +149,50 @@ const OrderButton = styled.button<{ disabled?: boolean }>`
   }
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-size: 18px;
+  color: #666;
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  text-align: center;
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 18px;
+  color: #fa342c;
+  margin-bottom: 16px;
+`;
+
+const BackButton = styled.button`
+  background: #fee500;
+  color: #222;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+
+  &:hover {
+    background: #fde047;
+  }
+`;
+
 const OrderPage = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const product = products.find((p) => String(p.id) === String(productId));
+
+  // API에서 상품 정보 가져오기
+  const { product, isLoading, error } = useProduct(productId);
 
   // 주문 정보만 관리하는 폼
   const {
@@ -239,6 +274,29 @@ const OrderPage = () => {
     navigate('/');
   });
 
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <Container>
+        <LoadingContainer>상품 정보를 불러오는 중...</LoadingContainer>
+      </Container>
+    );
+  }
+
+  // 에러 또는 상품을 찾을 수 없음
+  if (error || !product) {
+    return (
+      <Container>
+        <ErrorContainer>
+          <ErrorMessage>
+            {error?.message || '상품을 찾을 수 없습니다.'}
+          </ErrorMessage>
+          <BackButton onClick={() => navigate('/')}>돌아가기</BackButton>
+        </ErrorContainer>
+      </Container>
+    );
+  }
+
   // 총 수량 계산
   const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0);
 
@@ -249,103 +307,88 @@ const OrderPage = () => {
   const messageError = errors.message?.message || '';
   const senderError = errors.sender?.message || '';
 
-  if (!product) {
-    return (
-      <Section>
-        <div style={{ padding: 32, textAlign: 'center' }}>
-          <h2>상품을 찾을 수 없습니다.</h2>
-          <button onClick={() => navigate(-1)}>돌아가기</button>
-        </div>
-      </Section>
-    );
-  }
-
   return (
-    <Section>
-      <Container>
-        <CardSlider>
-          {cardTemplates.map((card, idx) => (
-            <CardThumbButton
-              key={card.id}
-              selected={card.id === selectedCardId}
-              onClick={() => handleSelectCard(card.id)}
-            >
-              <CardThumbImg
-                src={card.thumbUrl}
-                alt={`카드 템플릿 ${idx + 1}`}
-              />
-            </CardThumbButton>
-          ))}
-        </CardSlider>
-        <CardImagePreview>
-          <CardLargeImg src={selectedCard.imageUrl} alt="선택된 카드" />
-        </CardImagePreview>
-        <MessageTextarea
-          {...register('message', {
-            required: '메시지를 입력해주세요.',
-            validate: (value) =>
-              value.trim().length > 0 || '메시지를 입력해주세요.',
-          })}
-          placeholder="메시지를 입력하세요."
-          error={!!messageError}
-        />
-        {messageError && <ErrorText>{messageError}</ErrorText>}
+    <Container>
+      <Section spacing="sm">
+        <FormSection>
+          <FormLabel>카드 선택</FormLabel>
+          <CardSlider>
+            {cardTemplates.map((card) => (
+              <CardThumbButton
+                key={card.id}
+                selected={selectedCardId === card.id}
+                onClick={() => handleSelectCard(card.id)}
+              >
+                <CardThumbImg
+                  src={card.thumbUrl}
+                  alt={`카드 템플릿 ${card.id}`}
+                />
+              </CardThumbButton>
+            ))}
+          </CardSlider>
+          <CardImagePreview>
+            <CardLargeImg
+              src={selectedCard.imageUrl}
+              alt={`선택된 카드 ${selectedCard.id}`}
+            />
+          </CardImagePreview>
+        </FormSection>
+
+        <FormSection>
+          <FormLabel>메시지</FormLabel>
+          <MessageTextarea
+            {...register('message', { required: '메시지를 입력해주세요.' })}
+            placeholder="메시지를 입력하세요"
+            error={!!messageError}
+          />
+          {messageError && <ErrorText>{messageError}</ErrorText>}
+        </FormSection>
+
         <FormSection>
           <FormLabel>보내는 사람</FormLabel>
           <Input
-            type="text"
-            {...register('sender', {
-              required: '이름을 입력해주세요.',
-              validate: (value) =>
-                value.trim().length > 0 || '이름을 입력해주세요.',
-            })}
-            placeholder="이름을 입력하세요."
+            {...register('sender', { required: '보내는 사람을 입력해주세요.' })}
+            placeholder="보내는 사람"
             error={!!senderError}
           />
           {senderError && <ErrorText>{senderError}</ErrorText>}
-          <InputHelper>
-            * 실제 선물 발송 시 발신자(보내는 사람) 이름으로 반영되는
-            정보입니다.
-          </InputHelper>
         </FormSection>
-        <RecipientList
-          recipients={recipients}
-          onRemoveRecipient={handleRemoveRecipient}
-          onAddRecipient={handleAddRecipient}
-          canAddMore={recipients.length < 10}
-          maxReached={recipients.length >= 10}
+
+        <FormSection>
+          <FormLabel>받는 사람</FormLabel>
+          <RecipientList
+            recipients={recipients}
+            onAddRecipient={handleAddRecipient}
+            onRemoveRecipient={handleRemoveRecipient}
+          />
+        </FormSection>
+
+        <OrderButtonBar>
+          <Container>
+            <OrderButton disabled={!canOrder} onClick={handleOrderSubmit}>
+              {totalQuantity > 0 ? `${totalQuantity}개 주문하기` : '주문하기'}
+            </OrderButton>
+          </Container>
+        </OrderButtonBar>
+
+        <RecipientModal
+          isOpen={isModalOpen}
+          onSubmit={handleRecipientsSubmit}
+          onClose={handleCloseModal}
         />
+
         <ProductInfo>
           <ProductImg src={product.imageURL} alt={product.name} />
           <ProductInfoText>
+            <ProductBrand>{product.brandInfo.name}</ProductBrand>
             <ProductName>{product.name}</ProductName>
-            <ProductBrand>{product.brandInfo?.name}</ProductBrand>
             <ProductPrice>
-              상품가 {product.price.sellingPrice.toLocaleString()}원
+              {product.price.sellingPrice.toLocaleString()}원
             </ProductPrice>
           </ProductInfoText>
         </ProductInfo>
-      </Container>
-      <OrderButtonBar>
-        <Container>
-          <OrderButton
-            disabled={!canOrder}
-            onClick={() => canOrder && handleOrderSubmit()}
-          >
-            {totalQuantity > 0
-              ? `${(product.price.sellingPrice * totalQuantity).toLocaleString()}원 주문하기 (${totalQuantity}개)`
-              : `${product.price.sellingPrice.toLocaleString()}원 주문하기`}
-          </OrderButton>
-        </Container>
-      </OrderButtonBar>
-
-      <RecipientModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleRecipientsSubmit}
-        existingRecipients={recipients}
-      />
-    </Section>
+      </Section>
+    </Container>
   );
 };
 

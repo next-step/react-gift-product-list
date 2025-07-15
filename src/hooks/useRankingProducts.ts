@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../api';
+import axios from 'axios';
 import type { RankingResponse, FilterOption } from '../api/types';
 
 /**
@@ -15,8 +15,8 @@ function useRankingProducts(initialFilter: FilterOption = 'all') {
   const fetchRankingProducts = async (currentFilter: FilterOption) => {
     try {
       setIsLoading(true);
-      const response = await apiClient.get<RankingResponse>(
-        '/api/products/ranking',
+      const response = await axios.get<RankingResponse>(
+        'http://localhost:3000/api/products/ranking',
         {
           params: { filter: currentFilter },
         }

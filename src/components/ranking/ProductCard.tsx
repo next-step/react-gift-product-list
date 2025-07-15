@@ -1,18 +1,9 @@
 import styled from '@emotion/styled';
-
-interface Product {
-  id: string;
-  productId: number;
-  productName: string;
-  price: number;
-  brandName: string;
-  image: string;
-  rank: number;
-  isTopThree: boolean;
-}
+import type { Product } from '@/api/types';
 
 interface ProductCardProps {
   product: Product;
+  rank: number;
 }
 
 const CardContainer = styled.div`
@@ -80,23 +71,24 @@ const Price = styled.div`
   font-family: 'Pretendard', sans-serif;
 `;
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, rank }: ProductCardProps) => {
+  const isTopThree = rank <= 3;
+
   return (
     <CardContainer>
       <ImageContainer>
-        <RankBadge isTopThree={product.isTopThree}>{product.rank}</RankBadge>
+        <RankBadge isTopThree={isTopThree}>{rank}</RankBadge>
         <ProductImage
-          src={product.image}
-          alt={product.productName}
+          src={product.imageURL}
+          alt={product.name}
           loading="lazy"
         />
       </ImageContainer>
-      <BrandName>{product.brandName}</BrandName>
-      <ProductName>{product.productName}</ProductName>
-      <Price>{product.price.toLocaleString()}원</Price>
+      <BrandName>{product.brandInfo.name}</BrandName>
+      <ProductName>{product.name}</ProductName>
+      <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
     </CardContainer>
   );
 };
 
 export default ProductCard;
-export type { Product };
