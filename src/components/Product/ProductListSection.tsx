@@ -1,12 +1,16 @@
 import styled from '@emotion/styled'
 import { useEffect, useState, useMemo } from 'react'
 import { ProductItem } from '@/components/Product/ProductItem'
-import { productMock } from '@/components/Product/productMock'
+import axios from 'axios'
+import type { Product } from '@/types/product'
 
 const genderOptions = ['전체', '여성이', '남성이', '청소년이']
 const topicOptions = ['받고 싶어한', '많이 선물한', '위시로 받은']
 
 export function ProductListSection() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [showAll, setShowAll] = useState(false)
   const [selectedGender, setSelectedGender] = useState('전체')
   const [selectedTopic, setSelectedTopic] = useState('받고 싶어한')
@@ -22,6 +26,24 @@ export function ProductListSection() {
     }
   }, [])
 
+  useEffect(() => {
+    const fetchRanking = async () => {
+      try {
+        const response = await axios.get<{ data: Product[] }>(
+          'http://localhost:3000/api/products/ranking?targetType=ALL&rankType=MANY_WISH'
+        )
+        setProducts(response.data.data)
+      } catch (err) {
+        console.error('테마 목록 불러오기 실패:', err)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRanking()
+  }, [])
+
   const selectGender = (option: string) => {
     setSelectedGender(option)
     localStorage.setItem('selectedGender', option)
@@ -33,8 +55,12 @@ export function ProductListSection() {
   }
 
   const displayedProducts = useMemo(() => {
-    return showAll ? productMock : productMock.slice(0, 6)
-  }, [showAll])
+    return showAll ? products : products.slice(0, 6)
+  }, [showAll, products])
+
+  if (loading) return <p>선물랭킹 로딩중...</p>
+  if (error || !products || products.length === 0)
+    return <p>상품 목록이 없습니다.</p>
 
   return (
     <SectionWrapper>
