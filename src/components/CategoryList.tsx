@@ -27,7 +27,7 @@ const Title = styled.h1`
 `;
 
 const Item = styled.li`
-  width: calc(16% - 17px);
+  width: 20%;
   text-align: center;
 
   cursor: pointer;
@@ -38,6 +38,8 @@ const Item = styled.li`
 const Img = styled.img`
   width: 50px;
   height: 50px;
+  border-radius: 15px;
+  margin-bottom: 3px;
 `;
 
 const Name = styled.div`
@@ -64,9 +66,8 @@ function CategoryList() {
         return res.json();
       })
       .then((data) => {
-        // 항상 배열로 세팅
-        if (Array.isArray(data)) {
-          setThemes(data);
+        if (Array.isArray(data.data)) {
+          setThemes(data.data);
         } else {
           setThemes([]);
         }

@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
-import { products } from '@/data/products';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEffect, useState } from 'react';
 
 const List = styled.ul`
   display: grid;
@@ -51,17 +50,56 @@ const MoreButton = styled.button`
 
 const DEFAULT_VISIBLE = 6; // 기본으로 보여줄 상품 개수
 
+// Product 타입 정의 (API 응답 구조에 맞게)
+type Product = {
+  id: number;
+  name: string;
+  imageURL: string;
+  price: {
+    basicPrice: number;
+    discountRate: number;
+    sellingPrice: number;
+  };
+  brandInfo: {
+    id: number;
+    name: string;
+    imageURL: string;
+  };
+  targetType: string;
+  rankType: string;
+};
+
 function ProductList() {
-  const filtered = products;
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetch(`${import.meta.env.VITE_API_URL}/api/products/ranking`)
+      .then((res) => {
+        if (!res.ok) throw new Error('서버 에러');
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data.data)) {
+          setProducts(data.data);
+        } else {
+          setProducts([]);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('데이터를 불러오지 못했습니다.');
+        setLoading(false);
+      });
+  }, []);
 
   // 더보기/접기 state
   const [visibleCount, setVisibleCount] = useState(DEFAULT_VISIBLE);
-
-  // 현재 보여줄 상품만 slice로 자르기
-  const visibleProducts = filtered.slice(0, visibleCount);
-
-  // 더보기/접기 버튼 노출 조건
-  const isAllVisible = visibleCount >= filtered.length;
+  const visibleProducts = products.slice(0, visibleCount);
+  const isAllVisible = visibleCount >= products.length;
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -76,46 +114,54 @@ function ProductList() {
 
   return (
     <>
-      <List>
-        {visibleProducts.map((p) => (
-          <Item
-            key={p.id}
-            onClick={() => handleItemClick(p.id)}
-            style={{ cursor: 'pointer' }}
-          >
-            {/* 상품 이미지 */}
-            <img
-              src={p.imageURL}
-              alt={p.name}
-              style={{ width: '100%', borderRadius: 8 }}
-            />
-            {/* 브랜드명 (회색, 작은 글씨) */}
-            <div style={{ color: '#888', fontSize: 14, marginTop: 8 }}>
-              {p.brandInfo.name}
-            </div>
-            {/* 상품명 (굵은 글씨) */}
-            <div style={{ fontWeight: 700, fontSize: 16, marginTop: 4 }}>
-              {p.name}
-            </div>
-            {/* 가격 (굵고 큰 글씨) */}
-            <div style={{ fontWeight: 700, fontSize: 18, marginTop: 4 }}>
-              {p.price.sellingPrice.toLocaleString()} 원
-            </div>
-          </Item>
-        ))}
-      </List>
-      {/* 더보기/접기 버튼 */}
-      {filtered.length > DEFAULT_VISIBLE && (
+      {loading ? (
+        <div>로딩 중 ...</div>
+      ) : error ? (
+        <div>{error}</div>
+      ) : (
         <>
-          {!isAllVisible && (
-            <MoreButton onClick={() => setVisibleCount(filtered.length)}>
-              더보기
-            </MoreButton>
-          )}
-          {isAllVisible && (
-            <MoreButton onClick={() => setVisibleCount(DEFAULT_VISIBLE)}>
-              접기
-            </MoreButton>
+          <List>
+            {visibleProducts.map((p) => (
+              <Item
+                key={p.id}
+                onClick={() => handleItemClick(p.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* 상품 이미지 */}
+                <img
+                  src={p.imageURL}
+                  alt={p.name}
+                  style={{ width: '100%', borderRadius: 8 }}
+                />
+                {/* 브랜드명 (회색, 작은 글씨) */}
+                <div style={{ color: '#888', fontSize: 14, marginTop: 8 }}>
+                  {p.brandInfo.name}
+                </div>
+                {/* 상품명 (굵은 글씨) */}
+                <div style={{ fontWeight: 700, fontSize: 16, marginTop: 4 }}>
+                  {p.name}
+                </div>
+                {/* 가격 (굵고 큰 글씨) */}
+                <div style={{ fontWeight: 700, fontSize: 18, marginTop: 4 }}>
+                  {p.price.sellingPrice.toLocaleString()} 원
+                </div>
+              </Item>
+            ))}
+          </List>
+          {/* 더보기/접기 버튼 */}
+          {products.length > DEFAULT_VISIBLE && (
+            <>
+              {!isAllVisible && (
+                <MoreButton onClick={() => setVisibleCount(products.length)}>
+                  더보기
+                </MoreButton>
+              )}
+              {isAllVisible && (
+                <MoreButton onClick={() => setVisibleCount(DEFAULT_VISIBLE)}>
+                  접기
+                </MoreButton>
+              )}
+            </>
           )}
         </>
       )}
