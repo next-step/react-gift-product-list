@@ -1,6 +1,6 @@
 import type { ThemeType } from "@/types/theme";
 import { useState, useEffect } from "react";
-import { SectionContainer, SectionTitle } from "./Common/SectionLayout";
+import { SectionContainer, SectionTitle } from "../../Common/SectionLayout";
 import { getThemes } from "@/api/themes";
 import styled from "@emotion/styled";
 import ThemeItem from "./ThemeItem";
