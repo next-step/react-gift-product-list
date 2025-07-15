@@ -4,7 +4,6 @@ const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
 const pwRegEx = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
 const phoneRegEx = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
-console.log(phoneRegEx.test('01048571666'));
 // 이메일 유효성 검사
 export const emailValidator: Validator = (value: string) => {
   if (!value) return "ID를 입력해주세요";
