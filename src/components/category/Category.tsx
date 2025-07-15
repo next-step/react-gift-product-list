@@ -10,7 +10,7 @@ export const Category = () => {
   const { isLoading, isError, data: categories } = useFetch<Theme[]>(fetchThemes)
 
   if (isLoading) return <div>Loading...</div>
-  if (isError) return <div>Error loading Categories.</div>
+  if (isError || !categories || categories.length === 0) return null
 
   return (
     // 외부 컨테이너
