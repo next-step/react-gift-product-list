@@ -6,8 +6,11 @@ import { ERROR_MESSAGES } from "@/constants/messages";
 export const CategorySection = () => {
   const { themes, loading, error } = useThemes();
 
+  if (error) return null;
+
   if (loading) return <Placeholder>{ERROR_MESSAGES.THEME.LOAD}</Placeholder>;
-  if (error || themes.length === 0) return null;
+  if (themes.length === 0)
+    return <Placeholder>{ERROR_MESSAGES.THEME.NONE}</Placeholder>;
 
   return (
     <Section>
