@@ -1,7 +1,8 @@
 import axios from "axios";
 import { attachInterceptors } from "./interceptors";
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
-console.log(baseURL, " asdf");
+
 const apiClient = axios.create({
   baseURL,
   headers: {
