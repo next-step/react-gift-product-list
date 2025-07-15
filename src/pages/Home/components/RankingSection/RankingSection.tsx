@@ -5,18 +5,23 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { MdFace2, MdFace, MdFace6 } from 'react-icons/md';
 
+
+
 import {
   sectionWrapper,
   tabRow,
   subTabRow,
   cardGrid,
   moreButton,
+
   emptyStateStyle,
+
 } from './RankingSection.style';
 
 import TabButton from '../Shared/TabButton';
 import RankingCard from '../Shared/RankingCard';
 import { UserManagement } from '../../../Login/contexts/UserManagement';
+
 
 import { fetchRanking, type RankingItem } from '../../../../apis/ranking';
 
@@ -40,10 +45,12 @@ const RankingSection = () => {
 
   const [gender, setGender] = useState(initialGender);
   const [giftType, setGiftType] = useState(initialGiftType);
+
   const [items, setItems] = useState<RankingItem[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [, setError] = useState(false);
+
 
   const updateFilters = (newGender: string, newGiftType: string) => {
     setSearchParams({ gender: newGender, giftType: newGiftType });
@@ -53,6 +60,7 @@ const RankingSection = () => {
   };
 
   useEffect(() => {
+
     const loadRanking = async () => {
       setLoading(true);
       setError(false);
@@ -76,6 +84,7 @@ const RankingSection = () => {
   const toggleExpanded = () => setIsExpanded((prev) => !prev);
 
   const handleCardClick = (itemId: number) => {
+
     if (user) {
       navigate(`/order?id=${itemId}`);
     } else {
@@ -142,6 +151,7 @@ const RankingSection = () => {
     )}
   </>
 )}
+
     </section>
   );
 };
