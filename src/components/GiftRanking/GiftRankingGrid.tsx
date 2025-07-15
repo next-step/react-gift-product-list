@@ -1,16 +1,30 @@
 import { useState } from 'react';
 import { Grid, Button } from '@/components/GiftRanking/GiftRanking.styles';
 import ProductCard from '@/components/GiftRanking/ProductCard';
-import { mockItem } from '@/components/GiftRanking/mockItem';
 
-const allItems = Array.from({ length: 21 }, (_, i) => ({
-  ...mockItem,
-  id: i + 1,
-}));
+type Product = {
+  id: number;
+  name: string;
+  price: {
+    basicPrice: number;
+    sellingPrice: number;
+    discountRate: number;
+  };
+  imageURL: string;
+  brandInfo: {
+    id: number;
+    name: string;
+    imageURL: string;
+  };
+};
 
-const GiftRankingGrid = () => {
+type Props = {
+  products: Product[];
+};
+
+const GiftRankingGrid = ({ products }: Props) => {
   const [expanded, setExpanded] = useState(false);
-  const visibleItems = expanded ? allItems : allItems.slice(0, 6);
+  const visibleItems = expanded ? products : products.slice(0, 6);
 
   return (
     <>
@@ -21,16 +35,18 @@ const GiftRankingGrid = () => {
             id={item.id}
             rank={index + 1}
             imageURL={item.imageURL}
-            brand={item.brand}
+            brand={item.brandInfo.name}
             name={item.name}
-            price={item.price}
+            price={item.price.sellingPrice}
           />
         ))}
       </Grid>
 
-      <Button onClick={() => setExpanded(prev => !prev)}>
-        {expanded ? '접기' : '더보기'}
-      </Button>
+      {products.length > 6 && (
+        <Button onClick={() => setExpanded((prev) => !prev)}>
+          {expanded ? '접기' : '더보기'}
+        </Button>
+      )}
     </>
   );
 };

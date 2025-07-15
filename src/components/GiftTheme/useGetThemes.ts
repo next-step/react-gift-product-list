@@ -19,7 +19,7 @@ export const useGetThemes = () => {
     useEffect(() => {
         const fetchThemes = async () => {
             try {
-                const response = await axios.get<ApiResponse>(`${import.meta.env.VITE_API_BASE_URL}/api/themes`);
+                const response = await axios.get<ApiResponse>(`/api/themes`);
                 setThemes(response.data.data);
             } catch (error) {
                 setError(error as Error);

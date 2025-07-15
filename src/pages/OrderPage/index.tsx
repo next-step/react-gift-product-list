@@ -6,14 +6,20 @@ import SenderForm from '@/components/SenderForm';
 import MessageCard from '@/components/MessageCard';
 import ReceiverSelectBox from '@/components/ReceiverSelectBox';
 import ReceiverModal from '@/components/ReceiverModal';
-import { mockItem } from '@/components/GiftRanking/mockItem';
 import { formatOrderButtonText } from '@/components/SenderForm/constants';
 import { ORDER_INFO_TITLE, PRODUCT_PRICE_LABEL, CURRENCY_UNIT } from './constants';
 import { useOrderForm } from './useOrderForm';
 
 function OrderPage() {
   const { productId } = useParams<{ productId: string }>();
-  const product = { ...mockItem, id: parseInt(productId || '1') };
+  // TODO: 다음과제에서 api로 바꾸기. 현재 mocakdata파일 삭제로 발생한 오류 방지용.
+  const product = {
+    id: parseInt(productId || '1'),
+    name: '임시 상품명',
+    imageURL: 'https://via.placeholder.com/100',
+    brand: '임시 브랜드',
+    price: 10000,
+  };
 
   const {
     register,

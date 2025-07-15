@@ -1,14 +1,16 @@
 import { CategoryTab, TabCircle, TabRow, SortRow, SortTab } from '@/components/GiftRanking/GiftRanking.styles';
-import { categoryTabs, sortTabs } from '@/components/GiftRanking/mockItem';
+
+const categoryTabs = ['전체', '여성', '남성', '10대'] as const;
+const sortTabs = ['많이 찜한', '많이 받은', '많이 찜하고 받은'] as const;
 
 type Category = typeof categoryTabs[number];
 type Sort = typeof sortTabs[number];
 
 const categoryEmojis: Record<Category, string> = {
     전체: 'ALL',
-    여성이: '👩',
-    남성이: '👨',
-    청소년이: '👦',
+    여성: '👩',
+    남성: '👨',
+    '10대': '👦',
 };
 
 type Props = {
