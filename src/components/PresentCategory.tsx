@@ -3,31 +3,38 @@ import PresentTheme from "./PresentTheme";
 import { useEffect, useState } from "react";
 import { fetchTheme } from "@/api/theme";
 import type { Theme } from "@/types/theme";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const PresentCategory = () => {
   const [presentThemes, setPresentThemes] = useState<Theme[] | undefined>(
     undefined,
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchTheme()
       .then(data => {
         setPresentThemes(data.data);
+        setIsLoading(false);
       })
       .catch(error => {
         console.error("error: ", error);
+        setIsLoading(false);
       });
   }, []);
 
   return (
     <Background>
       <CategoryTitle>선물 테마</CategoryTitle>
-      <ThemeGrid>
-        {presentThemes &&
-          presentThemes.map(theme => (
+      {presentThemes && !isLoading ? (
+        <ThemeGrid>
+          {presentThemes.map(theme => (
             <PresentTheme key={theme.themeId} theme={theme} />
           ))}
-      </ThemeGrid>
+        </ThemeGrid>
+      ) : (
+        <LoadingSpinner height="266px" />
+      )}
     </Background>
   );
 };
