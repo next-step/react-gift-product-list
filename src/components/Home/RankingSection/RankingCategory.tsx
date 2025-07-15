@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
 
-const RANKING_CATEGORY_LIST = [
-  "받고싶어한",
-  "많이 선물한",
-  "위시로 받은",
+const RANKING_LIST = [
+  { label: "받고싶어한", value: "MANY_WISH" },
+  { label: "많이 선물한", value: "MANY_RECEIVE" },
+  { label: "위시로 받은", value: "MANY_WISH_RECEIVE" },
 ] as const;
+
 type Props = {
   selected: string;
   onChange: (key: string) => void;
@@ -13,13 +14,13 @@ type Props = {
 const RankingTextCategory = ({ selected, onChange }: Props) => {
   return (
     <RankingCategoryWrapper>
-      {RANKING_CATEGORY_LIST.map((item) => (
+      {RANKING_LIST.map(({ label, value }) => (
         <RankingCategoryItem
-          key={item}
-          active={selected === item}
-          onClick={() => onChange(item)}
+          key={value}
+          active={selected === value}
+          onClick={() => onChange(value)}
         >
-          {item}
+          {label}
         </RankingCategoryItem>
       ))}
     </RankingCategoryWrapper>

@@ -2,41 +2,46 @@ import TargetCategory from "./TargetCategory";
 import RankingCategory from "./RankingCategory";
 import RankingItem from "./RankingItem";
 import styled from "@emotion/styled";
-import { mockGiftItems } from "@/mocks/itemListMock";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   SectionContainer,
   SectionTitle,
 } from "@/components/Common/SectionLayout";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/useAuthContext";
-
-const DEFAULT_GENDER = "전체";
-const DEFAULT_CATEGORY = "받고싶어한";
+import { getRanking } from "@/api/products";
+import type { GiftItem } from "@/types/gift";
+import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 
 const RankingSection = () => {
   const [showAll, setShowAll] = useState(false);
+  const [rankingItems, setRankingItems] = useState<GiftItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const RANK_COUNT = showAll ? 21 : 6;
   const toggleShowAll = () => setShowAll((prev) => !prev);
+
   const navigate = useNavigate();
   const isLoggedIn = useAuthContext();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const gender = searchParams.get("gender") || DEFAULT_GENDER;
-  const category = searchParams.get("category") || DEFAULT_CATEGORY;
 
-  const handleGenderChange = (newGender: string) => {
+  const targetType = searchParams.get("targetType") || "ALL";
+  const rankType = searchParams.get("rankType") || "MANY_WISH";
+
+  const handleGenderChange = (newTarget: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set("gender", newGender);
+      newParams.set("targetType", newTarget);
       return newParams;
     });
   };
 
-  const handleCategoryChange = (newCategory: string) => {
+  const handleCategoryChange = (newRankType: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set("category", newCategory);
+      newParams.set("rankType", newRankType);
       return newParams;
     });
   };
@@ -49,21 +54,45 @@ const RankingSection = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchRanking = async () => {
+      try {
+        setLoading(true);
+        const res = await getRanking(targetType, rankType);
+        setRankingItems(res.data.data);
+      } catch (err) {
+        console.error(err);
+        setError("랭킹데이터 에러");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRanking();
+  }, [targetType, rankType]);
+
+  if (error) {
+    return <></>;
+  }
+
   return (
     <SectionContainer>
       <SectionTitle>실시간 급상승 선물랭킹</SectionTitle>
-      <TargetCategory selected={gender} onChange={handleGenderChange} />
-      <RankingCategory selected={category} onChange={handleCategoryChange} />
-      <RankingGrid>
-        {mockGiftItems.slice(0, RANK_COUNT).map((item, index) => (
-          <RankingItem
-            key={item.id}
-            rank={index + 1}
-            {...item}
-            onClick={() => handleClickItem(item.id)}
-          />
-        ))}
-      </RankingGrid>
+      <TargetCategory selected={targetType} onChange={handleGenderChange} />
+      <RankingCategory selected={rankType} onChange={handleCategoryChange} />
+      {loading ? (
+        <LoadingSpinner color="#ffffff" loading={loading} size={35} />
+      ) : (
+        <RankingGrid>
+          {rankingItems.slice(0, RANK_COUNT).map((item, index) => (
+            <RankingItem
+              key={item.id}
+              rank={index + 1}
+              {...item}
+              onClick={() => handleClickItem(item.id)}
+            />
+          ))}
+        </RankingGrid>
+      )}
       <MoreButton onClick={toggleShowAll}>
         {showAll ? "접기" : "더보기"}
       </MoreButton>

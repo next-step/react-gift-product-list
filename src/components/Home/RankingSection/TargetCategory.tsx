@@ -6,24 +6,24 @@ type Props = {
 };
 
 const TARGET_LIST = [
-  { key: "전체", icon: "ALL" },
-  { key: "여성이", icon: "👩🏻" },
-  { key: "남성이", icon: "👨🏻" },
-  { key: "청소년이", icon: "👦🏻" },
+  { label: "전체", value: "ALL", icon: "ALL" },
+  { label: "여성이", value: "FEMALE", icon: "👩🏻" },
+  { label: "남성이", value: "MALE", icon: "👨🏻" },
+  { label: "청소년이", value: "TEEN", icon: "👦🏻" },
 ] as const;
 
 const TargetCategory = ({ selected, onChange }: Props) => {
   return (
     <CategoryWrapper>
-      {TARGET_LIST.map(({ key, icon }) => (
-        <CategoryItemWrapper key={key}>
+      {TARGET_LIST.map(({ label, value, icon }) => (
+        <CategoryItemWrapper key={value}>
           <CategoryItemButton
-            isActive={selected === key}
-            onClick={() => onChange(key)}
+            isActive={selected === value}
+            onClick={() => onChange(value)}
           >
             <CategoryIcon>{icon}</CategoryIcon>
           </CategoryItemButton>
-          <CategoryText isActive={selected === key}>{key}</CategoryText>
+          <CategoryText isActive={selected === value}>{label}</CategoryText>
         </CategoryItemWrapper>
       ))}
     </CategoryWrapper>
@@ -74,7 +74,8 @@ const CategoryItemButton = styled.button<{ isActive: boolean }>`
 `;
 
 const CategoryIcon = styled.div`
-  font-size: 1.25rem;
+  font-size: 1rem;
+  font-weight: bold;
 `;
 
 const CategoryText = styled.span<{ isActive: boolean }>`
