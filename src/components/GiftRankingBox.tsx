@@ -5,6 +5,7 @@ import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 const productRankingURL = import.meta.env.VITE_API_BASE_URL_PRODUCT_RANKING;
 
@@ -26,7 +27,7 @@ type ProductRanking = {
 
 const GiftRanking = () => {
   const theme = useTheme();
-  const [productRankingData, setproductRankingData] = useState<
+  const [productRankingData, setProductRankingData] = useState<
     ProductRanking[] | null
   >(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +37,7 @@ const GiftRanking = () => {
     const fetchProductRanking = async () => {
       try {
         const response = await axios.get(productRankingURL);
-        setproductRankingData(response.data.data);
+        setProductRankingData(response.data.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching theme data:", error);
@@ -50,17 +51,23 @@ const GiftRanking = () => {
 
   const navigate = useNavigate();
   return (
-    <div>
-      <div css={giftRankingStyle(theme)}>
-        {productRankingData &&
-          productRankingData.map((product) => (
-            <GiftObject
-              key={product.id}
-              gift={product}
-              onClick={() => navigate(`/order/${product.id}`)}
-            />
-          ))}
-      </div>
+    <div css={giftRankingStyle(theme)}>
+      {isError ? (
+        <div>상품 목록이 없습니다.</div>
+      ) : isLoading ? (
+        <div css={spinnerWrapperStyle}>
+          <ClipLoader color="#333" size={40} />
+        </div>
+      ) : (
+        productRankingData &&
+        productRankingData.map((product) => (
+          <GiftObject
+            key={product.id}
+            gift={product}
+            onClick={() => navigate(`/order/${product.id}`)}
+          />
+        ))
+      )}
     </div>
   );
 };
@@ -73,4 +80,12 @@ const giftRankingStyle = (theme: Theme) => css`
   gap: 16px;
   padding: 16px;
   background: ${theme.colors.semantic.background.fill};
+`;
+
+const spinnerWrapperStyle = css`
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
 `;
