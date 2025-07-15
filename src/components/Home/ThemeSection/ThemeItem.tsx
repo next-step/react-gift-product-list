@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import type { ThemeItemType } from '@/types/theme';
+import styled from "@emotion/styled";
+import type { ThemeItemType } from "@/types/theme";
 
 const ThemeItem = ({ name, image }: ThemeItemType) => {
   return (

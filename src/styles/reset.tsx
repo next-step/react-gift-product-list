@@ -1,8 +1,8 @@
-import { css } from '@emotion/react';
-import type { Theme } from '@emotion/react';
+import { css } from "@emotion/react";
+import type { Theme } from "@emotion/react";
 
 const reset = (theme: Theme) => css`
-  @import url('pretendard/dist/web/static/pretendard.css');
+  @import url("pretendard/dist/web/static/pretendard.css");
   html,
   body,
   div,
@@ -120,7 +120,7 @@ const reset = (theme: Theme) => css`
   blockquote:after,
   q:before,
   q:after {
-    content: '';
+    content: "";
     content: none;
   }
   table {
@@ -135,10 +135,12 @@ const reset = (theme: Theme) => css`
     color: inherit;
   }
 
+  html,
   body {
-    font-family: 'Pretendard', sans-serif;
-    color: ${theme.colors.textDefault};
     height: 100%;
+    overflow: hidden;
+    font-family: "Pretendard", sans-serif;
+    color: ${theme.colors.textDefault};
     background-color: ${theme.colors.gray100};
   }
 

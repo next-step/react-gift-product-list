@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import type { GiftItem } from '@/types/gift';
+import styled from "@emotion/styled";
+import type { GiftItem } from "@/types/gift";
 
 type RankingItemProps = GiftItem & {
   rank: number;
@@ -62,9 +62,10 @@ const RankBadge = styled.div<{ isTop: boolean }>`
   left: 6px;
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  background-color: ${({ isTop, theme }) => (isTop ? theme.colors.red500 : 'transparent')};
-  color: ${({ isTop, theme }) => (isTop ? theme.colors.kakaoBrown : '#ffffff')};
+  border-radius: 4px;
+  background-color: ${({ isTop, theme }) =>
+    isTop ? theme.colors.red500 : theme.colors.gray600};
+  color: #ffffff;
   font-size: 14px;
   font-weight: bold;
   display: flex;

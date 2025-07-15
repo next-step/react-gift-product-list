@@ -1,38 +1,28 @@
-import Header from '@/components/Common/Header';
-import styled from '@emotion/styled';
-import { FiPlus } from 'react-icons/fi';
-import { mockThemeList } from '@/mocks/themeListMock';
-import ThemeItem from '@/components/ThemeItem';
-import type { ThemeItemType } from '@/types/theme';
-import RankingSection from '@/components/RankingSection';
-import { SectionContainer, SectionTitle } from '@/components/Common/SectionLayout';
-import { parseNickname } from '@/utils/parseNickName';
-import { useAuthContext } from '@/contexts/useAuthContext';
+import Header from "@/components/Common/Header";
+import styled from "@emotion/styled";
+import { FiPlus } from "react-icons/fi";
+import RankingSection from "@/components/Home/RankingSection";
+import { parseNickname } from "@/utils/parseNickName";
+import { useAuthContext } from "@/contexts/useAuthContext";
+import ThemeSection from "@/components/Home/ThemeSection";
 
 const Home = () => {
   const { user } = useAuthContext();
-  const nickname = user ? parseNickname(user.email) : '';
+  const nickname = user ? parseNickname(user.email) : "";
+
   return (
-    <>
+    <Wrapper>
       <Header title="선물하기" />
       <HomeContainer>
         <SelectFriendSection>
           <SelectFriend>
             <FiPlusIcon size={16} />
             <SelectFriendText>
-              {nickname ? `${nickname}님! ` : ''}선물할 친구를 선택해 주세요.
+              {nickname ? `${nickname}님! ` : ""}선물할 친구를 선택해 주세요.
             </SelectFriendText>
           </SelectFriend>
         </SelectFriendSection>
-        <SectionContainer>
-          <SectionTitle>선물 테마</SectionTitle>
-          <ThemeGrid>
-            {mockThemeList.slice(0, 15).map((item: ThemeItemType) => (
-              <ThemeItem key={item.themeId} {...item} />
-            ))}
-          </ThemeGrid>
-        </SectionContainer>
-
+        <ThemeSection />
         <CheerBannerSection>
           <CheerBanner>
             <CheerBannerLabel>카카오테크 캠퍼스 3기 여러분</CheerBannerLabel>
@@ -41,12 +31,22 @@ const Home = () => {
         </CheerBannerSection>
         <RankingSection />
       </HomeContainer>
-    </>
+    </Wrapper>
   );
 };
 
 export default Home;
 
+const Wrapper = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-itmes: center;
+  justify-content: flex-start;
+  background-color: ${({ theme }) => theme.colors.backgroundDefault};
+`;
 const HomeContainer = styled.main`
   width: 100%;
   max-width: 720px;
@@ -96,13 +96,6 @@ const SelectFriendText = styled.p`
     font-weight: ${theme.font.subtitle1Bold.weight};
     line-height: ${theme.font.subtitle1Bold.lineHeight};
   `}
-`;
-
-const ThemeGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: ${({ theme }) => theme.spacing.spacing4};
-  margin-top: ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const CheerBannerSection = styled.section`
