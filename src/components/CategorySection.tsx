@@ -18,7 +18,7 @@ const CategorySection = () => {
           </LoadingWrapper>
         </Grid>
       ) : isError ? (
-        <EmptyText>테마를 불러오지 못했어요 😢</EmptyText>
+        <EmptyText>테마를 불러오지 못했어요.</EmptyText>
       ) : themes.length === 0 ? (
         <EmptyText>테마가 없습니다.</EmptyText>
       ) : (

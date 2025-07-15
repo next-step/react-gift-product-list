@@ -52,7 +52,7 @@ const RankingGroup = () => {
       {isLoading ? (
         <Loading />
       ) : isError || !products ? (
-        <EmptyText>상품을 불러오지 못했어요 😢</EmptyText>
+        <EmptyText>상품을 불러오지 못했어요.</EmptyText>
       ) : products.length === 0 ? (
         <EmptyText>상품이 없습니다.</EmptyText>
       ) : (
@@ -83,7 +83,7 @@ const Title = styled.h3`
 
 const EmptyText = styled.p`
   ${({ theme }) => theme.typography.body.body2Regular};
-  color: ${({ theme }) => theme.color.gray[600]};
+  color: ${({ theme }) => theme.color.semantic.text};
   text-align: center;
   padding: ${({ theme }) => theme.spacing[6]} 0;
 `;
