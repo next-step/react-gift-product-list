@@ -72,9 +72,9 @@ export const GenderText = styled.p<{ isSelected: boolean }>`
 export const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: ${({ theme }) => theme.spacing.spacing2};
-  row-gap: ${({ theme }) => theme.spacing.spacing7};
+  gap: ${({ theme }) => theme.spacing.spacing3};
   margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+  width: 100%;
 `;
 
 export const MoreButton = styled.button`

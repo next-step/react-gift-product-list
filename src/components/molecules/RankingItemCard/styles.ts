@@ -5,6 +5,8 @@ export const Card = styled.div`
   flex-direction: column;
   cursor: pointer;
   position: relative;
+  min-width: 0;
+  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
 `;
 
 export const RankBadge = styled.span<{ rank: number }>`
@@ -26,7 +28,6 @@ export const RankBadge = styled.span<{ rank: number }>`
 export const Image = styled.img`
   width: 100%;
   height: auto;
-  aspect-ratio: 1;
   border-radius: 8px;
   margin-bottom: ${({ theme }) => theme.spacing.spacing2};
   object-fit: cover;
@@ -39,12 +40,12 @@ export const Subtitle = styled.p`
 
 export const ProductName = styled.h6`
   ${({ theme }) => theme.typography.body2Regular}
-  margin: 0 0 ${({ theme }) => theme.spacing.spacing2} 0;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing.spacing1};
 `;
 
 export const Price = styled.p`

@@ -1,16 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { rankingItems, genderItems, actionItems, type RankingItem } from '@/data/ranking';
+import { genderItems, actionItems } from '@/data/ranking';
+import { getRankingProducts } from '@/lib/api';
+import { type RankingProduct, type TargetType, type RankType } from '@/types/api';
 import { RankingItemCard } from '@/components';
 import * as S from './styles';
+
+interface FetchState<T> {
+  isLoading: boolean;
+  isError: boolean;
+  data: T | null;
+}
 
 const RankingSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [rankingProducts, setRankingProducts] = useState<RankingProduct[]>([]);
+  const [fetchState, setFetchState] = useState<FetchState<RankingProduct[]>>({
+    isLoading: true,
+    isError: false,
+    data: null,
+  });
   const navigate = useNavigate();
 
   const selectedGender = searchParams.get('gender') || 'ALL';
-  const selectedAction = searchParams.get('action') || '받고 싶어한';
+  const selectedAction = searchParams.get('action') || 'MANY_WISH';
+
+  useEffect(() => {
+    setFetchState(prev => ({ ...prev, isLoading: true }));
+    
+    getRankingProducts(selectedGender as TargetType, selectedAction as RankType)
+      .then((data) => {
+        setRankingProducts(data);
+        setFetchState({
+          isLoading: false,
+          isError: false,
+          data,
+        });
+      })
+      .catch(() => {
+        setFetchState({
+          isLoading: false,
+          isError: true,
+          data: null,
+        });
+      });
+  }, [selectedGender, selectedAction]);
 
   const handleGenderChange = (gender: string) => {
     setSearchParams(prev => {
@@ -28,9 +63,16 @@ const RankingSection = () => {
     });
   };
 
-  const handleItemCardClick = (item: RankingItem) => {
+  const handleItemCardClick = (item: RankingProduct) => {
     navigate(`/order/${item.id}`);
   };
+
+  if (fetchState.isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (fetchState.isError) {
+    return <div>Error loading data.</div>;
+  }
 
   return (
     <S.Section>
@@ -53,18 +95,18 @@ const RankingSection = () => {
         <S.ActionFilterContainer>
           {actionItems.map(action => (
             <S.ActionButton 
-              key={action} 
-              isSelected={selectedAction === action}
-              onClick={() => handleActionChange(action)}
+              key={action.key} 
+              isSelected={selectedAction === action.key}
+              onClick={() => handleActionChange(action.key)}
             >
-              {action}
+              {action.label}
             </S.ActionButton>
           ))}
         </S.ActionFilterContainer>
       </S.FilterContainer>
       
       <S.Grid>
-        {(isExpanded ? rankingItems : rankingItems.slice(0, 6)).map((item, index) => (
+        {(isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
           <RankingItemCard
             key={item.id}
             imageUrl={item.imageURL}

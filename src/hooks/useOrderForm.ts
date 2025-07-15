@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useReceiver } from '@/contexts/ReceiverContext';
 import { z, string } from 'zod';
 import { orders } from '@/data/orders';
-import { type RankingItem } from '@/data/ranking';
+import { type RankingProduct } from '@/types/api';
 import { type TextAreaChangeHandler, type InputChangeHandler } from '@/components';
 
 interface CardState {
@@ -26,7 +26,7 @@ const orderValidationSchema = z.object({
 });
 
 interface UseOrderFormProps {
-  product?: RankingItem;
+  product?: RankingProduct;
 }
 
 export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
