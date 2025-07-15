@@ -116,32 +116,32 @@ const RankingSection = () => {
       </div>
 
       {loading ? (
-        <div css={emptyStateStyle}>로딩 중...</div>
+        <div>로딩 중...</div>
       ) : items.length === 0 ? (
-        <div css={emptyStateStyle}>상품 목록이 없습니다.</div>
-      ) : (
-        <>
-          <div css={cardGrid}>
-            {visibleItems.map((item, i) => (
-              <div key={item.id} onClick={() => handleCardClick(item.id)}>
-                <RankingCard
-                  rank={i + 1}
-                  imageURL={item.imageURL}
-                  brand={item.brandInfo.name}
-                  name={item.name}
-                  price={item.price.sellingPrice}
-                  theme={theme}
-                />
-              </div>
-            ))}
-          </div>
-          {items.length > 6 && (
-            <button onClick={toggleExpanded} css={moreButton(theme)}>
-              {isExpanded ? '접기' : '더보기'}
-            </button>
-          )}
-        </>
-      )}
+  <div css={emptyStateStyle}>상품 목록이 없습니다.</div>
+) : (
+  <>
+    <div css={cardGrid}>
+      {visibleItems.map((item, i) => (
+        <div key={item.id} onClick={() => handleCardClick(item.id)}>
+          <RankingCard
+            rank={i + 1}
+            imageURL={item.imageURL}
+            brand={item.brandInfo.name}
+            name={item.name}
+            price={item.price.sellingPrice}
+            theme={theme}
+          />
+        </div>
+      ))}
+    </div>
+    {items.length > 6 && (
+      <button onClick={toggleExpanded} css={moreButton(theme)}>
+        {isExpanded ? '접기' : '더보기'}
+      </button>
+    )}
+  </>
+)}
     </section>
   );
 };
