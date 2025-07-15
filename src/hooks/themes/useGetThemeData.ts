@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { getThemes } from "@/api/themes";
-
-interface GetThemesResponseBody {
-  themeId: number;
-  name: string;
-  image: string;
-}
+import type { GetThemesResponseBody } from "@/api/themes/get-themes";
 
 export const useGetThemeData = () => {
   const [themes, setThemes] = useState<GetThemesResponseBody[]>([]);

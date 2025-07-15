@@ -1,7 +1,7 @@
 import { api } from "@/api/api";
 import ApiErrorHandler from "@/api/ErrorHandler";
 
-interface GetThemesResponseBody {
+export interface GetThemesResponseBody {
   themeId: number;
   name: string;
   image: string;
