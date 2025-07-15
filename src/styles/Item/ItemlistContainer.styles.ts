@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 export const ItemlistContainer = styled.div`
   width: 100%;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
   justify-content: center;
