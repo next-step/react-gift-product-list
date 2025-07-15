@@ -3,9 +3,7 @@ import GiftThemeSection from './components/GiftThemeSection';
 import CommentBoxSection from './components/CommentBoxSection';
 import GiftRankingSection from './components/GiftRankingSection';
 
-
-
-const Gift = () => {
+const HOME = () => {
   return (
     <>
       <FriendSelectionSection />
@@ -16,4 +14,4 @@ const Gift = () => {
   );
 };
 
-export default Gift;
+export default HOME;

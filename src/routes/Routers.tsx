@@ -5,12 +5,12 @@ import NotFound from '@/page/NotFound';
 import { Route, Routes } from 'react-router-dom';
 import { ROUTES } from './routes';
 import RequireAuth from './RequireAuth';
-import Gift from '@/page/Gift';
+import HOME from '@/page/Home';
 
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path={ROUTES.HOME} element={<Gift />} />
+      <Route path={ROUTES.HOME} element={<HOME />} />
       <Route path={ROUTES.LOGIN} element={<LoginPage />} />
       <Route
         path={ROUTES.MY}
