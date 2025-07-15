@@ -183,10 +183,10 @@ function checkDuplicatePhone(
   errors: FieldErrors<FormValues>,
 ) {
   const phoneCount: Record<string, number> = {};
-  receivers.forEach((r: Receiver) => {
+  receivers.forEach((r) => {
     if (r.phone) phoneCount[r.phone] = (phoneCount[r.phone] || 0) + 1;
   });
-  receivers.forEach((r: Receiver, idx: number) => {
+  receivers.forEach((r, idx) => {
     if (r.phone && phoneCount[r.phone] > 1) {
       setError(`receivers.${idx}.phone`, {
         type: 'duplicate',
