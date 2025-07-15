@@ -52,7 +52,7 @@ type Theme = {
   image: string;
 };
 
-function CategoryList() {
+function CategoryList({ onHide }: { onHide?: () => void }) {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,14 +68,17 @@ function CategoryList() {
       .then((data) => {
         if (Array.isArray(data.data)) {
           setThemes(data.data);
+          if (data.data.length === 0 && onHide) onHide();
         } else {
           setThemes([]);
+          if (onHide) onHide();
         }
         setLoading(false);
       })
       .catch(() => {
         setError('데이터를 불러오지 못했습니다.');
         setLoading(false);
+        if (onHide) onHide();
       });
   }, []);
   return (
@@ -85,9 +88,7 @@ function CategoryList() {
         <div>로딩 중 ... </div>
       ) : error ? (
         <div>{error}</div>
-      ) : themes.length === 0 ? (
-        <div>테마가 없습니다.</div>
-      ) : (
+      ) : themes.length === 0 ? null : (
         <List>
           {themes.map((cat) => (
             <Item key={cat.themeId}>

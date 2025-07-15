@@ -5,6 +5,7 @@ import NoticeBanner from '@/components/NoticeBanner';
 import RankingFilter from '@/components/RankingFilter';
 import ProductList from '@/components/ProductList';
 import Header from '@/components/Header';
+import { useState } from 'react';
 
 const Container = styled.div`
   max-width: 720px;
@@ -21,6 +22,7 @@ const PageBackground = styled.div`
 `;
 
 function MainPage() {
+  const [showCategory, setShowCategory] = useState(true);
   return (
     <>
       <Header />
@@ -28,7 +30,7 @@ function MainPage() {
         <PageBackground>
           <FriendSelectBox />
         </PageBackground>
-        <CategoryList />
+        {showCategory && <CategoryList onHide={() => setShowCategory(false)} />}
         <NoticeBanner />
         <RankingFilter />
         <ProductList />
