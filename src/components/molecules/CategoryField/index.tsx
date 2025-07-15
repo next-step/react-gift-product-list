@@ -1,4 +1,4 @@
-import { ItemCard } from '@/components';
+import { CategoryItemCard } from '@/components';
 import * as S from './styles';
 import { getThemes } from '@/lib/api';
 import { useState, useEffect } from 'react';
@@ -42,11 +42,10 @@ const CategoryField = () => {
       <S.Title>선물 테마</S.Title>
       <S.Grid>
         {themes.map((theme) => (
-          <ItemCard
+          <CategoryItemCard
             key={theme.themeId}
             imageUrl={theme.image}
             title={theme.name}
-            variant="category"
           />
         ))}
       </S.Grid>

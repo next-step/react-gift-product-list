@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { rankingItems, genderItems, actionItems, type RankingItem } from '@/data/ranking';
-import { ItemCard } from '@/components';
+import { RankingItemCard } from '@/components';
 import * as S from './styles';
 
 const RankingSection = () => {
@@ -65,14 +65,13 @@ const RankingSection = () => {
       
       <S.Grid>
         {(isExpanded ? rankingItems : rankingItems.slice(0, 6)).map((item, index) => (
-          <ItemCard
+          <RankingItemCard
             key={item.id}
             imageUrl={item.imageURL}
             title={item.name}
             subtitle={item.brandInfo.name}
             price={item.price.sellingPrice}
             rank={index + 1}
-            variant="product"
             onClick={() => handleItemCardClick(item)}
           />
         ))}

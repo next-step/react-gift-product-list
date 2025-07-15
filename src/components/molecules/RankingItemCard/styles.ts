@@ -23,20 +23,13 @@ export const RankBadge = styled.span<{ rank: number }>`
   z-index: 1;
 `;
 
-export const Image = styled.img<{ variant: 'category' | 'product' }>`
-  width: ${({ variant }) => variant === 'category' ? '52px' : '100%'};
-  height: ${({ variant }) => variant === 'category' ? '52px' : 'auto'};
-  aspect-ratio: ${({ variant }) => variant === 'category' ? 'auto' : '1'};
+export const Image = styled.img`
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
   border-radius: 8px;
-  margin-bottom: ${({ theme, variant }) => variant === 'category' ? theme.spacing.spacing1 : theme.spacing.spacing2};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing2};
   object-fit: cover;
-`;
-
-export const Title = styled.span`
-  ${({ theme }) => theme.typography.label2Regular}
-  color: ${({ theme }) => theme.semantic.text.default};
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.spacing1};
 `;
 
 export const Subtitle = styled.p`
