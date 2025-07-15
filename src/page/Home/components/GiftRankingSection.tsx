@@ -6,33 +6,11 @@ import useToggleCollapse from '../hooks/useToggleCollapse';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '@/api';
 import Loading from '@/components/Loading';
+import RankingApi from '@/api/products/rankingApi';
 
 interface ButtonProps {
   isActive: boolean;
-}
-
-interface BrandInfo {
-  id: number;
-  name: string;
-  imageURL: string;
-}
-
-interface PriceInfo {
-  basicPrice: number;
-  sellingPrice: number;
-  discountRate: number;
-}
-
-interface GiftRankingItem {
-  id: number;
-  name: string;
-  price: PriceInfo;
-  imageURL: string;
-  brandInfo: BrandInfo;
 }
 
 const GiftRankingSection = () => {
@@ -43,25 +21,7 @@ const GiftRankingSection = () => {
     activeFilterButton,
   } = useSearchParamState();
 
-  const [rankingDatas, setrankingDatas] = useState<GiftRankingItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/products/ranking?targetType=${activeGenerationButton}&rankType=${activeFilterButton}`
-        );
-        const { data } = response;
-        setrankingDatas(data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [activeGenerationButton, activeFilterButton]);
+  const { rankingDatas, loading } = RankingApi({ activeGenerationButton, activeFilterButton });
 
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
   const { isLoggedIn } = useUserInfo();

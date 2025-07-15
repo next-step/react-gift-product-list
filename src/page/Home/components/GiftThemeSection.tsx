@@ -1,40 +1,9 @@
 import styled from '@emotion/styled';
-// import { giftDatas } from '@/data/giftDatas';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '@/api';
 import Loading from '@/components/Loading';
-
-interface ThemeInfo {
-  themeId: number;
-  name: string;
-  image: string;
-}
-
-interface ThemesResponse {
-  data: ThemeInfo[];
-}
+import ThemeApi from '@/api/themes/themeApi';
 
 const GiftThemeSection = () => {
-  const [themes, setThemes] = useState<ThemeInfo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get<ThemesResponse>(`${API_BASE_URL}/api/themes`);
-        const { data } = response;
-        setThemes(data.data);
-      } catch (error) {
-        setError(true);
-        console.error('Error fetching themes:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { themes, loading, error } = ThemeApi();
 
   if (loading || error) return <></>;
 
