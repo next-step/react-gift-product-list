@@ -1,26 +1,36 @@
-import { categories } from '@/data/categories'
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import * as S from './GiftCategory.styles'
+import Loading from '@/component/Loading/Loading'
+import { useThemes } from '../../hooks/useThemes'
 
 const GiftCategory = () => {
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const { themes, loading, error } = useThemes()
+  const navigate = useNavigate()
 
-  const handleSelect = (id: number) => {
-    setSelectedId(id)
+  const handleSelect = (themeId: number) => {
+    navigate(`/themes/${themeId}`)
   }
 
   return (
-    <S.Container>
-      <S.Title>선물 테마</S.Title>
-      <S.Grid>
-        {categories.map((item) => (
-          <S.Item key={item.themeId} onClick={() => handleSelect(item.themeId)}>
-            <S.ItemImage src={item.image} alt={item.name} />
-            <S.ItemName>{item.name}</S.ItemName>
-          </S.Item>
-        ))}
-      </S.Grid>
-    </S.Container>
+    <>
+      {loading && <Loading />}
+      {!loading && !error && themes.length > 0 && (
+        <S.Container>
+          <S.Title>선물 테마</S.Title>
+          <S.Grid>
+            {themes.map((theme) => (
+              <S.Item
+                key={theme.themeId}
+                onClick={() => handleSelect(theme.themeId)}
+              >
+                <S.ItemImage src={theme.image} alt={theme.name} />
+                <S.ItemName>{theme.name}</S.ItemName>
+              </S.Item>
+            ))}
+          </S.Grid>
+        </S.Container>
+      )}
+    </>
   )
 }
 

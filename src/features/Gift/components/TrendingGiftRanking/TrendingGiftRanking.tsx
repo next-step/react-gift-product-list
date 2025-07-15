@@ -1,32 +1,37 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { products } from '@/data/products'
-import type { Product } from '@/data/products'
+import Loading from '@/component/Loading/Loading'
 import * as S from './TrendingGiftRanking.styles'
 import { FilterGender, FilterType } from './TrendingGiftRankingFilter'
 import ProductCard from '@/component/ProductCard/ProductCard'
+import {
+  useProductsRanking,
+  type Gender,
+  type Type,
+  type Product,
+} from '@/features/Gift/hooks/useProductsRanking'
 
 const INITIAL_VISIBLE_COUNT = 6
-
 const genderList = [
   { label: 'All', icon: 'ALL' },
   { label: '남성이', icon: '👨‍🦰' },
   { label: '여성이', icon: '👩‍🦰' },
   { label: '청소년이', icon: '👦' },
 ] as const
-
 const typeList = ['받고 싶어한', '많이 선물한', '위시로 받은'] as const
-
-export type Gender = (typeof genderList)[number]['label']
-export type Type = (typeof typeList)[number]
 
 const TrendingGiftRanking = () => {
   const navigate = useNavigate()
-
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const selectedGender = searchParams.get('gender') ?? genderList[0].label
-  const selectedType = searchParams.get('type') ?? typeList[0]
+  const selectedGender = (searchParams.get('gender') ??
+    genderList[0].label) as Gender
+  const selectedType = (searchParams.get('type') ?? typeList[0]) as Type
+
+  const { products, loading, error } = useProductsRanking(
+    selectedGender,
+    selectedType
+  )
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
@@ -52,13 +57,8 @@ const TrendingGiftRanking = () => {
   }
 
   const handleToggleView = () => {
-    if (isExpanded) {
-      setVisibleCount(INITIAL_VISIBLE_COUNT)
-      setIsExpanded(false)
-    } else {
-      setVisibleCount(products.length)
-      setIsExpanded(true)
-    }
+    setIsExpanded(!isExpanded)
+    setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : products.length)
   }
 
   useEffect(() => {
@@ -106,13 +106,22 @@ const TrendingGiftRanking = () => {
         ))}
       </S.TypeTab>
 
-      <ProductCard
-        products={products}
-        visibleCount={visibleCount}
-        isExpanded={isExpanded}
-        onProductSelect={handleProductSelect}
-        onToggleView={handleToggleView}
-      />
+      {loading && <Loading />}
+      {error && <S.ErrorText>에러: {error}</S.ErrorText>}
+
+      {!loading && !error && products.length === 0 && (
+        <S.NoProduct>상품이 없습니다.</S.NoProduct>
+      )}
+
+      {!loading && !error && products.length !== 0 && (
+        <ProductCard
+          products={products}
+          visibleCount={visibleCount}
+          isExpanded={isExpanded}
+          onProductSelect={handleProductSelect}
+          onToggleView={handleToggleView}
+        />
+      )}
     </S.Container>
   )
 }
