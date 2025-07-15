@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import type { Gift } from '@/types/gift';
 
 const Card = styled.div`
   width: 180px;
@@ -49,12 +48,18 @@ const Price = styled.div`
   color: ${({ theme }) => theme.color.semantic.text.default};
 `;
 
-interface GiftItemProps extends Gift {
+interface GiftItemProps {
+  id: number;
+  name: string;
+  imageURL: string;
+  brand: string;
+  price: number; 
+  discountRate: number;
   rank: number;
   onClick: () => void;
 }
 
-const GiftItem = ({ name, imageURL, price, brandInfo, rank, onClick }: GiftItemProps) => {
+const GiftItem = ({ name, imageURL, brand, price, rank, onClick }: GiftItemProps) => {
   return (
     <div onClick={onClick} style={{ cursor: 'pointer' }}>
       <Card>
@@ -62,9 +67,9 @@ const GiftItem = ({ name, imageURL, price, brandInfo, rank, onClick }: GiftItemP
           <ProductImage src={imageURL} alt={name} />
           <RankBadge>{rank}</RankBadge>
         </ImageWrapper>
-        <Brand>{brandInfo.name}</Brand>
+        <Brand>{brand}</Brand>
         <ProductName>{name}</ProductName>
-        <Price>{price.sellingPrice.toLocaleString()} 원</Price>
+        <Price>{price.toLocaleString()} 원</Price>
       </Card>
     </div>
   );

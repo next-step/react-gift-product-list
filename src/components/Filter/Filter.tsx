@@ -1,6 +1,7 @@
 import Layout from '@/components/layout/Layout';
-import Gender from './Gender';
-import Category from './Category';
+import Gender from '@/components/filter/Gender'
+import Category from '@/components/filter/Category';
+import GiftGrid from '@/components/gift-ranking/GiftGrid';
 import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
 
@@ -32,6 +33,7 @@ const Filter = () => {
       <Title>실시간 급상승 선물랭킹</Title>
       <Gender selectedGender={selectedGender} onChange={handleGenderChange} />
       <Category selectedCategory={selectedCategory} onChange={handleCategoryChange} />
+      <GiftGrid gender={selectedGender} category={selectedCategory} />
     </Layout>
   );
 };
