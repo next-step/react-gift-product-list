@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import { get } from "@/services/request";
+import { useFetch } from "@/hooks/useFetch";
 
 type Theme = {
   themeId: number;
@@ -9,31 +8,8 @@ type Theme = {
 };
 
 export default function Category() {
-  const [categories, setCategories] = useState<Theme[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-  const fetchThemes = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      const res = await get<{ data: Theme[] }>("/themes");
-      if (Array.isArray(res.data)) {
-        setCategories(res.data);
-      } else {
-        setError(true);
-      }
-    } catch (err) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchThemes();
-}, []);
-
+  const { data, loading, error } = useFetch<Theme[]>("/themes");
+  const categories = data ?? []; // data가 null인 경우 방지
 
   if (loading) return <div>로딩 중...</div>;
   if (error || categories.length === 0) return null; // 데이터 없거나 에러면 렌더링 안함

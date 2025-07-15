@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Spacing from "./Spacing";
 import { get } from "@/services/request";
+import { useFetch } from "@/hooks/useFetch";
 
 const genderOptions = [
   { label: "ALL", icon: "ALL", value: "ALL" },
@@ -44,39 +45,6 @@ export default function TimeRanking() {
   );
   const [showAll, setShowAll] = useState(false);
 
-  const [rankings, setRankings] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchRanking = async () => {
-      setLoading(true);
-      setError(false);
-      try {
-        const [data] = await Promise.all([
-          get<{ data: Product[] }>("/products/ranking", {
-            queryParams: {
-              targetType: searchTargetType(selectedGender),
-              rankType: searchRankType(selectedRankType),
-            },
-          }),
-          new Promise((resolve) => setTimeout(resolve, 300)),
-        ]);
-        if (Array.isArray(data.data)) {
-          setRankings(data.data);
-        } else {
-          setError(true);
-        }
-      } catch (err) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRanking();
-  }, [selectedGender, selectedRankType]);
-
   const searchTargetType = (gender: string): TargetType => {
     switch (gender) {
       case "여성":
@@ -100,6 +68,17 @@ export default function TimeRanking() {
         return "MANY_WISH";
     }
   };
+
+  const {
+    data,
+    loading,
+    error,
+  } = useFetch<Product[]>("/products/ranking", {
+    targetType: searchTargetType(selectedGender),
+    rankType: searchRankType(selectedRankType),
+  });
+  
+  const rankings = data ?? []; // ranking이 nulld인 경우 방지
 
   const changeGender = (value: Gender) => {
     setSelectedGender(value);
