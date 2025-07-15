@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import Loading from "@/components/common/Loading";
+import useFetch from "@/hooks/useFetch";
 
 interface ThemesData {
   data: Themes[];
@@ -11,38 +11,19 @@ interface Themes {
   name: string;
   image: string;
 }
-interface FetchState<T> {
-  isLoading: boolean;
-  isError: boolean;
-  data: T | null;
-}
 
 const Category = () => {
-  const [fetchState, setFetchState] = useState<FetchState<ThemesData>>({
-    isLoading: true,
-    isError: false,
-    data: null,
-  });
+  const { fetchState, fetchData } = useFetch<ThemesData>();
 
   useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const response = await axios.get<ThemesData>("http://localhost:3000/api/themes");
-        setFetchState({ isLoading: false, isError: false, data: response.data });
-      } catch (error) {
-        console.error("Error fetching themes data:", error);
-        setFetchState({ isLoading: false, isError: true, data: null });
-      }
-    };
-
-    fetchThemes();
+    fetchData("/api/themes");
   }, []);
 
   if (fetchState.isLoading) {
     return (
       <Container>
         <Title>선물 테마</Title>
-        <Loading height="240px" />
+        <Loading height="238px" />
       </Container>
     );
   }
