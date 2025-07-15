@@ -26,8 +26,9 @@ export const Item = styled.div`
 `
 
 export const ItemImage = styled.img`
-  width: ${theme.spacing[12]};
-  height: ${theme.spacing[12]};
+  width: ${theme.spacing[13]};
+  height: ${theme.spacing[13]};
+  border-radius: ${theme.spacing[4]};
 `
 
 export const ItemName = styled.p`

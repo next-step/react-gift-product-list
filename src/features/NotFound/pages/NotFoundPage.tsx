@@ -1,7 +1,13 @@
 import NotFound from '@/features/NotFound/components/NotFound'
+import TopNavigationBar from '@/component/TopNavigationBar/TopNavigationBar'
 
 const NotFoundPage = () => {
-  return <NotFound />
+  return (
+    <>
+      <TopNavigationBar />
+      <NotFound />
+    </>
+  )
 }
 
 export default NotFoundPage
