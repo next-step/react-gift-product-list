@@ -1,18 +1,18 @@
 import styled from "@emotion/styled";
 
-type GiftPersonTypeProps = {
+type GiftTargetTypeProps = {
   icon: string;
   name: string;
   selected: boolean;
   onClick: () => void;
 };
 
-const GiftPersonType = ({
+const GiftTargetType = ({
   icon,
   name,
   selected,
   onClick,
-}: GiftPersonTypeProps) => {
+}: GiftTargetTypeProps) => {
   return (
     <Flex onClick={onClick}>
       <Icon selected={selected}>{icon}</Icon>
@@ -21,7 +21,7 @@ const GiftPersonType = ({
   );
 };
 
-export default GiftPersonType;
+export default GiftTargetType;
 
 const Flex = styled.div`
   width: 58px;
