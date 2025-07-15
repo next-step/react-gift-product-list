@@ -40,30 +40,6 @@ export const LoadingContainer = styled.div`
   margin-bottom: 124px;
 `;
 
-export const LoadingSpinner = styled.div`
-  width: ${({ theme }) => theme.spacing[10]};
-  height: ${({ theme }) => theme.spacing[10]};
-  border-top: ${({ theme }) => theme.spacing[1]} solid
-    ${({ theme }) => theme.colors.gray[800]};
-  border-bottom: ${({ theme }) => theme.spacing[1]} solid
-    ${({ theme }) => theme.colors.gray[800]};
-  border-left: ${({ theme }) => theme.spacing[1]} solid
-    ${({ theme }) => theme.colors.gray[0]};
-  border-right: ${({ theme }) => theme.spacing[1]} solid
-    ${({ theme }) => theme.colors.gray[0]};
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
 export const ErrorContainer = styled.div`
   display: flex;
   justify-content: center;

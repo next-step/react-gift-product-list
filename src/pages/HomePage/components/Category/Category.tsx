@@ -5,7 +5,6 @@ import {
   ErrorMessage,
   GiftThemeSection,
   LoadingContainer,
-  LoadingSpinner,
   SectionHeader,
   SectionTitle,
   ThemeGrid,
@@ -13,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import type { FetchState } from "@/types/FetchState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface GiftTheme {
   themeId: number;

@@ -11,12 +11,13 @@ import {
   MainTabButton,
   TabIconContainer,
   TabLabel,
-  MoreInfoWrapper,
-  MoreInfo,
+  LoadingContainer,
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
 import axios from "axios";
+import type { FetchState } from "@/types/FetchState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const TARGET_TYPE = ["ALL", "FEMALE", "MALE", "TEEN"];
 const RANK_TYPE = ["MANY_WISH", "MANY_RECEIVE", "MANY_WISH_RECEIVE"];
@@ -24,19 +25,38 @@ const RANK_TYPE = ["MANY_WISH", "MANY_RECEIVE", "MANY_WISH_RECEIVE"];
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
   const [subTabIdx, setSubTabIdx] = useSubTab();
-  const [data, setData] = useState<TrendingGiftsType[]>([]);
+  const [fetchState, setFetchState] = useState<FetchState<TrendingGiftsType>>({
+    data: null,
+    isLoading: true,
+    isError: false,
+  });
 
   useEffect(() => {
     const fetchTrendingGifts = async () => {
+      setFetchState({
+        data: null,
+        isLoading: true,
+        isError: false,
+      });
+
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking?targetType=${TARGET_TYPE[mainTabIdx]}&rankType=${RANK_TYPE[subTabIdx]}`
         );
         const trendingGifts = response.data.data;
-        console.log(trendingGifts);
-        setData(trendingGifts);
+
+        setFetchState({
+          data: trendingGifts,
+          isLoading: false,
+          isError: false,
+        });
       } catch (error) {
         console.error("실시간 급상승 선물랭킹 데이터 로딩 실패", error);
+        setFetchState({
+          data: null,
+          isLoading: false,
+          isError: true,
+        });
       }
     };
 
@@ -59,13 +79,15 @@ function TrendingGiftsContent() {
         ))}
       </TabsWrapper>
 
-      <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
-        <ProductGrid products={data} />
-      </TabContentWrapper>
-
-      <MoreInfoWrapper>
-        <MoreInfo>{TRENDING_GIFTS_LABELS.MORE_INFO}</MoreInfo>
-      </MoreInfoWrapper>
+      {fetchState.isLoading ? (
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
+      ) : (
+        <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
+          <ProductGrid products={fetchState.data || []} />
+        </TabContentWrapper>
+      )}
     </TrendingGiftsSection>
   );
 }

@@ -82,3 +82,11 @@ export const TabLabel = styled.p<{ isSelected: boolean }>`
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.colors.blue[700] : theme.colors.gray[700]};
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 124px;
+  margin-bottom: 124px;
+`;
