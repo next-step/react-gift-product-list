@@ -1,17 +1,21 @@
 import styled from '@emotion/styled';
-import { mockCategories } from '@/data/categories';
+import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 
 const CategorySection = () => {
+  const { themes, isLoading, isError } = useCategoryThemes();
+
+  if (isLoading || isError || themes.length === 0) return null;
+
   return (
     <Section>
       <TitleWrapper>
         <Title>선물 테마</Title>
       </TitleWrapper>
       <Grid>
-        {mockCategories.map(category => (
-          <Item key={category.themeId}>
-            <CategoryImage src={category.image} alt={category.name} />
-            <CategoryText>{category.name}</CategoryText>
+        {themes.map(theme => (
+          <Item key={theme.themeId}>
+            <CategoryImage src={theme.image} alt={theme.name} />
+            <CategoryText>{theme.name}</CategoryText>
           </Item>
         ))}
       </Grid>
