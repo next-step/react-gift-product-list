@@ -16,11 +16,10 @@ const ThemeSection = () => {
     const fetchThemes = async () => {
       try {
         const res = await getThemes();
-        await new Promise((resolve) => setTimeout(resolve, 3000));
         setThemes(res.data.data);
       } catch (err) {
         console.error(err);
-        setError("테마를 불러오는 중 오류가 발생했습니다.");
+        setError("에러");
       } finally {
         setLoading(false);
       }
@@ -28,6 +27,10 @@ const ThemeSection = () => {
 
     fetchThemes();
   }, []);
+
+  if (error) {
+    return <></>;
+  }
 
   return (
     <SectionContainer>
@@ -40,8 +43,6 @@ const ThemeSection = () => {
           size={35}
           data-testid="loader"
         />
-      ) : error ? (
-        <p>{error}</p>
       ) : (
         <ThemeGrid>
           {themes.map((t) => (
