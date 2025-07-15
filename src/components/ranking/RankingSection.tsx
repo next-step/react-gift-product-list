@@ -1,13 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { css, useTheme } from "@emotion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { rankingList } from "@/mock/rankingList";
-import { RankingCard } from "@/components/ranking/RankingCard";
+import { RankingCard } from "./RankingCard";
 import type { ThemeType } from "@/styles/theme/theme";
-
-type GroupKey = "ALL" | "FEMALE" | "MALE" | "TEEN";
-type ActionKey = "WANT" | "GIVE" | "WISH";
+import { fetchRanking } from "@/api/ranking";
+import type { RankingItem } from "@/api/ranking";
 
 const GROUP_PARAM = "group";
 const ACTION_PARAM = "action";
@@ -20,27 +18,23 @@ const groupOptions = [
 ] as const;
 
 const actionOptions = [
-  { key: "WANT", label: "받고 싶어한" },
-  { key: "GIVE", label: "많이 선물한" },
-  { key: "WISH", label: "위시로 받은" },
+  { key: "MANY_WISH", label: "받고 싶어한" },
+  { key: "MANY_RECEIVE", label: "많이 선물한" },
+  { key: "MANY_WISH_RECEIVE", label: "위시로 받은" },
 ] as const;
-
-const isValidGroupKey = (value: string | null): value is GroupKey =>
-  groupOptions.some((opt) => opt.key === value);
-
-const isValidActionKey = (value: string | null): value is ActionKey =>
-  actionOptions.some((opt) => opt.key === value);
-
+type TargetType = (typeof groupOptions)[number]["key"];
+type RankType = (typeof actionOptions)[number]["key"];
 export const RankingSection = () => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const rawGroup = searchParams.get(GROUP_PARAM);
-  const rawAction = searchParams.get(ACTION_PARAM);
+  const group = (searchParams.get(GROUP_PARAM) || "ALL") as TargetType;
+const action = (searchParams.get(ACTION_PARAM) || "MANY_WISH") as RankType;
 
-  const selectedGroup: GroupKey = isValidGroupKey(rawGroup) ? rawGroup : "ALL";
-  const selectedAction: ActionKey = isValidActionKey(rawAction) ? rawAction : "WANT";
+  const [data, setData] = useState<RankingItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const updateParam = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -48,62 +42,97 @@ export const RankingSection = () => {
     setSearchParams(newParams);
   };
 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        setLoading(true);
+        const result = await fetchRanking({
+          targetType: group,
+          rankType: action,
+        });
+        setData(result);
+        setError(false);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
+  }, [group, action]);
+
   return (
     <section css={section(theme)}>
       <h3 css={title(theme)}>실시간 급상승 선물랭킹</h3>
 
       <div css={filterContainer(theme)}>
         <div css={groupFilterContainer(theme)}>
-          {groupOptions.map(({ key, label, icon }) => {
-            const isSelected = selectedGroup === key;
-            return (
-              <button
-                key={key}
-                css={groupButton}
-                onClick={() => updateParam(GROUP_PARAM, key)}
-              >
-                <div css={groupIcon(theme, isSelected)}>{icon}</div>
-                <p css={groupText(theme, isSelected)}>{label}</p>
-              </button>
-            );
-          })}
+          {groupOptions.map(({ key, label, icon }) => (
+            <button
+              key={key}
+              css={groupButton}
+              onClick={() => updateParam(GROUP_PARAM, key)}
+            >
+              <div css={groupIcon(theme, group === key)}>{icon}</div>
+              <p css={groupText(theme, group === key)}>{label}</p>
+            </button>
+          ))}
         </div>
 
         <div css={actionFilter(theme)}>
-          {actionOptions.map(({ key, label }) => {
-            const isSelected = selectedAction === key;
-            return (
-              <button
-                key={key}
-                css={actionButton(theme, isSelected)}
-                onClick={() => updateParam(ACTION_PARAM, key)}
-              >
-                {label}
-              </button>
-            );
-          })}
+          {actionOptions.map(({ key, label }) => (
+            <button
+              key={key}
+              css={actionButton(theme, action === key)}
+              onClick={() => updateParam(ACTION_PARAM, key)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div css={grid(theme)}>
-        {(isExpanded ? rankingList : rankingList.slice(0, 6)).map((item, idx) => (
-          <RankingCard
-            key={item.id}
-            rank={idx + 1}
-            id={item.id}
-            imageURL={item.imageURL}
-            brandName={item.brandInfo.name}
-            productName={item.name}
-            price={item.price.sellingPrice}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div css={grid(theme)}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      ) : error || data.length === 0 ? (
+        <EmptyState>상품이 없습니다.</EmptyState>
+      ) : (
+        <div css={grid(theme)}>
+          {(isExpanded ? data : data.slice(0, 6)).map((item, idx) => (
+            <RankingCard
+              key={item.id}
+              rank={idx + 1}
+              id={item.id}
+              imageURL={item.imageURL}
+              brandName={item.brandInfo.name}
+              productName={item.name}
+              price={item.price.sellingPrice}
+            />
+          ))}
+        </div>
+      )}
 
-      <button css={moreButton(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
-        <p>{isExpanded ? "접기" : "더보기"}</p>
-      </button>
+      {!loading && data.length > 6 && (
+        <button css={moreButton(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
+          <p>{isExpanded ? "접기" : "더보기"}</p>
+        </button>
+      )}
     </section>
   );
+};
+
+const SkeletonCard = () => {
+  const theme = useTheme();
+  return <div css={skeletonCard(theme)} />;
+};
+
+const EmptyState = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
+  return <div css={emptyState(theme)}>{children}</div>;
 };
 
 const section = (theme: ThemeType) => css`
@@ -112,7 +141,7 @@ const section = (theme: ThemeType) => css`
 `;
 
 const title = (theme: ThemeType) => css`
-  ${theme.typography.title1Bold}
+  ${theme.typography.title1Bold};
   color: ${theme.colors.textDefault};
   margin-bottom: ${theme.spacing.spacing4};
 `;
@@ -185,4 +214,18 @@ const moreButton = (theme: ThemeType) => css`
   cursor: pointer;
   ${theme.typography.body1Regular};
   color: ${theme.colors.textDefault};
+`;
+
+const skeletonCard = (theme: ThemeType) => css`
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background-color: ${theme.colors.gray300};
+`;
+
+const emptyState = (theme: ThemeType) => css`
+  text-align: center;
+  color: ${theme.colors.gray700};
+  ${theme.typography.body1Regular};
+  margin-top: 20px;
 `;
