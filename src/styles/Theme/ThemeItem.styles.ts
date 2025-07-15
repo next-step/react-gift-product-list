@@ -13,6 +13,7 @@ export const ThemeItemWrapper = styled.li`
 `;
 export const ThemeImage = styled.img`
   width: 50px;
+  border-radius: 15px;
   height: 50px;
 `;
 export const ThemeItemText = styled.span`
