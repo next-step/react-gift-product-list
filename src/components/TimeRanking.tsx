@@ -37,10 +37,10 @@ export default function TimeRanking() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [selectedGender, setSelectedGender] = useState(
-    () => searchParams.get("gender") || "ALL",
+    () => searchParams.get("gender") || "ALL"
   );
   const [selectedRankType, setSelectedRankType] = useState(
-    () => searchParams.get("rankType") || "받고 싶어한",
+    () => searchParams.get("rankType") || "받고 싶어한"
   );
   const [showAll, setShowAll] = useState(false);
 
@@ -62,7 +62,11 @@ export default function TimeRanking() {
           }),
           new Promise((resolve) => setTimeout(resolve, 300)),
         ]);
-        setRankings(data.data || []);
+        if (Array.isArray(data.data)) {
+          setRankings(data.data);
+        } else {
+          setError(true);
+        }
       } catch (err) {
         setError(true);
       } finally {

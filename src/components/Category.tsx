@@ -19,7 +19,11 @@ export default function Category() {
     setError(false);
     try {
       const res = await get<{ data: Theme[] }>("/themes");
-      setCategories(res.data|| []);
+      if (Array.isArray(res.data)) {
+        setCategories(res.data);
+      } else {
+        setError(true);
+      }
     } catch (err) {
       setError(true);
     } finally {
