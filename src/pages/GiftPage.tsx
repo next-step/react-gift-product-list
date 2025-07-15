@@ -24,7 +24,7 @@ export const GiftPage = () => {
       <FriendSelector onClick={() => console.log('선물할 친구 선택')} />
       {themesLoading ? (
         <Loading />
-      ) : themesError ? (
+      ) : themesError && themes.length === 0 ? (
         <div>테마 불러오기 실패</div>
       ) : (
         <CategoryGrid
