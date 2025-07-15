@@ -47,4 +47,6 @@ function MyPage() {
       )}
     </PageContainer>
   );
-} export default withAuth(MyPage);
+}
+const ProtectedMyPage = withAuth(MyPage);
+export default ProtectedMyPage;

@@ -50,8 +50,16 @@ function OrderPage() {
 
   const totalPrice = product?.price.sellingPrice * totalQuantity;
 
-  const onSubmit = (_data: FormData) => {
-    alert(`🎁 ${rank}등 상품 주문 완료!`);
+  const onSubmit = (data: FormData) => {
+    const receiverLines = data.receivers.map((r) => `- ${r.name} / ${r.phone} / 수량: ${r.quantity}`).join("\n");
+    const message = 
+`🎁 ${rank}등 상품 주문 완료!
+보낸 사람: ${data.sender}
+메시지: ${data.message}
+받는 사람 목록:
+${receiverLines}`;
+
+    alert(message);
     navigate("/");
   };
 
@@ -95,4 +103,6 @@ function OrderPage() {
       </form>
     </PageContainer>
   );
-} export default withAuth(OrderPage);
+}
+const ProtectedOrderPage = withAuth(OrderPage);
+export default ProtectedOrderPage;

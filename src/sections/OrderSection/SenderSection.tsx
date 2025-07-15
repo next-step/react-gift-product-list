@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import type { UseFormRegister } from "react-hook-form";
+import type { OrderFormData } from "@/utils/validateOrderSchema";
 
 const Section = styled.section`
   width: 100%;
@@ -28,7 +29,7 @@ const ErrorText = styled.p`
 `;
 
 interface Props {
-  register: UseFormRegister<any>;
+  register: UseFormRegister<OrderFormData>;
   error?: string;
   touched?: boolean;
 }
