@@ -5,7 +5,7 @@ import theme from '@/styles/theme/theme.ts'
 import App from './App.tsx';
 import 'pretendard/dist/web/static/pretendard.css'
 import { BrowserRouter } from "react-router";
-import { AuthProvider } from './contexts/AuthContext.tsx';
+import { AuthProvider } from '@/contexts/AuthProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
