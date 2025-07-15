@@ -26,7 +26,7 @@ export async function fetchThemes() {
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  await delay(1000);
+  await delay(1000); // For testing pending state rendering... remove on production
 
   return body.data;
 }

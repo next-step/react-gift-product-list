@@ -1,5 +1,5 @@
 const PROTOCOL = "http";
-const ENDPOINT = `localhost:3000`;
+const ENDPOINT = import.meta.env.VITE_REACT_GIFT_MOCK_SERVER_ENDPOINT;
 
 const API_SECTIONS = {
   LOGIN: `api/login`,
