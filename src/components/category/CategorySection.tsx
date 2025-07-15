@@ -4,8 +4,7 @@ import styled from "@emotion/styled";
 import { fetchThemes } from "@/api/theme";
 import type { Theme } from "@/api/theme";
 import { CategoryCard } from "@/components/category/CategoryCard";
-
-const SKELETON_CNT = 5;
+import { Spinner } from "@/components/common/Spinner";
 
 export const CategorySection = () => {
   const [themes, setThemes] = useState<Theme[]>([]);
@@ -29,11 +28,9 @@ export const CategorySection = () => {
 
   if (loading) {
     return (
-      <CategoryGrid>
-        {Array.from({ length: SKELETON_CNT }).map((_, i) => (
-          <SkeletonCard key={i} />
-        ))}
-      </CategoryGrid>
+      <LoadingWrapper>
+        <Spinner size={48} />
+      </LoadingWrapper>
     );
   }
 
@@ -50,20 +47,19 @@ export const CategorySection = () => {
   );
 };
 
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+`;
+
 const CategoryGrid = styled.section`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 20px 4px;
   padding: 20px 0;
-`;
-
-const SkeletonCard = styled.div`
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.gray300};
-  margin: 0 auto;
 `;
 
 const ErrorBanner = styled.div`

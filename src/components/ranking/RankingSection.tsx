@@ -1,11 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css, useTheme } from "@emotion/react";
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { RankingCard } from "./RankingCard";
 import type { ThemeType } from "@/styles/theme/theme";
 import { fetchRanking } from "@/api/ranking";
 import type { RankingItem } from "@/api/ranking";
+import { Spinner } from "@/components/common/Spinner";
 
 const GROUP_PARAM = "group";
 const ACTION_PARAM = "action";
@@ -22,15 +24,17 @@ const actionOptions = [
   { key: "MANY_RECEIVE", label: "많이 선물한" },
   { key: "MANY_WISH_RECEIVE", label: "위시로 받은" },
 ] as const;
+
 type TargetType = (typeof groupOptions)[number]["key"];
 type RankType = (typeof actionOptions)[number]["key"];
+
 export const RankingSection = () => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const group = (searchParams.get(GROUP_PARAM) || "ALL") as TargetType;
-const action = (searchParams.get(ACTION_PARAM) || "MANY_WISH") as RankType;
+  const action = (searchParams.get(ACTION_PARAM) || "MANY_WISH") as RankType;
 
   const [data, setData] = useState<RankingItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,11 +97,9 @@ const action = (searchParams.get(ACTION_PARAM) || "MANY_WISH") as RankType;
       </div>
 
       {loading ? (
-        <div css={grid(theme)}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
-        </div>
+        <LoadingWrapper>
+          <Spinner size={48} />
+        </LoadingWrapper>
       ) : error || data.length === 0 ? (
         <EmptyState>상품이 없습니다.</EmptyState>
       ) : (
@@ -125,15 +127,6 @@ const action = (searchParams.get(ACTION_PARAM) || "MANY_WISH") as RankType;
   );
 };
 
-const SkeletonCard = () => {
-  const theme = useTheme();
-  return <div css={skeletonCard(theme)} />;
-};
-
-const EmptyState = ({ children }: { children: React.ReactNode }) => {
-  const theme = useTheme();
-  return <div css={emptyState(theme)}>{children}</div>;
-};
 
 const section = (theme: ThemeType) => css`
   padding: ${theme.spacing.spacing4};
@@ -216,11 +209,11 @@ const moreButton = (theme: ThemeType) => css`
   color: ${theme.colors.textDefault};
 `;
 
-const skeletonCard = (theme: ThemeType) => css`
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  background-color: ${theme.colors.gray300};
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 0;
 `;
 
 const emptyState = (theme: ThemeType) => css`
@@ -229,3 +222,8 @@ const emptyState = (theme: ThemeType) => css`
   ${theme.typography.body1Regular};
   margin-top: 20px;
 `;
+
+const EmptyState = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
+  return <div css={emptyState(theme)}>{children}</div>;
+};
