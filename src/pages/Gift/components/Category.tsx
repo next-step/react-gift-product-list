@@ -24,7 +24,7 @@ const Category = () => {
     );
   }
 
-  if (fetchState.isError) {
+  if (fetchState.isError || fetchState.data?.data.length === 0) {
     return <></>;
   }
 
