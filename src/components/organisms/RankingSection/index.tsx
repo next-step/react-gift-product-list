@@ -4,7 +4,7 @@ import { genderItems, actionItems } from '@/data/ranking';
 import { getRankingProducts } from '@/lib/api';
 import { type RankingProduct, type TargetType, type RankType } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
-import { RankingItemCard } from '@/components';
+import { RankingItemCard, Loading, ErrorMessage } from '@/components';
 import * as S from './styles';
 
 const RankingSection = () => {
@@ -81,37 +81,32 @@ const RankingSection = () => {
         </S.ActionFilterContainer>
       </S.FilterContainer>
       
-      <S.Grid>
-        {fetchState.isLoading ? (
-          Array.from({ length: 6 }, (_, index) => (
-            <S.LoadingCard key={`loading-${index}`}>
-              <S.LoadingSpinner />
-              <span>Loading...</span>
-            </S.LoadingCard>
-          ))
-        ) : fetchState.isError ? (
-          <S.EmptyMessage>Error loading data.</S.EmptyMessage>
-        ) : rankingProducts.length === 0 ? (
-          <S.EmptyMessage>상품이 없습니다.</S.EmptyMessage>
-        ) : (
-          (isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
-            <RankingItemCard
-              key={item.id}
-              imageUrl={item.imageURL}
-              title={item.name}
-              subtitle={item.brandInfo.name}
-              price={item.price.sellingPrice}
-              rank={index + 1}
-              onClick={() => handleItemCardClick(item)}
-            />
-          ))
-        )}
-      </S.Grid>
+      {fetchState.isLoading ? (
+        <Loading height="400px" />
+      ) : fetchState.isError ? (
+        <ErrorMessage height="400px" />
+      ) : rankingProducts.length === 0 ? (
+        <S.EmptyMessage>상품이 없습니다.</S.EmptyMessage>
+      ) : (
+        <>
+          <S.Grid>
+            {(isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
+              <RankingItemCard
+                key={item.id}
+                imageUrl={item.imageURL}
+                title={item.name}
+                subtitle={item.brandInfo.name}
+                price={item.price.sellingPrice}
+                rank={index + 1}
+                onClick={() => handleItemCardClick(item)}
+              />
+            ))}
+          </S.Grid>
 
-      {!fetchState.isLoading && !fetchState.isError && rankingProducts.length > 0 && (
-        <S.MoreButton onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? '접기' : '더보기'}
-        </S.MoreButton>
+          <S.MoreButton onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? '접기' : '더보기'}
+          </S.MoreButton>
+        </>
       )}
     </S.Section>
   );
