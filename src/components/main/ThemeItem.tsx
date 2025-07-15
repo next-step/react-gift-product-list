@@ -14,6 +14,7 @@ const ThemeItemImage = styled.img({
   width: "50px",
   height: "50px",
   objectFit: "contain",
+  borderRadius: "18px",
 });
 
 const ThemeItemTitle = styled.p(({ theme }) => ({
