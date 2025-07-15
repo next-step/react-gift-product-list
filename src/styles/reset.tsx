@@ -135,16 +135,13 @@ const reset = (theme: Theme) => css`
     color: inherit;
   }
 
-  body {
-    font-family: "Pretendard", sans-serif;
-    color: ${theme.colors.textDefault};
-    background-color: ${theme.colors.gray100};
-  }
-
   html,
   body {
     height: 100%;
     overflow: hidden;
+    font-family: "Pretendard", sans-serif;
+    color: ${theme.colors.textDefault};
+    background-color: ${theme.colors.gray100};
   }
 
   #root {

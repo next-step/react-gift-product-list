@@ -45,7 +45,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-itmes: center;
   justify-content: flex-start;
-  backgorund-color: ${({ theme }) => theme.colors.backgroundDefault};
+  background-color: ${({ theme }) => theme.colors.backgroundDefault};
 `;
 const HomeContainer = styled.main`
   width: 100%;
