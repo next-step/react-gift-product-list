@@ -80,7 +80,7 @@ function CategoryList({ onHide }: { onHide?: () => void }) {
         setLoading(false);
         if (onHide) onHide();
       });
-  }, []);
+  }, [onHide]);
   return (
     <Box>
       <Title>선물 테마</Title>
