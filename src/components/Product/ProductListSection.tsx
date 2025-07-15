@@ -23,10 +23,6 @@ export function ProductListSection() {
     return showAll ? products : products.slice(0, 6)
   }, [showAll, products])
 
-  if (loading) return <p>선물랭킹 로딩중...</p>
-  if (error || !products || products.length === 0)
-    return <p>상품 목록이 없습니다.</p>
-
   return (
     <SectionWrapper>
       <SectionTitle>실시간 급상승 선물랭킹</SectionTitle>
@@ -55,15 +51,25 @@ export function ProductListSection() {
         ))}
       </SubTab>
 
-      <ProductListWrapper>
-        {displayedProducts.map((product, index) => (
-          <ProductItem key={product.id} {...product} rank={index + 1} />
-        ))}
-      </ProductListWrapper>
+      {loading && <p>선물랭킹 로딩중...</p>}
 
-      <ToggleButton onClick={() => setShowAll(!showAll)}>
-        {showAll ? '접기' : '더보기'}
-      </ToggleButton>
+      {!loading && (error || !products || products.length === 0) && (
+        <p>상품 목록이 없습니다.</p>
+      )}
+
+      {!loading && !error && products.length > 0 && (
+        <>
+          <ProductListWrapper>
+            {displayedProducts.map((product, index) => (
+              <ProductItem key={product.id} {...product} rank={index + 1} />
+            ))}
+          </ProductListWrapper>
+
+          <ToggleButton onClick={() => setShowAll(!showAll)}>
+            {showAll ? '접기' : '더보기'}
+          </ToggleButton>
+        </>
+      )}
     </SectionWrapper>
   )
 }
