@@ -100,7 +100,7 @@ function GiftCategorySelectorItemBox() {
   // console.log(themes);
   return (
     <GiGiftCategorySelectorItemBoxWrapper>
-      {isLoding ? <Spinner></Spinner> : <GiftCategorySelectorItemBoxGrid>
+      {!isError && (isLoding ? <Spinner/> : <GiftCategorySelectorItemBoxGrid>
                 {themes.map((item) => (
                   <GiftCategorySelectorItemWrapper key={item.themeId}>
                     <GiftCategorySelectorItemImg
@@ -111,7 +111,7 @@ function GiftCategorySelectorItemBox() {
                       {item.name}
                     </GiftCategorySelectorItemText>
                   </GiftCategorySelectorItemWrapper>))}
-      </GiftCategorySelectorItemBoxGrid>}
+      </GiftCategorySelectorItemBoxGrid>)}
     </GiGiftCategorySelectorItemBoxWrapper>
   );
 }
