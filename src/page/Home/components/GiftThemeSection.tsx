@@ -1,14 +1,48 @@
 import styled from '@emotion/styled';
-import { giftDatas } from '@/data/giftDatas';
+// import { giftDatas } from '@/data/giftDatas';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { API_BASE_URL } from '@/api';
+import Loading from '@/components/Loading';
+
+interface ThemeInfo {
+  themeId: number;
+  name: string;
+  image: string;
+}
+
+interface ThemesResponse {
+  data: ThemeInfo[];
+}
 
 const GiftThemeSection = () => {
+  const [themes, setThemes] = useState<ThemeInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get<ThemesResponse>(`${API_BASE_URL}/api/themes`);
+        const { data } = response;
+        setThemes(data.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <Loading />;
+
   return (
     <section>
       <TitleContainer>
         <Title>선물 테마</Title>
       </TitleContainer>
       <Container>
-        {giftDatas.map(theme => (
+        {themes.map(theme => (
           <Theme key={theme.themeId}>
             <Image alt={theme.name} src={theme.image} />
             <Text>{theme.name}</Text>
