@@ -1,4 +1,4 @@
-# react-gift-product
+# react-gift-product-list
 
 ## 구현할 기능 목록
 [ ] 상품 목록 - API 연동 기초
