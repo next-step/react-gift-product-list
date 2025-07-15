@@ -110,18 +110,21 @@ const GiftRankingSection = () => {
       </CatContainer>
 
       <RankContainer>
-        {rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
-          <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
-            <RankNumber>{index + 1}</RankNumber>
-
-            <ItemContainer>
-              <Image src={rank.imageURL} alt={rank.name} />
-              <ItemName>{rank.name}</ItemName>
-              <ItemSubName>{rank.name}</ItemSubName>
-              <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
-            </ItemContainer>
-          </RankItem>
-        ))}
+        {rankingDatas.length === 0 ? (
+          <NoDataMessage>상품 목록이 없습니다.</NoDataMessage>
+        ) : (
+          rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
+            <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
+              <RankNumber>{index + 1}</RankNumber>
+              <ItemContainer>
+                <Image src={rank.imageURL} alt={rank.name} />
+                <ItemName>{rank.name}</ItemName>
+                <ItemSubName>{rank.name}</ItemSubName>
+                <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
+              </ItemContainer>
+            </RankItem>
+          ))
+        )}
       </RankContainer>
 
       <ToggleButton onClick={toggleCollapse}>{isCollapsed ? '펼치기' : '접기'}</ToggleButton>
@@ -130,6 +133,14 @@ const GiftRankingSection = () => {
 };
 
 export default GiftRankingSection;
+
+const NoDataMessage = styled.div`
+  grid-column: 1 / -1;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.semantic.text.sub};
+  padding: 2rem 0;
+  font-size: 1.1rem;
+`;
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
