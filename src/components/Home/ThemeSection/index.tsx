@@ -1,11 +1,10 @@
 import type { ThemeType } from "@/types/theme";
 import { useState, useEffect } from "react";
-import type { CSSProperties } from "react";
 import { SectionContainer, SectionTitle } from "../../Common/SectionLayout";
 import { getThemes } from "@/api/themes";
 import styled from "@emotion/styled";
 import ThemeItem from "./ThemeItem";
-import { ClipLoader } from "react-spinners";
+import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 
 const ThemeSection = () => {
   const [themes, setThemes] = useState<ThemeType[]>([]);
@@ -36,13 +35,7 @@ const ThemeSection = () => {
     <SectionContainer>
       <SectionTitle>선물 테마</SectionTitle>
       {loading ? (
-        <ClipLoader
-          color="#000000"
-          loading={loading}
-          cssOverride={override}
-          size={35}
-          data-testid="loader"
-        />
+        <LoadingSpinner color="#ffffff" loading={loading} size={35} />
       ) : (
         <ThemeGrid>
           {themes.map((t) => (
@@ -62,8 +55,3 @@ const ThemeGrid = styled.div`
   gap: ${({ theme }) => theme.spacing.spacing4};
   margin-top: ${({ theme }) => theme.spacing.spacing4};
 `;
-
-const override: CSSProperties = {
-  display: "block",
-  margin: "100px auto",
-};
