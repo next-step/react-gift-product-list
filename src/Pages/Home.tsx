@@ -1,43 +1,14 @@
 import Header from "@/components/Common/Header";
 import styled from "@emotion/styled";
 import { FiPlus } from "react-icons/fi";
-import ThemeItem from "@/components/ThemeItem";
-import type { ThemeType } from "@/types/theme";
 import RankingSection from "@/components/RankingSection";
-import {
-  SectionContainer,
-  SectionTitle,
-} from "@/components/Common/SectionLayout";
 import { parseNickname } from "@/utils/parseNickName";
 import { useAuthContext } from "@/contexts/useAuthContext";
-import { getThemes } from "@/api/themes";
-import { useEffect, useState } from "react";
+import ThemeSection from "@/components/ThemeSection";
 
 const Home = () => {
   const { user } = useAuthContext();
   const nickname = user ? parseNickname(user.email) : "";
-  const [themes, setThemes] = useState<ThemeType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const res = await getThemes();
-        setThemes(res.data.data);
-      } catch (err) {
-        console.error(err);
-        setError("테마를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchThemes();
-  }, []);
-
-  if (loading) return <p>불러오는 중...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <>
@@ -51,19 +22,7 @@ const Home = () => {
             </SelectFriendText>
           </SelectFriend>
         </SelectFriendSection>
-        <SectionContainer>
-          <SectionTitle>선물 테마</SectionTitle>
-          <ThemeGrid>
-            {themes.map((theme) => (
-              <ThemeItem
-                key={theme.themeId}
-                name={theme.name}
-                image={theme.image}
-              />
-            ))}
-          </ThemeGrid>
-        </SectionContainer>
-
+        <ThemeSection />
         <CheerBannerSection>
           <CheerBanner>
             <CheerBannerLabel>카카오테크 캠퍼스 3기 여러분</CheerBannerLabel>
@@ -127,13 +86,6 @@ const SelectFriendText = styled.p`
     font-weight: ${theme.font.subtitle1Bold.weight};
     line-height: ${theme.font.subtitle1Bold.lineHeight};
   `}
-`;
-
-const ThemeGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: ${({ theme }) => theme.spacing.spacing4};
-  margin-top: ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const CheerBannerSection = styled.section`
