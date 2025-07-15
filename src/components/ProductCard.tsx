@@ -23,11 +23,11 @@ const Card = styled.div`
   position: relative;
 `;
 
-const RankBadge = styled.div`
+const RankBadge = styled.div<{ isTop3: boolean }>`
   position: absolute;
   top: -8px;
   left: -8px;
-  background-color: ${({ theme }) => theme.color.red.red700};
+  background-color: ${({ theme, isTop3 }) => isTop3 ? theme.color.red.red700 : theme.color.gray.gray500};
   color: white;
   font-weight: bold;
   padding: 4px 8px;
@@ -62,7 +62,7 @@ export default function ProductCard({ item, rank }: ProductCardProps) {
   }
   return (
     <Card onClick={handleClick}>
-      {rank !== undefined && <RankBadge>{rank}</RankBadge>}
+      {rank !== undefined && <RankBadge isTop3={rank <= 3}>{rank}</RankBadge>}
       <Image src={item.imageURL} alt={item.name} />
       <Brand>{item.brandInfo.name}</Brand>
       <Name>{item.name}</Name>
