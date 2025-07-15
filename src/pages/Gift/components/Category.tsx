@@ -2,14 +2,10 @@ import styled from "@emotion/styled";
 import { useEffect } from "react";
 import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
+import type { CategoryType } from "@/types/CategoryType";
 
 interface ThemesData {
-  data: Themes[];
-}
-interface Themes {
-  themeId: number;
-  name: string;
-  image: string;
+  data: CategoryType[];
 }
 
 const Category = () => {
