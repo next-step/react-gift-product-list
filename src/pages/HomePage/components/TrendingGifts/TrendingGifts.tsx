@@ -76,13 +76,16 @@ function TrendingGiftsContent() {
           </ErrorMessage>
         </ErrorContainer>
       );
-    } else if (fetchState.isLoading) {
+    }
+
+    if (fetchState.isLoading) {
       return (
         <LoadingContainer>
           <LoadingSpinner />
         </LoadingContainer>
       );
     }
+
     return <ProductGrid products={fetchState.data || []} />;
   };
 
