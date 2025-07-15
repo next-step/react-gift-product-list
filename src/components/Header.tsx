@@ -41,6 +41,8 @@ const IconButton = styled.button`
   align-items: center;
 `;
 
+const iconButtonStyle = { width: 32, justifyContent: 'flex-start' };
+
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,7 +65,7 @@ function Header() {
       <IconButton
         onClick={() => navigate(-1)}
         aria-label="이전 페이지"
-        style={{ width: 32, justifyContent: 'flex-start' }}
+        style={iconButtonStyle}
       >
         <FiChevronLeft size={28} />
       </IconButton>
