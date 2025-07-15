@@ -71,7 +71,11 @@ const RankingSection = () => {
   }, [targetType, rankType]);
 
   if (error) {
-    return <></>;
+    return (
+      <ErrorMessage>
+        <>상품이 없습니다.</>
+      </ErrorMessage>
+    );
   }
 
   return (
@@ -130,4 +134,13 @@ const MoreButton = styled.button`
   }
 
   margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 300px;
+  backgorund-color: ${({ theme }) => theme.colors.backgroundDefault};
 `;
