@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import { categoryData } from "@/mocks/categoryData";
 import CategoryCard from "@/components/CategoryCard";
+import { useThemes } from "@/hooks/useThemes";
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing5} 0;
@@ -18,13 +18,21 @@ const Grid = styled.div`
   gap: ${({ theme }) => theme.spacing.spacing3};
 `;
 
+const Message = styled.p`
+  text-align: center;
+  margin-top: ${({ theme }) => theme.spacing.spacing4};
+`;
+
 export default function CategorySection() {
+  const { themes, loading, error } = useThemes();
+  if (loading) return <Message>로딩 중...</Message>;
+  if (error || !themes?.length) return null;
 
   return (
     <Section>
       <SectionTitle>선물 테마</SectionTitle>
       <Grid>
-        {categoryData.map(({ themeId, name, image }) => (
+        {themes.map(({ themeId, name, image }) => (
           <CategoryCard key={themeId} name={name} image={image} />
         ))}
       </Grid>
