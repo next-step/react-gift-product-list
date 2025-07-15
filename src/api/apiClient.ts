@@ -1,5 +1,5 @@
 import axios from "axios";
-import { attachInterceptors } from "./interceptors";
+import { attachInterceptors } from "@/api/interceptors";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
