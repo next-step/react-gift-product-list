@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import styled from '@emotion/styled';
 import Header from '@/components/Header';
+import { useEffect } from 'react';
 
 const Container = styled.div`
   max-width: 720px;
@@ -44,10 +45,13 @@ const Button = styled.button`
 function MyPage() {
   const { user, logout } = useAuth();
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/login';
+    }
+  }, [user]);
+
+  if (!user) return null;
 
   return (
     <>
