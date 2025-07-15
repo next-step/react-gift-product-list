@@ -143,6 +143,8 @@ function ProductList() {
         <div>로딩 중 ...</div>
       ) : error ? (
         <div>{error}</div>
+      ) : visibleProducts.length === 0 ? (
+        <div>상품 목록이 없습니다.</div>
       ) : (
         <>
           <List>
