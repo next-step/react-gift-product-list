@@ -1,30 +1,33 @@
 import Category from '@/components/Category';
 import { CategoryContainerStyle } from '@/styles/Category/CategoryContainer.styles';
 import { CATEGORY_TYPE } from '@/types/category';
-import useRanking from '@/hooks/useRanking';
+import type { CategoryType } from '@/types/category';
 
-function CategoryContainer() {
-  const { selectCategory, handleCategoryClick } = useRanking();
+type CategoryContainerProps = {
+  selectedCategory: CategoryType;
+  handleCategoryClick: (category: CategoryType) => void;
+};
 
+function CategoryContainer({ selectedCategory, handleCategoryClick }: CategoryContainerProps) {
   return (
     <CategoryContainerStyle>
       <Category
         onClick={() => handleCategoryClick(CATEGORY_TYPE.MANY_WISH)}
-        category="MANY_WISH"
+        category={CATEGORY_TYPE.MANY_WISH}
         categoryName="받고 싶어한"
-        selectedCategory={selectCategory}
+        selectedCategory={selectedCategory}
       />
       <Category
         onClick={() => handleCategoryClick(CATEGORY_TYPE.MANY_RECEIVE)}
-        category="MANY_RECEIVE"
+        category={CATEGORY_TYPE.MANY_RECEIVE}
         categoryName="많이 선물한"
-        selectedCategory={selectCategory}
+        selectedCategory={selectedCategory}
       />
       <Category
         onClick={() => handleCategoryClick(CATEGORY_TYPE.MANY_WISH_RECEIVE)}
-        category="MANY_WISH_RECEIVE"
+        category={CATEGORY_TYPE.MANY_WISH_RECEIVE}
         categoryName="위시로 받은"
-        selectedCategory={selectCategory}
+        selectedCategory={selectedCategory}
       />
     </CategoryContainerStyle>
   );

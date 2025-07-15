@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ThemeItem from '@/components/ThemeItem';
-import type { Themetype } from '@/types/DTO/theme';
+import type { Themetype } from '@/types/DTO/themeDTO';
 import { ThemeContainerWrapper, ThemeTitle, Message } from '@/styles/Theme/ThemeContainer.styles';
 import { getThemes } from '@/apis/theme';
 import axios from 'axios';

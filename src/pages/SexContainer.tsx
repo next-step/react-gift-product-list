@@ -17,16 +17,16 @@ function SexContainer({ selectedSex, handleSelect }: SexContainerProps) {
         onClick={() => handleSelect(SEX_TYPE.ALL)}
       />
       <SexItem
-        sex={SEX_TYPE.MALE}
-        sexName={'남성'}
-        selectSex={selectedSex}
-        onClick={() => handleSelect(SEX_TYPE.MALE)}
-      />
-      <SexItem
         sex={SEX_TYPE.FEMALE}
         sexName={'여성'}
         selectSex={selectedSex}
         onClick={() => handleSelect(SEX_TYPE.FEMALE)}
+      />
+      <SexItem
+        sex={SEX_TYPE.MALE}
+        sexName={'남성'}
+        selectSex={selectedSex}
+        onClick={() => handleSelect(SEX_TYPE.MALE)}
       />
       <SexItem
         sex={SEX_TYPE.TEEN}
