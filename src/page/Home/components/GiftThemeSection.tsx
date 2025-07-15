@@ -34,21 +34,25 @@ const GiftThemeSection = () => {
     fetchData();
   }, []);
 
-  if (loading) return <Loading />;
+  // if (loading) return <Loading />;
 
   return (
     <section>
       <TitleContainer>
         <Title>선물 테마</Title>
       </TitleContainer>
-      <Container>
-        {themes.map(theme => (
-          <Theme key={theme.themeId}>
-            <Image alt={theme.name} src={theme.image} />
-            <Text>{theme.name}</Text>
-          </Theme>
-        ))}
-      </Container>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Container>
+          {themes.map(theme => (
+            <Theme key={theme.themeId}>
+              <Image alt={theme.name} src={theme.image} />
+              <Text>{theme.name}</Text>
+            </Theme>
+          ))}
+        </Container>
+      )}
     </section>
   );
 };

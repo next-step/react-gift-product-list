@@ -53,7 +53,6 @@ const GiftRankingSection = () => {
           `${API_BASE_URL}/api/products/ranking?targetType=${activeGenerationButton}&rankType=${activeFilterButton}`
         );
         const { data } = response;
-        console.log(data.data);
         setrankingDatas(data.data);
       } catch (error) {
         console.error(error);
@@ -75,8 +74,6 @@ const GiftRankingSection = () => {
       navigate(ROUTES.LOGIN);
     }
   };
-
-  if (loading) return <Loading />;
 
   return (
     <Section>
@@ -109,23 +106,27 @@ const GiftRankingSection = () => {
         </FilterGroup>
       </CatContainer>
 
-      <RankContainer>
-        {rankingDatas.length === 0 ? (
-          <NoDataMessage>상품 목록이 없습니다.</NoDataMessage>
-        ) : (
-          rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
-            <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
-              <RankNumber>{index + 1}</RankNumber>
-              <ItemContainer>
-                <Image src={rank.imageURL} alt={rank.name} />
-                <ItemName>{rank.name}</ItemName>
-                <ItemSubName>{rank.name}</ItemSubName>
-                <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
-              </ItemContainer>
-            </RankItem>
-          ))
-        )}
-      </RankContainer>
+      {loading ? (
+        <Loading />
+      ) : (
+        <RankContainer>
+          {rankingDatas.length === 0 ? (
+            <NoDataMessage>상품 목록이 없습니다.</NoDataMessage>
+          ) : (
+            rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
+              <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
+                <RankNumber>{index + 1}</RankNumber>
+                <ItemContainer>
+                  <Image src={rank.imageURL} alt={rank.name} />
+                  <ItemName>{rank.name}</ItemName>
+                  <ItemSubName>{rank.name}</ItemSubName>
+                  <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
+                </ItemContainer>
+              </RankItem>
+            ))
+          )}
+        </RankContainer>
+      )}
 
       <ToggleButton onClick={toggleCollapse}>{isCollapsed ? '펼치기' : '접기'}</ToggleButton>
     </Section>
