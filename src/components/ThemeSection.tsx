@@ -13,7 +13,7 @@ type ThemeItem = {
   name: string;
 };
 
-const Category = () => {
+const ThemeSection = () => {
   const theme = useTheme();
   const [themeData, setThemeData] = useState<ThemeItem[] | null>(null);
   const [isThemeLoading, setIsThemeLoading] = useState(true);
@@ -103,4 +103,4 @@ const spinnerWrapperStyle = css`
   min-height: 200px;
 `;
 
-export default Category;
+export default ThemeSection;
