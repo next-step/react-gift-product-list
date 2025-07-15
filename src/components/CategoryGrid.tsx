@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
-import { categories } from '@/data/categories';
 import { palette } from '@/styles/theme';
+import type { Category } from '@/types';
 
 const gridStyle = css`
   display: grid;
@@ -23,9 +23,13 @@ const itemStyle = css`
   }
 `;
 
-export const CategoryGrid = () => (
+interface Props {
+  items: Category[];
+}
+
+export const CategoryGrid = ({ items }: Props) => (
   <div css={gridStyle}>
-    {categories.map((cat) => (
+    {items.map((cat) => (
       <button key={cat.themeId} css={itemStyle} aria-label={cat.name}>
         <img src={cat.image} alt={cat.name} />
         {cat.name}

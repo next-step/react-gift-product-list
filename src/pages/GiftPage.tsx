@@ -10,24 +10,24 @@ import {
   type SortFilter,
 } from '@/components/RankingTabs';
 import { RankingGrid } from '@/components/RankingGrid';
-
-import {
-  rankingAll,
-  rankingFemale,
-  rankingMale,
-  rankingTeen,
-} from '@/data/rankings';
-import type { GiftItem } from '@/types'; 
-import { useAuth } from '@/contexts/AuthContext'; 
-import { useNavigate } from 'react-router-dom'; 
-
-type RankingItem = (typeof rankingAll)[number];
+import type { GiftItem } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { getThemes, getRanking } from '@/api/services';
+import { useFetch } from '@/hooks/useFetch';
 
 export const GiftPage = () => {
   const [gender, setGender] = useState<GenderFilter>('ALL');
   const [sort, setSort] = useState<SortFilter>('GIVE');
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+
+  const { data: categories, isLoading: isCategoriesLoading, error: categoriesError } = useFetch(getThemes);
+
+  const { data: rankingList, isLoading: isRankingLoading, error: rankingError } = useFetch(
+    () => getRanking(gender, sort),
+    [gender, sort]
+  );
 
   const handleCardClick = (item: GiftItem) => {
     if (!isLoggedIn) {
@@ -43,38 +43,18 @@ export const GiftPage = () => {
     setSort(s);
   };
 
-  const genderMap: Record<GenderFilter, RankingItem[]> = {
-    ALL: rankingAll,
-    FEMALE: rankingFemale,
-    MALE: rankingMale,
-    TEEN: rankingTeen,
-  };
-
-  const base = genderMap[gender];
-  
-  type RankField = 'give' | 'want' | 'receive';
-  type RankStatItem = RankingItem & Record<RankField, number>; 
-
-  const sortFieldMap: Record<SortFilter, RankField> = {
-    GIVE: 'give',
-    WANT: 'want',
-    RECEIVE: 'receive',
-  };
-  const key = sortFieldMap[sort];
-
-  const list = ([...base] as RankStatItem[]).sort(
-    (a, b) => b[key] - a[key]
-  );
-
-
   return (
     <Layout>
       <NavBar />
       <FriendSelectBar />
-      <CategoryGrid />
+      {isCategoriesLoading && <div>테마 목록을 불러오는 중...</div>}
+      {categoriesError && <div>테마 목록을 불러오는 데 실패했습니다.</div>}
+      {categories && <CategoryGrid items={categories} />}
       <Banner />
-      <RankingTabs gender={gender} sort={sort} onChange={handleTab}/>
-      <RankingGrid items={rankingAll} onCardClick={handleCardClick} />
+      <RankingTabs gender={gender} sort={sort} onChange={handleTab} />
+      {isRankingLoading && <div>랭킹 정보를 불러오는 중...</div>}
+      {rankingError && <div>랭킹 정보를 불러오는 데 실패했습니다.</div>}
+      {rankingList && <RankingGrid items={rankingList} onCardClick={handleCardClick} />}
     </Layout>
   );
 };
