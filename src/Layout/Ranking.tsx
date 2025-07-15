@@ -23,11 +23,11 @@ function Ranking() {
 
   useEffect(() => {
     const sex = localStorage.getItem('selectedSex');
-    setSelectedSex(sex as SexType);
+    setSelectedSex((sex as SexType) || 'ALL');
     const category = localStorage.getItem('selectedCategory');
-    setSelectCategory(category as CategoryType);
+    setSelectCategory((category as CategoryType) || 'MANY_WISH');
     getRank();
-  }, [selectedSex, selectCategory]);
+  }, []);
 
   if (isLoading) <>로딩중입니다.</>;
   if (error) return <p>{error}</p>;
