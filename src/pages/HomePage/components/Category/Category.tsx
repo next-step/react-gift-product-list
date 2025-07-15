@@ -24,9 +24,6 @@ function Category() {
   useEffect(() => {
     const fetchGiftThemes = async () => {
       try {
-        // 로딩 테스트
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/api/themes`
         );

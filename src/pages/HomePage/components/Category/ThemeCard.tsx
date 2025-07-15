@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const ThemeCardContainer = styled.div`
   display: flex;
@@ -19,11 +19,13 @@ const ThemeCardContainer = styled.div`
 const ThemeImage = styled.img`
   width: 50px;
   height: 50px;
+  border-radius: 30%;
 `;
 
 const ThemeName = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label2Regular.fontWeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label2Regular.fontWeight};
 `;
 
 function ThemeCard({ name, image }: { name: string; image: string }) {
