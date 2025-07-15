@@ -1,0 +1,22 @@
+import apiClient from './index';
+import type { RankingResponse, FilterOption } from './types';
+
+/**
+ * 실시간 급상승 선물 랭킹을 조회합니다.
+ * @param filter - 필터 옵션 (all, price-asc, price-desc, popular)
+ */
+export const getRankingProducts = async (
+  filter: FilterOption = 'all'
+): Promise<RankingResponse> => {
+  const response = await apiClient.get<RankingResponse>(
+    '/api/products/ranking',
+    {
+      params: { filter },
+    }
+  );
+  return response.data;
+};
+
+export default {
+  getRankingProducts,
+};
