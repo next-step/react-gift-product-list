@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import itemList from '../mocks/item_list.mock';
 import useUser from '@/hooks/useUser';
 
+import axios from 'axios';
+
 const RealtimeRankWrapper = styled.div`
   width: auto;
   height: auto;
@@ -174,6 +176,26 @@ function RealtimeGiftRank() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const {getId} = useUser();
 
+  const [ranking, setRanking] = useState([]);
+  const [isLoding, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
+        setRanking(response.data.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchThemes();
+  }, [selectedGroup,selectedType]);
+
   const navigate = useNavigate();
 
   const userGroupMock = [
@@ -184,9 +206,9 @@ function RealtimeGiftRank() {
   ];
 
   const rankingTypeMock = [
-    {key: 0, type: 'WANT', label: '받고 싶어한'},
-    {key: 1, type: 'MANY', label: '많이 선물한'},
-    {key: 2, type: 'WISH', label: '위시로 받은'},
+    {key: 0, type: 'MANY_WISH', label: '받고 싶어한'},
+    {key: 1, type: 'MANY_RECEIVE', label: '많이 선물한'},
+    {key: 2, type: 'MANY_WISH_RECEIVE', label: '위시로 받은'},
   ];
 
   useEffect(() => {
@@ -274,9 +296,10 @@ function RealtimeGiftRank() {
         ))}
       </RankingTypeSelectorWrapper>
 
+      {/* 여길 수정해야함 */}
       {/* 아이템 리스트 */}
       <RealtimeRankItemWrapper>
-        {(isCollapsed ? itemList : itemList.slice(0, 6)).map((item) => (
+        {(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
         <RealtimeRankItem
           key={item.id}
           onClick={() =>
