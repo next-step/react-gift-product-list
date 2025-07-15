@@ -39,8 +39,12 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   if (fetchState.isLoading) {
     return <Loading height="625px" />;
   }
-  if (fetchState.isError) {
-    return <></>;
+  if (fetchState.isError || fetchState.data?.data.length === 0) {
+    return (
+      <Empty>
+        <Msg>상품이 없습니다.</Msg>
+      </Empty>
+    );
   }
   return (
     <Container>
@@ -71,6 +75,18 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   );
 };
 
+const Empty = styled.div`
+  width: 100%;
+  display: flex;
+  height: 240px;
+  justify-content: center;
+  align-items: center;
+`;
+const Msg = styled.p`
+  width: 100%;
+  font: ${({ theme }) => theme.typography.label1Regular};
+  text-align: center;
+`;
 const Container = styled.div`
   width: 100%;
 `;
