@@ -7,10 +7,9 @@ import ExpandButton from '@/components/RankingSection/ExpandButton';
 import Loading from '@/components/common/Loading';
 import { useState } from 'react';
 import { useProductRanking } from '@/hooks/useProductRanking';
+import { ERROR_MESSAGES } from '@/constants/validation';
 
 const INITIAL_VISIBLE_COUNT = 6;
-const ERROR_MESSAGE = '상품을 불러오지 못했어요.';
-const EMPTY_MESSAGE = '상품이 없습니다.';
 
 const RankingGroup = () => {
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
@@ -44,8 +43,10 @@ const RankingGroup = () => {
 
   const renderContent = () => {
     if (isLoading) return <Loading />;
-    if (isError || !products) return <EmptyText>{ERROR_MESSAGE}</EmptyText>;
-    if (products.length === 0) return <EmptyText>{EMPTY_MESSAGE}</EmptyText>;
+    if (isError || !products)
+      return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_PRODUCTS}</EmptyText>;
+    if (products.length === 0)
+      return <EmptyText>{ERROR_MESSAGES.NO_PRODUCTS_AVAILABLE}</EmptyText>;
 
     const visibleProducts = isExpanded
       ? products

@@ -16,4 +16,9 @@ export const ERROR_MESSAGES = {
   INVALID_PHONE: '올바른 전화번호 형식이 아닙니다.',
   INVALID_QUANTITY: `구매 수량은 ${MIN_QUANTITY}개 이상이어야 합니다.`,
   DUPLICATE_PHONE: '전화번호가 중복되었습니다.',
+
+  FAILED_TO_LOAD_THEMES: '테마를 불러오지 못했어요.',
+  NO_THEMES_AVAILABLE: '테마가 없습니다.',
+  FAILED_TO_LOAD_PRODUCTS: '상품을 불러오지 못했어요.',
+  NO_PRODUCTS_AVAILABLE: '상품이 없습니다.',
 } as const;

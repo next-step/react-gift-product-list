@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import Loading from '@/components/common/Loading';
 import { useCategoryThemes } from '@/hooks/useCategoryThemes';
+import { ERROR_MESSAGES } from '@/constants/validation';
 
 const GRID_MIN_HEIGHT = 250;
 const CATEGORY_IMAGE_SIZE = 50;
@@ -19,13 +20,10 @@ const CategorySection = () => {
       );
     }
 
-    if (isError) {
-      return <EmptyText>테마를 불러오지 못했어요.</EmptyText>;
-    }
-
-    if (themes.length === 0) {
-      return <EmptyText>테마가 없습니다.</EmptyText>;
-    }
+    if (isError)
+      return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</EmptyText>;
+    if (themes.length === 0)
+      return <EmptyText>{ERROR_MESSAGES.NO_THEMES_AVAILABLE}</EmptyText>;
 
     return (
       <Grid>
