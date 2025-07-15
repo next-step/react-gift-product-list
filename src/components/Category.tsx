@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useTheme } from "@emotion/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 const themeURL = import.meta.env.VITE_API_BASE_URL_THEME;
 
@@ -15,26 +16,31 @@ type ThemeItem = {
 const Category = () => {
   const theme = useTheme();
   const [themeData, setThemeData] = useState<ThemeItem[] | null>(null);
+  const [isThemeLoading, setIsThemeLoading] = useState(true);
 
   useEffect(() => {
     const fetchTheme = async () => {
       try {
         const response = await axios.get(themeURL);
-
         setThemeData(response.data.data);
+        setIsThemeLoading(false);
       } catch (error) {
-        console.error("Error fetching weather data:", error);
+        console.error("Error fetching theme data:", error);
+        setIsThemeLoading(false);
       }
     };
 
     fetchTheme();
   }, []);
 
-  console.log(themeData);
-
   return (
     <div css={categoryStyle(theme)}>
-      {themeData &&
+      {isThemeLoading ? (
+        <div css={spinnerWrapperStyle}>
+          <ClipLoader color="#333" size={40} />
+        </div>
+      ) : (
+        themeData &&
         themeData.map((themeInfo) => (
           <div
             css={categoryItemStyle(theme)}
@@ -49,7 +55,8 @@ const Category = () => {
             />
             <h3 className="category-name">{themeInfo.name}</h3>
           </div>
-        ))}
+        ))
+      )}
     </div>
   );
 };
@@ -82,6 +89,14 @@ const imageStyle = () => css`
   display: block;
   border-radius: 8px;
   cursor: pointer;
+`;
+
+const spinnerWrapperStyle = css`
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
 `;
 
 export default Category;
