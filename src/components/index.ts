@@ -11,7 +11,7 @@ export type ClickHandler = () => void;
 export { default as Button } from './atoms/Button';
 export { default as IconButton } from './atoms/IconButton';
 export { default as Image } from './atoms/Image';
-export { default as Input } from './atoms/Input';
+export { default as Input, type InputType } from './atoms/Input';
 export { default as Label } from './atoms/Label';
 export { default as Text } from './atoms/Text';
 export { default as TextArea } from './atoms/TextArea';
