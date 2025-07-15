@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { type Product } from '@/types';
+import axios from 'axios';
 
 // API 호출 함수 (내부에서만 사용)
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 async function fetchRanking(targetType: string, rankType: string): Promise<Product[]> {
-  const res = await fetch(
-    `${API_BASE}/api/products/ranking?targetType=${targetType}&rankType=${rankType}`,
-  );
-  if (!res.ok) throw new Error('랭킹 불러오기 실패');
-  const data = await res.json();
+  const { data } = await axios(`${API_BASE}/api/products/ranking`, {
+    params: { targetType, rankType },
+  });
   return data.data;
 }
 
