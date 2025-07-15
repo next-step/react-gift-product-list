@@ -2,7 +2,10 @@ import styled from "@emotion/styled";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import ProductCard from "../ProductCard/ProductCard";
 import { MoreInfo, MoreInfoWrapper } from "../TrendingGifts.styles";
-import { TRENDING_GIFTS_LABELS } from "../constants/tabs";
+import {
+  TRENDING_GIFTS_EMPTY_MESSAGES,
+  TRENDING_GIFTS_LABELS,
+} from "../constants/labels";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -11,10 +14,6 @@ const ProductGridContainer = styled.div`
   gap: ${({ theme }) => theme.spacing[2]};
   margin-top: ${({ theme }) => theme.spacing[4]};
 `;
-
-interface ProductGridPropsType {
-  products: TrendingGiftsType[];
-}
 
 const EmptyProductContainer = styled.div`
   width: 100%;
@@ -32,11 +31,17 @@ const EmptyProductText = styled.p`
     theme.typography.label.label1Regular.fontWeight};
 `;
 
+interface ProductGridPropsType {
+  products: TrendingGiftsType[];
+}
+
 function ProductGrid({ products }: ProductGridPropsType) {
   if (products.length === 0)
     return (
       <EmptyProductContainer>
-        <EmptyProductText>상품이 없습니다.</EmptyProductText>
+        <EmptyProductText>
+          {TRENDING_GIFTS_EMPTY_MESSAGES.NO_PRODUCT}
+        </EmptyProductText>
       </EmptyProductContainer>
     );
 

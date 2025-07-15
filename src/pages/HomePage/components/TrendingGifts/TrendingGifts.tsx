@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { TRENDING_GIFTS_TABS, TRENDING_GIFTS_LABELS } from "./constants/labels";
 import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
 import ProductGrid from "./ProductGrid/ProductGrid";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
@@ -12,13 +11,19 @@ import {
   TabIconContainer,
   TabLabel,
   LoadingContainer,
+  ErrorContainer,
+  ErrorMessage,
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
 import axios from "axios";
 import type { FetchState } from "@/types/FetchState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { RANK_TYPE, TARGET_TYPE } from "./constants/tabs";
+import { TRENDING_GIFTS_TABS, TARGET_TYPE, RANK_TYPE } from "./constants/tabs";
+import {
+  TRENDING_GIFTS_ERROR_MESSAGES,
+  TRENDING_GIFTS_LABELS,
+} from "./constants/labels";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
@@ -49,7 +54,7 @@ function TrendingGiftsContent() {
           isError: false,
         });
       } catch (error) {
-        console.error("실시간 급상승 선물랭킹 데이터 로딩 실패", error);
+        console.error(TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR, error);
         setFetchState({
           data: null,
           isLoading: false,
@@ -78,7 +83,13 @@ function TrendingGiftsContent() {
       </TabsWrapper>
 
       <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
-        {fetchState.isLoading ? (
+        {fetchState.isError ? (
+          <ErrorContainer>
+            <ErrorMessage>
+              {TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR}
+            </ErrorMessage>
+          </ErrorContainer>
+        ) : fetchState.isLoading ? (
           <LoadingContainer>
             <LoadingSpinner />
           </LoadingContainer>

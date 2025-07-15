@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { TRENDING_GIFTS_SUB_TABS } from "../constants/labels";
+import { TRENDING_GIFTS_SUB_TABS } from "../constants/tabs";
 
 const SubTabContainer = styled.div`
   display: flex;
