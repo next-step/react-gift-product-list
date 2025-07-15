@@ -1,14 +1,25 @@
 import { rankingItemMock } from "@/assets/rankingItemMock";
 import styled from "@emotion/styled";
 import Divider from "@/components/common/Divider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import useFetch from "@/hooks/useFetch";
+import Loading from "@/components/common/Loading";
+import type { RankingItemType } from "@/types/RankingItemType";
+
+interface RankingListProps {
+  targetType: string;
+  rankType: string;
+}
+interface RankingData {
+  data: RankingItemType[];
+}
 
 const RANKING_LIST_ITEM_VIEW_COUNT = 6;
 
-const RankingList = () => {
+const RankingList = ({ targetType, rankType }: RankingListProps) => {
   const navigate = useNavigate();
   const [viewCount, setViewCount] = useState(RANKING_LIST_ITEM_VIEW_COUNT);
   const isCollapsed = viewCount === RANKING_LIST_ITEM_VIEW_COUNT;
@@ -19,10 +30,22 @@ const RankingList = () => {
   const goOrderPage = (itemId: number) => {
     navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
   };
+
+  const { fetchState, fetchData } = useFetch<RankingData>();
+  useEffect(() => {
+    fetchData(`/api/products/ranking?targetType=${targetType}&rankType=${rankType}`);
+  }, [targetType, rankType]);
+
+  if (fetchState.isLoading) {
+    return <Loading height="625px" />;
+  }
+  if (fetchState.isError) {
+    return <></>;
+  }
   return (
     <Container>
       <Content>
-        {rankingItemMock.slice(0, viewCount).map((item, index) => (
+        {fetchState.data?.data.slice(0, viewCount).map((item, index) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>
