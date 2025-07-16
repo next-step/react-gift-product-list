@@ -1,7 +1,7 @@
 ## ✨ 로그인 기능
 
 - [ ] `/login` API를 사용하여 로그인 기능을 완성해주세요.
-- [ ] 로그인 성공 시 내려오는 `authToken`, `email`, `name`을 `userInfo` storage에 저장하고 활용해주세요.
+- [x] 로그인 성공 시 내려오는 `authToken`, `email`, `name`을 `userInfo` storage에 저장하고 활용해주세요.
 - [ ] 4XX 에러가 발생하면 Toast를 통해 에러 메시지를 보여주세요. (`react-toastify` 라이브러리 사용)
 
 ---

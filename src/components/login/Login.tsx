@@ -5,6 +5,9 @@ import { useNavigate } from "react-router";
 import Input from "@/components/login/Input";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useValidate } from "@/components/login/useValidate";
+import axios from "axios";
+
+const loginURL = import.meta.env.VITE_API_BASE_URL_LOGIN;
 
 const Login = () => {
   const { setUser } = useUserInfo();
@@ -47,13 +50,32 @@ const Login = () => {
       </div>
 
       <button
-        onClick={() => {
+        onClick={async () => {
           if (isFormValid) {
-            sessionStorage.setItem("email", email.string);
-            setUser({
-              email: email.string,
-            });
-            navigate("/my");
+            try {
+              const response = await axios.post(
+                loginURL,
+                {
+                  email: "user@kakao.com",
+                  password: "password123",
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+
+              setUser({
+                email: response.data.email,
+                name: response.data.name,
+                authToken: response.data.authToken,
+              });
+              sessionStorage.setItem("email", email.string);
+              navigate("/my");
+            } catch (error) {
+              console.log("error:", error);
+            }
           }
         }}
         css={buttonStyle(theme, isFormValid)}
