@@ -11,6 +11,8 @@ import LogoIcon from '@/assets/logo.svg';
 import { useLoginForm } from './useLoginForm';
 import { PATH } from '@/constants/paths';
 import { useLogin } from '@/contexts/LoginContext';
+import axios from 'axios';
+import { useState } from 'react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -26,11 +28,25 @@ const LoginPage = () => {
     handleEmailChange,
     handlePwChange,
   } = useLoginForm();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (isValid) {
-      login(email);
-      navigate(PATH.HOME, { replace: true });
+      try {
+        const response = await axios.post('/api/login', {
+          email: email,
+          password: pw,
+        });
+        const { email: userEmail, name, authToken } = response.data.data;
+        login({ email: userEmail, name, authToken });
+        navigate(PATH.HOME, { replace: true });
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          setLoginError(error.response.data.message || '로그인 실패');
+        } else {
+          setLoginError('알 수 없는 오류가 발생했습니다.');
+        }
+      }
     }
   };
 
@@ -64,12 +80,8 @@ const LoginPage = () => {
           />
           {pwError && <ErrorMessage>{pwError}</ErrorMessage>}
         </InputWrapper>
-        <LoginButton
-          disabled={!(isValid && emailTouched && pwTouched)}
-          onClick={handleLogin}
-        >
-          로그인
-        </LoginButton>
+        {loginError && <ErrorMessage>{loginError}</ErrorMessage>}
+        <LoginButton disabled={!(isValid && emailTouched && pwTouched)} onClick={handleLogin}>로그인</LoginButton>
       </Container>
     </>
   );
