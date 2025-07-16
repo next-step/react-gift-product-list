@@ -6,6 +6,15 @@ import { css, type Theme } from "@emotion/react";
 import { login } from "@/services/auth";
 import { showErrorToast } from "@/styles/toast";
 import type { AxiosError } from "node_modules/axios/index.d.cts";
+// 현재 AxiosError를 import할 때,
+// import type { AxiosError } from "node_modules/axios/index.d.cts"
+// node_modules 경로로 직접 작성하는 방식은 위험할 거 같은데
+// import { AxiosError } from "axios"로 작성하면
+// "AxiosError has no exported member"라는 에러가 발생합니다.
+
+// tsconfig도 확인하고 수정해보았지만 해결이 되지 않아 여쭤봅니다..
+// 이런 경우 AxiosError를 안전하게 가져오거나,
+// 혹은 대체할 수 있는 좋은 방법이 있을지 조언 부탁드립니다.
 
 export default function LoginPage() {
   const navigate = useNavigate();
