@@ -22,11 +22,15 @@ export const RankingGrid = ({ gender, tab }: RankingGridProps) => {
 
   if (error) return null;
 
-  return loading ? (
-    <Placeholder>{ERROR_MESSAGES.PRODUCT.LOAD}</Placeholder>
-  ) : products.length === 0 ? (
-    <Placeholder>{ERROR_MESSAGES.PRODUCT.NONE}</Placeholder>
-  ) : (
+  if (loading) {
+    return <Placeholder>{ERROR_MESSAGES.PRODUCT.LOAD}</Placeholder>;
+  }
+
+  if (products.length === 0) {
+    return <Placeholder>{ERROR_MESSAGES.PRODUCT.NONE}</Placeholder>;
+  }
+
+  return (
     <>
       <Grid>
         {visibleItems.map((item, idx) => (
