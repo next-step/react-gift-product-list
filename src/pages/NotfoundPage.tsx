@@ -1,17 +1,17 @@
-import styled from '@emotion/styled'
-import { useNavigate } from 'react-router-dom'
+import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 export default function NotFoundPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <Wrapper>
       <Image src="/img_not_found.png" alt="Not found" />
       <Title>잘못된 접근입니다.</Title>
       <Description>찾으시는 페이지가 존재하지 않습니다.</Description>
-      <Button onClick={() => navigate('/')}>홈으로</Button>
+      <Button onClick={() => navigate("/")}>홈으로</Button>
     </Wrapper>
-  )
+  );
 }
 
 const Wrapper = styled.div`
@@ -22,25 +22,25 @@ const Wrapper = styled.div`
   align-items: center;
   padding: 5rem 1.25rem;
   background-color: ${({ theme }) => theme.colors.gray[100]};
-`
+`;
 
 const Image = styled.img`
   width: 150px;
   height: 150px;
   object-fit: cover;
-`
+`;
 
 const Title = styled.h1`
   ${({ theme }) => theme.typography.title1Bold};
   color: ${({ theme }) => theme.colors.gray[900]};
   margin-top: 28px;
-`
+`;
 
 const Description = styled.p`
   ${({ theme }) => theme.typography.body1Regular};
   margin-top: 8px;
   color: ${({ theme }) => theme.colors.gray[700]};
-`
+`;
 
 const Button = styled.button`
   margin-top: 48px;
@@ -60,4 +60,4 @@ const Button = styled.button`
   &:active {
     background-color: ${({ theme }) => theme.colors.kakao.yellow.pressed};
   }
-`
+`;

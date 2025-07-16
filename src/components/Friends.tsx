@@ -1,25 +1,37 @@
-import styled from '@emotion/styled';
-import { FiPlus } from 'react-icons/fi';
+import styled from "@emotion/styled";
+import { FiPlus } from "react-icons/fi";
 
 const STORAGE_KEY = "userInfo";
 
+function userIdFromSession(): string | null {
+  try {
+    const userInfo = sessionStorage.getItem(STORAGE_KEY);
+    if (!userInfo) return null;
+
+    const parsed = JSON.parse(userInfo);
+    if (!parsed.email || typeof parsed.email !== "string") return null;
+
+    return parsed.email.split("@")[0];
+  } catch {
+    return null;
+  }
+}
+
 export default function Friends() {
-  const userInfo = sessionStorage.getItem(STORAGE_KEY);
-  const userId = userInfo
-    ? JSON.parse(userInfo).email.split("@")[0]
-    : null;
+  const userId = userIdFromSession();
 
   return (
     <Wrapper>
-        <Button>
-          <IconWrapper>
-            <FiPlus size={20} />
-          </IconWrapper>
-          <Text>
-            {userId ? `${userId}님! 선물할 친구를 선택해 주세요.`
-            : '선물할 친구를 선택해 주세요.'}
-          </Text>
-        </Button>
+      <Button>
+        <IconWrapper>
+          <FiPlus size={20} />
+        </IconWrapper>
+        <Text>
+          {userId
+            ? `${userId}님! 선물할 친구를 선택해 주세요.`
+            : "선물할 친구를 선택해 주세요."}
+        </Text>
+      </Button>
     </Wrapper>
   );
 }
@@ -31,7 +43,6 @@ const Wrapper = styled.section`
   display: block;
 `;
 
-
 const Button = styled.button`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.background.default};
@@ -39,7 +50,7 @@ const Button = styled.button`
   align-items: center;
   gap: 12px;
   border: none;
-  border-radius: 20px; 
+  border-radius: 20px;
   padding: 20px;
   cursor: pointer;
 `;
@@ -48,7 +59,7 @@ const IconWrapper = styled.div`
   width: 42px;
   height: 42px;
   background-color: ${({ theme }) => theme.colors.kakao.yellow.default};
-  border-radius: 16px; 
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,14 +1,14 @@
-import { ThemeProvider, Global } from '@emotion/react';
-import { RouterProvider, createBrowserRouter, Outlet } from 'react-router-dom';
-import { resetStyle } from '@/styles/reset';
-import theme from '@/styles/theme';
-import { PATH } from '@/paths';
-import { MainLayout } from '@/components/MainLayout';
-import HomePage from '@/pages/HomePage';
-import LoginPage from '@/pages/Login/LoginPage';
-import MyPage from '@/pages/MyPage';
-import NotFoundPage from '@/pages/NotfoundPage';
-import OrderPage from '@/pages/OrderPage';
+import { ThemeProvider, Global } from "@emotion/react";
+import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
+import { resetStyle } from "@/styles/resetStyle";
+import theme from "@/styles/theme";
+import { PATH } from "@/paths";
+import { MainLayout } from "@/components/MainLayout";
+import HomePage from "@/pages/HomePage";
+import LoginPage from "@/pages/Login/LoginPage";
+import MyPage from "@/pages/MyPage";
+import NotFoundPage from "@/pages/NotfoundPage";
+import OrderPage from "@/pages/OrderPage";
 
 const LayoutWrapper = () => (
   <MainLayout>

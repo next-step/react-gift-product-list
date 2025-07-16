@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import Spacing from "@/components/Spacing";
 import { useLoginForm } from "./useLoginForm";
-import { css } from "@emotion/react";
+import { css, type Theme } from "@emotion/react";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function LoginPage() {
     const userInfo = {
       email,
     };
-    
+
     sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
 
     navigate(from, { replace: true });
@@ -115,7 +115,7 @@ const ErrorText = styled.p`
   ${({ theme }) => theme.typography.label2Regular};
 `;
 
-const disabledStyles = ({ theme }: { theme: any }) => css`
+const disabledStyles = ({ theme }: { theme: Theme }) => css`
   opacity: 0.5;
   cursor: not-allowed;
   background-color: ${theme.colors.kakao.yellow.default};
@@ -125,7 +125,7 @@ const disabledStyles = ({ theme }: { theme: any }) => css`
   }
 `;
 
-const enabledStyles = ({ theme }: { theme: any }) => css`
+const enabledStyles = ({ theme }: { theme: Theme }) => css`
   opacity: 1;
   cursor: pointer;
   &:hover {

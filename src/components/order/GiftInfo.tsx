@@ -30,6 +30,7 @@ export default function GiftInfo() {
   );
 }
 
+
 const InfoBox = styled.div`
   width: 100%;
   padding: 0px 1rem;

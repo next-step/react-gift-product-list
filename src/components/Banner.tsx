@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 export default function Banner() {
   return (
@@ -21,7 +21,6 @@ const Wrapper = styled.section`
   padding: 0 ${spacing};
   box-sizing: border-box;
 `;
-
 
 const BannerBox = styled.div`
   background-color: ${({ theme }) => theme.colors.kakao.yellow.default};

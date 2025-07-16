@@ -1,7 +1,7 @@
 export const PATH = {
-  HOME: '/',
-  LOGIN: '/login',
-  MY: '/my',
-  ORDER: '/order/:itemId',
-  NOTFOUND: '*',
+  HOME: "/",
+  LOGIN: "/login",
+  MY: "/my",
+  ORDER: "/order/:itemId",
+  NOTFOUND: "*",
 };

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const IconButton = styled.button`
   background: none;
@@ -7,6 +7,6 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
-`
+`;
 
-export default IconButton
+export default IconButton;

@@ -1,16 +1,14 @@
-import styled from '@emotion/styled'
-import type { PropsWithChildren } from 'react'
-import Header from './Header';
+import styled from "@emotion/styled";
+import type { PropsWithChildren } from "react";
+import Header from "./Header";
 
 export function MainLayout({ children }: PropsWithChildren) {
   return (
     <>
-    <Header />
-    <Container>
-      {children}
-    </Container>
+      <Header />
+      <Container>{children}</Container>
     </>
-  )
+  );
 }
 
 const Container = styled.main`
