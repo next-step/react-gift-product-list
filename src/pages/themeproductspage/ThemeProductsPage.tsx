@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import styled from "@emotion/styled";
 import ThemeProductsList from "@/pages/themeproductspage/ThemeProductsList";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 
 type ThemeInfo = {
   themeId: number;
@@ -35,12 +36,17 @@ type ThemeProductResponse = {
 
 export default function ThemeProductsPage() {
   const { themeId } = useParams();
+  const parsedThemeId = Number(themeId);
+
+  if (!parsedThemeId) {
+    return <p>잘못된 경로입니다.</p>;
+  }
   const { data: themeInfo, status: themeStatus } = useApiRequest<ThemeInfo>({
-    url: `/api/themes/${themeId}/info`,
+    url: API_ENDPOINTS.THEME_INFO(parsedThemeId),
   });
   const { data: productData, status: productStatus } =
     useApiRequest<ThemeProductResponse>({
-      url: `/api/themes/${themeId}/products`,
+      url: API_ENDPOINTS.THEME_PRODUCTS(parsedThemeId),
     });
 
   if (themeStatus === "loading" || productStatus === "loading")

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import CategoryItem from "@/components/CategorySection/CategoryItem";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 
 type Theme = {
   themeId: number;
@@ -13,7 +14,7 @@ type Theme = {
 
 export default function CategorySection() {
   const { data: themes, status } = useApiRequest<Theme[]>({
-    url: "/api/themes",
+    url: API_ENDPOINTS.THEMES,
   });
   const navigate = useNavigate();
 

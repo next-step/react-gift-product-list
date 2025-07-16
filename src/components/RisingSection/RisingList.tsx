@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import RisingItem from "@/components/RisingSection/RisingItem";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 
 const INITIAL_VISIBLE_COUNT = 6;
 
@@ -17,7 +18,7 @@ export default function RisingList() {
   const rankType = searchParams.get("rankType") ?? "MANY_WISH";
 
   const { data: products, status } = useApiRequest<Product[]>({
-    url: "/api/products/ranking",
+    url: API_ENDPOINTS.RANKING,
     params: { targetType, rankType },
   });
 
