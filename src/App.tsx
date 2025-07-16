@@ -7,6 +7,8 @@ import MyPage from './pages/Mypage';
 import OrderPage from '@/pages/OrderPage';
 import PrivateRoute from '@/routes/PrivateRoute';
 import { ROUTES } from '@/constants/routes';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
+      <ToastContainer position="bottom-center" autoClose={2000} />
     </>
   );
 }

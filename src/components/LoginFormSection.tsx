@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes';
 import useLoginForm from '@/hooks/useLoginForm';
 import InputField from '@/components/common/InputField';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 type FromState = {
   pathname: string;
@@ -26,7 +27,7 @@ const LoginFormSection = () => {
 
   const { email, password, isValid } = useLoginForm();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const isEmailOk = email.validate();
@@ -34,8 +35,17 @@ const LoginFormSection = () => {
 
     if (!isEmailOk || !isPasswordOk) return;
 
-    login({ email: email.value });
-    navigate(redirectTo, { replace: true });
+    try {
+      await login({
+        email: email.value,
+        password: password.value,
+      });
+      navigate(redirectTo, { replace: true });
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ?? '@kakao.com 이메일 주소만 가능합니다.';
+      toast.error(message);
+    }
   };
 
   return (
