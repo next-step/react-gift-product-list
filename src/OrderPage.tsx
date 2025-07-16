@@ -17,7 +17,7 @@ import { getProductSummary, type ProductSummary } from "@/apis/product";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
-
+import { orderProduct } from "@/apis/order";
 
 type FormData = z.infer<typeof orderSchema>;
 
@@ -84,17 +84,37 @@ function OrderPage() {
 
   const totalPrice = product ? product.price * totalQuantity : 0;
 
-  const onSubmit = (data: FormData) => {
-    const receiverLines = data.receivers.map((r) => `- ${r.name} / ${r.phone} / 수량: ${r.quantity}`).join("\n");
-    const message = 
-`🎁 ${product?.name} 주문 완료!
-보낸 사람: ${data.sender}
-메시지: ${data.message}
-받는 사람 목록:
-${receiverLines}`;
+  const onSubmit = async (data: FormData) => {
+    if (!product) return;
+    try {
+      await orderProduct({
+        productId: product.id,
+        message: data.message,
+        messageCardId: String(selectedCardId),
+        ordererName: data.sender,
+        receivers: data.receivers.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone,
+          quantity: r.quantity,
+        })),
+      }, user?.authToken || "");
+      const message =
+        `주문이 완료되었습니다.
+상품명: ${product?.name}
+구매 수량: ${totalQuantity}
+발신자 이름: ${data.sender}
+메시지: ${data.message}`;
 
-    alert(message);
-    navigate("/");
+      alert(message);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        toast.error("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+        navigate("/login");
+      } else {
+        toast.error("주문에 실패했습니다. 다시 시도해주세요.")
+      }
+    }
   };
 
   if (!product) {
