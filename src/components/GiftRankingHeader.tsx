@@ -18,6 +18,23 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
   setRankType,
 }) => {
   type RANK_TYPE = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
+import { useEffect } from "react";
+
+//fetch 경로
+type GiftRankingHeaderProps = {
+  target: string;
+  setTarget: React.Dispatch<React.SetStateAction<string>>;
+  rankType: string;
+  setRankType: React.Dispatch<React.SetStateAction<string>>;
+};
+
+const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
+  target,
+  setTarget,
+  rankType,
+  setRankType,
+}) => {
+  type RANK_TYPE = "MANY_WISH" | "MANY_GIVE" | "MANY_WANT";
 
   const navigate = useNavigate();
   const theme = useTheme();
@@ -28,6 +45,7 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
     const initTarget = searchParams.get("target") || "ALL";
     const initRank = (searchParams.get("rankType") as RANK_TYPE) || "MANY_WISH";
     setTarget(initTarget);
+    setRankType(initRank);
     setRankType(initRank);
     const params = new URLSearchParams(location.search);
     params.set("target", initTarget);
@@ -45,11 +63,13 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
 
   const handleRankClick = (newRank: string) => {
     setRankType(newRank);
+    setRankType(newRank);
     const params = new URLSearchParams(location.search);
     params.set("target", target);
     params.set("rankType", newRank);
     navigate(`${location.pathname}?${params.toString()}`);
   };
+
 
   return (
     <>
