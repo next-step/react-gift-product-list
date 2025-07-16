@@ -1,7 +1,7 @@
 import { rankingItemMock } from "@/assets/rankingItemMock";
 import styled from "@emotion/styled";
 import Divider from "@/components/common/Divider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "@/components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
@@ -31,10 +31,10 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
     navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
   };
 
-  const rankingListData = useFetch<RankingData>();
-  useEffect(() => {
-    rankingListData.fetchData("/api/products/ranking", { targetType, rankType });
-  }, [targetType, rankType, rankingListData.fetchData]);
+  const rankingListData = useFetch<RankingData>("/api/products/ranking", {
+    params: { targetType, rankType },
+    dependency: [targetType, rankType],
+  });
 
   if (rankingListData.isLoading) {
     return <Loading height="625px" />;

@@ -1,21 +1,33 @@
 import axios from "axios";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-type FetchParams = Record<string, string | number>;
-
+interface UseFetchOptions {
+  params?: Record<string, string | number>;
+  autoFetch?: boolean;
+  dependency?: React.DependencyList;
+  baseUrl?: boolean;
+}
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const useFetch = <T>() => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const defaultOptions: UseFetchOptions = {
+  params: {},
+  autoFetch: true,
+  dependency: [],
+  baseUrl: true,
+};
+
+const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => {
+  const mergedOptions = { ...defaultOptions, ...options };
+  const [isLoading, setIsLoading] = useState<boolean>(mergedOptions.autoFetch ? true : false);
   const [isError, setIsError] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
-  const fetchData = useCallback(async (url: string, params?: FetchParams, baseUrl: boolean = true) => {
-    const base = baseUrl ? BASE_URL : undefined;
+  const fetchData = useCallback(async () => {
+    const base = mergedOptions.baseUrl ? BASE_URL : undefined;
     const fetchUrl = new URL(url, base);
 
-    if (params) {
-      for (const [name, value] of Object.entries(params)) {
+    if (mergedOptions.params) {
+      for (const [name, value] of Object.entries(mergedOptions.params)) {
         fetchUrl.searchParams.append(name, String(value));
       }
     }
@@ -32,7 +44,13 @@ const useFetch = <T>() => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [url, mergedOptions.baseUrl, JSON.stringify(mergedOptions.params)]);
+
+  useEffect(() => {
+    if (mergedOptions.autoFetch) {
+      fetchData();
+    }
+  }, [fetchData, mergedOptions.autoFetch, JSON.stringify(mergedOptions.dependency)]);
 
   return { isLoading, isError, data, fetchData };
 };

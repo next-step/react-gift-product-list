@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { useEffect } from "react";
 import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
 import type { CategoryType } from "@/types/CategoryType";
@@ -9,11 +8,7 @@ interface ThemesData {
 }
 
 const Category = () => {
-  const themes = useFetch<ThemesData>();
-
-  useEffect(() => {
-    themes.fetchData("/api/themes");
-  }, []);
+  const themes = useFetch<ThemesData>("/api/themes");
 
   if (themes.isLoading) {
     return (
