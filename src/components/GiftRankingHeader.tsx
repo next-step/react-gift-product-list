@@ -2,12 +2,22 @@ import { css } from "@emotion/react";
 import type { Theme } from "@emotion/react";
 import { useTheme } from "@emotion/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-const GiftRankingHeader = () => {
-  const [target, setTarget] = useState("ALL");
-  const [rankType, setRank] = useState("MANY_WISH");
+//fetch 경로
+type GiftRankingHeaderProps = {
+  target: string;
+  setTarget: React.Dispatch<React.SetStateAction<string>>;
+  rankType: string;
+  setRankType: React.Dispatch<React.SetStateAction<string>>;
+};
 
+const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
+  target,
+  setTarget,
+  rankType,
+  setRankType,
+}) => {
   type RANK_TYPE = "MANY_WISH" | "MANY_GIVE" | "MANY_WANT";
 
   const navigate = useNavigate();
@@ -19,7 +29,7 @@ const GiftRankingHeader = () => {
     const initTarget = searchParams.get("target") || "ALL";
     const initRank = (searchParams.get("rankType") as RANK_TYPE) || "MANY_WISH";
     setTarget(initTarget);
-    setRank(initRank);
+    setRankType(initRank);
     const params = new URLSearchParams(location.search);
     params.set("target", initTarget);
     params.set("rankType", initRank);
@@ -35,14 +45,13 @@ const GiftRankingHeader = () => {
   };
 
   const handleRankClick = (newRank: string) => {
-    setRank(newRank);
+    setRankType(newRank);
     const params = new URLSearchParams(location.search);
     params.set("target", target);
     params.set("rankType", newRank);
     navigate(`${location.pathname}?${params.toString()}`);
   };
-  //👩🏻
-  //
+
   return (
     <>
       <div css={textStyle(theme)}>실시간 급상승 선물랭킹</div>
