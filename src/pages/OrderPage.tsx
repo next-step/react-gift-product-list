@@ -18,6 +18,7 @@ import {
 } from "@src/apis/BackEnd/apiList";
 import useFetchState from "@src/hooks/useFetchState";
 import PendingSpinner from "@src/components/shared/PendingSpinner";
+import { ToastContainer, toast } from "react-toastify";
 
 export type Receiver = {
   id: string;
@@ -59,6 +60,18 @@ function OrderPage() {
     }
   });
 
+  const orderSuccess = (data: FormType) => {
+    alert(
+      `주문이 완료되었습니다.\n상품명: ${
+        productMockData.name
+      }\n구매 수량: ${receivers.reduce(
+        (sum: number, r: Receiver) => sum + parseInt(r.quantity),
+        0
+      )}\n발신자 이름: ${data.sender}\n메세지: ${data.message}`
+    );
+    navigate(PATH.MAIN);
+  };
+
   const orderHandler = async (data: FormType) => {
     const orderInfo: OrderBody = {
       productId: productData.data!.id,
@@ -74,16 +87,22 @@ function OrderPage() {
     if (userContext?.authToken.value) {
       const response = await fetchOrder(orderInfo, userContext.authToken.value);
       console.log(response);
+      if (response?.status) {
+        if (response.status === 401) {
+          redirectLogin(PATH.ORDER, params.id);
+          return;
+        }
+        if (response.status >= 400 && response.status < 500) {
+          toast(response.data.data.message, {
+            type: "error",
+            position: "bottom-center"
+          });
+        }
+        if (response.status === 201) {
+          orderSuccess(data);
+        }
+      }
     }
-    alert(
-      `주문이 완료되었습니다.\n상품명: ${
-        productMockData.name
-      }\n구매 수량: ${receivers.reduce(
-        (sum: number, r: Receiver) => sum + parseInt(r.quantity),
-        0
-      )}\n발신자 이름: ${data.sender}\n메세지: ${data.message}`
-    );
-    navigate(PATH.MAIN);
   };
 
   const receivers = useWatch({
@@ -158,6 +177,7 @@ function OrderPage() {
           </form>
         </FormProvider>
       )}
+      <ToastContainer />
     </>
   );
 }
