@@ -1,3 +1,5 @@
+import { targetType, rankType } from "@/data/giftType";
+
 export interface Price {
   basicPrice: number;
   discountRate: number;
@@ -18,6 +20,6 @@ export interface Gift {
   brandInfo: BrandInfo;
 }
 
-export type TargetType = "ALL" | "FEMALE" | "MALE" | "TEEN";
+export type TargetType = (typeof targetType)[number]["id"];
 
-export type RankType = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
+export type RankType = (typeof rankType)[number]["id"];

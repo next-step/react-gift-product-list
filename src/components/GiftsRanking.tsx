@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import GiftTargetType from "./GiftTargetType";
 import { targetType, rankType } from "@/data/giftType";
-import type { Gift, RankType, TargetType } from "@/types/gift";
+import { isValidTargetType, isValidRankType } from "@/utils/typeGuards";
+import type { Gift } from "@/types/gift";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { fetchProductsRanking } from "@/api/products";
@@ -9,10 +10,13 @@ import GiftsRender from "./GiftsRender";
 
 const GiftsRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const targetTypeParam = searchParams.get("targetType") || targetType[0].id;
+  const rankTypeParam = searchParams.get("rankType") || rankType[0].id;
   const [selectedTypes, setSelectedTypes] = useState({
-    targetType: (searchParams.get("targetType") ??
-      targetType[0].id) as TargetType,
-    rankType: (searchParams.get("rankType") ?? rankType[0].id) as RankType,
+    targetType: isValidTargetType(targetTypeParam)
+      ? targetTypeParam
+      : targetType[0].id,
+    rankType: isValidRankType(rankTypeParam) ? rankTypeParam : rankType[0].id,
   });
 
   const [gifts, setGifts] = useState<Gift[] | undefined>(undefined);
