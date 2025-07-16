@@ -12,7 +12,7 @@ import { useLoginForm } from './useLoginForm';
 import { PATH } from '@/constants/paths';
 import { useLogin } from '@/contexts/LoginContext';
 import axios from 'axios';
-import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ const LoginPage = () => {
     handleEmailChange,
     handlePwChange,
   } = useLoginForm();
-  const [loginError, setLoginError] = useState<string | null>(null);
 
   const handleLogin = async () => {
     if (isValid) {
@@ -42,9 +41,13 @@ const LoginPage = () => {
         navigate(PATH.HOME, { replace: true });
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          setLoginError(error.response.data.message || '로그인 실패');
+          if (error.response.status >= 400 && error.response.status < 500) {
+            toast.error(error.response.data.message || '@kakao.com 이메일만 가능합니다.');
+          } else {
+            toast.error('알 수 없는 오류가 발생했습니다.');
+          }
         } else {
-          setLoginError('알 수 없는 오류가 발생했습니다.');
+          toast.error('알 수 없는 오류가 발생했습니다.');
         }
       }
     }
@@ -80,7 +83,6 @@ const LoginPage = () => {
           />
           {pwError && <ErrorMessage>{pwError}</ErrorMessage>}
         </InputWrapper>
-        {loginError && <ErrorMessage>{loginError}</ErrorMessage>}
         <LoginButton disabled={!(isValid && emailTouched && pwTouched)} onClick={handleLogin}>로그인</LoginButton>
       </Container>
     </>
