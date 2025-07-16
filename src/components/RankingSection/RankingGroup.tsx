@@ -4,7 +4,7 @@ import RankingFilter from '@/components/RankingSection/RankingFilter';
 import RankingSort from '@/components/RankingSection/RankingSort';
 import ProductGrid from '@/components/RankingSection/ProductGrid';
 import ExpandButton from '@/components/RankingSection/ExpandButton';
-import Loading from '@/components/common/Loading';
+import { loading } from '@/components/common/Loading';
 import { useState } from 'react';
 import { useProductRanking } from '@/hooks/useProductRanking';
 import { ERROR_MESSAGES } from '@/constants/validation';
@@ -42,7 +42,7 @@ const RankingGroup = () => {
   };
 
   const renderContent = () => {
-    if (isLoading) return <Loading />;
+    if (isLoading) return loading;
     if (isError || !products)
       return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_PRODUCTS}</EmptyText>;
     if (products.length === 0)

@@ -1,15 +1,5 @@
 import styled from '@emotion/styled';
 
-const Loading = () => {
-  return (
-    <Wrapper>
-      <Spinner />
-    </Wrapper>
-  );
-};
-
-export default Loading;
-
 const Wrapper = styled.div`
   width: 100%;
   padding: ${({ theme }) => theme.spacing[6]};
@@ -33,3 +23,9 @@ const Spinner = styled.div`
     }
   }
 `;
+
+export const loading = (
+  <Wrapper>
+    <Spinner />
+  </Wrapper>
+);

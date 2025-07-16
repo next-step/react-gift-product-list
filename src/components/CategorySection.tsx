@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import Loading from '@/components/common/Loading';
+import { loading } from '@/components/common/Loading';
 import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 import { ERROR_MESSAGES } from '@/constants/validation';
 
@@ -13,9 +13,7 @@ const CategorySection = () => {
     if (isLoading) {
       return (
         <Grid>
-          <LoadingWrapper>
-            <Loading />
-          </LoadingWrapper>
+          <LoadingWrapper>{loading}</LoadingWrapper>
         </Grid>
       );
     }
