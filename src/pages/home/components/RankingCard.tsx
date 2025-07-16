@@ -38,7 +38,7 @@ export const RankingCard = ({
     <Card onClick={handleClick}>
       <ImageWrapper>
         <ProductImage src={imageURL} alt={name} />
-        <RankBadge>{rank}위</RankBadge>
+        {rank <= 3 && <RankBadge>{rank}위</RankBadge>}
       </ImageWrapper>
 
       <BrandInfo>
