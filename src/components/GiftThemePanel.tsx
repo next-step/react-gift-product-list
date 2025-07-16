@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { fetchThemes } from "@src/apis/BackEnd/apiList";
 import ThemeButton from "@src/components/shared/ThemeButton";
 import useFetchState from "@src/hooks/useFetchState";
-import { themeMockData } from "@src/mock/themeMockData";
 import PendingSpinner from "./shared/PendingSpinner";
 
 type Theme = {
@@ -22,7 +21,7 @@ function GiftThemePanel() {
         <GiftThemePanelWrapper>
           <TitleP>선물 테마</TitleP>
           <ThemePlaceholder>
-            {themeMockData.map((theme) => {
+            {themes.data.map((theme) => {
               return (
                 <ThemeButton
                   key={theme.themeId}
@@ -45,10 +44,12 @@ const TitleP = styled.p`
 `;
 
 const ThemePlaceholder = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  row-gap: 16px;
+  justify-items: center;
+  align-items: start;
+  width: 100%;
 `;
 
 const GiftThemePanelWrapper = styled.div`

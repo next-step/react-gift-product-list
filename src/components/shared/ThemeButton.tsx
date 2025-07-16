@@ -13,25 +13,27 @@ function ThemeButton({ image, caption }: ThemeButtonProps) {
       }}
     >
       <ThemeImageHolder src={image} alt="image" />
-      <p>{caption}</p>
+      <div>{caption}</div>
     </ThemeButtonWrapper>
   );
 }
 
 const ThemeImageHolder = styled.img`
-  width: 38%;
-  height: 38%;
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 10px;
 `;
 
 const ThemeButtonWrapper = styled.button`
+  width: 100%;
   background-color: white;
-  width: 100px;
   border: none;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex: 1 20%;
   cursor: pointer;
 `;
 
