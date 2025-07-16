@@ -1,6 +1,9 @@
+import { useState } from "react";
 
 function useUser() {
-
+  const [id, setId2] = useState('');
+  const [pw, setPw2] = useState('');
+  
   function setId(id:string) {
     sessionStorage.setItem('userId',id);
   }

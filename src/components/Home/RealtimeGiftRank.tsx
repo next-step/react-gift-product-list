@@ -271,25 +271,15 @@ function RealtimeGiftRank() {
     name: any,
     price: any,
   ) {
-    const userId = getId();
-    
-    if (userId !== '') {
-      const query = new URLSearchParams({
-        brandInfo: brandInfo.name,
-        id: id.toString(),
-        imageURL,
-        name,
-        price: price.basicPrice,
-      }).toString();
-      // sessionStorage.setItem(
-      //   'selectedItem',
-      //   JSON.stringify({ brandInfo, id, imageURL, name, price }),
-      // );
+    const query = new URLSearchParams({
+      brandInfo: brandInfo.name,
+      id: id.toString(),
+      imageURL,
+      name,
+      price: price.basicPrice,
+    }).toString();
 
-      navigate(`/order?${query}`);
-    } else {
-      navigate('/login');
-    }
+    navigate(`/order?${query}`);
   }
 
   return (

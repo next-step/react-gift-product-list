@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import categories from '../../mocks/category.mock';
 import PromoBanner from './PromoBanner';
 
 import { useEffect, useState } from 'react';
@@ -77,7 +76,7 @@ const GiftCategorySelectorItemText = styled.p`
 
 function GiftCategorySelectorItemBox() {
   const [themes, setThemes] = useState([]);
-  const [isLoding, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
@@ -96,27 +95,25 @@ function GiftCategorySelectorItemBox() {
     fetchThemes();
   }, []);
 
-  // console.log(themes);
   return (
     <GiGiftCategorySelectorItemBoxWrapper>
-      {!isError && (isLoding ? <Spinner/> : <GiftCategorySelectorItemBoxGrid>
-                {themes.map((item) => (
-                  <GiftCategorySelectorItemWrapper key={item.themeId}>
-                    <GiftCategorySelectorItemImg
-                      src={item.image}
-                      alt={item.name}
-                    ></GiftCategorySelectorItemImg>
-                    <GiftCategorySelectorItemText>
-                      {item.name}
-                    </GiftCategorySelectorItemText>
-                  </GiftCategorySelectorItemWrapper>))}
+      {!isError && (isLoading ? <Spinner /> : <GiftCategorySelectorItemBoxGrid>
+        {themes.map((item) => (
+          <GiftCategorySelectorItemWrapper key={item.themeId}>
+            <GiftCategorySelectorItemImg
+              src={item.image}
+              alt={item.name}
+            ></GiftCategorySelectorItemImg>
+            <GiftCategorySelectorItemText>
+              {item.name}
+            </GiftCategorySelectorItemText>
+          </GiftCategorySelectorItemWrapper>))}
       </GiftCategorySelectorItemBoxGrid>)}
     </GiGiftCategorySelectorItemBoxWrapper>
   );
 }
 
 function GiftCategorySelector() {
-
 
   return (
     <GiftCategorySelectorWrapper>

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import  useUser from '@/hooks/useUser';
+import useUser from '@/hooks/useUser';
 
 const FriendSelectorWrapper = styled.div`
   width: auto;
@@ -41,9 +41,10 @@ const FriendSelectorTxt = styled.p`
 `;
 
 function FriendSelector() {
-  const {getId} = useUser(); // session storage에 있는 로그인 정보
+  // TODO: useUserInfo 훅으로 리팩토링, 여기 getId로 받아오는걸 그냥 id로 받아오게 할순없나?
+  const { getId } = useUser(); // useUser훅을 useUserInfo 훅으로 리팩토링해서 더 좀 괜찮게 바꿔야겠다
   const userName = getId();
-  
+
   return (
     <FriendSelectorWrapper>
       <FriendSelectorBox>
