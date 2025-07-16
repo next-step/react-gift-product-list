@@ -31,12 +31,12 @@ const RankingGroup = () => {
     }
   };
 
-  const handleFilterChange = (value: string) => {
+  const changeTargetType = (value: string) => {
     searchParams.set('targetType', value);
     setSearchParams(searchParams);
   };
 
-  const handleSortChange = (value: string) => {
+  const changeRankType = (value: string) => {
     searchParams.set('rankType', value);
     setSearchParams(searchParams);
   };
@@ -63,11 +63,8 @@ const RankingGroup = () => {
   return (
     <Section>
       <Title>실시간 급상승 선물랭킹</Title>
-      <RankingFilter
-        selectedFilter={targetType}
-        onSelect={handleFilterChange}
-      />
-      <RankingSort selectedSort={rankType} onSelect={handleSortChange} />
+      <RankingFilter selectedFilter={targetType} onSelect={changeTargetType} />
+      <RankingSort selectedSort={rankType} onSelect={changeRankType} />
       {renderContent()}
     </Section>
   );
