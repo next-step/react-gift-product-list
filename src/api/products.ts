@@ -12,5 +12,5 @@ export const fetchProductsRanking = async (
   if (response.status !== 200) {
     throw new Error("Failed to fetch product ranking");
   }
-  return response.data;
+  return response.data.data;
 };

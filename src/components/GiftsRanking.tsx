@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import GiftTargetType from "./GiftTargetType";
 import { targetType, rankType } from "@/data/giftType";
 import { isValidTargetType, isValidRankType } from "@/utils/typeGuards";
-import type { Gift } from "@/types/gift";
-import { useState, useEffect } from "react";
+import useApiRequest from "@/hooks/useApiRequest";
+import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router";
 import { fetchProductsRanking } from "@/api/products";
 import GiftsRender from "./GiftsRender";
@@ -19,9 +19,13 @@ const GiftsRanking = () => {
     rankType: isValidRankType(rankTypeParam) ? rankTypeParam : rankType[0].id,
   });
 
-  const [gifts, setGifts] = useState<Gift[] | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const requestFn = useCallback(() => {
+    return fetchProductsRanking(
+      selectedTypes.targetType,
+      selectedTypes.rankType,
+    );
+  }, [selectedTypes]);
+  const { data: gifts, isLoading, isError } = useApiRequest({ requestFn });
 
   const handleFilterChange = (key: string, selectedType: string) => {
     const newSelectedTypes = { ...selectedTypes, [key]: selectedType };
@@ -30,18 +34,6 @@ const GiftsRanking = () => {
     const searchParams = new URLSearchParams(newSelectedTypes);
     setSearchParams(searchParams, { replace: true });
   };
-
-  useEffect(() => {
-    fetchProductsRanking(selectedTypes.targetType, selectedTypes.rankType)
-      .then(data => {
-        setGifts(data.data);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsError(true);
-        setIsLoading(false);
-      });
-  }, [selectedTypes]);
 
   return (
     <Background>

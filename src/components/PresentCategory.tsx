@@ -1,28 +1,16 @@
 import styled from "@emotion/styled";
 import PresentTheme from "./PresentTheme";
-import { useEffect, useState } from "react";
 import { fetchTheme } from "@/api/theme";
 import type { Theme } from "@/types/theme";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import useApiRequest from "@/hooks/useApiRequest";
 
 const PresentCategory = () => {
-  const [presentThemes, setPresentThemes] = useState<Theme[] | undefined>(
-    undefined,
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-
-  useEffect(() => {
-    fetchTheme()
-      .then(data => {
-        setPresentThemes(data.data);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsError(true);
-        setIsLoading(false);
-      });
-  }, []);
+  const {
+    data: presentThemes,
+    isLoading,
+    isError,
+  } = useApiRequest<Theme[]>({ requestFn: fetchTheme });
 
   if (isError) {
     return <></>;
