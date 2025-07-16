@@ -20,6 +20,14 @@ export interface RankingProduct {
     };
 }
 
+export interface ProductSummary {
+    id: number;
+    name: string;
+    brandName: string;
+    price: number;
+    imageURL: string;
+}
+
 export type TargetType = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
 export type RankType = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
 

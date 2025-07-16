@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useReceiver } from '@/contexts/ReceiverContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { z, string } from 'zod';
 import { orders } from '@/data/orders';
 
-import { type RankingProduct } from '@/types/api';
+import { type ProductSummary } from '@/types/api';
 import { type TextAreaChangeHandler, type InputChangeHandler } from '@/components';
 
 interface CardState {
@@ -27,12 +28,13 @@ const orderValidationSchema = z.object({
 });
 
 interface UseOrderFormProps {
-  product?: RankingProduct;
+  product?: ProductSummary;
 }
 
 export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
   const navigate = useNavigate();
   const { receiverList } = useReceiver();
+  const { userInfo } = useAuth();
 
   const [cardState, setCardState] = useState<CardState>({
     selectedCardId: orders[0]?.id || 904,
@@ -40,7 +42,7 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
   });
 
   const [formData, setFormData] = useState<FormData>({
-    senderName: '',
+    senderName: userInfo?.name || '',
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({

@@ -4,7 +4,7 @@ import {
 } from '@/components';
 import { useReceiver } from '@/contexts/ReceiverContext';
 import { type Order } from '@/data/orders';
-import { type RankingProduct } from '@/types/api';
+import { type ProductSummary } from '@/types/api';
 import * as S from './styles';
 
 interface CardState {
@@ -30,7 +30,7 @@ interface OrderTemplateProps {
   formData: FormData;
   onSenderNameChange: InputChangeHandler;
   errors: ValidationErrors;
-  product?: RankingProduct;
+  product?: ProductSummary;
   onSubmit: () => void;
 }
 
@@ -94,7 +94,7 @@ const OrderTemplate = ({
         </S.Container>
       </S.ContentWrapper> 
       <S.FixedBottomButton onClick={onSubmit}>
-        {product && totalQuantity > 0 ? `${(product.price.sellingPrice * totalQuantity).toLocaleString()}원 결제하기` : '선물하기'}
+        {product && totalQuantity > 0 ? `${(product.price * totalQuantity).toLocaleString()}원 결제하기` : '선물하기'}
       </S.FixedBottomButton>
     </>
   );

@@ -1,8 +1,8 @@
-import { type RankingProduct } from '@/types/api';
+import { type ProductSummary } from '@/types/api';
 import * as S from './styles';
 
 interface ProductInfoProps {
-  product: RankingProduct;
+  product: ProductSummary;
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
@@ -15,11 +15,10 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         <S.ProductImage src={product.imageURL} alt={product.name} />
         <S.ProductDetails>
           <S.ProductName>{product.name}</S.ProductName>
-          <S.BrandName>{product.brandInfo.name}</S.BrandName>
-          <S.PriceDivider />
+          <S.BrandName>{product.brandName}</S.BrandName>
           <S.PriceContainer>
             <S.PriceLabel>상품가</S.PriceLabel>
-            <S.Price>{product.price.sellingPrice.toLocaleString()}원</S.Price>
+            <S.Price>{product.price.toLocaleString()}원</S.Price>
           </S.PriceContainer>
         </S.ProductDetails>
       </S.ProductContent>

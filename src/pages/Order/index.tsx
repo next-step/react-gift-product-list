@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { orders } from '@/data/orders';
-import { getProductById } from '@/lib/api';
-import { type RankingProduct } from '@/types/api';
+import { getProductSummary } from '@/lib/api';
+import { type ProductSummary } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { Loading, ErrorMessage } from '@/components';
@@ -10,7 +11,8 @@ import OrderTemplate from './template';
 
 const Order = () => {
   const { productId } = useParams<{ productId: string }>();
-  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct | undefined>(undefined, true);
+  const navigate = useNavigate();
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<ProductSummary | undefined>(undefined, true);
 
   useEffect(() => {
     if (!productId) {
@@ -21,15 +23,21 @@ const Order = () => {
       try {
         setLoading(true);
         
-        const productData = await getProductById(parseInt(productId));
+        const productData = await getProductSummary(parseInt(productId));
         setSuccess(productData);
-      } catch (error) {
+      } catch (error: any) {
+        if (error?.response?.status >= 400 && error?.response?.status < 500) {
+          const errorMessage = error?.response?.data?.data?.message || '현재 없는 상품입니다';
+          toast.error(errorMessage);
+          navigate('/');
+          return;
+        }
         setError();
       }
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [productId, navigate]);
 
   const {
     cardState,
