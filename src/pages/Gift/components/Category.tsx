@@ -25,7 +25,7 @@ const Category = () => {
   }
 
   if (themes.isError || themes.data?.data.length === 0) {
-    return <></>;
+    return null;
   }
 
   return (
