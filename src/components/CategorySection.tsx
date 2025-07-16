@@ -20,10 +20,13 @@ const CategorySection = () => {
       );
     }
 
-    if (isError)
+    if (isError) {
       return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</EmptyText>;
-    if (themes.length === 0)
+    }
+
+    if (!themes || themes.length === 0) {
       return <EmptyText>{ERROR_MESSAGES.NO_THEMES_AVAILABLE}</EmptyText>;
+    }
 
     return (
       <Grid>
