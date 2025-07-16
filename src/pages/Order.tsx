@@ -3,14 +3,12 @@ import { Header } from '../components/common/Header';
 import MessageCard from '../components/MessageCard';
 import styled from '@emotion/styled';
 import { orderCardTemplates } from '../data/orderCardTemplateMock';
-
 import ReceiverModal, {
   type Receiver,
 } from '../components/ReceiverModal';
 import { useReceiverForm } from '../hooks/useReceiverForm';
 import { useParams } from 'react-router-dom';
 import { useGiftProductById } from '../hooks/useGiftProductById';
-
 
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
@@ -79,6 +77,7 @@ const Section = styled.div`
   background-color: ${({ theme }) => theme.colors.gray00};
   padding: 20px;
   border-bottom: 8px solid ${({ theme }) => theme.colors.gray200};
+`;
 
 const Label = styled.div`
   font-size: 14px;
@@ -201,21 +200,23 @@ const Order = () => {
 
   const {
     data: product,
-    isLoading,
-    isError,
+    loading,
+    error,
   } = useGiftProductById(productId);
 
   const [selected, setSelected] = useState(orderCardTemplates[0].id);
   const selectedCard = orderCardTemplates.find(
     card => card.id === selected
   );
-Message] = useState('축하해요.');
+
+  const [message, setMessage] = useState('축하해요.');
 
   const { nameInput } = useReceiverForm();
   const sendorNameInput = nameInput;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
+
   const totalQuantity = receiverList.reduce(
     (sum, r) => sum + Number(r.quantity),
     0
@@ -233,13 +234,14 @@ Message] = useState('축하해요.');
     );
   };
 
-  if (isLoading)
+  if (loading)
     return (
       <div style={{ padding: 20 }}>
         상품 정보를 불러오는 중입니다...
       </div>
     );
-  if (isError || !product)
+
+  if (error || !product)
     return (
       <div style={{ padding: 20 }}>
         상품 정보를 불러오지 못했습니다.

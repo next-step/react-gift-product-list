@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import type { GiftItem } from '../types/GiftItem';
 
 const BASE_URL = 'http://localhost:3000';
@@ -19,8 +19,30 @@ export const fetchGiftProductById = async (
 };
 
 export const useGiftProductById = (id: number) => {
-  return useQuery({
-    queryKey: ['giftProduct', id],
-    queryFn: () => fetchGiftProductById(id),
-  });
+  const [data, setData] = useState<GiftItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (id == null) return;
+
+    const fetchProduct = async () => {
+      setLoading(true);
+      setError(null);
+      setData(null);
+
+      try {
+        const product = await fetchGiftProductById(id);
+        setData(product);
+      } catch (err: any) {
+        setError(err.message || '알 수 없는 오류');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  return { data, loading, error };
 };

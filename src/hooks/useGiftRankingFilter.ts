@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 type FilterKey = 'all' | 'female' | 'male' | 'teen';
 type TabOption = '받고 싶어한' | '많이 선물한' | '위시로 받은';
 
@@ -23,15 +25,12 @@ export const useGiftRankingFilter = () => {
       : defaultValue;
   };
 
-  const selectedFilter = getStoredValue(
-    LOCAL_FILTER_KEY,
-    filters,
-    'all'
+  const [selectedFilter] = useState<FilterKey>(() =>
+    getStoredValue(LOCAL_FILTER_KEY, filters, 'all')
   );
-  const selectedTab = getStoredValue(
-    LOCAL_TAB_KEY,
-    tabs,
-    '받고 싶어한'
+
+  const [selectedTab] = useState<TabOption>(() =>
+    getStoredValue(LOCAL_TAB_KEY, tabs, '받고 싶어한')
   );
 
   return {
