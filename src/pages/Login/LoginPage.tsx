@@ -12,7 +12,11 @@ const LoginPage = () => {
 
   const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    login(user.id);
+    login({
+      email: "user@kakao.com",
+      name: "user",
+      authToken: "dummy-token",
+    });
   };
   const isValidIdAndPassword = user.id.length !== 0 && user.password.length >= 8 && !errorMsg.id && !errorMsg.password;
   return (
