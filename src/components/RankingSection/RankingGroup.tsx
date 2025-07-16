@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
-import { mockProducts } from '@/data/products';
 import RankingFilter from '@/components/RankingSection/RankingFilter';
 import RankingSort from '@/components/RankingSection/RankingSort';
 import ProductGrid from '@/components/RankingSection/ProductGrid';
 import ExpandButton from '@/components/RankingSection/ExpandButton';
+import Loading from '@/components/common/Loading';
 import { useState } from 'react';
+import { useProductRanking } from '@/hooks/useProductRanking';
+import { ERROR_MESSAGES } from '@/constants/validation';
 
 const INITIAL_VISIBLE_COUNT = 6;
 
@@ -15,6 +17,19 @@ const RankingGroup = () => {
 
   const targetType = searchParams.get('targetType') || 'ALL';
   const rankType = searchParams.get('rankType') || 'MANY_WISH';
+
+  const { products, isLoading, isError } = useProductRanking(
+    targetType,
+    rankType
+  );
+
+  const isExpanded = products !== null && visibleCount === products.length;
+
+  const toggleVisibleCount = () => {
+    if (products) {
+      setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : products.length);
+    }
+  };
 
   const handleFilterChange = (value: string) => {
     searchParams.set('targetType', value);
@@ -26,9 +41,23 @@ const RankingGroup = () => {
     setSearchParams(searchParams);
   };
 
-  const isExpanded = visibleCount === mockProducts.length;
-  const toggleVisibleCount = () => {
-    setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : mockProducts.length);
+  const renderContent = () => {
+    if (isLoading) return <Loading />;
+    if (isError || !products)
+      return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_PRODUCTS}</EmptyText>;
+    if (products.length === 0)
+      return <EmptyText>{ERROR_MESSAGES.NO_PRODUCTS_AVAILABLE}</EmptyText>;
+
+    const visibleProducts = isExpanded
+      ? products
+      : products.slice(0, INITIAL_VISIBLE_COUNT);
+
+    return (
+      <>
+        <ProductGrid products={visibleProducts} />
+        <ExpandButton isExpanded={isExpanded} onToggle={toggleVisibleCount} />
+      </>
+    );
   };
 
   return (
@@ -39,14 +68,7 @@ const RankingGroup = () => {
         onSelect={handleFilterChange}
       />
       <RankingSort selectedSort={rankType} onSelect={handleSortChange} />
-      <ProductGrid
-        products={
-          isExpanded
-            ? mockProducts
-            : mockProducts.slice(0, INITIAL_VISIBLE_COUNT)
-        }
-      />
-      <ExpandButton isExpanded={isExpanded} onToggle={toggleVisibleCount} />
+      {renderContent()}
     </Section>
   );
 };
@@ -61,4 +83,11 @@ const Section = styled.section`
 const Title = styled.h3`
   ${({ theme }) => theme.typography.title.title1Bold};
   margin-bottom: ${({ theme }) => theme.spacing[4]};
+`;
+
+const EmptyText = styled.p`
+  ${({ theme }) => theme.typography.body.body2Regular};
+  color: ${({ theme }) => theme.color.semantic.text};
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing[6]} 0;
 `;
