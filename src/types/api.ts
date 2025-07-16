@@ -28,6 +28,22 @@ export interface ProductSummary {
     imageURL: string;
 }
 
+export interface OrderRequest {
+    productId: number;
+    message: string;
+    messageCardId: string;
+    ordererName: string;
+    receivers: {
+        name: string;
+        phoneNumber: string;
+        quantity: number;
+    }[];
+}
+
+export interface OrderResponse {
+    success: boolean;
+}
+
 export type TargetType = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
 export type RankType = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
 
