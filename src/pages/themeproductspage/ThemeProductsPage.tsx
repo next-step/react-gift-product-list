@@ -3,36 +3,7 @@ import { useApiRequest } from "@/hooks/useApiRequest";
 import styled from "@emotion/styled";
 import ThemeProductsList from "@/pages/themeproductspage/ThemeProductsList";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
-
-type ThemeInfo = {
-  themeId: number;
-  name: string;
-  title: string;
-  description: string;
-  backgroundColor: string;
-};
-
-type Product = {
-  id: number;
-  name: string;
-  price: {
-    basicPrice: number;
-    sellingPrice: number;
-    discountRate: number;
-  };
-  imageURL: string;
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
-};
-
-type ThemeProductResponse = {
-  list: Product[];
-  cursor: number;
-  hasMoreList: boolean;
-};
+import type { ThemeInfo, ThemeProductResponse } from "@/types/api_types";
 
 export default function ThemeProductsPage() {
   const { themeId } = useParams();

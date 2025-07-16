@@ -1,13 +1,6 @@
 //RisingSection의 리스트 여기에 재사용 가능할듯.
 import styled from "@emotion/styled";
-
-type Product = {
-  id: number;
-  name: string;
-  imageURL: string;
-  brandInfo: { name: string };
-  price: { sellingPrice: number };
-};
+import type { Product } from "@/types/api_types";
 
 type Props = {
   products: Product[];

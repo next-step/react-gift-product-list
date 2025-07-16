@@ -5,12 +5,7 @@ import CategoryItem from "@/components/CategorySection/CategoryItem";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
-
-type Theme = {
-  themeId: number;
-  name: string;
-  image: string;
-};
+import type { Theme } from "@/types/api_types";
 
 export default function CategorySection() {
   const { data: themes, status } = useApiRequest<Theme[]>({
