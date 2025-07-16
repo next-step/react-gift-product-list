@@ -1,40 +1,28 @@
 import { useState } from 'react';
 import { Section, Heading, None } from '@/components/GiftRanking/GiftRanking.styles';
-import { GiftRankingFilter, categoryTabs, sortTabs } from '@/components/GiftRanking/GiftRankingFilter';
+import { GiftRankingFilter } from '@/components/GiftRanking/GiftRankingFilter';
 import GiftRankingGrid from '@/components/GiftRanking/GiftRankingGrid';
 import useGetRanking from './useGetRanking';
-
-type Category = typeof categoryTabs[number];
-type Sort = typeof sortTabs[number];
+import { CATEGORY_OPTIONS, SORT_OPTIONS } from './constants';
+import type { CategoryValue, SortValue } from './constants';
 
 const GiftRankingSection = () => {
-  const getInitialCategory = (): Category => {
+  const getInitialCategory = (): CategoryValue => {
     const stored = localStorage.getItem('selectedCategory');
-    return categoryTabs.includes(stored as Category) ? (stored as Category) : '전체';
+    return (
+      (CATEGORY_OPTIONS.find((option) => option.value === stored)?.value || 'ALL')
+    );
   };
 
-  const getInitialSort = (): Sort => {
+  const getInitialSort = (): SortValue => {
     const stored = localStorage.getItem('selectedSort');
-    return sortTabs.includes(stored as Sort) ? (stored as Sort) : '많이 찜한';
+    return SORT_OPTIONS.find((option) => option.value === stored)?.value || 'MANY_WISH';
   };
 
-  const [selectedCategory, setSelectedCategory] = useState<Category>(getInitialCategory);
-  const [selectedSort, setSelectedSort] = useState<Sort>(getInitialSort);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryValue>(getInitialCategory);
+  const [selectedSort, setSelectedSort] = useState<SortValue>(getInitialSort);
 
-  const { products, isLoading, error } = useGetRanking(
-    selectedCategory === '전체'
-      ? 'ALL'
-      : selectedCategory === '여성'
-        ? 'FEMALE'
-        : selectedCategory === '남성'
-          ? 'MALE'
-          : 'TEEN',
-    selectedSort === '많이 찜한'
-      ? 'MANY_WISH'
-      : selectedSort === '많이 받은'
-        ? 'MANY_RECEIVE'
-        : 'MANY_WISH_RECEIVE'
-  );
+  const { products, isLoading, error } = useGetRanking(selectedCategory, selectedSort);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

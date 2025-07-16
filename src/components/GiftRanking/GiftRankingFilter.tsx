@@ -1,23 +1,17 @@
 import { CategoryTab, TabCircle, TabRow, SortRow, SortTab } from '@/components/GiftRanking/GiftRanking.styles';
-
-export const categoryTabs = ['전체', '여성', '남성', '10대'] as const;
-export const sortTabs = ['많이 찜한', '많이 받은', '많이 찜하고 받은'] as const;
-
-type Category = typeof categoryTabs[number];
-type Sort = typeof sortTabs[number];
-
-const categoryEmojis: Record<Category, string> = {
-    전체: 'ALL',
-    여성: '👩',
-    남성: '👨',
-    '10대': '👦',
-};
+import {
+    CATEGORY_OPTIONS,
+    type CategoryValue,
+    SORT_OPTIONS,
+    type SortValue,
+    categoryEmojis,
+} from './constants';
 
 type Props = {
-    selectedCategory: Category;
-    selectedSort: Sort;
-    onChangeCategory: (tab: Category) => void;
-    onChangeSort: (tab: Sort) => void;
+    selectedCategory: CategoryValue;
+    selectedSort: SortValue;
+    onChangeCategory: (tab: CategoryValue) => void;
+    onChangeSort: (tab: SortValue) => void;
 };
 
 export const GiftRankingFilter = ({
@@ -28,31 +22,30 @@ export const GiftRankingFilter = ({
 }: Props) => (
     <>
         <TabRow>
-            {categoryTabs.map((tab) => (
+            {CATEGORY_OPTIONS.map(({ value, label }) => (
                 <CategoryTab
-                    key={tab}
-                    isSelected={selectedCategory === tab}
-                    onClick={() => onChangeCategory(tab)}
+                    key={value}
+                    isSelected={selectedCategory === value}
+                    onClick={() => onChangeCategory(value)}
                 >
-                    <TabCircle isSelected={selectedCategory === tab}>
-                        {categoryEmojis[tab]}
+                    <TabCircle isSelected={selectedCategory === value}>
+                        {categoryEmojis[value]}
                     </TabCircle>
-                    {tab}
+                    {label}
                 </CategoryTab>
             ))}
         </TabRow>
 
         <SortRow>
-            {sortTabs.map((tab) => (
+            {SORT_OPTIONS.map(({ value, label }) => (
                 <SortTab
-                    key={tab}
-                    isSelected={selectedSort === tab}
-                    onClick={() => onChangeSort(tab)}
+                    key={value}
+                    isSelected={selectedSort === value}
+                    onClick={() => onChangeSort(value)}
                 >
-                    {tab}
+                    {label}
                 </SortTab>
             ))}
         </SortRow>
     </>
 );
-

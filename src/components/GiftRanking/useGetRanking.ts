@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import type { CategoryValue, SortValue } from './constants';
 
 type Product = {
   id: number;
@@ -22,10 +22,7 @@ type ApiResponse = {
   data: Product[];
 };
 
-type RankType = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
-type TargetType = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
-
-const useGetRanking = (targetType: TargetType, rankType: RankType) => {
+const useGetRanking = (targetType: CategoryValue, rankType: SortValue) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -34,7 +31,9 @@ const useGetRanking = (targetType: TargetType, rankType: RankType) => {
     const fetchRanking = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get<ApiResponse>(`/api/products/ranking?targetType=${targetType}&rankType=${rankType}`);
+        const response = await axios.get<ApiResponse>(
+          `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`,
+        );
         setProducts(response.data.data);
       } catch (error) {
         setError(error as Error);
