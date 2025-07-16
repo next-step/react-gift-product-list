@@ -13,23 +13,21 @@ import ProductInfo from "@/pages/order/components/ProductInfo";
 import OrderFooter from "@/pages/order/components/OrderFooter";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { mockRankingData } from "@/mock/mockData";
+import { useProductDetail } from "@/hooks/useProductDetail";
 import { validateReceiverCount } from "@/utils/validators";
+import { ERROR_MESSAGES } from "@/constants/messages";
 
 export default function OrderPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
 
   const id = Number(productId);
-  const product = mockRankingData.find((p) => p.id === Number(id));
-
-  if (!product) return <div>상품 정보를 찾을 수 없습니다.</div>;
+  const { product, loading, error } = useProductDetail(id);
 
   const messageCardRef = useRef<MessageCardHandle>(null);
   const senderInfoRef = useRef<SenderInfoHandle>(null);
 
   const [receivers, setReceivers] = useState<Receiver[]>([]);
-
   const [message, setMessage] = useState("");
   const [senderName, setSenderName] = useState("");
 
@@ -37,15 +35,16 @@ export default function OrderPage() {
     (sum, receiver) => sum + receiver.quantity,
     0,
   );
-  const totalPrice = product.price.sellingPrice * totalQuantity;
+
+  const totalPrice = product?.price.sellingPrice
+    ? product.price.sellingPrice * totalQuantity
+    : 0;
 
   const handleOrderClick = () => {
     const isMessageValid = messageCardRef.current?.validate() ?? false;
     const isSenderValid = senderInfoRef.current?.validate() ?? false;
 
-    if (!isMessageValid || !isSenderValid) {
-      return;
-    }
+    if (!isMessageValid || !isSenderValid) return;
 
     const receiverError = validateReceiverCount(receivers.length);
     if (receiverError) {
@@ -55,20 +54,27 @@ export default function OrderPage() {
 
     const alertMessage = [
       `주문이 완료되었습니다.`,
-      `상품명: ${product.name}`,
+      `상품명: ${product?.name}`,
       `구매 수량: ${receivers.length}`,
       `발신자 이름: ${senderName}`,
       `메시지: ${message}`,
     ].join("\n");
 
     window.alert(alertMessage.trim());
-
     navigate("/");
   };
 
   const handleReceiverChange = useCallback((newReceivers: Receiver[]) => {
     setReceivers(newReceivers);
   }, []);
+
+  if (error) return null;
+  if (loading) {
+    return <Placeholder>{ERROR_MESSAGES.PRODUCT.LOAD}</Placeholder>;
+  }
+  if (!product) {
+    return <Placeholder>{ERROR_MESSAGES.PRODUCT.FAIL_TO_LOAD}</Placeholder>;
+  }
 
   return (
     <>
@@ -83,7 +89,6 @@ export default function OrderPage() {
       />
       <SectionDivider />
       <ReceiverListSection onChange={handleReceiverChange} />
-
       <SectionDivider />
       <ProductInfo
         name={product.name}
@@ -99,4 +104,11 @@ export default function OrderPage() {
 const SectionDivider = styled.div`
   height: 12px;
   background-color: ${({ theme }) => theme.colors.semantic.background.disabled};
+`;
+
+const Placeholder = styled.div`
+  text-align: center;
+  padding: 40px 0;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.semantic.text.disabled};
 `;

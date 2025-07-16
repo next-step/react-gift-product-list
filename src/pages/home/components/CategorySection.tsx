@@ -1,13 +1,22 @@
 import styled from "@emotion/styled";
 import { CategoryCard } from "@/pages/home/components/CategoryCard";
-import { mockCategoryData } from "@/mock/mockData";
+import { useThemes } from "@/hooks/useThemes";
+import { ERROR_MESSAGES } from "@/constants/messages";
 
 export const CategorySection = () => {
+  const { themes, loading, error } = useThemes();
+
+  if (error) return null;
+
+  if (loading) return <Placeholder>{ERROR_MESSAGES.THEME.LOAD}</Placeholder>;
+  if (themes.length === 0)
+    return <Placeholder>{ERROR_MESSAGES.THEME.NONE}</Placeholder>;
+
   return (
     <Section>
       <Title>선물 테마</Title>
       <Grid>
-        {mockCategoryData.map((item) => (
+        {themes.map((item) => (
           <CategoryCard
             key={item.themeId}
             name={item.name}
@@ -33,4 +42,11 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 16px 8px;
+`;
+
+const Placeholder = styled.div`
+  padding: 32px 0;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.semantic.text.disabled};
+  font-size: 14px;
 `;

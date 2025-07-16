@@ -21,4 +21,14 @@ export const ERROR_MESSAGES = {
     DUPLICATE_PHONE: "중복된 전화번호입니다.",
     MAX_RECEIVER_NUMBER: "최대 10명까지 등록할 수 있습니다.",
   },
+  THEME: {
+    FAIL_TO_LOAD: "테마 정보를 불러오지 못했습니다.",
+    LOAD: "테마 정보를 불러오고 있습니다.",
+    NONE: "테마가 없습니다.",
+  },
+  PRODUCT: {
+    FAIL_TO_LOAD: "상품 정보를 불러오지 못했습니다.",
+    LOAD: "상품 정보를 불러오고 있습니다.",
+    NONE: "상품이 없습니다,",
+  },
 };

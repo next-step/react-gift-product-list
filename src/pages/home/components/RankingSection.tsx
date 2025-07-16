@@ -15,13 +15,13 @@ export const RankingSection = () => {
   const [gender, setGender] = useLocalStorageState<GenderType>(
     LOCAL_STORAGE_KEYS.RANKING_GENDER,
     "ALL",
-    GENDER_FILTERS,
+    GENDER_FILTERS.map((f) => f.value),
   );
 
   const [tab, setTab] = useLocalStorageState<TabType>(
     LOCAL_STORAGE_KEYS.RANKING_TAB,
-    RANKING_TABS[0],
-    RANKING_TABS,
+    "MANY_WISH",
+    RANKING_TABS.map((t) => t.value),
   );
 
   return (

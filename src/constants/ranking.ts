@@ -1,10 +1,18 @@
-export const RANKING_TABS = [
-  "받고 싶어한",
-  "많이 선물한",
-  "위시로 받은",
-] as const;
+import type { TargetType, RankType } from "@/api/product";
 
-export type TabType = (typeof RANKING_TABS)[number];
+export const GENDER_FILTERS: { label: string; value: TargetType }[] = [
+  { label: "전체", value: "ALL" },
+  { label: "여성", value: "FEMALE" },
+  { label: "남성", value: "MALE" },
+  { label: "청소년", value: "TEEN" },
+];
 
-export const GENDER_FILTERS = ["ALL", "여성", "남성", "청소년"] as const;
-export type GenderType = (typeof GENDER_FILTERS)[number];
+export type GenderType = (typeof GENDER_FILTERS)[number]["value"];
+
+export const RANKING_TABS: { label: string; value: RankType }[] = [
+  { label: "받고 싶어한", value: "MANY_WISH" },
+  { label: "많이 선물한", value: "MANY_RECEIVE" },
+  { label: "위시로 받은", value: "MANY_WISH_RECEIVE" },
+];
+
+export type TabType = (typeof RANKING_TABS)[number]["value"];
