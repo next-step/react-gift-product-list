@@ -40,7 +40,7 @@ const Ranking = () => {
           ))}
         </RankCategoryList>
       </NavBar>
-      <RankingList />
+      <RankingList targetType={selectedTarget} rankType={selectedRank} />
     </Container>
   );
 };

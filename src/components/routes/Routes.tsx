@@ -1,11 +1,11 @@
 import { Route, Routes as RouterRoutes } from "react-router-dom";
+import AuthRoute from "@/components/routes/AuthRoute";
+import { ROUTE_PATH } from "@/components/routes/routePath";
 import GiftPage from "@/pages/Gift/GiftPage";
 import LoginPage from "@/pages/Login/LoginPage";
-import NotFoundPage from "@/pages/NotFound/NotFoundPage";
 import ProfilePage from "@/pages/Profile/ProfilePage";
-import AuthRoute from "@/components/routes/AuthRoute";
 import OrderPage from "@/pages/Order/OrderPage";
-import { ROUTE_PATH } from "@/components/routes/routePath";
+import NotFoundPage from "@/pages/NotFound/NotFoundPage";
 
 const Routes = () => {
   return (

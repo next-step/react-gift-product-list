@@ -1,12 +1,33 @@
 import styled from "@emotion/styled";
-import { categoryMock } from "@/assets/categoryMock";
+import Loading from "@/components/common/Loading";
+import useFetch from "@/hooks/useFetch";
+import type { CategoryType } from "@/types/CategoryType";
+
+interface ThemesData {
+  data: CategoryType[];
+}
 
 const Category = () => {
+  const themes = useFetch<ThemesData>("/api/themes");
+
+  if (themes.isLoading) {
+    return (
+      <Container>
+        <Title>선물 테마</Title>
+        <Loading height="250px" />
+      </Container>
+    );
+  }
+
+  if (themes.isError || themes.data?.data.length === 0) {
+    return null;
+  }
+
   return (
     <Container>
       <Title>선물 테마</Title>
       <List>
-        {categoryMock.map((category) => (
+        {themes.data?.data.map((category) => (
           <Item key={category.themeId}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
@@ -45,7 +66,7 @@ const Item = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.25;
+  gap: 0.25rem;
   cursor: pointer;
 `;
 const Img = styled.img`

@@ -5,10 +5,21 @@ import { useState } from "react";
 import Button from "@/components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import useFetch from "@/hooks/useFetch";
+import Loading from "@/components/common/Loading";
+import type { RankingItemType } from "@/types/RankingItemType";
+
+interface RankingListProps {
+  targetType: string;
+  rankType: string;
+}
+interface RankingData {
+  data: RankingItemType[];
+}
 
 const RANKING_LIST_ITEM_VIEW_COUNT = 6;
 
-const RankingList = () => {
+const RankingList = ({ targetType, rankType }: RankingListProps) => {
   const navigate = useNavigate();
   const [viewCount, setViewCount] = useState(RANKING_LIST_ITEM_VIEW_COUNT);
   const isCollapsed = viewCount === RANKING_LIST_ITEM_VIEW_COUNT;
@@ -19,10 +30,26 @@ const RankingList = () => {
   const goOrderPage = (itemId: number) => {
     navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
   };
+
+  const rankingListData = useFetch<RankingData>("/api/products/ranking", {
+    params: { targetType, rankType },
+    dependency: [targetType, rankType],
+  });
+
+  if (rankingListData.isLoading) {
+    return <Loading height="625px" />;
+  }
+  if (rankingListData.isError || rankingListData.data?.data.length === 0) {
+    return (
+      <Empty>
+        <Msg>상품이 없습니다.</Msg>
+      </Empty>
+    );
+  }
   return (
     <Container>
       <Content>
-        {rankingItemMock.slice(0, viewCount).map((item, index) => (
+        {rankingListData.data?.data.slice(0, viewCount).map((item, index) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>
@@ -48,6 +75,18 @@ const RankingList = () => {
   );
 };
 
+const Empty = styled.div`
+  width: 100%;
+  display: flex;
+  height: 240px;
+  justify-content: center;
+  align-items: center;
+`;
+const Msg = styled.p`
+  width: 100%;
+  font: ${({ theme }) => theme.typography.label1Regular};
+  text-align: center;
+`;
 const Container = styled.div`
   width: 100%;
 `;
