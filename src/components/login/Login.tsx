@@ -65,7 +65,6 @@ const Login = () => {
                   },
                 }
               );
-
               setUser({
                 email: response.data.email,
                 name: response.data.name,
@@ -118,7 +117,6 @@ const inputContainerStyle = (theme: Theme) => css`
   width: 80%;
   gap: ${theme.spacing.spacing8};
   padding: ${theme.spacing.spacing6};
-  padding: ${theme.spacing.spacing0};
 `;
 
 const inputStyle = (theme: Theme, isFormValid: boolean) => css`
@@ -138,6 +136,6 @@ const containerStyle = () => css`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  100vh;
-  width: 100%; : height
+  height : 100vh;
+  width: 100%; : 
 `;
