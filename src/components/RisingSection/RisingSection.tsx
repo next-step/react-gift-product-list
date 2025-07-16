@@ -23,8 +23,9 @@ const Container = styled.section`
 
 const Title = styled.div`
   font-size: ${({ theme }) => theme.typography.title1Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.subtitle1Regular.fontWeight};
+  font-weight: bold;
   color: ${({ theme }) => theme.colors.gray1000};
-  margin-bottom: 12px;
+  margin-bottom: 30px;
+  margin-top: 10px;
   margin-left: 16px;
 `;

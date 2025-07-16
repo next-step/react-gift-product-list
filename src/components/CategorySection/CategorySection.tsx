@@ -1,15 +1,37 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 import CategoryItem from "@/components/CategorySection/CategoryItem";
-import { CATEGORIES } from "@/mocks/categories_mock";
+import { useApiRequest } from "@/hooks/useApiRequest";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
+import type { Theme } from "@/types/api_types";
 
 export default function CategorySection() {
+  const { data: themes, status } = useApiRequest<Theme[]>({
+    url: API_ENDPOINTS.THEMES,
+  });
+  const navigate = useNavigate();
+
+  if (status === "loading") return <LoadingSpinner />;
+  if (status === "error" || !themes || themes.length === 0) return null;
+
+  const handleClick = (themeId: number) => {
+    navigate(`/themes/${themeId}`);
+  };
+
   return (
     <>
       <SectionTitle>선물 테마</SectionTitle>
       <Container>
-        {CATEGORIES.map(({ themeId, name, image }) => (
-          <CategoryItem key={themeId} name={name} image={image} />
+        {themes.map(({ themeId, name, image }) => (
+          <div
+            key={themeId}
+            onClick={() => handleClick(themeId)}
+            style={{ cursor: "pointer" }}
+          >
+            <CategoryItem name={name} image={image} />
+          </div>
         ))}
       </Container>
     </>
@@ -25,7 +47,7 @@ const Container = styled.div`
 
 const SectionTitle = styled.div`
   font-size: ${({ theme }) => theme.typography.title1Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.title1Regular.fontWeight};
+  font-weight: bold;
   color: ${({ theme }) => theme.colors.textDefault};
   padding: 16px 16px;
 `;

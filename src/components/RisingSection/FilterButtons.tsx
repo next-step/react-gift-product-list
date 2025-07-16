@@ -1,53 +1,49 @@
 /** @jsxImportSource @emotion/react */
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
-type TargetGroupFilter = '전체' | '여성이' | '남성이' | '청소년이';
-type PreferenceFilter = '받고 싶어한' | '많이 선물한' | '위시로 받은';
+type TargetGroupFilter = "ALL" | "FEMALE" | "MALE" | "TEEN";
+type PreferenceFilter = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
 
-import { useState } from 'react';
-import SelectableButton from '../common/BaseButton';
+import { useSearchParams } from "react-router-dom";
+import SelectableButton from "@/components/common/BaseButton";
 
-const TARGET_GROUP_OPTIONS: { icon: string; label: TargetGroupFilter }[] = [
-  { icon: 'ALL', label: '전체' },
-  { icon: '💁‍♀️', label: '여성이' },
-  { icon: '🙋‍♂️', label: '남성이' },
-  { icon: '🧒', label: '청소년이' },
+const TARGET_GROUP_OPTIONS: {
+  icon: string;
+  value: TargetGroupFilter;
+  label: string;
+}[] = [
+  { icon: "ALL", value: "ALL", label: "전체" },
+  { icon: "💁‍♀️", value: "FEMALE", label: "여성이" },
+  { icon: "🙋‍♂️", value: "MALE", label: "남성이" },
+  { icon: "🧒", value: "TEEN", label: "청소년이" },
 ];
 
-const PREFERENCE_OPTIONS: PreferenceFilter[] = [
-  '받고 싶어한',
-  '많이 선물한',
-  '위시로 받은',
+const PREFERENCE_OPTIONS: { value: PreferenceFilter; label: string }[] = [
+  { value: "MANY_WISH", label: "받고 싶어한" },
+  { value: "MANY_RECEIVE", label: "많이 선물한" },
+  { value: "MANY_WISH_RECEIVE", label: "위시로 받은" },
 ];
 
 export default function FilterButtons() {
-  const [targetGroupselected, setTargetGroupSelected] =
-    useState<TargetGroupFilter>(() => {
-      return (
-        (localStorage.getItem('selectedTargetGroup') as TargetGroupFilter) ||
-        '전체'
-      );
-    });
-  const [preferenceSelected, setPreferenceSubSelected] =
-    useState<PreferenceFilter>(() => {
-      return (
-        (localStorage.getItem('selectedPreference') as PreferenceFilter) ||
-        '받고 싶어한'
-      );
-    });
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const targetGroupSelected =
+    (searchParams.get("targetType") as TargetGroupFilter) || "ALL";
+  const preferenceSelected =
+    (searchParams.get("rankType") as PreferenceFilter) || "MANY_WISH";
 
   return (
     <>
       <TargetGroupfilterContainer>
-        {TARGET_GROUP_OPTIONS.map(({ icon, label }) => (
+        {TARGET_GROUP_OPTIONS.map(({ icon, value, label }) => (
           <SelectableButton
-            key={label}
+            key={value}
             icon={icon}
             label={label}
-            isActive={targetGroupselected === label}
+            isActive={targetGroupSelected === value}
             onClick={() => {
-              setTargetGroupSelected(label);
-              localStorage.setItem('selectedTargetGroup', label);
+              searchParams.set("targetType", value);
+              setSearchParams(searchParams);
             }}
             color="blue"
             direction="vertical"
@@ -55,14 +51,14 @@ export default function FilterButtons() {
         ))}
       </TargetGroupfilterContainer>
       <PreferencefilterContainer>
-        {PREFERENCE_OPTIONS.map((label) => (
+        {PREFERENCE_OPTIONS.map(({ value, label }) => (
           <SelectableButton
-            key={label}
+            key={value}
             label={label}
-            isActive={preferenceSelected === label}
+            isActive={preferenceSelected === value}
             onClick={() => {
-              setPreferenceSubSelected(label);
-              localStorage.setItem('selectedPreference', label);
+              searchParams.set("rankType", value);
+              setSearchParams(searchParams);
             }}
             color="blue"
           />

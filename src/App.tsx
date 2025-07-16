@@ -13,6 +13,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import MyPage from "@/pages/MyPage";
 import OrderPage from "@/pages/orderpage/OrderPage";
 import PrivateRoute from "@/routes/PrivateRoute";
+import ThemeProductsPage from "@/pages/themeproductspage/ThemeProductsPage";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/themes/:themeId" element={<ThemeProductsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>

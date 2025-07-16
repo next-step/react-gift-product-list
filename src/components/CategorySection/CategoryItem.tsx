@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 const Image = styled.img`
   width: 56px;
   height: 56px;
-  border-radius: 50%;
+  border-radius: 40%;
 `;
 
 const Label = styled.span`
