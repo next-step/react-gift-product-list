@@ -1,10 +1,12 @@
 import { URLS } from '@assets/urls';
 import { useLoginEmailForm } from '@hooks/useLoginEmailForm';
 import { useLoginPwForm } from '@hooks/useLoginPwForm';
-import { StyeldLoginInput } from '@styles/Login/StyeldLoginInput';
-import { StyledLoginButton } from '@styles/Login/StyledLoginButton';
-import { StyledLoginComponentDiv } from '@styles/Login/StyledLoginComponentDiv';
-import { StyledLoginKakoLogo } from '@styles/Login/StyledLoginKakoLogo';
+import {
+  StyeldLoginInput,
+  StyledLoginButton,
+  StyledLoginComponentDiv,
+  StyledLoginKakoLogo,
+} from '@src/styles/Login/StyledLoginFormContainer';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 

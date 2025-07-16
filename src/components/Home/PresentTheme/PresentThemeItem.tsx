@@ -1,33 +1,13 @@
-import styled from '@emotion/styled';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import {
+  StyledImage,
+  StyledPresentThemeDiv,
+  StyledPresentThemeItemDiv,
+  StyledPresentThemeItemP,
+} from '@styles/Home/PresentTheme/StyledPresnetThemeItem';
+import { StyledPresentThemeCommonP } from '@src/styles/Home/StyledPresentThemeCommonP';
 
-const StyledImage = styled.img`
-  padding: ${({ theme }) => theme.spacing.spacing2};
-  width: 50px;
-  height: 50px;
-`;
-const StyledP = styled.p`
-  ${({ theme }) => theme.typography.label2Regular}
-  margin: 3px;
-`;
-const StyledPresentThemeItemDiv = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing.spacing2};
-`;
-const StyledPresentP = styled.p`
-  ${({ theme }) => theme.typography.title1Bold};
-  margin: ${({ theme }) => theme.spacing.spacing3};
-`;
-const StyledPresentThemeDiv = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  background-color: ${({ theme }) => theme.sementicPalette.backgroundDefault};
-  width: 720px;
-`;
 interface Theme {
   themeId: number;
   name: string;
@@ -74,13 +54,13 @@ const PresentThemeItem = () => {
   } else {
     return (
       <>
-        <StyledPresentP>선물 테마</StyledPresentP>
+        <StyledPresentThemeCommonP>선물 테마</StyledPresentThemeCommonP>
         <StyledPresentThemeDiv>
           {themes &&
             themes.data.map((item: Theme) => (
               <StyledPresentThemeItemDiv key={item.themeId} className='border'>
                 <StyledImage src={item.image} alt={item.name} />
-                <StyledP>{item.name}</StyledP>
+                <StyledPresentThemeItemP>{item.name}</StyledPresentThemeItemP>
               </StyledPresentThemeItemDiv>
             ))}
         </StyledPresentThemeDiv>

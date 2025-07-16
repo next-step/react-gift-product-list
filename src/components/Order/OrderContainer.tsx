@@ -1,17 +1,17 @@
-import StyledTopestDiv from '@src/styles/Common/StyledTopesDiv';
-import OrderCardTemplateContainer from '@components/Order/OrderCardTemplateContainer';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import StyledTopestDiv from '@styles/Common/StyledTopesDiv';
+import OrderCardTemplateContainer from '@components/Order/OrderCardTemplateContainer';
+
 import { GOODS_DATA, type Goods } from '@assets/goodsData';
-import { Spacer } from '@src/styles/Common/Spacer';
-import { StyledItemInfoContainer } from '@styles/Order/OrderContainer/StyledItemInfoContainer';
-import { StyledOrderButton } from '@styles/Order/OrderContainer/StyledOrderButton';
+import { Spacer } from '@styles/Common/Spacer';
 import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import SenderContainer from './SenderContainer';
 import type { OrderFormValue } from '@src/types/OrderFormValues';
 import RecipientsModalContainer from './RecipientsModalContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { orderSchema } from '../Schemas/orderSchmea';
+import { StyledItemInfoContainer, StyledOrderButton } from '@src/styles/Order/StyledOrderContainer';
 
 const OrderContainer = () => {
   const [searchParams] = useSearchParams();

@@ -1,26 +1,10 @@
-import styled from '@emotion/styled';
 import PresentThemeItem from './PresentThemeItem';
-
-const StyledPresentContainer = styled.div`
-  background-color: ${({ theme }) => theme.sementicPalette.backgroundDefault};
-  padding-top: ${({ theme }) => theme.spacing.spacing6};
-`;
-
-const StyledExtraContainer = styled.div`
-  background-color: ${({ theme }) => theme.sementicPalette.kakaoYellow};
-  margin: ${({ theme }) => theme.spacing.spacing3} ${({ theme }) => theme.spacing.spacing3} 0px
-    ${({ theme }) => theme.spacing.spacing3};
-  border-radius: ${({ theme }) => theme.spacing.spacing5};
-  padding: ${({ theme }) => theme.spacing.spacing4};
-`;
-const StyledExtraFristP = styled.div`
-  color: ${({ theme }) => theme.sementicPalette.textSub};
-  ${({ theme }) => theme.typography.label1Regular};
-`;
-const StyledExtraSecondP = styled.div`
-  color: ${({ theme }) => theme.sementicPalette.textDefault};
-  ${({ theme }) => theme.typography.label1Bold};
-`;
+import {
+  StyledExtraContainer,
+  StyledExtraFristP,
+  StyledExtraSecondP,
+  StyledPresentContainer,
+} from '@styles/Home/PresentTheme/StyledPresentThemeContainer';
 
 const PresentThemeConatiner = () => {
   return (

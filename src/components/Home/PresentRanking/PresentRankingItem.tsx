@@ -2,13 +2,15 @@ import { URLS } from '@assets/urls';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { StyledPresentRankingNumContainer } from '@styles/Home/PresentRanking/StyledPresentRankingNumContainer';
 import type { ProductRanking, ProductRankings } from '@src_types/ProductRankings';
-import { StyledPresentRankingItemDiv } from '@styles/Home/PresentRanking/StyledPresentRankingItemDiv';
-import { StyledPresentRankingItemImage } from '@styles/Home/PresentRanking/StyledPresentRankingItemImage';
-import { StyledPresentRankingItemBrandName } from '@styles/Home/PresentRanking/StyledPresentRankingItemBrandName';
-import { StyledPresentRankingItemPresentItem } from '@styles/Home/PresentRanking/StyledPresentRankingItemPresentItem';
-import { StyledPresentRankingItemPrasentPrice } from '@styles/Home/PresentRanking/StyledPresentRankingItemPrasentPrice';
+import {
+  StyledPresentRankingItemBrandName,
+  StyledPresentRankingItemDiv,
+  StyledPresentRankingItemImage,
+  StyledPresentRankingItemPrasentPrice,
+  StyledPresentRankingItemPresentItem,
+  StyledPresentRankingNumContainer,
+} from '@src/styles/Home/PresentRanking/StyledPresentRankingItem';
 
 const BASIC_RANKING_COMPONENT_NUMBER = 6;
 const MANY_RANKING_COMPONENT_NUMBER = 18;
