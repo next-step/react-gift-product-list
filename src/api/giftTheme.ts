@@ -1,7 +1,5 @@
-const BASE_URL = 'http://localhost:3000';
+import { fetcher } from './client';
 
-export const fetchGiftThemes = async () => {
-  const res = await fetch(`${BASE_URL}/api/themes`);
-  if (!res.ok) throw new Error('테마를 불러오지 못했습니다.');
-  return res.json();
+export const fetchGiftThemes = () => {
+  return fetcher('/api/themes', '테마를 불러오지 못했습니다.');
 };
