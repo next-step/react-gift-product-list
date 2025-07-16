@@ -70,12 +70,8 @@ export const RankingSection = () => {
 
   const renderContent = () => {
     if (loading) {
-      return (
-        <S.LoadingWrapper>
-          <Spinner size={48} />
-        </S.LoadingWrapper>
-      );
-    }
+    return <Spinner size={48} withWrapper />;
+  }
 
     if (error || data.length === 0) {
       return <EmptyState>상품이 없습니다.</EmptyState>;

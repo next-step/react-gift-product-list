@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useState, useCallback } from "react";
 import styled from "@emotion/styled";
+
 import { fetchThemes } from "@/api/theme";
 import type { Theme } from "@/api/theme";
 import { CategoryCard } from "@/components/category/CategoryCard";
@@ -29,12 +30,9 @@ export const CategorySection = () => {
   }, [fetchThemesData]);
 
   if (loading) {
-    return (
-      <LoadingWrapper>
-        <Spinner size={48} />
-      </LoadingWrapper>
-    );
-  }
+  return <Spinner size={48} withWrapper />;
+}
+
 
   if (error || themes.length === 0) {
     return <ErrorBanner>해당 ID에 일치하는 데이터가 없습니다.</ErrorBanner>;
@@ -49,12 +47,6 @@ export const CategorySection = () => {
   );
 };
 
-const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 0;
-`;
 
 const CategoryGrid = styled.section`
   width: 100%;

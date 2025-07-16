@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import type { ThemeType } from "@/styles/theme/theme";
 
 export const section = (theme: ThemeType) => css`
@@ -91,12 +90,6 @@ export const emptyState = (theme: ThemeType) => css`
   margin-top: 20px;
 `;
 
-export const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 32px 0;
-`;
 export const EmptyStateWrapper = (theme: ThemeType) => css`
   text-align: center;
   color: ${theme.colors.gray700};
