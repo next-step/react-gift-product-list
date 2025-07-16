@@ -2,12 +2,14 @@ import { createContext, useContext } from 'react';
 
 export interface UserInfo {
   email: string;
+  name: string;
+  authToken: string;
 }
 
 interface AuthContextType {
   isLoggedIn: boolean;
   userInfo: UserInfo | null;
-  login: (email: string, onSuccess?: () => void) => void;
+  login: (email: string, password: string, onSuccess?: () => void) => Promise<void>;
   logout: () => void;
 }
 

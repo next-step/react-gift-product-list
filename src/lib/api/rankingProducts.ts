@@ -1,6 +1,5 @@
 import { api } from "./core";
-import { type RankType, type TargetType, type RankingProduct } from "../../types/api";
-
+import type { RankType, TargetType, RankingProduct } from "../../types/api";
 
 export const getRankingProducts = async (targetType: TargetType = 'ALL', rankType: RankType = 'MANY_WISH'): Promise<RankingProduct[]> => {
     try {

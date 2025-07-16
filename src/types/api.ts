@@ -22,3 +22,18 @@ export interface RankingProduct {
 
 export type TargetType = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
 export type RankType = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
+
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    email: string;
+    name: string;
+    authToken: string;
+}
+
+export interface ApiResponse<T> {
+    data: T;
+}
