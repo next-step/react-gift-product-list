@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Product } from '@/types/Product';
-import { products } from '@/mock/productsData';
 import RankingItem from './RankingItem';
 
 const Wrapper = styled.section`
@@ -105,6 +104,16 @@ const rankingTabs = [
   { key: 'wish', label: '위시로 받은' },
 ];
 
+const Loading = styled.p`
+  padding: 0 8px;
+  ${({ theme }) => theme.typography.body2Regular};
+  color: ${({ theme }) => theme.colors.gray[600]};
+  height: 509px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export default function GiftRanking() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initGender = searchParams.get('gender') ?? 'all';
@@ -113,6 +122,33 @@ export default function GiftRanking() {
   const [filter, setFilter] = useState(initGender);
   const [tab, setTab] = useState(initType);
   const [collapsed, setCollapsed] = useState(true);
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  const fetchRanking = async (gender: string, type: string) => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`/api/products/ranking?gender=${gender}&type=${type}`);
+      const data = await res.json();
+
+      // 테스트용 딜레이
+      await new Promise((r) => setTimeout(r, 300));
+
+      setProducts(data.data || []);
+      setHasError(false);
+    } catch (err) {
+      console.error('랭킹 데이터 불러오기 에러 :', err);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRanking(filter, tab);
+  }, [filter, tab]);
 
   const updateParams = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -157,15 +193,23 @@ export default function GiftRanking() {
         ))}
       </TabRow>
 
-      {/* 상품 */}
-      <Grid>
-        {visible.map((item, index) => (
-          <RankingItem key={item.id} item={item} rank={index + 1} />
-        ))}
-      </Grid>
-
-      {/* 더보기 / 접기 */}
-      <MoreBtn onClick={() => setCollapsed((c) => !c)}>{collapsed ? '더보기' : '접기'}</MoreBtn>
+      {/* 상품 목록 */}
+      {isLoading ? (
+        <Loading>로딩 중...</Loading>
+      ) : hasError ? (
+        <p>상품 목록을 불러오는 데 실패했습니다.</p>
+      ) : products.length === 0 ? (
+        <p>상품 목록이 없습니다.</p>
+      ) : (
+        <>
+          <Grid>
+            {visible.map((item, index) => (
+              <RankingItem key={item.id} item={item} rank={index + 1} />
+            ))}
+          </Grid>
+          <MoreBtn onClick={() => setCollapsed((c) => !c)}>{collapsed ? '더보기' : '접기'}</MoreBtn>
+        </>
+      )}
     </Wrapper>
   );
 }

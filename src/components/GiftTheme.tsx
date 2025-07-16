@@ -26,6 +26,9 @@ const Loading = styled.p`
   ${({ theme }) => theme.typography.body2Regular};
   color: ${({ theme }) => theme.colors.gray[600]};
   height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default function GiftTheme() {
