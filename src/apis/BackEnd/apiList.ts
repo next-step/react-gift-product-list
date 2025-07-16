@@ -81,3 +81,33 @@ export async function fetchProductSummary(id: string) {
     return null;
   }
 }
+
+export type OrderBody = {
+  productId: number;
+  message: string;
+  messageCardId: string;
+  ordererName: string;
+  receivers: {
+    name: string;
+    phoneNumber: string;
+    quantity: number;
+  }[];
+};
+
+export async function fetchOrder(orderInfo: OrderBody, authToken: string) {
+  try {
+    const response = await instance.post(BE.API.ORDER.BASE, orderInfo, {
+      headers: {
+        Authorization: `${authToken}`
+      }
+    });
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response ?? null;
+    } else {
+      console.error(error);
+    }
+    return null;
+  }
+}

@@ -7,10 +7,17 @@ import UserContext from "@src/contexts/UserContext";
 import { productMockData } from "@src/mock/productMockData";
 import { PATH } from "@src/router/Router";
 import theme from "@src/styles/kakaoTheme";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BatchReceiverInput from "@src/components/OrderPanels/BatchReceiverInput";
 import { useForm, Controller, FormProvider, useWatch } from "react-hook-form";
+import {
+  fetchOrder,
+  fetchProductSummary,
+  type OrderBody
+} from "@src/apis/BackEnd/apiList";
+import useFetchState from "@src/hooks/useFetchState";
+import PendingSpinner from "@src/components/shared/PendingSpinner";
 
 export type Receiver = {
   id: string;
@@ -20,9 +27,18 @@ export type Receiver = {
 };
 
 export type FormType = {
+  cardId: string;
   message: string;
   sender: string;
   receivers: Receiver[];
+};
+
+export type ProductData = {
+  imageURL: string;
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
 };
 
 function OrderPage() {
@@ -36,13 +52,29 @@ function OrderPage() {
 
   const formHooks = useForm({
     defaultValues: {
+      cardId: "",
       message: "",
       sender: userContext?.user.value || "",
       receivers: []
     }
   });
 
-  const orderHandler = (data: FormType) => {
+  const orderHandler = async (data: FormType) => {
+    const orderInfo: OrderBody = {
+      productId: productData.data!.id,
+      message: formHooks.getValues("message"),
+      messageCardId: formHooks.getValues("cardId").toString(),
+      ordererName: formHooks.getValues("sender"),
+      receivers: formHooks.getValues("receivers").map((receiver: Receiver) => ({
+        name: receiver.name,
+        phoneNumber: receiver.phoneNumber,
+        quantity: parseInt(receiver.quantity)
+      }))
+    };
+    if (userContext?.authToken.value) {
+      const response = await fetchOrder(orderInfo, userContext.authToken.value);
+      console.log(response);
+    }
     alert(
       `주문이 완료되었습니다.\n상품명: ${
         productMockData.name
@@ -65,43 +97,68 @@ function OrderPage() {
     }
   }, [userContext?.authToken.value]);
 
+  //product summary fetch logic
+  const productId = useParams().id ?? "";
+  const update = useCallback(async () => {
+    const response = await fetchProductSummary(productId);
+    if (!response) {
+      console.error("fetchProductSummary에 실패하였습니다.");
+      return;
+    }
+
+    if (response.status >= 400 && response.status < 500) {
+      navigate(`/?err=${encodeURIComponent(response.data.data.message)}`);
+      return;
+    }
+
+    return response;
+  }, [productId]);
+  const productData = useFetchState<ProductData>(update);
+
   return (
-    <FormProvider {...formHooks}>
-      <form onSubmit={formHooks.handleSubmit(orderHandler)}>
-        <OrderPageWrapper>
-          <CardSelector name="message" />
-          <InputGroup title="보내는 사람">
-            <Controller
-              name="sender"
-              control={formHooks.control}
-              rules={{ required: "이름을 입력해주세요." }}
-              render={({ field, fieldState }) => (
-                <AdvancedInput
-                  placeholder="이름을 입력하세요."
-                  type="text"
-                  {...field}
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message}
+    <>
+      {productData.status === "pending" && <PendingSpinner />}
+      {productData.status === "done" && (
+        <FormProvider {...formHooks}>
+          <form onSubmit={formHooks.handleSubmit(orderHandler)}>
+            <OrderPageWrapper>
+              <CardSelector messageName="message" cardName="cardId" />
+              <InputGroup title="보내는 사람">
+                <Controller
+                  name="sender"
+                  control={formHooks.control}
+                  rules={{ required: "이름을 입력해주세요." }}
+                  render={({ field, fieldState }) => (
+                    <AdvancedInput
+                      placeholder="이름을 입력하세요."
+                      type="text"
+                      {...field}
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  )}
                 />
-              )}
-            />
-            <Sub>* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.</Sub>
-          </InputGroup>
-          <BatchReceiverInput />
-          <InputGroup title="상품 정보">
-            <ProductCard />
-          </InputGroup>
-          <FooterButton type="submit">
-            {productMockData.price.sellingPrice *
-              receivers.reduce(
-                (sum: number, r: Receiver) => sum + parseInt(r.quantity),
-                0
-              )}
-            원 주문하기
-          </FooterButton>
-        </OrderPageWrapper>
-      </form>
-    </FormProvider>
+                <Sub>
+                  * 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.
+                </Sub>
+              </InputGroup>
+              <BatchReceiverInput />
+              <InputGroup title="상품 정보">
+                <ProductCard productData={productData.data} />
+              </InputGroup>
+              <FooterButton type="submit">
+                {productMockData.price.sellingPrice *
+                  receivers.reduce(
+                    (sum: number, r: Receiver) => sum + parseInt(r.quantity),
+                    0
+                  )}
+                원 주문하기
+              </FooterButton>
+            </OrderPageWrapper>
+          </form>
+        </FormProvider>
+      )}
+    </>
   );
 }
 
