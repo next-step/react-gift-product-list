@@ -5,6 +5,7 @@ import { useLoginForm } from "./useLoginForm";
 import { css, type Theme } from "@emotion/react";
 import { auth } from "@/services/auth";
 import { STORAGE_KEY } from "@/constants/storage";
+import { showErrorToast } from "@/styles/toast";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -26,14 +27,26 @@ export default function LoginPage() {
   const goToLogin = async () => {
     if (!isFormValid) return;
 
+    const isValidEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+[^\s@.]$/;
+
+    if (!isValidEmailFormat.test(email)) {
+      showErrorToast("올바른 이메일 형식이 아닙니다.");
+      return;
+    }
+
+    if (!email.endsWith("@kakao.com")) {
+      showErrorToast("@kakao.com 이메일 주소만 가능합니다.");
+      return;
+    }
+
     try {
       const user = await auth({ email, password });
       sessionStorage.setItem(STORAGE_KEY.USER_INFO, JSON.stringify(user));
-
       navigate(from, { replace: true });
-    } catch (error) {
-      alert("이메일 또는 비밀번호가 올바르지 않습니다.");
-      console.error("로그인 실패:", error);
+    } catch (error: any) {
+      if (error.response?.status >= 400 && error.response?.status < 500) {
+        showErrorToast("올바른 이메일 형식이 아닙니다.");
+      }
     }
   };
 
