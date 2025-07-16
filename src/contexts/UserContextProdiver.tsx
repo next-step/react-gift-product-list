@@ -3,12 +3,15 @@ import UserContext from "./UserContext";
 import useStoredState from "@src/hooks/useStoredState";
 
 const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const [valid, setValid] = useStoredState<boolean>("valid", false);
+  const [authToken, setAuthToken] = useStoredState<string | null>(
+    "authToken",
+    null
+  );
   const [userName, setUserName] = useStoredState<string | null>("name", null);
   const [email, setEmail] = useStoredState<string | null>("email", null);
 
   const context = {
-    valid: { value: valid, setValue: setValid },
+    authToken: { value: authToken, setValue: setAuthToken },
     user: { value: userName, setValue: setUserName },
     email: { value: email, setValue: setEmail }
   };

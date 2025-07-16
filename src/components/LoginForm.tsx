@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { fetchLogin } from "@src/apis/BackEnd/apiList";
 import UserContext from "@src/contexts/UserContext";
 import theme from "@src/styles/kakaoTheme";
 import { useContext, useEffect } from "react";
@@ -38,18 +39,32 @@ function LoginForm() {
     navigate(redirectPath ? decodeURIComponent(redirectPath) : "/");
   };
 
-  const handleLogin = (data: LoginFormData) => {
-    userContext?.valid.setValue(true);
-    userContext?.email.setValue(data.email);
-    userContext?.user.setValue(data.email.split("@")[0]);
+  const handleLogin = async (data: LoginFormData) => {
+    const response = await fetchLogin(data.email, data.password);
+
+    if (!response) {
+      console.error("fetchLogin에 실패하였습니다.");
+      return;
+    }
+
+    if (response.status >= 400 && response.status < 500) {
+      alert(response.data.data.message);
+      return;
+    }
+
+    const authData = response.data;
+    console.log(authData.data.authToken);
+    userContext?.authToken.setValue(authData.data.authToken);
+    userContext?.email.setValue(authData.data.email);
+    userContext?.user.setValue(authData.data.name);
     nagivateToRedirectionTarget();
   };
 
   useEffect(() => {
-    if (userContext?.valid.value) {
+    if (userContext?.authToken.value) {
       nagivateToRedirectionTarget();
     }
-  }, [userContext?.valid.value]);
+  }, [userContext?.authToken.value]);
 
   return (
     <InputForm onSubmit={handleSubmit(handleLogin)}>

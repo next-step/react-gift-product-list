@@ -60,10 +60,10 @@ function OrderPage() {
   });
 
   useEffect(() => {
-    if (!userContext?.valid.value) {
+    if (!userContext?.authToken.value) {
       redirectLogin(PATH.ORDER, params.id);
     }
-  }, [userContext?.valid.value]);
+  }, [userContext?.authToken.value]);
 
   return (
     <FormProvider {...formHooks}>

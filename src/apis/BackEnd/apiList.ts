@@ -1,60 +1,84 @@
+import axios from "axios";
 import { BE } from "./apiEndPoints";
-import axios from "./axios/instance";
+import instance from "./axios/instance";
 
 const ALIVEMESSAGE = "pong~!@#$%^&*()";
 
-const GETRequest = async (url: string) => {
-  try {
-    return await axios.get(url);
-  } catch (error) {
-    console.error("GET Request failed, ", error);
-    return null;
-  }
-};
-
 export async function fetchServerAlive() {
-  const response = await GETRequest(BE.PING);
-  if (!response || response.status !== 200) {
+  try {
+    const response = await instance.get(BE.PING);
+    if (!response || response.status !== 200) {
+      return false;
+    }
+
+    const body = response.data;
+    return body.data === ALIVEMESSAGE;
+  } catch (error) {
+    console.error(error);
     return false;
   }
-
-  const body = response.data;
-  return body.data === ALIVEMESSAGE;
 }
 
 export async function fetchThemes() {
-  const response = await GETRequest(BE.API.THEME.BASE);
+  try {
+    const response = await instance.get(BE.API.THEME.BASE);
 
-  if (!response || response.status !== 200) {
+    if (!response || response.status !== 200) {
+      return null;
+    }
+
+    const body = response.data;
+    if (body.data.length <= 0) {
+      return null;
+    }
+    console.log(body.data);
+    // function delay(ms: number) {
+    //   return new Promise((resolve) => setTimeout(resolve, ms));
+    // }
+    // await delay(1000); // For testing pending state rendering... remove on production
+
+    return body.data;
+  } catch (error) {
+    console.error(error);
     return null;
   }
-
-  const body = response.data;
-  if (body.data.length <= 0) {
-    return null;
-  }
-  console.log(body.data);
-  // function delay(ms: number) {
-  //   return new Promise((resolve) => setTimeout(resolve, ms));
-  // }
-  // await delay(1000); // For testing pending state rendering... remove on production
-
-  return body.data;
 }
 
 export async function fetchRealTimeRankings(
   targetType: string,
   rankType: string
 ) {
-  const response = await GETRequest(
-    BE.API.PRODUCT.RANKING + `?targetType=${targetType}&rankType=${rankType}`
-  );
+  try {
+    const response = await instance.get(
+      BE.API.PRODUCT.RANKING + `?targetType=${targetType}&rankType=${rankType}`
+    );
 
-  if (!response || response.status !== 200) {
+    if (!response || response.status !== 200) {
+      return null;
+    }
+
+    const body = response.data;
+
+    return body.data;
+  } catch (error) {
+    console.error(error);
     return null;
   }
+}
 
-  const body = response.data;
-
-  return body.data;
+export async function fetchLogin(email: string, password: string) {
+  try {
+    const response = await instance.post(BE.API.LOGIN.BASE, {
+      email,
+      password
+    });
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response ?? null;
+    } else {
+      console.error(error);
+    }
+    return null;
+  }
 }
