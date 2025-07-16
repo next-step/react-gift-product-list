@@ -41,7 +41,6 @@ const GiftRanking: React.FC<GiftRankingProps> = ({ target, rankType }) => {
   const sortParam =
     productRankingURL + `?targetType=${target}&rankType=${rankType}`;
 
-  console.log(sortParam);
   useEffect(() => {
     const fetchProductRanking = async () => {
       try {
