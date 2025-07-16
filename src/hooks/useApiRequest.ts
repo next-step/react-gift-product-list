@@ -8,12 +8,14 @@ interface RequestConfig<T = any> extends AxiosRequestConfig {
   url: string;
   method?: "get" | "post" | "put" | "patch" | "delete";
   data?: T;
+  manual?: boolean;
 }
 
 export function useApiRequest<T>({
   url,
   method = "get",
   data,
+  manual = false,
   ...config
 }: RequestConfig) {
   const [response, setResponse] = useState<T | null>(null);
@@ -21,6 +23,8 @@ export function useApiRequest<T>({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (manual) return;
+
     let isMounted = true;
     const fetchData = async () => {
       setStatus("loading");
@@ -46,7 +50,30 @@ export function useApiRequest<T>({
     return () => {
       isMounted = false;
     };
-  }, [url, method, JSON.stringify(config.params), JSON.stringify(data)]);
+  }, [
+    url,
+    method,
+    JSON.stringify(config.params),
+    JSON.stringify(data),
+    manual,
+  ]);
 
-  return { data: response, status, error };
+  const refetch = async () => {
+    setStatus("loading");
+    try {
+      const res = await axios.request<{ data: T }>({
+        url: import.meta.env.VITE_API_BASE_URL + url,
+        method,
+        data,
+        ...config,
+      });
+      setResponse(res.data.data);
+      setStatus("success");
+    } catch (err: any) {
+      setError(err.message ?? "에러 발생");
+      setStatus("error");
+    }
+  };
+
+  return { data: response, status, error, refetch };
 }
