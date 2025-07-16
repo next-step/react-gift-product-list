@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import type { Receiver } from "@/types/order";
 import { productSummary } from "@/services/order";
 import { showErrorToast } from "@/styles/toast";
+import { STORAGE_KEY } from "@/constants/storage";
 
 export default function OrderPage() {
   const navigate = useNavigate();
@@ -37,11 +38,22 @@ export default function OrderPage() {
     fetchProduct();
   }, [itemId, navigate]);
 
+  const [senderName, setSenderName] = useState("");
+
+  useEffect(() => {
+    const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+    if (!userInfo) return;
+
+    const user = JSON.parse(userInfo);
+    setSenderName(user.data.name || "");
+  }, []);
+
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
     0
   );
 
+  if (!product) return null;
   const totalPrice = product.data.price * totalQuantity;
 
   const handleOrder = () => {
@@ -72,7 +84,7 @@ export default function OrderPage() {
       />
       <Divider />
       <SenderForm
-        value={sender.value}
+        value={senderName}
         onChange={sender.onChange}
         error={sender.error}
       />
