@@ -6,28 +6,25 @@ import { useTheme } from "@emotion/react";
 import * as S from "./RankingSection.styles";
 import { RankingCard } from "./RankingCard";
 import { fetchRanking } from "@/api/ranking";
-import type { RankingItem } from "@/api/ranking";
+import type { RankingItem, RankType, TargetType } from "@/api/ranking";
 import { Spinner } from "@/components/common/Spinner";
 
 const GROUP_PARAM = "group";
 const ACTION_PARAM = "action";
 const ITEM_COUNT = 6;
 
-const groupOptions = [
+const groupOptions: { key: TargetType; label: string; icon: string }[] = [
   { key: "ALL", label: "전체", icon: "ALL" },
   { key: "FEMALE", label: "여성이", icon: "👩🏻" },
   { key: "MALE", label: "남성이", icon: "👨🏻" },
   { key: "TEEN", label: "청소년이", icon: "👦🏻" },
-] as const;
+];
 
-const actionOptions = [
+const actionOptions: { key: RankType; label: string }[] = [
   { key: "MANY_WISH", label: "받고 싶어한" },
   { key: "MANY_RECEIVE", label: "많이 선물한" },
   { key: "MANY_WISH_RECEIVE", label: "위시로 받은" },
-] as const;
-
-type TargetType = (typeof groupOptions)[number]["key"];
-type RankType = (typeof actionOptions)[number]["key"];
+];
 
 export const RankingSection = () => {
   const theme = useTheme();
@@ -41,11 +38,14 @@ export const RankingSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const updateParam = useCallback((key: string, value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set(key, value);
-    setSearchParams(newParams);
-  }, [searchParams, setSearchParams]);
+  const updateParam = useCallback(
+    (key: string, value: string) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set(key, value);
+      setSearchParams(newParams);
+    },
+    [searchParams, setSearchParams]
+  );
 
   const visibleItems = useMemo(() => {
     return isExpanded ? data : data.slice(0, ITEM_COUNT);
