@@ -37,7 +37,7 @@ function OrderPage() {
   const formHooks = useForm({
     defaultValues: {
       message: "",
-      sender: "",
+      sender: userContext?.user.value || "",
       receivers: []
     }
   });
