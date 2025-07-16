@@ -41,7 +41,7 @@ export const Trend = () => {
     isLoading,
     isError,
     data: products,
-  } = useFetch<Product[]>(() => fetchProductRankList(targetType, rankType))
+  } = useFetch<Product[]>(() => fetchProductRankList(targetType, rankType), [targetType, rankType])
 
   // * 초기 보여줄 상품 개수
   const INITIAL_SHOW_COUNT = PRODUCT_UI_CONSTANTS.INITIAL_SHOW_COUNT
