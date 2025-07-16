@@ -2,13 +2,12 @@ import Header from "@/components/Common/Header";
 import styled from "@emotion/styled";
 import { FiPlus } from "react-icons/fi";
 import RankingSection from "@/components/Home/RankingSection";
-import { parseNickname } from "@/utils/parseNickName";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import ThemeSection from "@/components/Home/ThemeSection";
 
 const Home = () => {
   const { user } = useAuthContext();
-  const nickname = user ? parseNickname(user.email) : "";
+  const nickname = user?.name;
 
   return (
     <Wrapper>

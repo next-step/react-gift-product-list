@@ -1,9 +1,8 @@
-import { parseNickname } from '@/utils/parseNickName';
-import { useAuthContext } from '@/contexts/useAuthContext';
-import Header from '@/components/Common/Header';
-import { SectionContainer } from '@/components/Common/SectionLayout';
-import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from "@/contexts/useAuthContext";
+import Header from "@/components/Common/Header";
+import { SectionContainer } from "@/components/Common/SectionLayout";
+import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 const MyPage = () => {
   const { user, logout } = useAuthContext();
@@ -11,13 +10,13 @@ const MyPage = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login'); // 로그아웃 후 로그인 페이지로 이동
+    navigate("/login"); // 로그아웃 후 로그인 페이지로 이동
   };
 
   if (!user) {
     return <div>로그인 된 사용자가 아닙니다.</div>;
   }
-  const nickname = parseNickname(user.email);
+  const nickname = user.name;
   const email = user.email;
 
   return (
