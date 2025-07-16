@@ -9,9 +9,9 @@ const useFetch = <T>() => {
   const [data, setData] = useState<T | null>(null);
 
   const fetchData = async (url: string, baseUrl: boolean = true) => {
-    const fetchUrl = baseUrl ? BASE_URL + url : url;
+    const fetchUrl = baseUrl ? new URL(url, BASE_URL) : new URL(url);
     try {
-      const response = await axios.get<T>(fetchUrl);
+      const response = await axios.get<T>(fetchUrl.href);
       setIsError(false);
       setData(response.data);
     } catch (error) {
