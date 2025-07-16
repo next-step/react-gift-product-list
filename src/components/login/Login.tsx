@@ -56,8 +56,8 @@ const Login = () => {
               const response = await axios.post(
                 loginURL,
                 {
-                  email: "user@kakao.com",
-                  password: "password123",
+                  email: email.string,
+                  password: password.string,
                 },
                 {
                   headers: {
