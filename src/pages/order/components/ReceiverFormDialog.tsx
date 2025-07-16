@@ -45,7 +45,6 @@ export default function ReceiverFormDialog({
   fields,
   append,
   remove,
-  watch,
 }: ReceiverFormDialogProps) {
   const receivers = useWatch({ control, name: "receivers" });
   const phoneValidator = useMemo(
