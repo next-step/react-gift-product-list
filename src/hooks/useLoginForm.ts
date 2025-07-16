@@ -1,45 +1,55 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { getEmailError, getPasswordError } from '@/utils/validators';
 
-type Field = 'email' | 'password';
+export interface LoginFormValues {
+  email: string;
+  password: string;
+}
 
 const useLoginForm = () => {
-  const [userInfo, setUserInfo] = useState<Record<Field, string>>({
-    email: '',
-    password: '',
+  const {
+    register,
+    trigger,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<LoginFormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
-  const [errors, setErrors] = useState<Record<Field, string>>({
-    email: '',
-    password: '',
-  });
+  const values = watch();
 
-  const validators: Record<Field, (value: string) => string> = {
-    email: getEmailError,
-    password: getPasswordError,
+  const email = {
+    value: values.email,
+    error: errors.email?.message || '',
+    register: register('email', {
+      validate: value => {
+        const error = getEmailError(value);
+        return error === '' ? true : error;
+      },
+    }),
+    validate: () => trigger('email'),
   };
 
-  const handleChange = (field: Field, value: string) => {
-    setUserInfo(prev => ({ ...prev, [field]: value }));
-    validateField(field);
+  const password = {
+    value: values.password,
+    error: errors.password?.message || '',
+    register: register('password', {
+      validate: value => {
+        const error = getPasswordError(value);
+        return error === '' ? true : error;
+      },
+    }),
+    validate: () => trigger('password'),
   };
-
-  const validateField = (field: Field): boolean => {
-    const validator = validators[field];
-    const error = validator(userInfo[field]);
-
-    setErrors(prev => ({ ...prev, [field]: error }));
-    return !error;
-  };
-
-  const isValidForm = !errors.email && !errors.password;
 
   return {
-    userInfo,
-    handleChange,
-    errors,
-    validateField,
-    isValidForm,
+    email,
+    password,
+    isValid,
   };
 };
 

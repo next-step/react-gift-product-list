@@ -24,28 +24,17 @@ const LoginFormSection = () => {
     ? fromState.pathname + (fromState.search ?? '')
     : ROUTES.HOME;
 
-  const { userInfo, handleChange, errors, validateField, isValidForm } =
-    useLoginForm();
-
-  const isLoginField = (name: string): name is 'email' | 'password' => {
-    return name === 'email' || name === 'password';
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (isLoginField(name)) {
-      handleChange(name, value);
-    }
-  };
+  const { email, password, isValid } = useLoginForm();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isEmailOk = validateField('email');
-    const isPasswordOk = validateField('password');
+    const isEmailOk = email.validate();
+    const isPasswordOk = password.validate();
+
     if (!isEmailOk || !isPasswordOk) return;
 
-    login({ email: userInfo.email });
+    login({ email: email.value });
     navigate(redirectTo, { replace: true });
   };
 
@@ -55,25 +44,25 @@ const LoginFormSection = () => {
       <FormWrapper onSubmit={handleLogin}>
         <InputWrapper>
           <InputField
+            {...email.register}
             name="email"
             type="email"
-            value={userInfo.email}
-            onChange={handleInputChange}
-            onBlur={() => validateField('email')}
-            error={errors.email}
+            value={email.value}
+            onBlur={email.validate}
+            error={email.error}
             placeholder="이메일"
           />
           <InputField
+            {...password.register}
             name="password"
             type="password"
-            value={userInfo.password}
-            onChange={handleInputChange}
-            onBlur={() => validateField('password')}
-            error={errors.password}
+            value={password.value}
+            onBlur={password.validate}
+            error={password.error}
             placeholder="비밀번호"
           />
         </InputWrapper>
-        <LoginButton disabled={!isValidForm}>로그인</LoginButton>
+        <LoginButton disabled={!isValid}>로그인</LoginButton>
       </FormWrapper>
     </Wrapper>
   );
