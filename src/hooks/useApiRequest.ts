@@ -4,27 +4,35 @@ import type { AxiosRequestConfig } from "axios";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-interface RequestConfig extends AxiosRequestConfig {
+interface RequestConfig<T = any> extends AxiosRequestConfig {
   url: string;
+  method?: "get" | "post" | "put" | "patch" | "delete";
+  data?: T;
 }
 
-export function useApiRequest<T>({ url, ...config }: RequestConfig) {
-  const [data, setData] = useState<T | null>(null);
+export function useApiRequest<T>({
+  url,
+  method = "get",
+  data,
+  ...config
+}: RequestConfig) {
+  const [response, setResponse] = useState<T | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-
     const fetchData = async () => {
       setStatus("loading");
       try {
-        const res = await axios.get<{ data: T }>(
-          import.meta.env.VITE_API_BASE_URL + url,
-          config
-        );
+        const res = await axios.request<{ data: T }>({
+          url: import.meta.env.VITE_API_BASE_URL + url,
+          method,
+          data,
+          ...config,
+        });
         if (isMounted) {
-          setData(res.data.data);
+          setResponse(res.data.data);
           setStatus("success");
         }
       } catch (err: any) {
@@ -34,12 +42,11 @@ export function useApiRequest<T>({ url, ...config }: RequestConfig) {
         }
       }
     };
-
     fetchData();
     return () => {
       isMounted = false;
     };
-  }, [url, JSON.stringify(config.params)]);
+  }, [url, method, JSON.stringify(config.params), JSON.stringify(data)]);
 
-  return { data, status, error };
+  return { data: response, status, error };
 }
