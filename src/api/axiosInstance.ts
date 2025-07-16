@@ -8,4 +8,13 @@ const axiosInstance = axios.create({
   timeout: 5000,
 });
 
+axiosInstance.interceptors.response.use(
+  response => {
+    return response.data?.data ?? response.data;
+  },
+  error => {
+    return Promise.reject(error);
+  },
+);
+
 export default axiosInstance;
