@@ -25,16 +25,30 @@ export const useGiftRankingFilter = () => {
       : defaultValue;
   };
 
-  const [selectedFilter] = useState<FilterKey>(() =>
-    getStoredValue(LOCAL_FILTER_KEY, filters, 'all')
+  const [selectedFilter, setSelectedFilter] = useState<FilterKey>(
+    () => getStoredValue(LOCAL_FILTER_KEY, filters, 'all')
   );
 
-  const [selectedTab] = useState<TabOption>(() =>
+  const [selectedTab, setSelectedTab] = useState<TabOption>(() =>
     getStoredValue(LOCAL_TAB_KEY, tabs, '받고 싶어한')
   );
+
+  const updateFilter = (filter: FilterKey) => {
+    setSelectedFilter(filter);
+    localStorage.setItem(LOCAL_FILTER_KEY, filter);
+  };
+
+  const updateTab = (tab: TabOption) => {
+    setSelectedTab(tab);
+    localStorage.setItem(LOCAL_TAB_KEY, tab);
+  };
 
   return {
     selectedFilter,
     selectedTab,
+    setSelectedFilter: updateFilter,
+    setSelectedTab: updateTab,
+    filters,
+    tabs,
   };
 };
