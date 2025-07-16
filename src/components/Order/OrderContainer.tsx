@@ -8,7 +8,7 @@ import { StyledItemInfoContainer } from '@styles/Order/OrderContainer/StyledItem
 import { StyledOrderButton } from '@styles/Order/OrderContainer/StyledOrderButton';
 import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import SenderContainer from './SenderContainer';
-import type { OrderFormValue } from '@/types/OrderFormValues';
+import type { OrderFormValue } from '@src/types/OrderFormValues';
 import RecipientsModalContainer from './RecipientsModalContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { orderSchema } from '../Schemas/orderSchmea';
@@ -39,6 +39,7 @@ const OrderContainer = () => {
   });
   const {
     handleSubmit,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     register,
     control,
     watch,

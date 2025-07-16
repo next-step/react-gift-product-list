@@ -3,8 +3,8 @@ import { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { FormProvider, useFieldArray, useForm, type SubmitHandler } from 'react-hook-form'; // useForm, SubmitHandler, FieldErrors 임포트
 import RecipientsItem from './RecipientsItem'; // 다음 단계에서 구현할 개별 아이템 컴포넌트
-import type { Recipient } from '@/types/Recipient'; // Recipient 타입 임포트
-import type { RecipientsModalFormData } from '@/types/RecipientsModalFormData';
+import type { Recipient } from '@src/types/Recipient'; // Recipient 타입 임포트
+import type { RecipientsModalFormData } from '@src/types/RecipientsModalFormData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { recipientsModalSchema } from '../Schemas/recipientsModalSchema';
 
@@ -108,7 +108,9 @@ const RecipientsModal = ({ onClose, onAdd, existedRecipients }: RecipientsModalP
     },
   });
   const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     register,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     formState: { errors },
     handleSubmit,
     reset,
