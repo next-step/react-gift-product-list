@@ -18,7 +18,16 @@ const StyledPresentThemeItemDiv = styled.div`
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing.spacing2};
 `;
-
+const StyledPresentP = styled.p`
+  ${({ theme }) => theme.typography.title1Bold};
+  margin: ${({ theme }) => theme.spacing.spacing3};
+`;
+const StyledPresentThemeDiv = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background-color: ${({ theme }) => theme.sementicPalette.backgroundDefault};
+  width: 720px;
+`;
 interface Theme {
   themeId: number;
   name: string;
@@ -29,13 +38,14 @@ interface Themes {
   data: Theme[];
 }
 const PresentThemeItem = () => {
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [isError, setError] = useState<boolean>(false);
   const [themes, setThemes] = useState<Themes>({
     data: [
       {
-        themeId: 2920,
-        name: '생일',
-        image:
-          'https://img1.daumcdn.net/thumb/S104x104/?fname=https%3A%2F%2Ft1.daumcdn.net%2Fgift%2Fhome%2Ftheme%2F292020231106_MXMUB.png',
+        themeId: 0,
+        name: '',
+        image: 'none',
       },
     ],
   });
@@ -46,25 +56,35 @@ const PresentThemeItem = () => {
         // const response = await axios.get(process.env.VITE_API_BASE_URL + '/themes');
         const response = await axios.get('http://localhost:3000/api/themes');
         setThemes(response.data);
-        console.log(response.data);
       } catch (error) {
-        console.error('Error fetching weather data:', error);
+        console.error('Error fetching Theme data:', error);
+        setError(true);
       }
     };
     fetchThemes();
-  }, []);
-  console.log(themes);
-  return (
-    <>
-      {themes &&
-        themes.data.map((item: Theme) => (
-          <StyledPresentThemeItemDiv key={item.themeId} className='border'>
-            <StyledImage src={item.image} alt={item.name} />
-            <StyledP>{item.name}</StyledP>
-          </StyledPresentThemeItemDiv>
-        ))}
-    </>
-  );
+    setLoading(false);
+  }, [isLoading, isError]);
+
+  if (isLoading) {
+    return <div>Loading</div>;
+  } else if (isError || themes.data.length <= 0) {
+    return <>{alert('에러 발생')}</>;
+  } else {
+    return (
+      <>
+        <StyledPresentP>선물 테마</StyledPresentP>
+        <StyledPresentThemeDiv>
+          {themes &&
+            themes.data.map((item: Theme) => (
+              <StyledPresentThemeItemDiv key={item.themeId} className='border'>
+                <StyledImage src={item.image} alt={item.name} />
+                <StyledP>{item.name}</StyledP>
+              </StyledPresentThemeItemDiv>
+            ))}
+        </StyledPresentThemeDiv>
+      </>
+    );
+  }
 };
 
 export default PresentThemeItem;

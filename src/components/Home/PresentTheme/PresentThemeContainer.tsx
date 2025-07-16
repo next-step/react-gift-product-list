@@ -5,16 +5,6 @@ const StyledPresentContainer = styled.div`
   background-color: ${({ theme }) => theme.sementicPalette.backgroundDefault};
   padding-top: ${({ theme }) => theme.spacing.spacing6};
 `;
-const StyledPresentP = styled.p`
-  ${({ theme }) => theme.typography.title1Bold};
-  margin: ${({ theme }) => theme.spacing.spacing3};
-`;
-const StyledPresentThemeDiv = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  background-color: ${({ theme }) => theme.sementicPalette.backgroundDefault};
-  width: 720px;
-`;
 
 const StyledExtraContainer = styled.div`
   background-color: ${({ theme }) => theme.sementicPalette.kakaoYellow};
@@ -35,10 +25,7 @@ const StyledExtraSecondP = styled.div`
 const PresentThemeConatiner = () => {
   return (
     <StyledPresentContainer>
-      <StyledPresentP>선물 테마</StyledPresentP>
-      <StyledPresentThemeDiv>
-        <PresentThemeItem></PresentThemeItem>
-      </StyledPresentThemeDiv>
+      <PresentThemeItem />
       <StyledExtraContainer>
         <StyledExtraFristP>카카오테크 캠퍼스 3기여러분</StyledExtraFristP>
         <StyledExtraSecondP>프론트엔드 2단계 과제 화이팅!</StyledExtraSecondP>
