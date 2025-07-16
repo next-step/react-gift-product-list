@@ -4,6 +4,7 @@ import CategoryBtn from '@/components/giftHome/GiftThemes/CategoryBtn';
 import Text from '@/common/Text';
 import { fetchThemes } from '@/api/themes';
 import type { Category } from '@/api/themes';
+import LoadingSpinner from '@/common/LoadingSpinner';
 
 const GiftCategoryList = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -25,7 +26,7 @@ const GiftCategoryList = () => {
     loadThemes();
   }, []);
 
-  if (loading) return <Text>로딩 중...</Text>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <Text>{error}</Text>;
 
   return (
