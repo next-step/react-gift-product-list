@@ -5,6 +5,7 @@ import theme from "@src/styles/kakaoTheme";
 import { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 type LoginFormData = {
   email: string;
@@ -48,12 +49,15 @@ function LoginForm() {
     }
 
     if (response.status >= 400 && response.status < 500) {
-      alert(response.data.data.message);
+      toast(response.data.data.message, {
+        type: "error",
+        hideProgressBar: true,
+        position: "bottom-center"
+      });
       return;
     }
 
     const authData = response.data;
-    console.log(authData.data.authToken);
     userContext?.authToken.setValue(authData.data.authToken);
     userContext?.email.setValue(authData.data.email);
     userContext?.user.setValue(authData.data.name);
@@ -112,6 +116,7 @@ function LoginForm() {
       >
         로그인
       </LoginButton>
+      <ToastContainer />
     </InputForm>
   );
 }
