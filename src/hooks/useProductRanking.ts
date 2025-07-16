@@ -8,6 +8,17 @@ interface UseProductRankingResult {
   isError: boolean;
 }
 
+const fetchProductRankings = async (
+  targetType: string,
+  rankType: string
+): Promise<Product[]> => {
+  const res = await axios.get<{ data: Product[] }>(
+    `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking`,
+    { params: { targetType, rankType } }
+  );
+  return res.data.data;
+};
+
 export const useProductRanking = (
   targetType: string,
   rankType: string
@@ -17,18 +28,13 @@ export const useProductRanking = (
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    const fetchRanking = async () => {
+    const load = async () => {
       setIsLoading(true);
       setIsError(false);
       try {
-        const res = await axios.get<{ data: Product[] }>(
-          `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking`,
-          {
-            params: { targetType, rankType },
-          }
-        );
-        setProducts(res.data.data);
-      } catch (e) {
+        const data = await fetchProductRankings(targetType, rankType);
+        setProducts(data);
+      } catch {
         setIsError(true);
         setProducts(null);
       } finally {
@@ -36,7 +42,7 @@ export const useProductRanking = (
       }
     };
 
-    fetchRanking();
+    load();
   }, [targetType, rankType]);
 
   return { products, isLoading, isError };
