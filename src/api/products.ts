@@ -6,7 +6,7 @@ export const getRanking = (
   targetType: string,
   rankType: string
 ): Promise<AxiosResponse<{ data: GiftItem[] }>> => {
-  return instance.get("/products/rankings", {
+  return instance.get("/products/ranking", {
     params: { targetType, rankType },
   });
 };
