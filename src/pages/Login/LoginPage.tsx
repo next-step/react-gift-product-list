@@ -40,8 +40,9 @@ export default function LoginPage() {
 
       sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
       navigate(from, { replace: true });
-    } catch (error: unknown) { // any 타입을 unknown 타입으로 수정
-      const status = (error as AxiosError).response?.status; 
+    } catch (error: unknown) {
+      // any 타입을 unknown 타입으로 수정
+      const status = (error as AxiosError).response?.status;
       // unknown 타입 .response처럼 사용 불가 -> AxiosError로 타입 단언
       if (status && status >= 400 && status < 500) {
         showErrorToast("올바른 이메일 형식이 아닙니다.");
