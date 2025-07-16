@@ -238,6 +238,10 @@ hint : 받는 사람 기능 구현할 때 useFieldArray 사용?
 
 ## 📌 1단계 - 구현 기능 목록
 
+- API 서버 : https://github.com/next-step/react-gift-mock-server/tree/main/src
+
+- git pull 받아 로컬에서 실행 후 로컬 서버를 사용하여 API를 요청하는 방식으로 작업할 것
+
 ### 1. 선물하기 홈 > 선물 테마 섹션
 
 - `/api/themes` API를 사용하여 테마 목록을 완성
