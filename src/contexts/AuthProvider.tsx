@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (error: any) {
       if (error.response && error.response.status >= 400 && error.response.status < 500) {
-        const errorMessage = error.response.data?.message || '로그인에 실패했습니다.';
+        const errorMessage = error.response.data?.data?.message || '로그인에 실패했습니다.';
         toast.error(errorMessage);
       } else {
         toast.error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
