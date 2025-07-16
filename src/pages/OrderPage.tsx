@@ -4,10 +4,11 @@ import SenderForm from "@/components/order/SenderForm";
 import ReceiverForm from "@/components/order/ReceiverForm";
 import GiftInfo from "@/components/order/GiftInfo";
 import { useNavigate, useParams } from "react-router-dom";
-import { ranking } from "@/data/ranking";
 import useOrderForm from "../components/order/useOrderForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Receiver } from "@/types/order";
+import { productSummary } from "@/services/order";
+import { showErrorToast } from "@/styles/toast";
 
 export default function OrderPage() {
   const navigate = useNavigate();
@@ -17,14 +18,31 @@ export default function OrderPage() {
   const sender = useOrderForm();
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
 
-  const card = ranking.find((card) => card.id === Number(itemId));
-  if (!card) return null;
+  const [product, setProduct] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        if (!itemId) return;
+        const data = await productSummary(itemId);
+        setProduct(data);
+      } catch (error: any) {
+        if (error.response?.status >= 400 && error.response?.status < 500) {
+          showErrorToast("상품 정보를 불러올 수 없습니다.");
+          navigate("/gift", { replace: true });
+        }
+      }
+    };
+
+    fetchProduct();
+  }, [itemId, navigate]);
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
-    0,
+    0
   );
-  const totalPrice = card.price.basicPrice * totalQuantity;
+
+  const totalPrice = product.data.price * totalQuantity;
 
   const handleOrder = () => {
     const isMessageValid = message.validate();
@@ -36,7 +54,7 @@ export default function OrderPage() {
     }
 
     alert(`주문이 완료되었습니다.
-상품명: ${card.name}
+상품명: ${product.name}
 총 구매 수량: ${totalQuantity}
 받는 사람 수: ${receiverList.length}명
 발신자 이름: ${sender.value}
@@ -64,7 +82,7 @@ export default function OrderPage() {
         setReceiverList={setReceiverList}
       />
       <Divider />
-      <GiftInfo />
+      <GiftInfo product={product.data} />
       <OrderBtn onClick={handleOrder}>
         {totalPrice.toLocaleString()}원 주문하기
       </OrderBtn>
