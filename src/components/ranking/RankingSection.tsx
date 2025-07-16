@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 
@@ -11,6 +11,7 @@ import { Spinner } from "@/components/common/Spinner";
 
 const GROUP_PARAM = "group";
 const ACTION_PARAM = "action";
+const ITEM_COUNT = 6;
 
 const groupOptions = [
   { key: "ALL", label: "전체", icon: "ALL" },
@@ -40,30 +41,62 @@ export const RankingSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const updateParam = (key: string, value: string) => {
+  const updateParam = useCallback((key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set(key, value);
     setSearchParams(newParams);
+  }, [searchParams, setSearchParams]);
+
+  const visibleItems = useMemo(() => {
+    return isExpanded ? data : data.slice(0, ITEM_COUNT);
+  }, [isExpanded, data]);
+
+  const fetchRankingData = async () => {
+    try {
+      setLoading(true);
+      const result = await fetchRanking({ targetType: group, rankType: action });
+      setData(result);
+      setError(false);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        setLoading(true);
-        const result = await fetchRanking({
-          targetType: group,
-          rankType: action,
-        });
-        setData(result);
-        setError(false);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
+    fetchRankingData();
   }, [group, action]);
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <S.LoadingWrapper>
+          <Spinner size={48} />
+        </S.LoadingWrapper>
+      );
+    }
+
+    if (error || data.length === 0) {
+      return <EmptyState>상품이 없습니다.</EmptyState>;
+    }
+
+    return (
+      <div css={S.grid(theme)}>
+        {visibleItems.map((item, idx) => (
+          <RankingCard
+            key={item.id}
+            rank={idx + 1}
+            id={item.id}
+            imageURL={item.imageURL}
+            brandName={item.brandInfo.name}
+            productName={item.name}
+            price={item.price.sellingPrice}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <section css={S.section(theme)}>
@@ -96,29 +129,9 @@ export const RankingSection = () => {
         </div>
       </div>
 
-      {loading ? (
-        <S.LoadingWrapper>
-          <Spinner size={48} />
-        </S.LoadingWrapper>
-      ) : error || data.length === 0 ? (
-        <EmptyState>상품이 없습니다.</EmptyState>
-      ) : (
-        <div css={S.grid(theme)}>
-          {(isExpanded ? data : data.slice(0, 6)).map((item, idx) => (
-            <RankingCard
-              key={item.id}
-              rank={idx + 1}
-              id={item.id}
-              imageURL={item.imageURL}
-              brandName={item.brandInfo.name}
-              productName={item.name}
-              price={item.price.sellingPrice}
-            />
-          ))}
-        </div>
-      )}
+      {renderContent()}
 
-      {!loading && data.length > 6 && (
+      {!loading && data.length > ITEM_COUNT && (
         <button css={S.moreButton(theme)} onClick={() => setIsExpanded((prev) => !prev)}>
           <p>{isExpanded ? "접기" : "더보기"}</p>
         </button>
