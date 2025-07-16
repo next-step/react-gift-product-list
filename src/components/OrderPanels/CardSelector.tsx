@@ -4,14 +4,21 @@ import { useEffect, useState } from "react";
 import AdvancedTextArea from "../shared/AdvancedTextArea";
 import { Controller, useFormContext } from "react-hook-form";
 
-function CardSelector({ name }: { name: string }) {
+function CardSelector({
+  messageName,
+  cardName
+}: {
+  messageName: string;
+  cardName: string;
+}) {
   const cardTemplete = cardTempleteMockData;
   const [selectedCard, setSelectedCard] = useState<number>(0);
   const { control, setValue } = useFormContext();
 
   useEffect(() => {
-    setValue(name, cardTemplete[selectedCard].defaultTextMessage);
-  }, [selectedCard, setValue, name]);
+    setValue(messageName, cardTemplete[selectedCard].defaultTextMessage);
+    setValue(cardName, cardTemplete[selectedCard].id);
+  }, [selectedCard, setValue]);
 
   return (
     <CardSelectorWrapper>
@@ -21,7 +28,8 @@ function CardSelector({ name }: { name: string }) {
             <CardThumbnail
               onClick={() => {
                 setSelectedCard(i);
-                setValue(name, cardTemplete[i].defaultTextMessage);
+                setValue(messageName, cardTemplete[i].defaultTextMessage);
+                setValue(cardName, c.id);
               }}
               key={c.id}
               src={c.thumbUrl}
@@ -33,7 +41,7 @@ function CardSelector({ name }: { name: string }) {
       </CardThumbnailWrapper>
       <CardImage src={cardTemplete[selectedCard].imageUrl} alt="card" />
       <Controller
-        name={name}
+        name={messageName}
         control={control}
         rules={{ required: "메세지를 입력해주세요." }}
         render={({ field, fieldState }) => (

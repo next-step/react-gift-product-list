@@ -15,7 +15,7 @@ function RecipientSelector() {
           children="+"
         ></RoundButton>
         <DescriptionP>
-          {userContext?.valid.value
+          {userContext?.authToken.value
             ? `${userContext.user.value}님! 선물할 친구를 선택해 주세요.`
             : "선물할 친구를 선택해 주세요."}
         </DescriptionP>
