@@ -1,0 +1,99 @@
+import styled from "@emotion/styled";
+
+export const Container = styled.div``;
+
+export const LetterCardContainer = styled.header`
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+
+    padding: 6px 8px;
+
+    overflow-x: scroll;
+`;
+
+export const PreviewContainer = styled.div`
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 3/2;
+
+    margin: 0px auto;
+    border-radius: 12px;
+
+    overflow: hidden;
+`;
+
+export const Preview = styled.img`
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+`;
+
+export const FieldSet = styled.fieldset`
+    padding: 0px ${({ theme }) => theme.spacing.spacing4};
+
+    font-size: ${({ theme }) => theme.typography.body.body1Regular.size};
+`;
+
+export const Legend = styled.h1`
+    display: block;
+
+    padding: 12px 0px;
+
+    font-size: ${({ theme }) => theme.typography.subtitle.subtitle1Bold};
+    font-weight: ${({ theme }) => theme.typography.subtitle.subtitle1Bold.weight};
+`;
+
+export const Label = styled.label`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    min-width: 64px;
+`;
+
+export const FieldGroup = styled.div`
+    display: flex;
+`;
+
+export const OrderButton = styled.button`
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 48px;
+
+    border: 0;
+
+    font-size: ${({ theme }) => theme.typography.label.label1Bold.size};
+    font-weight: ${({ theme }) => theme.typography.label.label1Bold.weight};
+
+    background-color: ${({ theme }) => theme.colors.semantic.kakaoYellow};
+`;
+
+export const ReceiverLabel = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 4px 0px;
+`;
+
+export const ReceiverPlaceholder = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 88px;
+
+    border: 1px solid ${({ theme }) => theme.colors.gray.gray300};
+    border-radius: 8px;
+
+    text-align: center;
+    font-size: ${({ theme }) => theme.typography.body.body2Regular.size};
+    color: ${({ theme }) => theme.colors.gray.gray600};
+`;

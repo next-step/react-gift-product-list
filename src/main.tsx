@@ -1,10 +1,15 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import "reflect-metadata";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
+import { GlobalStyles } from "@/app/styles";
+
+import App from "@/App";
+
+createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+        <GlobalStyles />
+        <App />
+    </StrictMode>,
+);
