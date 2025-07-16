@@ -40,7 +40,9 @@ const OrderPage = () => {
         );
         setProduct(res.data.data);
       } catch (err: any) {
-        toast.error('상품 정보를 불러오지 못했어요.');
+        toast.error('상품 정보를 불러오지 못했어요.', {
+          toastId: 'product-load-fail',
+        });
         navigate(ROUTES.HOME);
       } finally {
         setIsLoading(false);
