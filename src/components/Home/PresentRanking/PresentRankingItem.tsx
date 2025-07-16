@@ -121,50 +121,36 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
     fetchProductRanking();
     setLoading(false);
   }, [isLoading, isError, search]);
-
-  return (
-    <>
-      {/* {repeatItems.map((item: Goods, index: number) => (
-        <div key={index} onClick={() => handleItemClick(item)} style={{ cursor: 'pointer' }}>
-          <StyledPresentRankingItemDiv>
-            <StyledPresentRankingNumContainer index={index + 1}>
-              {index + 1}
-            </StyledPresentRankingNumContainer>
-            <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
-            <StyledPresentRankingItemBrandName className='brand_name'>
-              {item.brandInfo.name}
-            </StyledPresentRankingItemBrandName>
-            <StyledPresentRankingItemPresentItem className='goods_name'>
-              {item.name}
-            </StyledPresentRankingItemPresentItem>
-            <StyledPresentRankingItemPrasentPrice className='goods_price'>
-              {item.price.sellingPrice.toLocaleString()} 원
-            </StyledPresentRankingItemPrasentPrice>
-          </StyledPresentRankingItemDiv>
-        </div>
-      ))} */}
-      {productRanking &&
-        productRanking.data.slice(0, repeatCnt).map((item: ProductRanking, index: number) => (
-          <div key={item.id} onClick={() => handleItemClick(item)} style={{ cursor: 'pointer' }}>
-            <StyledPresentRankingItemDiv>
-              <StyledPresentRankingNumContainer index={index + 1}>
-                {index + 1}
-              </StyledPresentRankingNumContainer>
-              <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
-              <StyledPresentRankingItemBrandName className='brand_name'>
-                {item.brandInfo.name}
-              </StyledPresentRankingItemBrandName>
-              <StyledPresentRankingItemPresentItem className='goods_name'>
-                {item.name}
-              </StyledPresentRankingItemPresentItem>
-              <StyledPresentRankingItemPrasentPrice className='goods_price'>
-                {item.price.sellingPrice.toLocaleString()} 원
-              </StyledPresentRankingItemPrasentPrice>
-            </StyledPresentRankingItemDiv>
-          </div>
-        ))}
-    </>
-  );
+  if (isLoading) {
+    return <div>Loading</div>;
+  } else if (isError || productRanking.data.length <= 0) {
+    return <StyledPresentRankingItemDiv>상품 없음</StyledPresentRankingItemDiv>;
+  } else {
+    return (
+      <>
+        {productRanking &&
+          productRanking.data.slice(0, repeatCnt).map((item: ProductRanking, index: number) => (
+            <div key={item.id} onClick={() => handleItemClick(item)} style={{ cursor: 'pointer' }}>
+              <StyledPresentRankingItemDiv>
+                <StyledPresentRankingNumContainer index={index + 1}>
+                  {index + 1}
+                </StyledPresentRankingNumContainer>
+                <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
+                <StyledPresentRankingItemBrandName className='brand_name'>
+                  {item.brandInfo.name}
+                </StyledPresentRankingItemBrandName>
+                <StyledPresentRankingItemPresentItem className='goods_name'>
+                  {item.name}
+                </StyledPresentRankingItemPresentItem>
+                <StyledPresentRankingItemPrasentPrice className='goods_price'>
+                  {item.price.sellingPrice.toLocaleString()} 원
+                </StyledPresentRankingItemPrasentPrice>
+              </StyledPresentRankingItemDiv>
+            </div>
+          ))}
+      </>
+    );
+  }
 };
 
 export default PresentItem;
