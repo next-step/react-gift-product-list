@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import CategoryItem from './CategoryItem';
+import Spinner from './common/Spinner';
 import type { GiftThemeType } from '@/types/theme';
 
 const Wrapper = styled.section`
@@ -23,8 +24,6 @@ const Grid = styled.ul`
 
 const Loading = styled.p`
   padding: 0 8px;
-  ${({ theme }) => theme.typography.body2Regular};
-  color: ${({ theme }) => theme.colors.gray[600]};
   height: 250px;
   display: flex;
   align-items: center;
@@ -63,7 +62,9 @@ export default function GiftTheme() {
     return (
       <Wrapper>
         <Title>선물 테마</Title>
-        <Loading>로딩 중...</Loading>
+        <Loading>
+          <Spinner />
+        </Loading>
       </Wrapper>
     );
   }
