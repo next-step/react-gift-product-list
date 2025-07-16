@@ -19,7 +19,7 @@ const Order = () => {
 
     const fetchProduct = async () => {
       try {
-        setLoading();
+        setLoading(true);
         
         const productData = await getProductById(parseInt(productId));
         setSuccess(productData);

@@ -17,8 +17,7 @@ const RankingSection = () => {
   const selectedAction = searchParams.get('action') || 'MANY_WISH';
 
   useEffect(() => {
-    setLoading();
-    
+    setLoading(true);
     getRankingProducts(selectedGender as TargetType, selectedAction as RankType)
       .then((data) => {
         setSuccess(data);

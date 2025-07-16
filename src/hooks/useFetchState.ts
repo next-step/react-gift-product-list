@@ -8,7 +8,7 @@ interface FetchState<T> {
 
 interface UseFetchStateReturn<T> {
   fetchState: FetchState<T>;
-  setLoading: () => void;
+  setLoading: (isLoading: boolean) => void;
   setSuccess: (data: T) => void;
   setError: () => void;
   reset: () => void;
