@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import styled from '@emotion/styled';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 import Navigation from '@/components/Navigation';
 import CardSelector from '@/components/OrderSection/CardSelector';
 import MessageInput from '@/components/OrderSection/MessageInput';
@@ -7,16 +12,43 @@ import ReceiverForm from '@/components/ReceiverFormSection/ReceiverForm';
 import ProductInfo from '@/components/OrderSection/ProductInfo';
 import OrderSubmitButton from '@/components/OrderSection/OrderSubmitButton';
 import { ROUTES } from '@/constants/routes';
-import { mockProducts } from '@/data/products';
-import styled from '@emotion/styled';
 import { FormProvider } from 'react-hook-form';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import type { OrderFormValues } from '@/types/order';
+import { loading } from '@/components/common/Loading';
+
+interface ProductSummary {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+}
 
 const OrderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = mockProducts[Number(id) - 1];
+
+  const [product, setProduct] = useState<ProductSummary | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get<{ data: ProductSummary }>(
+          `${import.meta.env.VITE_API_BASE_URL}/api/products/${id}/summary`
+        );
+        setProduct(res.data.data);
+      } catch (err: any) {
+        toast.error('상품 정보를 불러오지 못했어요.');
+        navigate(ROUTES.HOME);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) fetchProduct();
+  }, [id, navigate]);
 
   const {
     methods,
@@ -43,6 +75,7 @@ const OrderPage = () => {
     navigate(ROUTES.HOME);
   };
 
+  if (isLoading) return loading;
   if (!product) return <div>잘못된 접근입니다.</div>;
 
   return (

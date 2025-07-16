@@ -1,10 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { useState, useMemo } from 'react';
 import { messageCards } from '@/data/messageCards';
-import type { Product } from '@/types/product';
 import type { OrderFormValues } from '@/types/order';
 
-export const useOrderForm = (product: Product | undefined) => {
+interface ProductSummary {
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+}
+
+export const useOrderForm = (product: ProductSummary | undefined) => {
   const methods = useForm<OrderFormValues>({
     defaultValues: {
       senderName: '',
@@ -25,7 +31,7 @@ export const useOrderForm = (product: Product | undefined) => {
   );
 
   const totalPrice = useMemo(
-    () => (product ? totalQuantity * product.price.sellingPrice : 0),
+    () => (product ? totalQuantity * product.price : 0),
     [totalQuantity, product]
   );
 
