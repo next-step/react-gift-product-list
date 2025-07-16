@@ -1,8 +1,9 @@
 import styled from '@emotion/styled'
-import type { TargetType, RankType } from '../../types'
+
 import { FilterItems, RankItems } from '../../data/filterList'
 import { theme } from '@/styles/theme'
 import { typographyMixin } from '@/components/ui'
+import type { RankType, TargetType } from '@/api/types/product'
 
 // * 실시간 급상승 필터 컴포넌트
 export const TrendFilter = ({

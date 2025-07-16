@@ -1,14 +1,19 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import type { TargetType, RankType, Product } from '../../types'
-import { isValidTargetType, isValidRankType } from '../../types'
 import { TrendFilter } from './TrendFilter'
 import { ProductItem } from './ProductItem'
 import { Button, Loading, Typography } from '@/components/ui'
 import { theme } from '@/styles/theme'
 import { useFetch } from '@/hooks/useFetch'
 import { fetchProductRankList } from '@/api/services/product'
+import {
+  isValidRankType,
+  isValidTargetType,
+  RankType,
+  TargetType,
+  type Product,
+} from '@/api/types/product'
 
 // * 실시간 급상승 컴포넌트
 export const Trend = () => {
@@ -18,12 +23,12 @@ export const Trend = () => {
   // * URL 파라미터에서 초기값 가져오기
   const getInitialTargetType = (): TargetType => {
     const urlTargetType = searchParams.get('targetType')
-    return urlTargetType && isValidTargetType(urlTargetType) ? urlTargetType : 'ALL'
+    return urlTargetType && isValidTargetType(urlTargetType) ? urlTargetType : TargetType.ALL
   }
 
   const getInitialRankType = (): RankType => {
     const urlRankType = searchParams.get('rankType')
-    return urlRankType && isValidRankType(urlRankType) ? urlRankType : 'MANY_WISH'
+    return urlRankType && isValidRankType(urlRankType) ? urlRankType : RankType.MANY_WISH
   }
 
   // * URL 파라미터 타입별 상태 관리
