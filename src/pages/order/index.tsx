@@ -21,15 +21,12 @@ export default function OrderPage() {
   const navigate = useNavigate();
 
   const id = Number(productId);
-  const product = mockRankingData.find((p) => p.id === Number(id));
-
-  if (!product) return <div>상품 정보를 찾을 수 없습니다.</div>;
+  const product = mockRankingData.find((p) => p.id === id);
 
   const messageCardRef = useRef<MessageCardHandle>(null);
   const senderInfoRef = useRef<SenderInfoHandle>(null);
 
   const [receivers, setReceivers] = useState<Receiver[]>([]);
-
   const [message, setMessage] = useState("");
   const [senderName, setSenderName] = useState("");
 
@@ -37,7 +34,9 @@ export default function OrderPage() {
     (sum, receiver) => sum + receiver.quantity,
     0,
   );
-  const totalPrice = product.price.sellingPrice * totalQuantity;
+  const totalPrice = product?.price.sellingPrice
+    ? product.price.sellingPrice * totalQuantity
+    : 0;
 
   const handleOrderClick = () => {
     const isMessageValid = messageCardRef.current?.validate() ?? false;
@@ -55,7 +54,7 @@ export default function OrderPage() {
 
     const alertMessage = [
       `주문이 완료되었습니다.`,
-      `상품명: ${product.name}`,
+      `상품명: ${product?.name}`,
       `구매 수량: ${receivers.length}`,
       `발신자 이름: ${senderName}`,
       `메시지: ${message}`,
@@ -69,6 +68,10 @@ export default function OrderPage() {
   const handleReceiverChange = useCallback((newReceivers: Receiver[]) => {
     setReceivers(newReceivers);
   }, []);
+
+  if (!product) {
+    return <div>상품 정보를 찾을 수 없습니다.</div>;
+  }
 
   return (
     <>
