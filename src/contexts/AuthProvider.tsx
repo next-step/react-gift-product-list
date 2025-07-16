@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { toast } from 'react-toastify';
 import { AuthContext } from './AuthContext';
 import type { UserInfo } from './AuthContext';
+import { login as loginApi } from '@/lib/api';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -20,13 +22,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return null;
   });
 
-  const login = useCallback((email: string, onSuccess?: () => void) => {
-    const newuserInfo = { email };
-    setUserInfo(newuserInfo);
-    sessionStorage.setItem('kakaotech/userInfo', JSON.stringify(newuserInfo));
+  const login = useCallback(async (email: string, password: string, onSuccess?: () => void) => {
+    try {
+      const response = await loginApi({ email, password });
+      
+      const newUserInfo: UserInfo = {
+        email: response.email,
+        name: response.name,
+        authToken: response.authToken,
+      };
+      
+      setUserInfo(newUserInfo);
+      sessionStorage.setItem('kakaotech/userInfo', JSON.stringify(newUserInfo));
 
-    if (onSuccess) {
-      setTimeout(onSuccess, 0);
+      if (onSuccess) {
+        setTimeout(onSuccess, 0);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.status >= 400 && error.response.status < 500) {
+        const errorMessage = error.response.data?.message || '로그인에 실패했습니다.';
+        toast.error(errorMessage);
+      } else {
+        toast.error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+      throw error;
     }
   }, []);
 
