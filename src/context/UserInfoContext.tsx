@@ -2,6 +2,8 @@ import { createContext } from "react";
 
 type User = {
   email: string;
+  name: string;
+  authToken: string;
 };
 
 type UserInfoContextType = {
