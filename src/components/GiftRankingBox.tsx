@@ -60,21 +60,23 @@ const GiftRanking = ({ target, rankType }: GiftRankingProps) => {
   const navigate = useNavigate();
   return (
     <div css={giftRankingStyle(theme)}>
-      {isError ? (
-        <div>상품 목록이 없습니다.</div>
-      ) : isLoading ? (
+      {isError && <div>상품 목록이 없습니다.</div>}
+      {isLoading && (
         <div css={spinnerWrapperStyle}>
           <ClipLoader color="#333" size={40} />
         </div>
-      ) : (
-        productRankingData &&
-        productRankingData.map((product) => (
-          <GiftObject
-            key={product.id}
-            gift={product}
-            onClick={() => navigate(`/order/${product.id}`)}
-          />
-        ))
+      )}
+      {!isError && !isLoading && (
+        <>
+          {productRankingData &&
+            productRankingData.map((product) => (
+              <GiftObject
+                key={product.id}
+                gift={product}
+                onClick={() => navigate(`/order/${product.id}`)}
+              />
+            ))}
+        </>
       )}
     </div>
   );
