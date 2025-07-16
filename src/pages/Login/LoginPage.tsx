@@ -3,6 +3,8 @@ import styled from "@emotion/styled";
 import Spacing from "@/components/Spacing";
 import { useLoginForm } from "./useLoginForm";
 import { css, type Theme } from "@emotion/react";
+import { auth } from "@/services/auth";
+import { STORAGE_KEY } from "@/constants/storage";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,15 +23,18 @@ export default function LoginPage() {
     isFormValid,
   } = useLoginForm();
 
-  const goToLogin = () => {
+  const goToLogin = async () => {
     if (!isFormValid) return;
-    const userInfo = {
-      email,
-    };
 
-    sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+    try {
+      const user = await auth({ email, password });
+      sessionStorage.setItem(STORAGE_KEY.USER_INFO, JSON.stringify(user));
 
-    navigate(from, { replace: true });
+      navigate(from, { replace: true });
+    } catch (error) {
+      alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+      console.error("로그인 실패:", error);
+    }
   };
 
   return (

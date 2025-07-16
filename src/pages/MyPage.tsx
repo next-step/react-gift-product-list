@@ -5,7 +5,7 @@ import Spacing from "@/components/Spacing";
 import { STORAGE_KEY } from "@/constants/storage";
 
 export default function MyPage() {
-  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -17,12 +17,9 @@ export default function MyPage() {
     }
 
     const user = JSON.parse(isLogIn);
-    if (!user || typeof user.email !== "string") {
-      throw new Error("이메일 정보가 없습니다.");
-    }
-    const id = user.email.split("@")[0];
-    setUserId(id);
-    setEmail(user.email);
+
+    setUserName(user.data.name);
+    setEmail(user.data.email);
   }, [navigate]);
 
   const LogOut = () => {
@@ -37,7 +34,7 @@ export default function MyPage() {
           <Spacing height="12px" />
           <TopText>마이 페이지</TopText>
           <Spacing height="8px" />
-          <BottomText>{userId}님 안녕하세요!</BottomText>
+          <BottomText>{userName}님 안녕하세요!</BottomText>
           <BottomText>이메일 주소는 {email}입니다.</BottomText>
           <Spacing height="24px" />
           <LogoutBtn onClick={LogOut}>로그아웃</LogoutBtn>

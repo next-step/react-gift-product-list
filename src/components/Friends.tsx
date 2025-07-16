@@ -7,18 +7,16 @@ function userIdFromSession(): string | null {
   try {
     const userInfo = sessionStorage.getItem(STORAGE_KEY);
     if (!userInfo) return null;
-
     const parsed = JSON.parse(userInfo);
-    if (!parsed.email || typeof parsed.email !== "string") return null;
 
-    return parsed.email.split("@")[0];
+    return parsed.data.name;
   } catch {
     return null;
   }
 }
 
 export default function Friends() {
-  const userId = userIdFromSession();
+  const userName = userIdFromSession();
 
   return (
     <Wrapper>
@@ -27,8 +25,8 @@ export default function Friends() {
           <FiPlus size={20} />
         </IconWrapper>
         <Text>
-          {userId
-            ? `${userId}님! 선물할 친구를 선택해 주세요.`
+          {userName
+            ? `${userName}님! 선물할 친구를 선택해 주세요.`
             : "선물할 친구를 선택해 주세요."}
         </Text>
       </Button>
