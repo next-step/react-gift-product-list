@@ -4,19 +4,29 @@ import Divider from "@/components/common/Divider";
 import styled from "@emotion/styled";
 import type React from "react";
 import useLoginInput from "@/hooks/useLoginInput";
-import { useAuth } from "@/contexts/authContext";
+import { useAuth, type Auth } from "@/contexts/authContext";
+import useFetch from "@/hooks/useFetch";
+
+interface AuthData {
+  data: Auth;
+}
 
 const LoginPage = () => {
   const { user, onChange, onBlur, errorMsg } = useLoginInput();
   const { login } = useAuth();
-
-  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const loginFetch = useFetch<AuthData>("api/login", {
+    method: "POST",
+    data: { email: user.id, password: user.password },
+    autoFetch: false,
+  });
+  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    login({
-      email: "user@kakao.com",
-      name: "user",
-      authToken: "dummy-token",
-    });
+    const responseData = await loginFetch.fetchData();
+    if (!loginFetch.isError && responseData) {
+      login(responseData.data);
+    } else {
+      console.log("toast 오류 메시지");
+    }
   };
   const isValidIdAndPassword = user.id.length !== 0 && user.password.length >= 8 && !errorMsg.id && !errorMsg.password;
   return (

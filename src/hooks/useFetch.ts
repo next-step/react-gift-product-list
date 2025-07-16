@@ -2,17 +2,21 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseFetchOptions {
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   params?: Record<string, string | number>;
   autoFetch?: boolean;
   dependency?: React.DependencyList;
+  data?: Object;
   baseUrl?: boolean;
 }
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const defaultOptions: UseFetchOptions = {
+  method: "GET",
   params: {},
   autoFetch: true,
   dependency: [],
+  data: {},
   baseUrl: true,
 };
 
@@ -22,7 +26,7 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
   const [isError, setIsError] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (): Promise<T | null> => {
     const base = mergedOptions.baseUrl ? BASE_URL : undefined;
     const fetchUrl = new URL(url, base);
 
@@ -34,17 +38,19 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
 
     try {
       setIsLoading(true);
-      const response = await axios.get<T>(fetchUrl.href);
+      const response = await axios<T>(fetchUrl.href, { method: mergedOptions.method, data: mergedOptions.data });
       setIsError(false);
       setData(response.data);
+      return response.data;
     } catch (error) {
       console.error("Error fetching themes data:", error);
       setIsError(true);
       setData(null);
+      return null;
     } finally {
       setIsLoading(false);
     }
-  }, [url, mergedOptions.baseUrl, JSON.stringify(mergedOptions.params)]);
+  }, [url, mergedOptions.baseUrl, JSON.stringify(mergedOptions)]);
 
   useEffect(() => {
     if (mergedOptions.autoFetch) {
