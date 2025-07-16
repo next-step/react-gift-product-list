@@ -14,6 +14,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
+
 const containerStyle = css`
   max-width: 720px;
   margin: 0 auto;
@@ -43,6 +44,7 @@ const App = () => {
           </AuthProvider>
         </div>
       </QueryClientProvider>
+
     </ThemeProvider>
   );
 };

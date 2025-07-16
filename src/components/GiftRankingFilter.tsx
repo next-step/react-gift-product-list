@@ -138,6 +138,7 @@ export default function GiftRankingFilter() {
         <Message>상품 목록이 없습니다.</Message>
       )}
       {hasProducts && <RankingGrid />}
+
     </Container>
   );
 }

@@ -3,12 +3,14 @@ import { Header } from '../components/common/Header';
 import MessageCard from '../components/MessageCard';
 import styled from '@emotion/styled';
 import { orderCardTemplates } from '../data/orderCardTemplateMock';
+
 import ReceiverModal, {
   type Receiver,
 } from '../components/ReceiverModal';
 import { useReceiverForm } from '../hooks/useReceiverForm';
 import { useParams } from 'react-router-dom';
 import { useGiftProductById } from '../hooks/useGiftProductById';
+
 
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
@@ -77,7 +79,6 @@ const Section = styled.div`
   background-color: ${({ theme }) => theme.colors.gray00};
   padding: 20px;
   border-bottom: 8px solid ${({ theme }) => theme.colors.gray200};
-`;
 
 const Label = styled.div`
   font-size: 14px;
@@ -203,11 +204,12 @@ const Order = () => {
     isLoading,
     isError,
   } = useGiftProductById(productId);
+
   const [selected, setSelected] = useState(orderCardTemplates[0].id);
   const selectedCard = orderCardTemplates.find(
     card => card.id === selected
   );
-  const [message, setMessage] = useState('축하해요.');
+Message] = useState('축하해요.');
 
   const { nameInput } = useReceiverForm();
   const sendorNameInput = nameInput;
@@ -255,6 +257,7 @@ const Order = () => {
           />
           <MainWrapper>
             <MainImg src={selectedCard?.imageUrl} />
+
             <MessageInput
               placeholder="메시지를 입력해주세요."
               value={message}
@@ -329,7 +332,6 @@ const Order = () => {
             onClose={() => setModalOpen(false)}
             onComplete={data => setReceiverList(data)}
           />
-
           <Label>상품 정보</Label>
           <ProductInfo>
             <img
@@ -352,7 +354,6 @@ const Order = () => {
           </ProductInfo>
         </Section>
       </OrderInfoWrapper>
-
       <BottomOrderButton
         disabled={!sendorNameInput.isValid}
         onClick={handleOrder}

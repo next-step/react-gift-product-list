@@ -7,6 +7,7 @@ import { useGiftRanking } from '../hooks/useGiftRanking';
 import { useGiftRankingFilter } from '../hooks/useGiftRankingFilter';
 import type { GiftItem } from '../types/GiftItem';
 
+
 const Container = styled.div`
   padding: 24px;
 `;
@@ -91,6 +92,7 @@ export const RankingGrid = () => {
     isError,
   } = useGiftRanking(selectedFilter, selectedTab);
 
+
   const handleClick = (id: number) => {
     if (isAuthenticated) {
       navigate(`/order/${id}`);
@@ -110,7 +112,6 @@ export const RankingGrid = () => {
     return <Container>상품 정보를 불러오지 못했습니다.</Container>;
   if (products.length === 0)
     return <Container>표시할 상품이 없습니다.</Container>;
-
   return (
     <Container>
       <Grid>
@@ -135,6 +136,7 @@ export const RankingGrid = () => {
       </Grid>
 
       {visibleCount < products.length && (
+
         <MoreButton onClick={handleMore}>더보기</MoreButton>
       )}
     </Container>
