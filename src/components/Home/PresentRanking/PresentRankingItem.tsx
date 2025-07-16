@@ -2,6 +2,8 @@ import { GOODS_DATA } from '@assets/goodsData';
 import type { Goods } from '@assets/goodsData';
 import { URLS } from '@assets/urls';
 import styled from '@emotion/styled';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const BASIC_RANKING_COMPONENT_NUMBER = 6;
@@ -31,7 +33,8 @@ const StyledPresentRankingItemPrasentPrice = styled.p`
 
 const StyledPresentRankingNumContainer = styled.div<{ index: number }>`
   position: absolute;
-  background-color: ${({ index, theme }) => (index <= 3 ? theme.palette.red600 : theme.palette.gray600)};
+  background-color: ${({ index, theme }) =>
+    index <= 3 ? theme.palette.red600 : theme.palette.gray600};
   width: 20px;
   height: 20px;
   z-index: 10;
@@ -46,7 +49,10 @@ const StyledPresentRankingNumContainer = styled.div<{ index: number }>`
 
 const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
   const repeatCnt = isVisible ? MANY_RANKING_COMPONENT_NUMBER : BASIC_RANKING_COMPONENT_NUMBER;
-  const repeatItems = Array.from({ length: repeatCnt }, (_, i) => GOODS_DATA[i % GOODS_DATA.length]);
+  const repeatItems = Array.from(
+    { length: repeatCnt },
+    (_, i) => GOODS_DATA[i % GOODS_DATA.length]
+  );
   const navigate = useNavigate();
 
   const handleItemClick = (item: Goods) => {
@@ -58,15 +64,48 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
     }
   };
 
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [isError, setError] = useState<boolean>(false);
+  const [themes, setThemes] = useState<Themes>({
+    data: [
+      {
+        themeId: 0,
+        name: '',
+        image: 'none',
+      },
+    ],
+  });
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        // const response = await axios.get(process.env.VITE_API_BASE_URL + '/themes');
+        const response = await axios.get('http://localhost:3000/api/themes');
+        setThemes(response.data);
+      } catch (error) {
+        console.error('Error fetching Theme data:', error);
+        setError(true);
+      }
+    };
+    fetchThemes();
+    setLoading(false);
+  }, [isLoading, isError]);
+
   return (
     <>
       {repeatItems.map((item: Goods, index: number) => (
         <div key={index} onClick={() => handleItemClick(item)} style={{ cursor: 'pointer' }}>
           <StyledPresentRankingItemDiv>
-            <StyledPresentRankingNumContainer index={index + 1}>{index + 1}</StyledPresentRankingNumContainer>
+            <StyledPresentRankingNumContainer index={index + 1}>
+              {index + 1}
+            </StyledPresentRankingNumContainer>
             <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
-            <StyledPresentRankingItemBrandName className='brand_name'>{item.brandInfo.name}</StyledPresentRankingItemBrandName>
-            <StyledPresentRankingItemPresentItem className='goods_name'>{item.name}</StyledPresentRankingItemPresentItem>
+            <StyledPresentRankingItemBrandName className='brand_name'>
+              {item.brandInfo.name}
+            </StyledPresentRankingItemBrandName>
+            <StyledPresentRankingItemPresentItem className='goods_name'>
+              {item.name}
+            </StyledPresentRankingItemPresentItem>
             <StyledPresentRankingItemPrasentPrice className='goods_price'>
               {item.price.sellingPrice.toLocaleString()} 원
             </StyledPresentRankingItemPrasentPrice>

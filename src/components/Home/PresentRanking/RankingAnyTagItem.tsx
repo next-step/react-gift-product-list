@@ -2,38 +2,49 @@ import StyledRankingAnyTagItem from '@styles/Home/RankingTagItem/StyledRankingAn
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const ANY_TAG_ITEM_LIST = ['받고 싶어한', '많이 선물한', '위시로 받은'];
-type AnyTagItemTypeList = '받고 싶어한' | '많이 선물한' | '위시로 받은';
+const RANK_TAG_LIST: [string, RankTagTypeList][] = [
+  ['많이 찜한', 'MANY_WISH'],
+  ['많이 받은', 'MANY_RECEIVE'],
+  ['많이 찜하고 받은', 'MANY_WISH_RECEIVE'],
+];
+type RankTagTypeList = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
 
 const RankingAnyTagItem = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
-  const [selected, setSelected] = useState<AnyTagItemTypeList>('받고 싶어한');
+  const [selected, setSelected] = useState<RankTagTypeList>('MANY_WISH');
 
-  const isValidSelectedOption = (value: string): value is AnyTagItemTypeList => {
-    return ANY_TAG_ITEM_LIST.includes(value);
+  const isValidSelectedOption = (value: string): value is RankTagTypeList => {
+    return RANK_TAG_LIST.some(([, code]) => code === value);
   };
   useEffect(() => {
     const params = new URLSearchParams(search);
-    const value = params.get('AnyTagSelected');
+    const value = params.get('rankType');
     if (value && isValidSelectedOption(value)) {
       setSelected(value);
+    } else {
+      params.set('rankType', 'MANY_WISH');
+      navigate(`?${params.toString()}`, { replace: true });
     }
-  }, [search]);
+  }, [search, navigate]);
 
-  const handleClick = (value: AnyTagItemTypeList) => {
+  const handleClick = (value: RankTagTypeList) => {
     const params = new URLSearchParams(search);
-    params.set('AnyTagSelected', value);
+    params.set('rankType', value);
     navigate(`?${params.toString()}`, { replace: true });
   };
-
   return (
     <>
-      {ANY_TAG_ITEM_LIST.map((item: string) => {
-        const tag = item as AnyTagItemTypeList;
+      {RANK_TAG_LIST.map((item: string[]) => {
+        const tag = item[1] as RankTagTypeList;
         return (
-          <StyledRankingAnyTagItem key={tag} className='ranking-any-tag-item' onClick={() => handleClick(tag)} isSelected={selected === tag}>
-            {tag.toLowerCase()}
+          <StyledRankingAnyTagItem
+            key={tag}
+            className='ranking-tag-item'
+            onClick={() => handleClick(tag)}
+            isSelected={selected === tag}
+          >
+            {item[0].toLowerCase()}
           </StyledRankingAnyTagItem>
         );
       })}
