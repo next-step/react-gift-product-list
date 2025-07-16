@@ -11,9 +11,13 @@ import PendingSpinner from "../shared/PendingSpinner";
 import useFetchState from "@src/hooks/useFetchState";
 
 function RealTimeRankPanel() {
+  const DEFAULT_PRODUCT_LIST_LENGTH = 6;
+
   const [productList, setCardList] = useState<Product[]>([]);
-  const [productRenderList, setProductRenderList] = useState<Product[]>([]);
   const [expand, setExpand] = useState<boolean>(false);
+  const productRenderList = expand
+    ? productList
+    : productList.slice(0, DEFAULT_PRODUCT_LIST_LENGTH);
   // const [currentPage, setCurrentPage] = useState<number>(0);
 
   const [searchParams] = useSearchParams();
@@ -43,10 +47,6 @@ function RealTimeRankPanel() {
   //   }
   // };
 
-  useEffect(() => {
-    setProductRenderList(expand ? productList : productList.slice(0, 6));
-  }, [expand, productList]);
-
   return (
     <RealTimeRankPanelWrapper>
       <TitleP>실시간 급상승 선물랭킹</TitleP>
@@ -71,7 +71,7 @@ function RealTimeRankPanel() {
             </MoreButton>
           )}{" "}
           */}
-          {productList.length > 6 && (
+          {productList.length > DEFAULT_PRODUCT_LIST_LENGTH && (
             <ExpandButton
               onClick={() => {
                 setExpand(!expand);
