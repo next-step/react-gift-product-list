@@ -3,24 +3,45 @@ import { fetchProductSummary } from "@src/apis/BackEnd/apiList";
 import useFetchState from "@src/hooks/useFetchState";
 import theme from "@src/styles/kakaoTheme";
 import { useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import PendingSpinner from "../shared/PendingSpinner";
 
 function ProductCard() {
+  const navigate = useNavigate();
   const productId = useParams().id ?? "";
-  const update = useCallback(() => fetchProductSummary(productId), [productId]);
+  const update = useCallback(async () => {
+    const response = await fetchProductSummary(productId);
+
+    if (!response) {
+      console.error("fetchProductSummary에 실패하였습니다.");
+      return;
+    }
+
+    if (response.status >= 400 && response.status < 500) {
+      navigate(`/?err=${encodeURIComponent(response.data.data.message)}`);
+      return;
+    }
+
+    return response;
+  }, [productId]);
   const productData = useFetchState(update);
 
   return (
-    <ProductCardWrapper>
-      <Image src={productData?.data?.imageURL} alt="image" />
-      <Description>
-        <ProductName>{productData?.data?.name}</ProductName>
-        <BrandName>{productData?.data?.brandName}</BrandName>
-        <Price>
-          상품가 <strong>{productData?.data?.price}원</strong>
-        </Price>
-      </Description>
-    </ProductCardWrapper>
+    <>
+      {productData.status === "pending" && <PendingSpinner />}
+      {productData.status === "done" && (
+        <ProductCardWrapper>
+          <Image src={productData?.data?.imageURL} alt="image" />
+          <Description>
+            <ProductName>{productData?.data?.name}</ProductName>
+            <BrandName>{productData?.data?.brandName}</BrandName>
+            <Price>
+              상품가 <strong>{productData?.data?.price}원</strong>
+            </Price>
+          </Description>
+        </ProductCardWrapper>
+      )}
+    </>
   );
 }
 
