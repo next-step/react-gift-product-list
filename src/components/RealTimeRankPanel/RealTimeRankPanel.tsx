@@ -22,7 +22,6 @@ function RealTimeRankPanel() {
     const targetType = searchParams.get("targetType") ?? "ALL";
     const rankType = searchParams.get("rankType") ?? "MANY_WISH";
     const data = await fetchRealTimeRankings(targetType, rankType);
-    console.log(data);
     return data;
   }, [searchParams]);
 
