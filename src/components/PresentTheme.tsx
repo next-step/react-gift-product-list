@@ -29,6 +29,8 @@ const Flex = styled.div`
 const Img = styled.img`
   width: 50px;
   height: 50px;
+  border-radius: 18px;
+  object-fit: cover;
 `;
 
 const P = styled.p`

@@ -1,16 +1,20 @@
 import styled from "@emotion/styled";
-import GiftPersonType from "./GiftPersonType";
-import { personType, presentType } from "@/data/giftType";
-import { gifts } from "@/data/gift";
+import GiftTargetType from "./GiftTargetType";
+import { targetType, rankType } from "@/data/giftType";
+import { isValidTargetType, isValidRankType } from "@/utils/typeGuards";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
-import GiftsList from "./GiftsList";
+import GiftsRender from "./GiftsRender";
 
 const GiftsRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const targetTypeParam = searchParams.get("targetType") || targetType[0].id;
+  const rankTypeParam = searchParams.get("rankType") || rankType[0].id;
   const [selectedTypes, setSelectedTypes] = useState({
-    personType: searchParams.get("personType") ?? personType[0].id,
-    presentType: searchParams.get("presentType") ?? presentType[0].id,
+    targetType: isValidTargetType(targetTypeParam)
+      ? targetTypeParam
+      : targetType[0].id,
+    rankType: isValidRankType(rankTypeParam) ? rankTypeParam : rankType[0].id,
   });
 
   const handleFilterChange = (key: string, selectedType: string) => {
@@ -24,29 +28,29 @@ const GiftsRanking = () => {
   return (
     <Background>
       <RankingTitle>실시간 급상승 선물랭킹</RankingTitle>
-      <GiftPersonTypeFlex>
-        {personType.map((type, index) => (
-          <GiftPersonType
+      <GiftTargetTypeFlex>
+        {targetType.map((type, index) => (
+          <GiftTargetType
             key={index}
             icon={type.icon}
             name={type.name}
-            selected={selectedTypes.personType === type.id}
-            onClick={() => handleFilterChange("personType", type.id)}
+            selected={selectedTypes.targetType === type.id}
+            onClick={() => handleFilterChange("targetType", type.id)}
           />
         ))}
-      </GiftPersonTypeFlex>
-      <PresentTypeFlex>
-        {presentType.map((type, index) => (
-          <PresentType
+      </GiftTargetTypeFlex>
+      <GiftRankTypeFlex>
+        {rankType.map((type, index) => (
+          <GiftRankType
             key={index}
-            selected={selectedTypes.presentType === type.id}
-            onClick={() => handleFilterChange("presentType", type.id)}
+            selected={selectedTypes.rankType === type.id}
+            onClick={() => handleFilterChange("rankType", type.id)}
           >
             {type.name}
-          </PresentType>
+          </GiftRankType>
         ))}
-      </PresentTypeFlex>
-      <GiftsList gifts={gifts} />
+      </GiftRankTypeFlex>
+      <GiftsRender selectedTypes={selectedTypes} />
     </Background>
   );
 };
@@ -70,7 +74,7 @@ const RankingTitle = styled.h3`
     `${theme.spacing.spacing5} ${theme.spacing.spacing2}`};
 `;
 
-const GiftPersonTypeFlex = styled.div`
+const GiftTargetTypeFlex = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -78,7 +82,7 @@ const GiftPersonTypeFlex = styled.div`
   padding: ${({ theme }) => `${theme.spacing.spacing4} 0`};
 `;
 
-const PresentTypeFlex = styled.div`
+const GiftRankTypeFlex = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
@@ -90,7 +94,7 @@ const PresentTypeFlex = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.blue.blue300};
 `;
 
-const PresentType = styled.p<{ selected: boolean }>`
+const GiftRankType = styled.p<{ selected: boolean }>`
   width: 100%;
   flex: 1 1 0%;
   display: flex;

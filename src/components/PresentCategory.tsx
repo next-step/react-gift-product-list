@@ -1,16 +1,33 @@
 import styled from "@emotion/styled";
-import { presentThemes } from "@/data/present";
 import PresentTheme from "./PresentTheme";
+import { fetchTheme } from "@/api/theme";
+import type { Theme } from "@/types/theme";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import useApiRequest from "@/hooks/useApiRequest";
 
 const PresentCategory = () => {
+  const {
+    data: presentThemes,
+    isLoading,
+    isError,
+  } = useApiRequest<Theme[]>({ requestFn: fetchTheme });
+
+  if (isError) {
+    return <></>;
+  }
+
   return (
     <Background>
       <CategoryTitle>선물 테마</CategoryTitle>
-      <ThemeGrid>
-        {presentThemes.map(theme => (
-          <PresentTheme key={theme.themeId} theme={theme} />
-        ))}
-      </ThemeGrid>
+      {presentThemes && !isLoading ? (
+        <ThemeGrid>
+          {presentThemes.map(theme => (
+            <PresentTheme key={theme.themeId} theme={theme} />
+          ))}
+        </ThemeGrid>
+      ) : (
+        <LoadingSpinner height="266px" />
+      )}
     </Background>
   );
 };

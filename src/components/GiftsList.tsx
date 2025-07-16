@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import GiftItem from "./GiftItem";
 import { ROUTE_PATH } from "@/routes/paths";
@@ -16,6 +16,10 @@ const GiftsList = ({ gifts }: GiftsListProps) => {
   const handleGiftClick = (giftId: number) => {
     navigate(`${ROUTE_PATH.ORDER.replace(":id", giftId.toString())}`);
   };
+
+  useEffect(() => {
+    setShowMore(false);
+  }, [gifts]);
 
   const visibleGifts = showMore ? gifts : gifts.slice(0, 6);
 
