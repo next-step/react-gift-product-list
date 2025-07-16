@@ -95,9 +95,17 @@ const GiftChart = () => {
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
-        <Text size="label2" weight="bold">
-          {error}
-        </Text>
+        <CenteredBox>
+          <Text size="label1" weight="regular">
+            {error}
+          </Text>
+        </CenteredBox>
+      ) : products.length === 0 ? (
+        <CenteredBox>
+          <Text size="label1" weight="regular">
+            상품이 없습니다.
+          </Text>
+        </CenteredBox>
       ) : (
         <ProductItem>
           {products.map((product) => (
@@ -179,4 +187,12 @@ const ProductItem = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.spacing3};
   margin-top: ${({ theme }) => theme.spacing.spacing4};
+`;
+
+const CenteredBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
 `;
