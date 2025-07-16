@@ -1,23 +1,48 @@
-import { rankingItemMock } from "@/assets/rankingItemMock";
 import Divider from "@/components/common/Divider";
+import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
+import type { ProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { Navigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
+interface ProductData {
+  data: ProductType;
+}
 
 const Product = () => {
   const { setValue } = useFormContext<OrderFormType>();
   const { productId } = useParams();
-  const product = rankingItemMock.find((item) => item.id === Number(productId));
+  const navigate = useNavigate();
+  const { data, isError, isLoading } = useFetch<ProductData>(`api/products/${productId}/summary`);
+  const product = data?.data;
+  const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), []);
   useEffect(() => {
     if (product) {
       setValue("productId", product.id);
     }
-  }, [productId]);
-  if (!product) {
-    return <Navigate to={ROUTE_PATH.HOME} />;
+    if (isError) {
+      toast.error("현재 없는 상품입니다.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        onClose: goHome,
+      });
+    }
+  }, [isError, isLoading, setValue, goHome]);
+  if (isLoading) {
+    return <Loading height="170px" />;
+  }
+  if (isError) {
+    return null;
   }
   return (
     <Content>
@@ -25,13 +50,13 @@ const Product = () => {
       <Title>상품 정보</Title>
       <Divider spacing="1rem" />
       <ProductWrapper>
-        <ProductImg alt="product" src={product.imageURL} />
+        <ProductImg alt="product" src={product?.imageURL} />
         <div>
-          <ProductTitle>{product.name}</ProductTitle>
-          <ProductBrand>{product.brandInfo.name}</ProductBrand>
+          <ProductTitle>{product?.name}</ProductTitle>
+          <ProductBrand>{product?.brandName}</ProductBrand>
           <ProductPrice>
             <ProductPriceInfo>상품가 </ProductPriceInfo>
-            {product.price.sellingPrice}원
+            {product?.price}원
           </ProductPrice>
         </div>
       </ProductWrapper>

@@ -4,6 +4,7 @@ import theme from "@/styles/theme/theme";
 import { BrowserRouter } from "react-router-dom";
 import Routes from "@/components/routes/Routes";
 import { AuthProvider } from "./contexts/authContext";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes />
+          <ToastContainer />
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

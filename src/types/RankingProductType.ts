@@ -1,4 +1,4 @@
-export type RankingItemType = {
+export type RankingProductType = {
   id: number;
   name: string;
   imageURL: string;
@@ -12,4 +12,12 @@ export type RankingItemType = {
     name: string;
     imageURL: string;
   };
+};
+
+export type ProductType = {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
 };

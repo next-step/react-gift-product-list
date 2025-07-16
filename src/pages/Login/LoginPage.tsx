@@ -6,7 +6,7 @@ import type React from "react";
 import useLoginInput from "@/hooks/useLoginInput";
 import { useAuth, type Auth } from "@/contexts/authContext";
 import useFetch from "@/hooks/useFetch";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 interface AuthData {
   data: Auth;
@@ -74,7 +74,6 @@ const LoginPage = () => {
           </Button>
         </Form>
       </Content>
-      <ToastContainer />
     </Container>
   );
 };

@@ -7,14 +7,14 @@ import { useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import Loading from "@/components/common/Loading";
-import type { RankingItemType } from "@/types/RankingItemType";
+import type { RankingProductType } from "@/types/RankingProductType";
 
 interface RankingListProps {
   targetType: string;
   rankType: string;
 }
 interface RankingData {
-  data: RankingItemType[];
+  data: RankingProductType[];
 }
 
 const RANKING_LIST_ITEM_VIEW_COUNT = 6;
