@@ -16,6 +16,7 @@ const ItemImage = styled.img`
   width: 50px;
   height: 50px;
   object-fit: contain;
+  border-radius: 18px;
 `;
 
 const ItemName = styled.span`
