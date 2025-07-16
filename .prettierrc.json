@@ -1,0 +1,23 @@
+{
+    "tabWidth": 4,
+    "printWidth": 100,
+
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+
+    "importOrder": [
+        "reflect-metadata",
+        "^react",
+        "<THIRD_PARTY_MODULES>",
+
+        "^(@/app)(.*)$",
+        "^(@/entities)(.*)$",
+        "^(@/features)(.*)$",
+        "^(@/pages)(.*)$",
+        "^(@/shared)(.*)$",
+        "^(@/widgets)(.*)$",
+
+        "^(.*)/(.*)$"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": false
+}
