@@ -33,7 +33,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
 
   const rankingListData = useFetch<RankingData>();
   useEffect(() => {
-    rankingListData.fetchData(`/api/products/ranking?targetType=${targetType}&rankType=${rankType}`);
+    rankingListData.fetchData("/api/products/ranking", { targetType, rankType });
   }, [targetType, rankType, rankingListData.fetchData]);
 
   if (rankingListData.isLoading) {
