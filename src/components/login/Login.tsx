@@ -65,12 +65,17 @@ const Login = () => {
                   },
                 }
               );
-              setUser({
-                email: response.data.email,
-                name: response.data.name,
-                authToken: response.data.authToken,
-              });
-              sessionStorage.setItem("email", email.string);
+
+              const logUserInfo = {
+                email: response.data.data.email,
+                name: response.data.data.name,
+                authToken: response.data.data.authToken,
+              };
+
+              setUser(logUserInfo);
+
+              sessionStorage.setItem("userInfo", JSON.stringify(logUserInfo));
+
               navigate("/my");
             } catch (error) {
               console.log("error:", error);
