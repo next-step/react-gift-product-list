@@ -42,7 +42,7 @@ const FriendSelectorTxt = styled.p`
 
 function FriendSelector() {
   const { getId } = useUser(); // TODO: useUser훅을 useUserInfo훅으로 리팩터링한후 아이디를 받아오는 과정에 대해 다시 생각해보자
-  const userName = getId();
+  const userName = getId(); // useName을 받아와서 친구 선택 박스에 출력함
 
   return (
     <FriendSelectorWrapper>

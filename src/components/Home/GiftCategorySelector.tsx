@@ -78,6 +78,7 @@ function GiftCategorySelectorItemBox() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  // 최초 랜더링시 axios로 api요청후 state 세팅
   useEffect(() => {
     const fetchThemes = async () => {
       try {
@@ -94,14 +95,16 @@ function GiftCategorySelectorItemBox() {
     fetchThemes();
   }, []);
 
+  // 로딩중일때 spinner 패인팅
   if (isLoading) {
     return <Spinner />;
   }
 
+  // 에러뜨면 아무것도 표시 x
   if (isError) {
     return null;
   }
-  
+
   return (
     <GiftCategorySelectorItemBoxGrid>
       {themes.map((item) => (
