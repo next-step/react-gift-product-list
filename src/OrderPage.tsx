@@ -16,6 +16,7 @@ import * as z from "zod";
 import { getProductSummary, type ProductSummary } from "@/apis/product";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth";
 
 
 type FormData = z.infer<typeof orderSchema>;
@@ -54,6 +55,8 @@ function OrderPage() {
   const defaultCardId = messageCardData[0]?.id ?? 1;
   const [selectedCardId, setSelectedCardId] = useState(defaultCardId);
 
+  const { user } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -70,6 +73,12 @@ function OrderPage() {
       receivers: [],
     },
   });
+
+  useEffect(() => {
+    if (user?.name) {
+      setValue("sender", user.name);
+    }
+  }, [user?.name, setValue]);
 
   const totalQuantity = watch("receivers").reduce((sum, r) => sum + (r.quantity || 0), 0);
 
