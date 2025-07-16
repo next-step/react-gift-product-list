@@ -23,10 +23,10 @@ const RankingAnyTagItem = () => {
     if (value && isValidSelectedOption(value)) {
       setSelected(value);
     } else {
-      params.set('rankType', 'MANY_WISH');
+      params.set('rankType', selected);
       navigate(`?${params.toString()}`, { replace: true });
     }
-  }, [search, navigate]);
+  }, [search, navigate, selected]);
 
   const handleClick = (value: RankTagTypeList) => {
     const params = new URLSearchParams(search);
