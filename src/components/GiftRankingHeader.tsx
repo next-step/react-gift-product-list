@@ -34,7 +34,7 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
   rankType,
   setRankType,
 }) => {
-  type RANK_TYPE = "MANY_WISH" | "MANY_GIVE" | "MANY_WANT";
+  type RANK_TYPE = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
 
   const navigate = useNavigate();
   const theme = useTheme();
