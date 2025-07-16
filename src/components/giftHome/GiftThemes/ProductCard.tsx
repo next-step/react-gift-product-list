@@ -12,7 +12,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const goToCard = () => {
     if (isLoggedIn) {
       navigate(`/order/${id}`, {
         state: { imageURL, name, price, brandInfo },
@@ -23,7 +23,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <Card onClick={handleClick}>
+    <Card onClick={goToCard}>
       <ProductImage src={imageURL} alt={name} />
       <BrandName>{brandInfo.name}</BrandName>
       <Price>{price.basicPrice.toLocaleString()}원</Price>
