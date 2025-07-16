@@ -2,12 +2,9 @@ import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
 import RankingFilter from '@/components/RankingSection/RankingFilter';
 import RankingSort from '@/components/RankingSection/RankingSort';
-import ProductGrid from '@/components/RankingSection/ProductGrid';
-import ExpandButton from '@/components/RankingSection/ExpandButton';
-import { loading } from '@/components/common/Loading';
 import { useState } from 'react';
 import { useProductRanking } from '@/hooks/useProductRanking';
-import { ERROR_MESSAGES } from '@/constants/validation';
+import RankingContent from '@/components/RankingSection/RankingContent';
 
 const INITIAL_VISIBLE_COUNT = 6;
 
@@ -41,35 +38,17 @@ const RankingGroup = () => {
     setSearchParams(searchParams);
   };
 
-  const renderContent = () => {
-    if (productRanking.pending) return loading;
-
-    if (productRanking.error || !productRanking.data) {
-      return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_PRODUCTS}</EmptyText>;
-    }
-
-    if (productRanking.data.length === 0) {
-      return <EmptyText>{ERROR_MESSAGES.NO_PRODUCTS_AVAILABLE}</EmptyText>;
-    }
-
-    const visibleProducts = isExpanded
-      ? productRanking.data
-      : productRanking.data.slice(0, INITIAL_VISIBLE_COUNT);
-
-    return (
-      <>
-        <ProductGrid products={visibleProducts} />
-        <ExpandButton isExpanded={isExpanded} onToggle={toggleVisibleCount} />
-      </>
-    );
-  };
-
   return (
     <Section>
       <Title>실시간 급상승 선물랭킹</Title>
       <RankingFilter selectedFilter={targetType} onSelect={changeTargetType} />
       <RankingSort selectedSort={rankType} onSelect={changeRankType} />
-      {renderContent()}
+      <RankingContent
+        productRanking={productRanking}
+        visibleCount={visibleCount}
+        toggleVisibleCount={toggleVisibleCount}
+        isExpanded={isExpanded}
+      />
     </Section>
   );
 };
@@ -84,11 +63,4 @@ const Section = styled.section`
 const Title = styled.h3`
   ${({ theme }) => theme.typography.title.title1Bold};
   margin-bottom: ${({ theme }) => theme.spacing[4]};
-`;
-
-const EmptyText = styled.p`
-  ${({ theme }) => theme.typography.body.body2Regular};
-  color: ${({ theme }) => theme.color.semantic.text};
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing[6]} 0;
 `;

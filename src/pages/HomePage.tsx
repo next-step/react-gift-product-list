@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation';
 import FriendSelectSection from '@/components/FriendSelectSection';
-import CategorySection from '@/components/CategorySection';
+import CategoryGroup from '@/components/CategorySection/CategoryGroup';
 import BannerSection from '@/components/BannerSection';
 import RankingGroup from '@/components/RankingSection/RankingGroup';
 
@@ -9,7 +9,7 @@ const HomePage = () => {
     <>
       <Navigation />
       <FriendSelectSection />
-      <CategorySection />
+      <CategoryGroup />
       <BannerSection />
       <RankingGroup />
     </>

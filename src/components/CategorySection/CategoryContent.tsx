@@ -1,68 +1,49 @@
 import styled from '@emotion/styled';
 import { loading } from '@/components/common/Loading';
-import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 import { ERROR_MESSAGES } from '@/constants/validation';
+import type { Category } from '@/types/category';
+
+interface Props {
+  themes: {
+    data: Category[] | null;
+    pending: boolean;
+    error: boolean;
+  };
+}
 
 const GRID_MIN_HEIGHT = 250;
 const CATEGORY_IMAGE_SIZE = 50;
 
-const CategorySection = () => {
-  const themes = useCategoryThemes();
-
-  const renderContent = () => {
-    if (themes.pending) {
-      return (
-        <Grid>
-          <LoadingWrapper>{loading}</LoadingWrapper>
-        </Grid>
-      );
-    }
-
-    if (themes.error) {
-      return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</EmptyText>;
-    }
-
-    if (!themes.data || themes.data.length === 0) {
-      return <EmptyText>{ERROR_MESSAGES.NO_THEMES_AVAILABLE}</EmptyText>;
-    }
-
+const CategoryContent = ({ themes }: Props) => {
+  if (themes.pending) {
     return (
       <Grid>
-        {themes.data.map(theme => (
-          <Item key={theme.themeId}>
-            <CategoryImage src={theme.image} alt={theme.name} />
-            <CategoryText>{theme.name}</CategoryText>
-          </Item>
-        ))}
+        <LoadingWrapper>{loading}</LoadingWrapper>
       </Grid>
     );
-  };
+  }
+
+  if (themes.error) {
+    return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</EmptyText>;
+  }
+
+  if (!themes.data || themes.data.length === 0) {
+    return <EmptyText>{ERROR_MESSAGES.NO_THEMES_AVAILABLE}</EmptyText>;
+  }
 
   return (
-    <Section>
-      <TitleWrapper>
-        <Title>선물 테마</Title>
-      </TitleWrapper>
-      {renderContent()}
-    </Section>
+    <Grid>
+      {themes.data.map(theme => (
+        <Item key={theme.themeId}>
+          <CategoryImage src={theme.image} alt={theme.name} />
+          <CategoryText>{theme.name}</CategoryText>
+        </Item>
+      ))}
+    </Grid>
   );
 };
 
-export default CategorySection;
-
-const Section = styled.section`
-  padding: ${({ theme }) => theme.spacing[2]};
-  margin-bottom: ${({ theme }) => theme.spacing[6]};
-`;
-
-const TitleWrapper = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-  padding: ${({ theme }) => `${theme.spacing[0]} ${theme.spacing[1]}`};
-`;
-
-const Title = styled.h3`
-  ${({ theme }) => theme.typography.title.title1Bold};
-`;
+export default CategoryContent;
 
 const Grid = styled.div`
   display: grid;
