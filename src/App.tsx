@@ -61,7 +61,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/order" element={<OrderPage />} />
+          <Route path="/order/:productId" element={<OrderPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <ToastContainer

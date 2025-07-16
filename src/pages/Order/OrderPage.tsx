@@ -1,9 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useTheme } from '@emotion/react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { mockItems } from '../../data/mockItems';
-import { cardTemplates } from '../../data/cardTemplates';
+import { useState, useEffect } from 'react';
 import {
   containerStyle,
   cardSelectorStyle,
@@ -25,11 +23,30 @@ import {
 import AddReceiverModal from './components/AddReceiverModal';
 import ReceiverTable from './components/ReceiverTable';
 import EmptyReceiverBox from './components/EmptyReceiverBox';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { cardTemplates } from '../../data/cardTemplates';
+import 'react-toastify/dist/ReactToastify.css';
+
+function useAuth() {
+  const authToken = localStorage.getItem('authToken') || '';
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+  return { authToken, userInfo };
+}
 
 const OrderPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { productId } = useParams<{ productId: string }>();
+  const { authToken, userInfo } = useAuth();
+
+  const [product, setProduct] = useState<{
+    id: number;
+    name: string;
+    brandName: string;
+    price: number;
+    imageURL: string;
+  } | null>(null);
 
   const [selectedCard, setSelectedCard] = useState(cardTemplates[0]);
   const [receivers, setReceivers] = useState<
@@ -46,12 +63,53 @@ const OrderPage = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      senderName: '',
-      message: selectedCard.defaultTextMessage,
+      senderName: userInfo?.name || '',
+      message: cardTemplates[0].defaultTextMessage,
     },
   });
 
-  const onSubmit = (data: { senderName: string; message: string }) => {
+  // 제품 정보 API 호출
+  useEffect(() => {
+    if (!productId) {
+      toast.error('잘못된 접근입니다.');
+      navigate('/');
+      return;
+    }
+
+    fetch(`/api/products/${productId}/summary`, {
+      headers: {
+        Authorization: authToken ? `Bearer ${authToken}` : '',
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errData = await res.json().catch(() => null);
+          toast.error(
+            errData?.message || '제품 정보를 불러오는데 실패했습니다.'
+          );
+          navigate('/');
+          throw new Error('4xx error');
+        }
+        return res.json();
+      })
+      .then((json) => {
+        if (json.data) {
+          setProduct(json.data);
+        } else {
+          throw new Error('제품 데이터를 불러오지 못했습니다.');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [productId, authToken, navigate]);
+
+  const handleCardSelect = (card: typeof selectedCard) => {
+    setSelectedCard(card);
+    setValue('message', card.defaultTextMessage);
+  };
+
+  const onSubmit = async (data: { senderName: string; message: string }) => {
     if (receivers.length === 0) {
       alert('받는 사람을 최소 1명 이상 추가해주세요.');
       return;
@@ -62,18 +120,48 @@ const OrderPage = () => {
       return;
     }
 
-    alert(
-      `주문이 완료되었습니다.\n상품명: ${product.name}\n총 구매 수량: ${totalQuantity}\n발신자 이름: ${data.senderName}\n메시지: ${data.message}\n받는 사람 수: ${receivers.length}`
-    );
-    navigate('/');
+    try {
+      const res = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          productId: Number(productId),
+          message: data.message,
+          messageCardId: selectedCard?.id || '',
+          ordererName: data.senderName,
+          receivers: receivers.map(({ name, phone, quantity }) => ({
+            name,
+            phoneNumber: phone,
+            quantity,
+          })),
+        }),
+      });
+
+      if (res.status === 401) {
+        navigate('/login');
+        return;
+      }
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        toast.error(errorData?.message || '주문에 실패했습니다.');
+        return;
+      }
+
+      toast.success('주문이 완료되었습니다!');
+      navigate('/');
+    } catch (error) {
+      toast.error('서버와 통신 중 오류가 발생했습니다.');
+      console.error(error);
+    }
   };
 
-  const product = mockItems[0];
-
-  const handleCardSelect = (card: (typeof cardTemplates)[0]) => {
-    setSelectedCard(card);
-    setValue('message', card.defaultTextMessage);
-  };
+  if (!product) {
+    return <div>제품 정보를 불러오는 중입니다...</div>;
+  }
 
   return (
     <div css={containerStyle(theme)}>
@@ -105,19 +193,27 @@ const OrderPage = () => {
           placeholder="메시지를 입력해주세요."
           css={[messageInputStyle(theme), errors.message && errorInputStyle]}
         />
-        {errors.message && <p css={errorMessageStyle}>{errors.message.message}</p>}
+        {errors.message && (
+          <p css={errorMessageStyle}>{errors.message.message}</p>
+        )}
 
         <div css={sectionStyle(theme)}>
           <div css={formGroupStyle(theme)}>
             <label>보내는 사람</label>
             <div>
               <input
-                {...register('senderName', { required: '이름을 입력해주세요.' })}
+                {...register('senderName', {
+                  required: '이름을 입력해주세요.',
+                })}
                 placeholder="이름을 입력하세요."
                 css={errors.senderName ? errorInputStyle : undefined}
               />
-              {errors.senderName && (
-                <p css={errorMessageStyle}>{errors.senderName.message}</p>
+              {errors.message && (
+                <p css={errorMessageStyle}>
+                  {typeof errors.message.message === 'string'
+                    ? errors.message.message
+                    : ''}
+                </p>
               )}
             </div>
             <p css={helperTextStyle(theme)}>
@@ -163,17 +259,25 @@ const OrderPage = () => {
         <div css={sectionStyle(theme)}>
           <h2 css={titleStyle(theme)}>상품 정보</h2>
           <div css={productInfoStyle(theme)}>
-            <img src={product.imageURL} alt="상품" css={productImageStyle(theme)} />
+            <img
+              src={product.imageURL}
+              alt="상품"
+              css={productImageStyle(theme)}
+            />
             <div>
               <p>
-                {product.name} / {product.brand}
+                {product.name} / {product.brandName}
               </p>
               <strong>{product.price.toLocaleString()}원</strong>
             </div>
           </div>
         </div>
 
-        <button css={orderButtonStyle(theme)} type="submit">
+        <button
+          css={orderButtonStyle(theme)}
+          type="submit"
+          disabled={totalQuantity < 1}
+        >
           {(product.price * totalQuantity).toLocaleString()}원 주문하기
         </button>
       </form>
