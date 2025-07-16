@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styled from "@emotion/styled";
 import { fetchThemes } from "@/api/theme";
 import type { Theme } from "@/api/theme";
@@ -11,20 +11,22 @@ export const CategorySection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const loadThemes = async () => {
-      try {
-        const data = await fetchThemes();
-        setThemes(data);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadThemes();
+  const fetchThemesData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await fetchThemes();
+      setThemes(data);
+      setError(false);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchThemesData();
+  }, [fetchThemesData]);
 
   if (loading) {
     return (
