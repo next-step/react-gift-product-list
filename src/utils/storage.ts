@@ -4,6 +4,8 @@ type TypeGuard<T> = (value: unknown) => value is T;
 
 interface UserInfo {
   email: string;
+  authToken: string;
+  name: string;
 }
 
 export const setSessionStorageItem = <T>(key: string, value: T) => {

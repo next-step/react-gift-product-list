@@ -1,8 +1,14 @@
+import type {
+  RankingRankType,
+  RankingTargetType,
+} from "@/api/product/get-ranking-products";
 import {
   HotGiftRankingGrid,
   HotGiftRankingTab,
   HotGiftRankingTag,
 } from "@/components/main";
+import { TAB_DATA, TAGS } from "@/constants";
+import { parseUrlParam } from "@/utils";
 import styled from "@emotion/styled";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -31,21 +37,25 @@ const HotGiftRankingSectionTagContainer = styled.div(({ theme }) => ({
   marginBottom: `${theme.spacing4}`,
 }));
 
-const tags = [
-  { id: "ALL", emoji: "ALL", text: "전체" },
-  { id: "FEMALE", emoji: "👩", text: "여성이" },
-  { id: "MALE", emoji: "👨", text: "남성이" },
-  { id: "TEEN", emoji: "👦", text: "청소년이" },
-];
-
 export const HotGiftRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedTag = searchParams.get("targetType") || "ALL";
-  const selectedTab = searchParams.get("rankType") || "MANY_WISH";
+  const selectedTag = parseUrlParam(
+    searchParams.get("targetType"),
+    TAGS,
+    "ALL",
+  );
+  const selectedTab = parseUrlParam(
+    searchParams.get("rankType"),
+    TAB_DATA,
+    "MANY_WISH",
+  );
 
   const handleParamChange = useCallback(
-    (key: "targetType" | "rankType", value: string) => {
+    (
+      key: "targetType" | "rankType",
+      value: RankingTargetType | RankingRankType,
+    ) => {
       const newParams = new URLSearchParams(searchParams);
       newParams.set(key, value);
       setSearchParams(newParams);
@@ -59,7 +69,7 @@ export const HotGiftRanking = () => {
         실시간 급상승 선물랭킹
       </HotGiftRankingSectionTitle>
       <HotGiftRankingSectionTagContainer>
-        {tags.map(tag => (
+        {TAGS.map(tag => (
           <HotGiftRankingTag
             key={tag.id}
             isSelected={selectedTag === tag.id}

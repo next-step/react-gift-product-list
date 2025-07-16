@@ -1,5 +1,6 @@
-import { category } from "@/__mock__";
+import { LoadingSpinner } from "@/components/common";
 import { ThemeItem } from "@/components/main";
+import { useGetThemeData } from "@/hooks/themes/useGetThemeData";
 import styled from "@emotion/styled";
 
 const PresentSectionPadding = styled.div(({ theme }) => ({
@@ -38,7 +39,25 @@ const PresentSectionGridContainer = styled.div(({ theme }) => ({
 }));
 
 export const PresentTheme = () => {
-  const categories = category;
+  const { themes, loading, error, isEmpty } = useGetThemeData();
+
+  const renderContent = () => {
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (error || isEmpty) {
+      return null;
+    }
+
+    return (
+      <PresentSectionGridContainer>
+        {themes.map(theme => (
+          <ThemeItem key={theme.themeId} {...theme} />
+        ))}
+      </PresentSectionGridContainer>
+    );
+  };
   return (
     <>
       <PresentSectionPadding />
@@ -46,11 +65,7 @@ export const PresentTheme = () => {
         <PresentSectionTitleWrapper>
           <PresentSectionTitle>선물 테마</PresentSectionTitle>
         </PresentSectionTitleWrapper>
-        <PresentSectionGridContainer>
-          {categories.map(category => (
-            <ThemeItem key={category.themeId} {...category} />
-          ))}
-        </PresentSectionGridContainer>
+        {renderContent()}
       </PresentSectionContainer>
       <PresentSectionPadding />
     </>

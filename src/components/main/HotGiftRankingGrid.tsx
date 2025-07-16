@@ -1,8 +1,8 @@
-import { generateMockArray } from "@/__mock__/generate-mock-array";
-import { Button } from "@/components/common";
+import { Button, LoadingSpinner } from "@/components/common";
 import { useRouter } from "@/hooks/common/useRouter";
+import { useRankingProducts } from "@/hooks/products/useRankingProducts";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const HotGiftRankingGridContainer = styled.div(({ theme }) => ({
   display: "grid",
@@ -69,17 +69,43 @@ const ButtonContainer = styled.div(({ theme }) => ({
   padding: `${theme.spacing8} 0 ${theme.spacing10} 0`,
 }));
 
+const EmptyContainer = styled.div(({ theme }) => ({
+  gridColumn: "1 / -1",
+  height: "50vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: `${theme.spacing8} 0`,
+  color: `${theme.color.gray[900]}`,
+  fontSize: `${theme.typography.body1Regular.fontSize}`,
+}));
+
 const RANK_CORRECTION_NUMBER = 1;
+const INITIAL_SHOW_COUNT = 6;
 
 export const HotGiftRankingGrid = () => {
   const [showMore, setShowMore] = useState(false);
+  const { products, loading, isEmpty } = useRankingProducts();
   const { goOrderPage } = useRouter();
-  const INITIAL_SHOW_COUNT = 6;
-  const mockData = generateMockArray();
-  const displayedItems = showMore
-    ? mockData
-    : mockData.slice(0, INITIAL_SHOW_COUNT);
 
+  useEffect(() => {
+    setShowMore(false);
+  }, [products]);
+
+  const displayedItems = showMore
+    ? products
+    : products.slice(0, INITIAL_SHOW_COUNT);
+
+  if (loading) {
+    return (
+      <EmptyContainer>
+        <LoadingSpinner />
+      </EmptyContainer>
+    );
+  }
+  if (isEmpty) {
+    return <EmptyContainer>상품이 없습니다.</EmptyContainer>;
+  }
   return (
     <>
       <HotGiftRankingGridContainer>
@@ -88,9 +114,7 @@ export const HotGiftRankingGrid = () => {
             key={item.id}
             onClick={() => goOrderPage(item.id)}
           >
-            <HotGiftRankingImageContainer
-              src={item.imageURL}
-            ></HotGiftRankingImageContainer>
+            <HotGiftRankingImageContainer src={item.imageURL} alt={item.name} />
             <RankBadge rank={index + RANK_CORRECTION_NUMBER}>
               {index + RANK_CORRECTION_NUMBER}
             </RankBadge>
@@ -101,7 +125,7 @@ export const HotGiftRankingGrid = () => {
         ))}
       </HotGiftRankingGridContainer>
 
-      {mockData.length > INITIAL_SHOW_COUNT && (
+      {products.length > INITIAL_SHOW_COUNT && (
         <ButtonContainer>
           <Button
             variant="secondary"
