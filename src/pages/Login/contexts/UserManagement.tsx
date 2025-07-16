@@ -1,18 +1,26 @@
-import { createContext, useContext } from 'react';
-import type { ReactNode } from 'react';
-import { useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from 'react';
 
 interface User {
+  authToken: string;
   email: string;
+  name: string;
 }
 
 interface UserManagementContextType {
   user: User | null;
-  login: (email: string) => void;
+  login: (userData: User) => void;
   logout: () => void;
 }
 
-const UserManagementContext = createContext<UserManagementContextType | undefined>(undefined);
+const UserManagementContext = createContext<
+  UserManagementContextType | undefined
+>(undefined);
 
 const LOCAL_STORAGE_KEY = 'kakao-login-user';
 
@@ -23,17 +31,24 @@ function useStorageState<T>(key: string, initialValue: T) {
   });
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
+    if (state) {
+      localStorage.setItem(key, JSON.stringify(state));
+    } else {
+      localStorage.removeItem(key);
+    }
   }, [key, state]);
 
   return [state, setState] as const;
 }
 
-export const UserManagementProvider = ({ children }: { children: ReactNode }) => {
+export const UserManagementProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [user, setUser] = useStorageState<User | null>(LOCAL_STORAGE_KEY, null);
 
-  const login = (email: string) => {
-    const userData = { email };
+  const login = (userData: User) => {
     setUser(userData);
   };
 
@@ -41,15 +56,23 @@ export const UserManagementProvider = ({ children }: { children: ReactNode }) =>
     setUser(null);
   };
 
+  const contextValue: UserManagementContextType = {
+    user,
+    login,
+    logout,
+  };
+
   return (
-    <UserManagementContext.Provider value={{ user, login, logout }}>
+    <UserManagementContext.Provider value={contextValue}>
       {children}
     </UserManagementContext.Provider>
   );
 };
-
 export const UserManagement = () => {
   const context = useContext(UserManagementContext);
-  if (!context) throw new Error('UserManagement must be used within UserManagementProvider');
+  if (!context)
+    throw new Error(
+      'UserManagement must be used within UserManagementProvider'
+    );
   return context;
 };

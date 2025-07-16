@@ -17,12 +17,7 @@ const LoginFormSection = () => {
 
   const redirectPath = searchParams.get('redirect') || '/my';
 
-  const {
-    email,
-    password,
-    isValid,
-    goToLogin,
-  } = useLoginForm();
+  const { email, password, isValid, goToLogin } = useLoginForm();
 
   const loginWithRedirect = () => {
     goToLogin();

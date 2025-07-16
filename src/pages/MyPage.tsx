@@ -9,7 +9,8 @@ const MyPage = () => {
   const { user, logout } = UserManagement();
   const navigate = useNavigate();
 
-  const name = user?.email.split('@')[0] ?? '사용자';
+  const email = typeof user?.email === 'string' ? user.email : '';
+  const name = email ? email.split('@')[0] : '사용자';
 
   const performLogout = () => {
     logout();
@@ -42,7 +43,7 @@ const MyPage = () => {
           color: ${theme.color.gray.gray900};
         `}
       >
-        이메일 주소는 {user?.email ?? '없음'}입니다.
+        이메일 주소는 {email || '없음'}입니다.
       </p>
       <button
         onClick={performLogout}
