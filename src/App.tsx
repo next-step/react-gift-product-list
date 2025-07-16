@@ -10,11 +10,14 @@ import LoginPage from "./LoginPage";
 import NotFoundPage from "./NotFoundPage";
 import MyPage from "./MyPage";
 import OrderPage from "./OrderPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 
 function App() {
   return (
     <>
       <GlobalStyle />
+      <ToastContainer position="bottom-center" autoClose={3000} />
       <Layout>
         <Header />
         <Routes>

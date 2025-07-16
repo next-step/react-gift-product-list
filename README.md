@@ -20,9 +20,9 @@
 ### 요구사항
 
 #### 1. 로그인 기능
-- [ ] /login api 를 사용하여 로그인 기능을 완성
-- [ ] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage에 저장하고 활용
-- [ ] 4XX 에러가 발생하면 Toast를 통해 에러메시지 출력
+- [x] /login api 를 사용하여 로그인 기능을 완성
+- [x] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage에 저장하고 활용
+- [x] 4XX 에러가 발생하면 Toast를 통해 에러메시지 출력
 
 #### 2. 주문하기 기능
 - [ ] /products/:productId/summary api를 사용하여 제품 정보 가져오기

@@ -3,6 +3,7 @@ import { createContext } from "react";
 export interface User {
   email: string;
   name: string;
+  authToken: string;
 }
 
 export interface AuthContextType {

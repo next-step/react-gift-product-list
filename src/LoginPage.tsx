@@ -7,6 +7,9 @@ import { useInput } from "@/hooks/useInput";
 import { useValidate } from "@/hooks/useValidate";
 import { validateEmail, validatePassword } from "@/utils/validate";
 import { useAuth } from "@/hooks/useAuth";
+import { login } from "@/apis/auth";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 const LogoImage = styled.img`
   width: 88px;
@@ -48,16 +51,30 @@ export default function LoginPage() {
   const passwordInput = useInput("");
   const passwordValidation = useValidate(passwordInput.value, validatePassword);
 
-  const handleLogin = () => {
-    const email = emailInput.value;
-    setUser({
-      email,
-      name: email.split("@")[0],
-    });
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
-      navigate("/");
+  const handleLogin = async () => {
+    try {
+      const result = await login({
+        email: emailInput.value,
+        password: passwordInput.value,
+      });
+
+      setUser({
+        email: result.email,
+        name: result.name,
+        authToken: result.authToken,
+      });
+
+      if (window.history.length > 2) {
+        navigate(-1);
+      } else {
+        navigate("/");
+      }
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message ?? "@kakao.com 이메일 주소만 가능합니다.");
+      } else {
+        toast.error("알 수 없는 오류가 발생했습니다.");
+      }
     }
   };
 
