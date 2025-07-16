@@ -36,8 +36,10 @@ export default function LoginPage() {
   const goToLogin = async () => {
     if (!isFormValid) return;
 
-    if (!isFormValid) return;
-
+    if (!email.endsWith("@kakao.com")) {
+      showErrorToast("@kakao.com 이메일 주소만 가능합니다.");
+      return;
+    }
     try {
       const response = await login({ email, password });
 
