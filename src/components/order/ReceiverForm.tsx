@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import ReceiverModal from "./ReceiverModal";
 import type { Receiver } from "@/types/order";
+import React from "react";
 
 type ReceiverFormProps = {
   receiverList: Receiver[];
@@ -42,11 +43,11 @@ export default function ReceiverForm({
           </TableHeader>
           <TableBody>
             {receiverList.map((r) => (
-              <>
+              <React.Fragment key={r.phone}>
                 <BodyText>{r.name}</BodyText>
                 <BodyText>{r.phone}</BodyText>
                 <BodyText>{r.quantity}</BodyText>
-              </>
+              </React.Fragment>
             ))}
           </TableBody>
         </TableWrapper>
