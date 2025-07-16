@@ -3,6 +3,9 @@ import styled from "@emotion/styled";
 import Spacing from "@/components/Spacing";
 import { useLoginForm } from "./useLoginForm";
 import { css, type Theme } from "@emotion/react";
+import { login } from "@/services/auth";
+import { showErrorToast } from "@/styles/toast";
+import type { AxiosError } from "node_modules/axios/index.d.cts";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,15 +24,29 @@ export default function LoginPage() {
     isFormValid,
   } = useLoginForm();
 
-  const goToLogin = () => {
+  const goToLogin = async () => {
     if (!isFormValid) return;
-    const userInfo = {
-      email,
-    };
 
-    sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+    if (!isFormValid) return;
 
-    navigate(from, { replace: true });
+    try {
+      const response = await login({ email, password });
+
+      const userInfo = {
+        authToken: response.data.authToken,
+        email: response.data.email,
+        name: response.data.name,
+      };
+
+      sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+      navigate(from, { replace: true });
+    } catch (error: unknown) { // any 타입을 unknown 타입으로 수정
+      const status = (error as AxiosError).response?.status; 
+      // unknown 타입 .response처럼 사용 불가 -> AxiosError로 타입 단언
+      if (status && status >= 400 && status < 500) {
+        showErrorToast("올바른 이메일 형식이 아닙니다.");
+      }
+    }
   };
 
   return (

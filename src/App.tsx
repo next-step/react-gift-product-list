@@ -9,6 +9,7 @@ import LoginPage from "@/pages/Login/LoginPage";
 import MyPage from "@/pages/MyPage";
 import NotFoundPage from "@/pages/NotfoundPage";
 import OrderPage from "@/pages/OrderPage";
+import { ToastContainer } from "react-toastify";
 
 const LayoutWrapper = () => (
   <MainLayout>
@@ -34,6 +35,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Global styles={resetStyle} />
       <RouterProvider router={router} />
+      <ToastContainer />
     </ThemeProvider>
   );
 }
