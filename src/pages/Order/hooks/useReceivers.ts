@@ -1,5 +1,4 @@
 import { useState } from 'react';
-<<<<<<< HEAD
 import {
   receiverListSchema,
   receiverSchema,
@@ -9,13 +8,6 @@ import {
 
 export const useReceivers = (initialReceivers: Receiver[]) => {
   const [receivers, setReceivers] = useState<Receiver[]>(initialReceivers);
-=======
-import { receiverListSchema, receiverSchema, type Receiver, type ReceiverError } from '../schemas/receiverSchema';
-
-export const useReceivers = (initialReceivers: Receiver[]) => {
-  const [receivers, setReceivers] = useState<Receiver[]>(initialReceivers);
-  const [errors, setErrors] = useState<ReceiverError[]>([]);
->>>>>>> 25a6f46 (0단계 기본 코드 준비)
 
   const addReceiver = () => {
     if (receivers.length >= 10) return;
@@ -26,7 +18,11 @@ export const useReceivers = (initialReceivers: Receiver[]) => {
     setReceivers((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const updateReceiver = (index: number, field: keyof Receiver, value: string) => {
+  const updateReceiver = (
+    index: number,
+    field: keyof Receiver,
+    value: string
+  ) => {
     const updated = [...receivers];
     const current = updated[index];
 
