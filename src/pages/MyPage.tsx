@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 import LogoutButton from "@/components/common/BaseButton";
 
 const MyPage = () => {
-  const { userEmail, userName, logout } = useAuth();
+  const { userInfo, logout } = useAuth();
+  const userEmail = userInfo?.email || "";
+  const userName = userInfo?.name || "";
   const navigate = useNavigate();
 
   const handleLogout = () => {

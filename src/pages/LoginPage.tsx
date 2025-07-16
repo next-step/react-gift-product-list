@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/utils/validator";
 import type { LoginFormValues } from "@/utils/validator";
+import { useApiRequest } from "@/hooks/useApiRequest";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,20 +20,47 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
-    watch,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
     reValidateMode: "onChange",
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    login(data.email);
-    navigate(redirectTo);
-  };
+  const { refetch } = useApiRequest<{
+    email: string;
+    name: string;
+    authToken: string;
+  }>({
+    url: "/api/login",
+    method: "post",
+    manual: true,
+  });
 
-  const email = watch("email");
-  const password = watch("password");
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const result = await refetch({ data });
+
+      if (result?.data) {
+        const { email, name, authToken } = result.data;
+
+        if (email && name && authToken) {
+          login({ email, name, authToken });
+          navigate(redirectTo);
+        }
+      }
+    } catch (err: any) {
+      const statusCode = err?.response?.status;
+      const errorMessage = err?.response?.data?.data?.message;
+
+      if (statusCode >= 400 && statusCode < 500) {
+        if (errorMessage?.includes("@kakao.com")) {
+          toast.error("@kakao.com 이메일 주소만 가능합니다.");
+        } else if (errorMessage) {
+          toast.error(errorMessage);
+        }
+      }
+    }
+  };
 
   return (
     <Wrapper>

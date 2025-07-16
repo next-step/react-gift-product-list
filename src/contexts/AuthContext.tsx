@@ -1,10 +1,16 @@
 import { getUserNameFromEmail } from "@/utils/getUserNameFromEmail";
 import React, { createContext, useContext, useState } from "react";
 
+type UserInfo = {
+  email: string;
+  name: string;
+  authToken: string;
+};
+
 type AuthContextType = {
   isLoggedIn: boolean;
-  userEmail: string | null;
-  login: (email: string) => void;
+  userInfo: UserInfo | null;
+  login: (userInfo: UserInfo) => void;
   logout: () => void;
 };
 
@@ -14,26 +20,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
     return localStorage.getItem("isLoggedIn") === "true";
   });
-  const [userEmail, setUserEmail] = useState<string | null>(() => {
-    return localStorage.getItem("userEmail");
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(() => {
+    const stored = localStorage.getItem("userInfo");
+    return stored ? JSON.parse(stored) : null;
   });
 
-  const login = (email: string) => {
+  const login = (user: UserInfo) => {
     setIsLoggedIn(true);
-    setUserEmail(email);
+    setUserInfo(user);
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userEmail", email);
+    localStorage.setItem("userInfo", JSON.stringify(user));
   };
 
   const logout = () => {
     setIsLoggedIn(false);
-    setUserEmail(null);
+    setUserInfo(null);
     localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userInfo");
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userEmail, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, userInfo, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -42,7 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  const { userEmail, ...rest } = context;
-  const userName = getUserNameFromEmail(userEmail);
-  return { userEmail, userName, ...rest };
+  const { userInfo, ...rest } = context;
+  const userName = getUserNameFromEmail(userInfo?.email ?? null);
+  return { userInfo, userName, ...rest };
 };
