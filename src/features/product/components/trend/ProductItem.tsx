@@ -1,9 +1,9 @@
 import styled from '@emotion/styled'
-import type { Product } from '../../types'
 import { useNavigate } from 'react-router-dom'
 import { ROUTE_PATH } from '@/Router'
 import { theme } from '@/styles/theme'
 import { typographyMixin } from '@/components/ui'
+import type { Product } from '@/api/types/product'
 
 // * 실시간 급상승 상품 아이템 컴포넌트
 export const ProductItem = ({ product, index }: { product: Product; index: number }) => {

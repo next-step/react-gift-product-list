@@ -3,12 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { OrderFormProvider, useOrderForm } from '@/contexts/order'
 import { orderCardMock, type CardData } from '@/features/order'
-import { productListMock, type Product } from '@/features/product'
+import { productListMock } from '@/features/product'
 import { ROUTE_PATH } from '@/Router'
 import { OrderCardSection, ReceiverSection, SenderSection } from '@/features/order/components'
 import { theme } from '@/styles/theme'
 import { Button, PageContainer, Typography } from '@/components/ui'
 import { NotFound } from '@/pages/NotFound'
+import type { Product } from '@/api/types/product'
 
 // * 주문하기 페이지 (주문하기 폼 Provider 포함)
 export const Order = () => {

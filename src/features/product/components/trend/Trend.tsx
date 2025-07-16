@@ -1,13 +1,20 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import type { TargetType, RankType } from '../../types'
-import { isValidTargetType, isValidRankType } from '../../types'
 import { TrendFilter } from './TrendFilter'
 import { ProductItem } from './ProductItem'
-import { productListMock } from '../../data'
-import { Button } from '@/components/ui'
+import { Button, Loading, Typography } from '@/components/ui'
 import { theme } from '@/styles/theme'
+import { useFetch } from '@/hooks/useFetch'
+import { fetchProductRankList } from '@/api/services/product'
+import {
+  isValidRankType,
+  isValidTargetType,
+  RankType,
+  TargetType,
+  type Product,
+} from '@/api/types/product'
+import { PRODUCT_UI_CONSTANTS } from '@/features/product/constants'
 
 // * 실시간 급상승 컴포넌트
 export const Trend = () => {
@@ -17,20 +24,33 @@ export const Trend = () => {
   // * URL 파라미터에서 초기값 가져오기
   const getInitialTargetType = (): TargetType => {
     const urlTargetType = searchParams.get('targetType')
-    return urlTargetType && isValidTargetType(urlTargetType) ? urlTargetType : 'ALL'
+    return urlTargetType && isValidTargetType(urlTargetType) ? urlTargetType : TargetType.ALL
   }
 
   const getInitialRankType = (): RankType => {
     const urlRankType = searchParams.get('rankType')
-    return urlRankType && isValidRankType(urlRankType) ? urlRankType : 'MANY_WISH'
+    return urlRankType && isValidRankType(urlRankType) ? urlRankType : RankType.MANY_WISH
   }
 
   // * URL 파라미터 타입별 상태 관리
   const [targetType, setTargetType] = useState<TargetType>(getInitialTargetType)
   const [rankType, setRankType] = useState<RankType>(getInitialRankType)
 
+  // * 상품 랭킹 데이터 fetch
+  const {
+    isLoading,
+    isError,
+    data: products,
+  } = useFetch<Product[]>(() => fetchProductRankList(targetType, rankType), [targetType, rankType])
+
   // * 초기 보여줄 상품 개수
-  const INITIAL_SHOW_COUNT = 6
+  const INITIAL_SHOW_COUNT = PRODUCT_UI_CONSTANTS.INITIAL_SHOW_COUNT
+
+  // * 표시할 상품 리스트 결정
+  const displayProducts = showAll ? (products ?? []) : (products ?? []).slice(0, INITIAL_SHOW_COUNT)
+
+  // * 더보기 버튼 표시 여부
+  const shouldShowMoreButton = (products?.length ?? 0) > INITIAL_SHOW_COUNT
 
   // * URL 파라미터 변경 감지
   // ! 불필요한 리렌더링 방지를 위해 상태 변화 감지는 searchParams 만 적용
@@ -47,12 +67,6 @@ export const Trend = () => {
     }
   }, [searchParams])
 
-  // * 표시할 상품 리스트 결정
-  const displayProducts = showAll ? productListMock : productListMock.slice(0, INITIAL_SHOW_COUNT)
-
-  // * 더보기 버튼 표시 여부
-  const shouldShowMoreButton = productListMock.length > INITIAL_SHOW_COUNT
-
   // * 더보기 버튼 핸들러
   const handleMoreButtonClick = () => {
     setShowAll(!showAll)
@@ -63,14 +77,9 @@ export const Trend = () => {
     setTargetType(type)
 
     // * URL 파라미터 업데이트
-    // ! 새로운 인스턴스 사용
-    // ? searchParams는 읽기 전용처럼 취급하고, 정상적으로 React Router가 변경을 감지하도록
     const newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set('targetType', type)
     setSearchParams(newSearchParams)
-
-    // TODO: 추후 실제 상품 목록 필터링 시 수정
-    console.log('Selected target type:', type)
   }
 
   // * Rank 타입 필터 핸들러
@@ -81,9 +90,43 @@ export const Trend = () => {
     const newSearchParams = new URLSearchParams(searchParams)
     newSearchParams.set('rankType', type)
     setSearchParams(newSearchParams)
+  }
 
-    // TODO: 추후 실제 상품 목록 필터링 시 수정
-    console.log('Selected rank type:', type)
+  // * 바뀌는 영역 조건부 관리
+  let body: React.ReactNode
+  if (isLoading) {
+    // * 로딩 화면
+    body = (
+      <LoadingContainer>
+        <Loading />
+      </LoadingContainer>
+    )
+  } else if (isError || !products || products.length === 0) {
+    // * 빈 목록 or 에러 화면
+    body = (
+      <LoadingContainer>
+        <EmptyMsg variant="subtitle2Regular">상품 목록이 없습니다.</EmptyMsg>
+      </LoadingContainer>
+    )
+  } else {
+    body = (
+      <>
+        <ProductContainer>
+          {displayProducts.map((product, index) => (
+            <ProductItem key={product.id} product={product} index={index} />
+          ))}
+        </ProductContainer>
+
+        {/* 더보기 버튼 */}
+        {shouldShowMoreButton && (
+          <MoreButtonContainer>
+            <Button variant="outline" size="medium" onClick={handleMoreButtonClick}>
+              {showAll ? '접기' : `더보기`}
+            </Button>
+          </MoreButtonContainer>
+        )}
+      </>
+    )
   }
 
   return (
@@ -99,21 +142,8 @@ export const Trend = () => {
         onRankTypeChange={handleRankTypeChange}
       />
 
-      {/* 실시간 급상승 상품 컨테이너 */}
-      <ProductContainer>
-        {displayProducts.map((product, index) => (
-          <ProductItem key={product.id} product={product} index={index} />
-        ))}
-      </ProductContainer>
-
-      {/* 더보기 버튼 */}
-      {shouldShowMoreButton && (
-        <MoreButtonContainer>
-          <Button variant="outline" size="medium" onClick={handleMoreButtonClick}>
-            {showAll ? '접기' : `더보기`}
-          </Button>
-        </MoreButtonContainer>
-      )}
+      {/* 조건부 렌더링 */}
+      {body}
     </Container>
   )
 }
@@ -136,6 +166,7 @@ const Container = styled.section`
 const ProductContainer = styled.div`
   width: 100%;
   height: fit-content;
+  min-height: 18.875rem;
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -150,4 +181,19 @@ const MoreButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: ${theme.spacing.spacing4};
+`
+
+// * 로딩 컨테이너
+const LoadingContainer = styled.div`
+  width: 100%;
+  height: 18.875rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+// * 빈 목록 메시지
+const EmptyMsg = styled(Typography)`
+  color: ${theme.semanticColors.text.sub};
 `

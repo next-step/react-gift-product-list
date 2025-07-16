@@ -1,4 +1,4 @@
-import type { Product } from '@/features/product'
+import type { Product } from '@/api/types/product'
 import type { CardData, ReceiverData } from '@/features/order/schema'
 
 export type { ReceiverData, CardData }
