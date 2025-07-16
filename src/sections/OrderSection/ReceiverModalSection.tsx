@@ -9,6 +9,7 @@ import {
     type UseFormTrigger,
 } from "react-hook-form";
 import Modal from "@/components/Modal";
+import type { OrderFormData } from "@/utils/validateOrderSchema";
 
 export const Container = styled.section`
   width: 100%;
@@ -146,10 +147,10 @@ interface Receiver {
 }
 
 interface Props {
-    register: UseFormRegister<any>;
-    control: Control<any>;
-    errors: FieldErrors;
-    trigger: UseFormTrigger<any>;
+    register: UseFormRegister<OrderFormData>;
+    control: Control<OrderFormData>;
+    errors: FieldErrors<OrderFormData>;
+    trigger: UseFormTrigger<OrderFormData>;
 }
 
 export default function ReceiverModalSection({

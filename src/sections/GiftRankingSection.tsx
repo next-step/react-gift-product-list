@@ -1,8 +1,9 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { giftRankingData } from "@/mocks/giftRankingData";
 import ProductCard from "@/components/ProductCard";
 import { useSearchParams } from "react-router";
+import { useGiftRanking } from "@/hooks/useGiftRanking";
+import AsyncBoundary from "@/components/AsyncBoundary";
 
 const Wrapper = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing5};
@@ -89,15 +90,23 @@ const LoadMore = styled.button`
   display: block;
 `;
 
+const Message = styled.p`
+  text-align: center;
+  margin-top: ${({ theme }) => theme.spacing.spacing5};
+  ${({ theme }) => theme.typography.body.body2Regular};
+`;
+
 export default function GiftRankingSection() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initialFilter = searchParams.get("targetType") || "ALL";
-  const initialTab = searchParams.get("rankType") || "WANT";
+  const initialTab = searchParams.get("rankType") || "MANY_WISH";
 
   const [selectedFilter, setSelectedFilter] = useState(initialFilter);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [showAll, setShowAll] = useState(false);
+
+  const { data, loading, error } = useGiftRanking(selectedFilter, selectedTab);
 
   const filters = [
     { label: "전체", icon: "ALL", value: "ALL" },
@@ -107,9 +116,9 @@ export default function GiftRankingSection() {
   ];
 
   const tabs = [
-    { label: "받고 싶어한", value: "WANT" },
+    { label: "받고 싶어한", value: "MANY_WISH" },
     { label: "많이 선물한", value: "MANY_RECEIVE" },
-    { label: "위시로 받은", value: "WISH" },
+    { label: "위시로 받은", value: "MANY_WISH_RECEIVE" },
   ];
 
   const updateParams = (target: string, rank: string) => {
@@ -130,10 +139,8 @@ export default function GiftRankingSection() {
   };
 
   const DEFAULT_VISIBLE_COUNT = 6;
-  const MAX_VISIBLE_COUNT = 12;
-  const repeatedData = Array(12).fill(null).flatMap(() => giftRankingData).slice(0, MAX_VISIBLE_COUNT);  
-  const visibleData = showAll ? repeatedData : repeatedData.slice(0, DEFAULT_VISIBLE_COUNT);
-
+  const visibleProducts = data ?? [];
+  const productToShow = showAll ? visibleProducts : visibleProducts.slice(0, DEFAULT_VISIBLE_COUNT);
   return (
     <Wrapper>
       <Title>실시간 급상승 선물랭킹</Title>
@@ -163,19 +170,28 @@ export default function GiftRankingSection() {
         ))}
       </TabWrapper>
 
-      <Grid>
-        {visibleData.map((item, index) => (
-          <ProductCard
-            key={`${item.id}-${index}`}
-            item={item}
-            rank={index + 1}
-          />
-        ))}
-      </Grid>
-
-      <LoadMore onClick={() => setShowAll(!showAll)}>
-        {showAll ? "접기" : "더보기"}
-      </LoadMore>
+      <AsyncBoundary loading={loading} error={error} errorFallback={<Message>상품을 불러오는 데 실패했어요.</Message>}>
+        {data?.length === 0 ? (
+          <Message>상품이 없습니다.</Message>
+        ) : (
+          <>
+            <Grid>
+              {productToShow.map((item, index) => (
+                <ProductCard
+                  key={item.id}
+                  item={item}
+                  rank={index + 1}
+                />
+              ))}
+            </Grid>
+            {data && data.length > DEFAULT_VISIBLE_COUNT && (
+              <LoadMore onClick={() => setShowAll(!showAll)}>
+                {showAll ? "접기" : "더보기"}
+              </LoadMore>
+            )}
+          </>
+        )}
+      </AsyncBoundary>
     </Wrapper>
   );
 }
