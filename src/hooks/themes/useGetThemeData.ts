@@ -1,37 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { getThemes } from "@/api/themes";
 import type { GetThemesResponseBody } from "@/api/themes/get-themes";
+import { useApiStatus } from "@/hooks/common/useApiStatus";
 
 export const useGetThemeData = () => {
-  const [themes, setThemes] = useState<GetThemesResponseBody[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const {
+    data: themes,
+    error,
+    execute,
+    loading,
+  } = useApiStatus<GetThemesResponseBody[]>();
   useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const themeData = await getThemes();
-        setThemes(themeData);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "알 수 없는 오류가 발생했습니다.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchThemes();
-  }, []);
+    execute(getThemes);
+  }, [execute]);
 
   return {
-    themes,
+    themes: themes || [],
     loading,
     error,
-    isEmpty: themes.length === 0,
+    isEmpty: themes?.length === 0,
   };
 };
