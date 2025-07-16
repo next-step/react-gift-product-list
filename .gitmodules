@@ -1,0 +1,3 @@
+[submodule "react-gift-mock-server"]
+	path = react-gift-mock-server
+	url = git@github.com:next-step/react-gift-mock-server.git
