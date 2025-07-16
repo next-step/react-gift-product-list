@@ -10,26 +10,20 @@ import { Link } from 'react-router-dom'
 export const Category = () => {
   const { isLoading, isError, data: categories } = useFetch<Theme[]>(fetchThemes)
 
-  if (isLoading)
-    return (
-      // 외부 컨테이너
-      <Container>
-        {/* 카테고리 타이틀 */}
-        <h1 css={theme.typography.title.title1Bold}>선물 테마</h1>
-        {/* 로딩 서브 컨테이너 */}
-        <LoadingSubContainer>
-          <Loading />
-        </LoadingSubContainer>
-      </Container>
-    )
-  if (isError || !categories || categories.length === 0) return null
+  // * 빈 목록 or 에러 화면
+  if (!isLoading && (isError || !categories || categories.length === 0)) return null
 
-  return (
-    // 외부 컨테이너
-    <Container>
-      {/* 카테고리 타이틀 */}
-      <h1 css={theme.typography.title.title1Bold}>선물 테마</h1>
-      {/* 내부 서브 컨테이너 */}
+  // * 바뀌는 영역 조건부 관리
+  let body: React.ReactNode
+  if (isLoading) {
+    // * 로딩 화면
+    body = (
+      <LoadingSubContainer>
+        <Loading />
+      </LoadingSubContainer>
+    )
+  } else {
+    body = (
       <SubContainer>
         {categories?.map((category) => (
           // 카테고리 아이템
@@ -39,6 +33,16 @@ export const Category = () => {
           </Item>
         ))}
       </SubContainer>
+    )
+  }
+
+  return (
+    // 외부 컨테이너
+    <Container>
+      {/* 카테고리 타이틀 */}
+      <h1 css={theme.typography.title.title1Bold}>선물 테마</h1>
+      {/* 조건부 렌더링 */}
+      {body}
     </Container>
   )
 }
