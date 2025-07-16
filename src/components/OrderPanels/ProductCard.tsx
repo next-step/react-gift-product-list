@@ -1,16 +1,23 @@
 import styled from "@emotion/styled";
-import { productMockData } from "@src/mock/productMockData";
+import { fetchProductSummary } from "@src/apis/BackEnd/apiList";
+import useFetchState from "@src/hooks/useFetchState";
 import theme from "@src/styles/kakaoTheme";
+import { useCallback } from "react";
+import { useParams } from "react-router-dom";
 
 function ProductCard() {
+  const productId = useParams().id ?? "";
+  const update = useCallback(() => fetchProductSummary(productId), [productId]);
+  const productData = useFetchState(update);
+
   return (
     <ProductCardWrapper>
-      <Image src={productMockData.imageURL} alt="image" />
+      <Image src={productData?.data?.imageURL} alt="image" />
       <Description>
-        <ProductName>{productMockData.name}</ProductName>
-        <BrandName>{productMockData.brandInfo.name}</BrandName>
+        <ProductName>{productData?.data?.name}</ProductName>
+        <BrandName>{productData?.data?.brandName}</BrandName>
         <Price>
-          상품가 <strong>{productMockData.price.sellingPrice}원</strong>
+          상품가 <strong>{productData?.data?.price}원</strong>
         </Price>
       </Description>
     </ProductCardWrapper>
