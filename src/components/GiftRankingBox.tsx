@@ -25,7 +25,12 @@ type ProductRanking = {
   };
 };
 
-const GiftRanking = () => {
+type GiftRankingProps = {
+  target: string;
+  rankType: string;
+};
+
+const GiftRanking: React.FC<GiftRankingProps> = ({ target, rankType }) => {
   const theme = useTheme();
   const [productRankingData, setProductRankingData] = useState<
     ProductRanking[] | null

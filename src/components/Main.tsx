@@ -21,7 +21,7 @@ const Main = () => {
         rankType={rankType}
         setRankType={setRankType}
       />
-      <GiftRanking />
+      <GiftRanking target={target} rankType={rankType} />
     </>
   );
 };
