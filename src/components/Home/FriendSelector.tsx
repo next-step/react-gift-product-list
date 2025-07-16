@@ -41,8 +41,7 @@ const FriendSelectorTxt = styled.p`
 `;
 
 function FriendSelector() {
-  // TODO: useUserInfo 훅으로 리팩토링, 여기 getId로 받아오는걸 그냥 id로 받아오게 할순없나?
-  const { getId } = useUser(); // useUser훅을 useUserInfo 훅으로 리팩토링해서 더 좀 괜찮게 바꿔야겠다
+  const { getId } = useUser(); // TODO: useUser훅을 useUserInfo훅으로 리팩터링한후 아이디를 받아오는 과정에 대해 다시 생각해보자
   const userName = getId();
 
   return (

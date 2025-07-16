@@ -4,7 +4,7 @@ import PromoBanner from './PromoBanner';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const GiftCategorySelectorWrapper = styled.div`
+const GiftCategorySelectorStyle = styled.div`
   width: auto;
   height: auto;
   padding: ${({ theme }) => theme.spacing.spacing8} ${({ theme }) => theme.spacing.spacing4};
@@ -16,7 +16,7 @@ const GiftCategorySelectorTitle = styled.h2`
   line-height: ${({ theme }) => theme.typography.title.title1Bold.lineHeight};
 `;
 
-const GiGiftCategorySelectorItemBoxWrapper = styled.div`
+const GiftCategorySelectorItemBoxWrapper = styled.div`
   width: 100%;
   height: 300px;
   display:flex;
@@ -73,7 +73,6 @@ const GiftCategorySelectorItemText = styled.p`
   margin-top: ${({ theme }) => theme.spacing.spacing1};
 `;
 
-
 function GiftCategorySelectorItemBox() {
   const [themes, setThemes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,10 +83,10 @@ function GiftCategorySelectorItemBox() {
       try {
         const response = await axios.get('http://localhost:3000/api/themes');
         setThemes(response.data.data);
-        setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching weather data:', error);
+        console.error('Error fetching weather data:', error); // 디버깅 코드 나중에 제거하자
         setIsError(true);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -95,32 +94,40 @@ function GiftCategorySelectorItemBox() {
     fetchThemes();
   }, []);
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (isError) {
+    return null;
+  }
+  
   return (
-    <GiGiftCategorySelectorItemBoxWrapper>
-      {!isError && (isLoading ? <Spinner /> : <GiftCategorySelectorItemBoxGrid>
-        {themes.map((item) => (
-          <GiftCategorySelectorItemWrapper key={item.themeId}>
-            <GiftCategorySelectorItemImg
-              src={item.image}
-              alt={item.name}
-            ></GiftCategorySelectorItemImg>
-            <GiftCategorySelectorItemText>
-              {item.name}
-            </GiftCategorySelectorItemText>
-          </GiftCategorySelectorItemWrapper>))}
-      </GiftCategorySelectorItemBoxGrid>)}
-    </GiGiftCategorySelectorItemBoxWrapper>
+    <GiftCategorySelectorItemBoxGrid>
+      {themes.map((item) => (
+        <GiftCategorySelectorItemWrapper key={item.themeId}>
+          <GiftCategorySelectorItemImg
+            src={item.image}
+            alt={item.name}
+          ></GiftCategorySelectorItemImg>
+          <GiftCategorySelectorItemText>
+            {item.name}
+          </GiftCategorySelectorItemText>
+        </GiftCategorySelectorItemWrapper>))}
+    </GiftCategorySelectorItemBoxGrid>
   );
 }
 
 function GiftCategorySelector() {
 
   return (
-    <GiftCategorySelectorWrapper>
+    <GiftCategorySelectorStyle>
       <GiftCategorySelectorTitle>선물 테마</GiftCategorySelectorTitle>
-      <GiftCategorySelectorItemBox></GiftCategorySelectorItemBox>
+      <GiftCategorySelectorItemBoxWrapper>
+        <GiftCategorySelectorItemBox />
+      </GiftCategorySelectorItemBoxWrapper>
       <PromoBanner></PromoBanner>
-    </GiftCategorySelectorWrapper>
+    </GiftCategorySelectorStyle>
   );
 }
 
