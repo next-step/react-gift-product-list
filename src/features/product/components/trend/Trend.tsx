@@ -92,49 +92,42 @@ export const Trend = () => {
     setSearchParams(newSearchParams)
   }
 
-  // * 로딩 화면
-  if (isLoading)
-    return (
-      <Container>
-        {/* 실시간 급상승 필터 컨테이너 */}
-        <h1 css={theme.typography.title.title1Bold}>실시간 급상승 선물랭킹</h1>
-
-        {/* 필터 */}
-        <TrendFilter
-          targetType={targetType}
-          rankType={rankType}
-          onTargetTypeChange={handleTargetTypeChange}
-          onRankTypeChange={handleRankTypeChange}
-        />
-
-        {/* 로딩 컨테이너 */}
-        <LoadingContainer>
-          <Loading />
-        </LoadingContainer>
-      </Container>
+  // * 바뀌는 영역 조건부 관리
+  let body: React.ReactNode
+  if (isLoading) {
+    // * 로딩 화면
+    body = (
+      <LoadingContainer>
+        <Loading />
+      </LoadingContainer>
     )
-
-  // * 빈 목록 or 에러 화면
-  if (isError || !products || products.length === 0)
-    return (
-      <Container>
-        {/* 실시간 급상승 필터 컨테이너 */}
-        <h1 css={theme.typography.title.title1Bold}>실시간 급상승 선물랭킹</h1>
-
-        {/* 필터 */}
-        <TrendFilter
-          targetType={targetType}
-          rankType={rankType}
-          onTargetTypeChange={handleTargetTypeChange}
-          onRankTypeChange={handleRankTypeChange}
-        />
-
-        {/* 로딩 컨테이너 */}
-        <LoadingContainer>
-          <EmptyMsg variant="subtitle2Regular">상품 목록이 없습니다.</EmptyMsg>
-        </LoadingContainer>
-      </Container>
+  } else if (isError || !products || products.length === 0) {
+    // * 빈 목록 or 에러 화면
+    body = (
+      <LoadingContainer>
+        <EmptyMsg variant="subtitle2Regular">상품 목록이 없습니다.</EmptyMsg>
+      </LoadingContainer>
     )
+  } else {
+    body = (
+      <>
+        <ProductContainer>
+          {displayProducts.map((product, index) => (
+            <ProductItem key={product.id} product={product} index={index} />
+          ))}
+        </ProductContainer>
+
+        {/* 더보기 버튼 */}
+        {shouldShowMoreButton && (
+          <MoreButtonContainer>
+            <Button variant="outline" size="medium" onClick={handleMoreButtonClick}>
+              {showAll ? '접기' : `더보기`}
+            </Button>
+          </MoreButtonContainer>
+        )}
+      </>
+    )
+  }
 
   return (
     <Container>
@@ -149,21 +142,8 @@ export const Trend = () => {
         onRankTypeChange={handleRankTypeChange}
       />
 
-      {/* 실시간 급상승 상품 컨테이너 */}
-      <ProductContainer>
-        {displayProducts.map((product, index) => (
-          <ProductItem key={product.id} product={product} index={index} />
-        ))}
-      </ProductContainer>
-
-      {/* 더보기 버튼 */}
-      {shouldShowMoreButton && (
-        <MoreButtonContainer>
-          <Button variant="outline" size="medium" onClick={handleMoreButtonClick}>
-            {showAll ? '접기' : `더보기`}
-          </Button>
-        </MoreButtonContainer>
-      )}
+      {/* 조건부 렌더링 */}
+      {body}
     </Container>
   )
 }
