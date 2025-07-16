@@ -17,6 +17,9 @@ export default function MyPage() {
     }
 
     const user = JSON.parse(isLogIn);
+    if (!user || typeof user.email !== "string") {
+      throw new Error("이메일 정보가 없습니다.");
+    }
     const id = user.email.split("@")[0];
     setUserId(id);
     setEmail(user.email);
