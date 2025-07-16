@@ -1,8 +1,5 @@
-import { useState, useEffect } from "react";
-import { TRENDING_GIFTS_TABS, TRENDING_GIFTS_LABELS } from "./constants/labels";
 import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
 import ProductGrid from "./ProductGrid/ProductGrid";
-import { trendingGiftsMockData } from "@/data/trendingGfitsMockData";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import {
   TrendingGiftsSection,
@@ -12,27 +9,56 @@ import {
   MainTabButton,
   TabIconContainer,
   TabLabel,
-  MoreInfoWrapper,
-  MoreInfo,
+  LoadingContainer,
+  ErrorContainer,
+  ErrorMessage,
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { RANK_TYPE, TARGET_TYPE, TRENDING_GIFTS_TABS } from "./constants/tabs";
+import {
+  TRENDING_GIFTS_ERROR_MESSAGES,
+  TRENDING_GIFTS_LABELS,
+} from "./constants/labels";
+import { getTrendingGifts } from "@/data/api";
+import { useFetch } from "@/hooks/useFetch";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
   const [subTabIdx, setSubTabIdx] = useSubTab();
-  const [data, setData] = useState<TrendingGiftsType[]>([]);
 
-  useEffect(() => {
-    // 현재는 mock 데이터로 대체
-    setData(trendingGiftsMockData);
-  }, [mainTabIdx, subTabIdx]);
+  const { data, isLoading, isError } = useFetch<TrendingGiftsType>({
+    fetchFn: () =>
+      getTrendingGifts(TARGET_TYPE[mainTabIdx], RANK_TYPE[subTabIdx]),
+    errorMessage: TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR,
+    deps: [mainTabIdx, subTabIdx],
+  });
+
+  const renderTrendingGiftsContent = () => {
+    if (isError) {
+      return (
+        <ErrorContainer>
+          <ErrorMessage>
+            {TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR}
+          </ErrorMessage>
+        </ErrorContainer>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
+      );
+    }
+
+    return <ProductGrid products={data || []} />;
+  };
 
   return (
-    <TrendingGiftsSection>
-      <TitleWarpper>
-        <SectionTitle>{TRENDING_GIFTS_LABELS.SECTION_TITLE}</SectionTitle>
-      </TitleWarpper>
+    <>
       <TabsWrapper>
         {TRENDING_GIFTS_TABS.map((el, idx) => (
           <MainTabButton key={idx} onClick={() => setMainTabIdx(idx)}>
@@ -43,22 +69,22 @@ function TrendingGiftsContent() {
           </MainTabButton>
         ))}
       </TabsWrapper>
-
       <TabContentWrapper subTabIdx={subTabIdx} onClick={setSubTabIdx}>
-        <ProductGrid products={data} />
+        {renderTrendingGiftsContent()}
       </TabContentWrapper>
-
-      <MoreInfoWrapper>
-        <MoreInfo>{TRENDING_GIFTS_LABELS.MORE_INFO}</MoreInfo>
-      </MoreInfoWrapper>
-    </TrendingGiftsSection>
+    </>
   );
 }
 
 function TrendingGifts() {
   return (
     <LocalStorageProvider>
-      <TrendingGiftsContent />
+      <TrendingGiftsSection>
+        <TitleWarpper>
+          <SectionTitle>{TRENDING_GIFTS_LABELS.SECTION_TITLE}</SectionTitle>
+        </TitleWarpper>
+        <TrendingGiftsContent />
+      </TrendingGiftsSection>
     </LocalStorageProvider>
   );
 }

@@ -31,3 +31,26 @@ export const ThemeGrid = styled.div`
   margin-top: ${({ theme }) => theme.spacing[5]};
   margin-bottom: ${({ theme }) => theme.spacing[5]};
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 124px;
+  margin-bottom: 124px;
+`;
+
+export const ErrorContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: 124px;
+  margin-bottom: 124px;
+`;
+
+export const ErrorMessage = styled.p`
+  font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label1Regular.fontWeight};
+`;
