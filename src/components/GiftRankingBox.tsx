@@ -38,10 +38,14 @@ const GiftRanking: React.FC<GiftRankingProps> = ({ target, rankType }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  const sortParam =
+    productRankingURL + `?targetType=${target}&rankType=${rankType}`;
+
+  console.log(sortParam);
   useEffect(() => {
     const fetchProductRanking = async () => {
       try {
-        const response = await axios.get(productRankingURL);
+        const response = await axios.get(sortParam);
         setProductRankingData(response.data.data);
         setIsLoading(false);
       } catch (error) {
@@ -52,7 +56,7 @@ const GiftRanking: React.FC<GiftRankingProps> = ({ target, rankType }) => {
     };
 
     fetchProductRanking();
-  }, []);
+  }, [sortParam]);
 
   const navigate = useNavigate();
   return (

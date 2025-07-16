@@ -4,7 +4,6 @@ import { useTheme } from "@emotion/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-//fetch 경로
 type GiftRankingHeaderProps = {
   target: string;
   setTarget: React.Dispatch<React.SetStateAction<string>>;
@@ -18,7 +17,7 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
   rankType,
   setRankType,
 }) => {
-  type RANK_TYPE = "MANY_WISH" | "MANY_GIVE" | "MANY_WANT";
+  type RANK_TYPE = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
 
   const navigate = useNavigate();
   const theme = useTheme();
@@ -34,7 +33,7 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
     params.set("target", initTarget);
     params.set("rankType", initRank);
     navigate(`${location.pathname}?${params.toString()}`);
-  }, [location.pathname, location.search, navigate]);
+  }, [location.pathname, location.search, navigate, setRankType, setTarget]);
 
   const handleTargetClick = (newTarget: string) => {
     setTarget(newTarget);
@@ -73,47 +72,47 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
 
         <div css={filterContainerStyle(theme)}>
           <div
-            onClick={() => handleTargetClick("WOMAN")}
+            onClick={() => handleTargetClick("FEMALE")}
             css={[
               iconStyle(theme),
-              target === "WOMAN" && selectedTargetStyle(theme),
+              target === "FEMALE" && selectedTargetStyle(theme),
             ]}
           >
             👩🏻
           </div>
-          <p css={target === "WOMAN" ? selectedTargetStyle(theme) : undefined}>
+          <p css={target === "FEMALE" ? selectedTargetStyle(theme) : undefined}>
             여성이
           </p>
         </div>
 
         <div css={filterContainerStyle(theme)}>
           <div
-            onClick={() => handleTargetClick("MAN")}
+            onClick={() => handleTargetClick("MALE")}
             css={[
               iconStyle(theme),
-              target === "MAN" && selectedTargetStyle(theme),
+              target === "MALE" && selectedTargetStyle(theme),
             ]}
           >
             👨🏻
           </div>
-          <p css={target === "MAN" && selectedTargetStyle(theme)}>남성이</p>
+          <p css={target === "MALE" && selectedTargetStyle(theme)}>남성이</p>
         </div>
       </div>
       <div css={tabContainerStyle(theme)}>
         <div
-          onClick={() => handleRankClick("MANY_WANT")}
+          onClick={() => handleRankClick("MANY_WISH_RECEIVE")}
           css={[
             tabItemStyle(theme),
-            rankType === "MANY_WANT" && selectedRankStyle(theme),
+            rankType === "MANY_WISH_RECEIVE" && selectedRankStyle(theme),
           ]}
         >
           받고 싶어한
         </div>
         <div
-          onClick={() => handleRankClick("MANY_GIVE")}
+          onClick={() => handleRankClick("MANY_RECEIVE")}
           css={[
             tabItemStyle(theme),
-            rankType === "MANY_GIVE" && selectedRankStyle(theme),
+            rankType === "MANY_RECEIVE" && selectedRankStyle(theme),
           ]}
         >
           많이 선물한
