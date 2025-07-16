@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import categories from '../mocks/category.mock';
-import PromoBanner from './PromoBanner';
+import categories from '../../mocks/category.mock';
+import PromoBanner from '../PromoBanner';
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';

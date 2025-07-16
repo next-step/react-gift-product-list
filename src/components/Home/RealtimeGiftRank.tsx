@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import itemList from '../mocks/item_list.mock';
+import itemList from '../../mocks/item_list.mock';
 import useUser from '@/hooks/useUser';
 
 import axios from 'axios';
