@@ -10,7 +10,7 @@ import * as S from './styles';
 const RankingSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExpanded, setIsExpanded] = useState(false);
-  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct[]>(true);
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct[]>([],true);
   const navigate = useNavigate();
 
   const selectedGender = searchParams.get('gender') || 'ALL';
@@ -47,8 +47,6 @@ const RankingSection = () => {
     navigate(`/order/${item.id}`);
   };
 
-  const rankingProducts = fetchState.data || [];
-
   return (
     <S.Section>
       <S.Title>실시간 급상승 선물랭킹</S.Title>
@@ -84,12 +82,12 @@ const RankingSection = () => {
         <Loading height="400px" />
       ) : fetchState.isError ? (
         <ErrorMessage height="400px" />
-      ) : rankingProducts.length === 0 ? (
+      ) : fetchState.data.length === 0 ? (
         <S.EmptyMessage>상품이 없습니다.</S.EmptyMessage>
       ) : (
         <>
           <S.Grid>
-            {(isExpanded ? rankingProducts : rankingProducts.slice(0, 6)).map((item, index) => (
+            {(isExpanded ? fetchState.data : fetchState.data.slice(0, 6)).map((item, index) => (
               <RankingItemCard
                 key={item.id}
                 imageUrl={item.imageURL}

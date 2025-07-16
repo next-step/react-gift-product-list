@@ -10,7 +10,7 @@ import OrderTemplate from './template';
 
 const Order = () => {
   const { productId } = useParams<{ productId: string }>();
-  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct>(true);
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct | undefined>(undefined, true);
 
   useEffect(() => {
     if (!productId) {
@@ -40,7 +40,7 @@ const Order = () => {
     handleMessageChange,
     handleSenderNameChange,
     handleOrder,
-  } = useOrderForm({ product: fetchState.data || undefined });
+  } = useOrderForm({ product: fetchState.data });
 
   if (fetchState.isLoading) {
     return <Loading height="100vh" />;

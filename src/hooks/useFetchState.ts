@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 interface FetchState<T> {
   isLoading: boolean;
   isError: boolean;
-  data: T | null;
+  data: T;
 }
 
 interface UseFetchStateReturn<T> {
@@ -14,11 +14,11 @@ interface UseFetchStateReturn<T> {
   reset: () => void;
 }
 
-export const useFetchState = <T>(initialLoading = false): UseFetchStateReturn<T> => {
+export const useFetchState = <T>(initialData: T, initialLoading = false): UseFetchStateReturn<T> => {
   const [fetchState, setFetchState] = useState<FetchState<T>>({
     isLoading: initialLoading,
     isError: false,
-    data: null,
+    data: initialData,
   });
 
   const setLoading = useCallback(() => {
@@ -37,17 +37,17 @@ export const useFetchState = <T>(initialLoading = false): UseFetchStateReturn<T>
     setFetchState({
       isLoading: false,
       isError: true,
-      data: null,
+      data: initialData,
     });
-  }, []);
+  }, [initialData]);
 
   const reset = useCallback(() => {
     setFetchState({
       isLoading: false,
       isError: false,
-      data: null,
+      data: initialData,
     });
-  }, []);
+  }, [initialData]);
 
   return {
     fetchState,

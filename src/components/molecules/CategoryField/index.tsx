@@ -7,7 +7,7 @@ import { useFetchState } from '@/hooks/useFetchState';
 import { Loading, ErrorMessage } from '@/components';
 
 const CategoryField = () => {
-  const { fetchState, setLoading, setSuccess, setError } = useFetchState<Theme[]>(true);
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<Theme[]>([], true);
   
   useEffect(() => {
     setLoading(true); 
@@ -29,7 +29,7 @@ const CategoryField = () => {
         <ErrorMessage height="200px" />
       ) : (
         <S.Grid>
-          {fetchState.data?.map((theme) => (
+          {fetchState.data.map((theme) => (
             <CategoryItemCard
               key={theme.themeId}
               imageUrl={theme.image}
