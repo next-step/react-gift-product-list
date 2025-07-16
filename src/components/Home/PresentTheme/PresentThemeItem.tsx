@@ -56,13 +56,15 @@ const PresentThemeItem = () => {
         // const response = await axios.get(process.env.VITE_API_BASE_URL + '/themes');
         const response = await axios.get('http://localhost:3000/api/themes');
         setThemes(response.data);
+        setError(false);
       } catch (error) {
         console.error('Error fetching Theme data:', error);
         setError(true);
+      } finally {
+        setLoading(false);
       }
     };
     fetchThemes();
-    setLoading(false);
   }, [isLoading, isError]);
 
   if (isLoading) {

@@ -83,20 +83,18 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
   const [productRanking, setProductRanking] = useState<ProductRankings>({
     data: [
       {
-        id: 11712379,
-        name: '부드러운 고구마 라떼 케이크',
+        id: 0,
+        name: '',
         price: {
-          basicPrice: 31000,
-          sellingPrice: 26350,
-          discountRate: 15,
+          basicPrice: 0,
+          sellingPrice: 0,
+          discountRate: 0,
         },
-        imageURL:
-          'https://st.kakaocdn.net/product/gift/product/20250218142602_030fce0196af42189694554c03a54fbb.jpg',
+        imageURL: 'none',
         brandInfo: {
-          id: 27,
-          name: '뚜레쥬르',
-          imageURL:
-            'https://st.kakaocdn.net/product/gift/gift_brand/20250331162129_e8de4166853848729c5abad9834405b0.jpg',
+          id: 0,
+          name: '',
+          imageURL: 'none',
         },
       },
     ],
@@ -113,13 +111,15 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
         // const response = await axios.get(process.env.VITE_API_BASE_URL + '/ranking');
         const response = await axios.get('http://localhost:3000/api/products/ranking' + typeUrls);
         setProductRanking(response.data);
+        setError(false);
       } catch (error) {
         console.error('Error fetching Product Ranking data:', error);
         setError(true);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProductRanking();
-    setLoading(false);
   }, [isLoading, isError, search]);
   if (isLoading) {
     return <div>Loading</div>;
