@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import ProductCard from '@/components/giftHome/GiftThemes/ProductCard';
 import Text from '@/common/Text';
+import { fetchProductRanking, type Product } from '@/api/ranking';
+import LoadingSpinner from '@/common/LoadingSpinner';
 
 const targetTypes = ['ALL', 'FEMALE', 'MALE', 'TEEN'] as const;
 type TargetType = (typeof targetTypes)[number];
 
-const rankTypes = ['MANY_WISH', 'MANY_RECEIVE', 'MANY_WISHLIST'] as const;
+const rankTypes = ['MANY_WISH', 'MANY_RECEIVE', 'MANY_WISH_RECEIVE'] as const;
 type RankType = (typeof rankTypes)[number];
 
 const targetTypeLabels: Record<TargetType, string> = {
@@ -19,7 +22,7 @@ const targetTypeLabels: Record<TargetType, string> = {
 const rankTypeLabels: Record<RankType, string> = {
   MANY_WISH: '받고 싶어한',
   MANY_RECEIVE: '많이 선물한',
-  MANY_WISHLIST: '위시로 받은',
+  MANY_WISH_RECEIVE: '위시로 받은',
 };
 
 const GiftChart = () => {
@@ -28,11 +31,32 @@ const GiftChart = () => {
   const selectedTarget = (searchParams.get('target') as TargetType) || 'ALL';
   const selectedRank = (searchParams.get('rank') as RankType) || 'MANY_WISH';
 
-  const handleTargetClick = (target: TargetType) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRanking = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchProductRanking(selectedTarget, selectedRank);
+        setProducts(data);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || '랭킹 데이터를 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRanking();
+  }, [selectedTarget, selectedRank]);
+
+  const updateTargetFilter = (target: TargetType) => {
     setSearchParams({ target, rank: selectedRank });
   };
 
-  const handleRankClick = (rank: RankType) => {
+  const updateRankFilter = (rank: RankType) => {
     setSearchParams({ target: selectedTarget, rank });
   };
 
@@ -47,7 +71,7 @@ const GiftChart = () => {
           <TargetBox
             key={target}
             isSelected={selectedTarget === target}
-            onClick={() => handleTargetClick(target)}
+            onClick={() => updateTargetFilter(target)}
           >
             <TargetText isSelected={selectedTarget === target}>
               {targetTypeLabels[target]}
@@ -61,18 +85,26 @@ const GiftChart = () => {
           <RankOption
             key={rank}
             isSelected={selectedRank === rank}
-            onClick={() => handleRankClick(rank)}
+            onClick={() => updateRankFilter(rank)}
           >
             {rankTypeLabels[rank]}
           </RankOption>
         ))}
       </RankContainer>
 
-      <ProductItem>
-        {Array.from({ length: 6 }).map((_, index) => (
-          <ProductCard key={index} />
-        ))}
-      </ProductItem>
+      {loading ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <Text size="label2" weight="bold">
+          {error}
+        </Text>
+      ) : (
+        <ProductItem>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </ProductItem>
+      )}
     </Layout>
   );
 };
