@@ -46,10 +46,10 @@ const GiftRanking = ({ target, rankType }: GiftRankingProps) => {
       try {
         const response = await axios.get(sortParam);
         setProductRankingData(response.data.data);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching theme data:", error);
         setIsError(true);
+      } finally {
         setIsLoading(false);
       }
     };
