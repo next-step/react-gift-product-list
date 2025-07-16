@@ -159,7 +159,13 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
       alert(orderInfo);
       navigate('/');
     } catch (error: any) {
-      console.error('주문 실패:', error);
+      console.error('주문 실패:', error);   
+      if (error?.response?.status === 401) {
+        const errorMessage = error?.response?.data?.data?.message || '로그인이 필요합니다.';
+        toast.error(errorMessage);
+        navigate('/login');
+        return;
+      }     
       if (error?.response?.status === 400) {
         const errorMessage = error?.response?.data?.data?.message || '유효성 검사에 실패했습니다.';
         toast.error(errorMessage);
