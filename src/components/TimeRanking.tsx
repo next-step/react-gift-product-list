@@ -37,10 +37,10 @@ export default function TimeRanking() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [selectedGender, setSelectedGender] = useState(
-    () => searchParams.get("gender") || "ALL"
+    () => searchParams.get("gender") || "ALL",
   );
   const [selectedRankType, setSelectedRankType] = useState(
-    () => searchParams.get("rankType") || "받고 싶어한"
+    () => searchParams.get("rankType") || "받고 싶어한",
   );
   const [showAll, setShowAll] = useState(false);
 
@@ -68,14 +68,11 @@ export default function TimeRanking() {
     }
   };
 
-  const {
-    data,
-    loading,
-  } = useFetch<Product[]>("/products/ranking", {
+  const { data, loading } = useFetch<Product[]>("/products/ranking", {
     targetType: searchTargetType(selectedGender),
     rankType: searchRankType(selectedRankType),
   });
-  
+
   const rankings = data ?? []; // ranking이 nulld인 경우 방지
 
   const changeGender = (value: Gender) => {
@@ -147,10 +144,7 @@ export default function TimeRanking() {
         <>
           <CardGrid>
             {itemsToShow.map((item, index) => (
-              <Card
-                key={`${item.id}`}
-                onClick={() => goToOrder(item.id)}
-              >
+              <Card key={`${item.id}`} onClick={() => goToOrder(item.id)}>
                 <RankLabel>{index + 1}</RankLabel>
                 <Image src={item.imageURL} alt={item.name} />
                 <Spacing height="12px" />

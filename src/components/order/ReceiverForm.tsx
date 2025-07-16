@@ -9,7 +9,10 @@ type ReceiverFormProps = {
   setReceiverList: React.Dispatch<React.SetStateAction<Receiver[]>>;
 };
 
-export default function ReceiverForm({ receiverList, setReceiverList }: ReceiverFormProps) {
+export default function ReceiverForm({
+  receiverList,
+  setReceiverList,
+}: ReceiverFormProps) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
@@ -136,7 +139,7 @@ const TableHeader = styled.table`
   padding: 12px;
   background-color: ${({ theme }) => theme.colors.gray[100]};
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray[300]};
-`
+`;
 
 const HeaderText = styled.p`
   ${({ theme }) => theme.typography.label1Bold};

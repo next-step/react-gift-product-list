@@ -121,7 +121,7 @@ const ReceiverAdder = forwardRef<ReceiverAdderHandle, ReceiverAdderProps>(
         ))}
       </form>
     );
-  }
+  },
 );
 
 export default ReceiverAdder;

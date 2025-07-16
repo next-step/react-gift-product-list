@@ -12,7 +12,7 @@ import type { Receiver } from "@/types/order";
 export default function OrderPage() {
   const navigate = useNavigate();
   const { itemId } = useParams();
-  
+
   const message = useOrderForm();
   const sender = useOrderForm();
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
@@ -22,7 +22,7 @@ export default function OrderPage() {
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
-    0
+    0,
   );
   const totalPrice = card.price.basicPrice * totalQuantity;
 
