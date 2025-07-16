@@ -44,8 +44,6 @@ const Label = styled.span`
 export const GiftThemeGrid = () => {
   const { data, isLoading, isError } = useGiftThemes();
 
-  console.log('Gift themes data:', data);
-
   if (isLoading) return <p>로딩 중...</p>;
   if (isError || !data || data.length === 0) return null;
 
