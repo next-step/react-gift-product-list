@@ -7,7 +7,8 @@ import {
   HotGiftRankingTab,
   HotGiftRankingTag,
 } from "@/components/main";
-import { TAGS } from "@/constants";
+import { TAB_DATA, TAGS } from "@/constants";
+import { parseUrlParam } from "@/utils";
 import styled from "@emotion/styled";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -39,10 +40,16 @@ const HotGiftRankingSectionTagContainer = styled.div(({ theme }) => ({
 export const HotGiftRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedTag: RankingTargetType = (searchParams.get("targetType") ||
-    "ALL") as RankingTargetType;
-  const selectedTab: RankingRankType = (searchParams.get("rankType") ||
-    "MANY_WISH") as RankingRankType;
+  const selectedTag = parseUrlParam(
+    searchParams.get("targetType"),
+    TAGS,
+    "ALL",
+  );
+  const selectedTab = parseUrlParam(
+    searchParams.get("rankType"),
+    TAB_DATA,
+    "MANY_WISH",
+  );
 
   const handleParamChange = useCallback(
     (
