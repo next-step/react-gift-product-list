@@ -31,15 +31,15 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
     navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
   };
 
-  const { fetchState, fetchData } = useFetch<RankingData>();
+  const rankingList = useFetch<RankingData>();
   useEffect(() => {
-    fetchData(`/api/products/ranking?targetType=${targetType}&rankType=${rankType}`);
+    rankingList.fetchData(`/api/products/ranking?targetType=${targetType}&rankType=${rankType}`);
   }, [targetType, rankType]);
 
-  if (fetchState.isLoading) {
+  if (rankingList.isLoading) {
     return <Loading height="625px" />;
   }
-  if (fetchState.isError || fetchState.data?.data.length === 0) {
+  if (rankingList.isError || rankingList.data?.data.length === 0) {
     return (
       <Empty>
         <Msg>상품이 없습니다.</Msg>
@@ -49,7 +49,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   return (
     <Container>
       <Content>
-        {fetchState.data?.data.slice(0, viewCount).map((item, index) => (
+        {rankingList.data?.data.slice(0, viewCount).map((item, index) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>

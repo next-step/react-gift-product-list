@@ -9,13 +9,13 @@ interface ThemesData {
 }
 
 const Category = () => {
-  const { fetchState, fetchData } = useFetch<ThemesData>();
+  const themes = useFetch<ThemesData>();
 
   useEffect(() => {
-    fetchData("/api/themes");
+    themes.fetchData("/api/themes");
   }, []);
 
-  if (fetchState.isLoading) {
+  if (themes.isLoading) {
     return (
       <Container>
         <Title>선물 테마</Title>
@@ -24,7 +24,7 @@ const Category = () => {
     );
   }
 
-  if (fetchState.isError || fetchState.data?.data.length === 0) {
+  if (themes.isError || themes.data?.data.length === 0) {
     return <></>;
   }
 
@@ -32,7 +32,7 @@ const Category = () => {
     <Container>
       <Title>선물 테마</Title>
       <List>
-        {fetchState.data?.data.map((category) => (
+        {themes.data?.data.map((category) => (
           <Item key={category.themeId}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
