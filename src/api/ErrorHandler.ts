@@ -1,23 +1,22 @@
 import axios from "axios";
 import type { ApiError } from "@/api/types";
+import { API_ERROR_MESSAGE } from "@/constants";
 
 export const handleApiError = (
   error: unknown,
-  fallbackMessage = "알 수 없는 오류가 발생했습니다",
+  fallbackMessage = API_ERROR_MESSAGE.DEFAULT as string,
 ): never => {
-  if (axios.isAxiosError(error)) {
+  if (axios.isAxiosError<BaseResponse<ApiError>>(error)) {
     if (error.response) {
-      const errorData = error.response.data as BaseResponse<ApiError>;
+      const errorData = error.response.data;
       const apiError = errorData.data;
 
       const message = apiError?.message || fallbackMessage;
       throw new Error(message);
     } else if (error.request) {
-      throw new Error(
-        "네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.",
-      );
+      throw new Error(API_ERROR_MESSAGE.NETWORK);
     } else {
-      throw new Error("요청 설정 중 오류가 발생했습니다.");
+      throw new Error(API_ERROR_MESSAGE.SETTING);
     }
   }
 

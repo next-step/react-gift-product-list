@@ -10,3 +10,4 @@ export { ORDER_ERROR_MESSAGE } from "@/constants/order-error-messages";
 export { NON_BREAKING_SPACE } from "@/constants/non-breaking-code";
 export { TAB_DATA } from "@/constants/tabs";
 export { TAGS } from "@/constants/tags";
+export { API_ERROR_MESSAGE } from "@/constants/api-error-message";

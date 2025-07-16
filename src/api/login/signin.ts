@@ -1,5 +1,6 @@
 import { api } from "@/api/api";
 import { executeApi } from "@/api/ErrorHandler";
+import { API_ERROR_MESSAGE } from "@/constants";
 
 interface SignInRequestBody {
   email: string;
@@ -21,5 +22,5 @@ export const signin = async (
       requestBody,
     );
     return response.data;
-  }, "로그인 중 오류가 발생했습니다.");
+  }, API_ERROR_MESSAGE.LOGIN);
 };

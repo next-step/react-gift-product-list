@@ -1,5 +1,6 @@
 import { api } from "@/api/api";
 import { executeApi } from "@/api/ErrorHandler";
+import { API_ERROR_MESSAGE } from "@/constants";
 
 export interface GetThemesResponseBody {
   themeId: number;
@@ -11,5 +12,5 @@ export const getThemes = async (): Promise<GetThemesResponseBody[]> => {
     const { data: response } =
       await api.get<BaseResponse<GetThemesResponseBody[]>>("/themes");
     return response.data;
-  }, "테마를 불러오는 중 오류가 발생했습니다.");
+  }, API_ERROR_MESSAGE.THEMES);
 };
