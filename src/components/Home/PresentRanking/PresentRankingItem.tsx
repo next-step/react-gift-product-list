@@ -1,67 +1,17 @@
 import { URLS } from '@assets/urls';
-import styled from '@emotion/styled';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { StyledPresentRankingNumContainer } from '@styles/Home/PresentRanking/StyledPresentRankingNumContainer';
+import type { ProductRanking, ProductRankings } from '@src_types/ProductRankings';
+import { StyledPresentRankingItemDiv } from '@styles/Home/PresentRanking/StyledPresentRankingItemDiv';
+import { StyledPresentRankingItemImage } from '@styles/Home/PresentRanking/StyledPresentRankingItemImage';
+import { StyledPresentRankingItemBrandName } from '@styles/Home/PresentRanking/StyledPresentRankingItemBrandName';
+import { StyledPresentRankingItemPresentItem } from '@styles/Home/PresentRanking/StyledPresentRankingItemPresentItem';
+import { StyledPresentRankingItemPrasentPrice } from '@styles/Home/PresentRanking/StyledPresentRankingItemPrasentPrice';
 
 const BASIC_RANKING_COMPONENT_NUMBER = 6;
 const MANY_RANKING_COMPONENT_NUMBER = 18;
-
-const StyledPresentRankingItemDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const StyledPresentRankingItemImage = styled.img`
-  position: relative;
-  width: 100%;
-`;
-const StyledPresentRankingItemBrandName = styled.p`
-  color: ${({ theme }) => theme.sementicPalette.textDisabled};
-  padding: ${({ theme }) => theme.spacing.spacing1};
-`;
-const StyledPresentRankingItemPresentItem = styled.p`
-  color: ${({ theme }) => theme.typography.body2Regular};
-  padding-left: ${({ theme }) => theme.spacing.spacing1};
-`;
-const StyledPresentRankingItemPrasentPrice = styled.p`
-  color: ${({ theme }) => theme.typography.body2Bold};
-  padding-left: ${({ theme }) => theme.spacing.spacing1};
-  padding-top: ${({ theme }) => theme.spacing.spacing2};
-`;
-
-const StyledPresentRankingNumContainer = styled.div<{ index: number }>`
-  position: absolute;
-  background-color: ${({ index, theme }) =>
-    index <= 3 ? theme.palette.red600 : theme.palette.gray600};
-  width: 20px;
-  height: 20px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 4px;
-  border-radius: 2px;
-  color: ${({ theme }) => theme.palette.blue00};
-  ${({ theme }) => theme.typography.label2Bold}
-`;
-interface ProductRanking {
-  id: number;
-  name: string;
-  price: {
-    basicPrice: number;
-    sellingPrice: number;
-    discountRate: number;
-  };
-  imageURL: string;
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
-}
-type ProductRankings = {
-  data: ProductRanking[];
-};
 
 const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
   const { search } = useLocation();

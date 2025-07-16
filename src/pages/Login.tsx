@@ -3,7 +3,7 @@ import NavigationBar from '@components/Common/NavigationBar';
 import { StyledLoginComponentContainerDiv } from '@styles/Login/StyledLoginComponentContainerDiv';
 import { useNavigate } from 'react-router-dom';
 import { URLS } from '@assets/urls';
-import StyledTopestDiv from '@styles/StyledTopesDiv';
+import StyledTopestDiv from '@src/styles/Common/StyledTopesDiv';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

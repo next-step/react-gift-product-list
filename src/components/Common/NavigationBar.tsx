@@ -4,7 +4,7 @@ import { StyledNavbar } from '@styles/Common/StyledNavbar';
 import { StyledNavLoginBtn } from '@styles/Common/StyledNavLoginBtn';
 import { StyledNavTextDiv } from '@styles/Common/StyledNavTextDiv';
 import { URLS } from '@assets/urls';
-import { Spacer } from '@styles/Spacer';
+import { Spacer } from '@src/styles/Common/Spacer';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

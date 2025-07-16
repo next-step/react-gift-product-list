@@ -1,9 +1,9 @@
-import StyledTopestDiv from '@styles/StyledTopesDiv';
+import StyledTopestDiv from '@src/styles/Common/StyledTopesDiv';
 import OrderCardTemplateContainer from '@components/Order/OrderCardTemplateContainer';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { GOODS_DATA, type Goods } from '@assets/goodsData';
-import { Spacer } from '@styles/Spacer';
+import { Spacer } from '@src/styles/Common/Spacer';
 import { StyledItemInfoContainer } from '@styles/Order/OrderContainer/StyledItemInfoContainer';
 import { StyledOrderButton } from '@styles/Order/OrderContainer/StyledOrderButton';
 import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';

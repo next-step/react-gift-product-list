@@ -2,8 +2,8 @@ import PresentThemeContainer from '@components/Home/PresentTheme/PresentThemeCon
 import PresentRankingContainer from '@components/Home/PresentRanking/PresentRankingContainer';
 import SelectFriendContainer from '@components/Home/SelectFriendContainer';
 import NavigationBar from '@components/Common/NavigationBar';
-import StyledTopestDiv from '@styles/StyledTopesDiv';
-import { Spacer } from '@styles/Spacer';
+import StyledTopestDiv from '@src/styles/Common/StyledTopesDiv';
+import { Spacer } from '@src/styles/Common/Spacer';
 
 function Home() {
   return (

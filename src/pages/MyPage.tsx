@@ -1,4 +1,4 @@
-import StyledTopestDiv from '@styles/StyledTopesDiv';
+import StyledTopestDiv from '@src/styles/Common/StyledTopesDiv';
 import MyPageContainer from '@components/MyPage/MyPageContainer';
 
 const MyPage = () => {
