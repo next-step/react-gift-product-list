@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useState, useMemo } from 'react';
 import { messageCards } from '@/data/messageCards';
 import type { OrderFormValues } from '@/types/order';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProductSummary {
   name: string;
@@ -11,9 +12,11 @@ interface ProductSummary {
 }
 
 export const useOrderForm = (product: ProductSummary | undefined) => {
+  const { user } = useAuth();
+
   const methods = useForm<OrderFormValues>({
     defaultValues: {
-      senderName: '',
+      senderName: user?.name ?? '',
       textMessage: messageCards[0].defaultTextMessage,
       receivers: [],
     },
