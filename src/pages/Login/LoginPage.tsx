@@ -6,6 +6,7 @@ import type React from "react";
 import useLoginInput from "@/hooks/useLoginInput";
 import { useAuth, type Auth } from "@/contexts/authContext";
 import useFetch from "@/hooks/useFetch";
+import { toast, ToastContainer } from "react-toastify";
 
 interface AuthData {
   data: Auth;
@@ -22,10 +23,19 @@ const LoginPage = () => {
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const responseData = await loginFetch.fetchData();
-    if (!loginFetch.isError && responseData) {
-      login(responseData.data);
-    } else {
-      console.log("toast 오류 메시지");
+    if (responseData.data) {
+      login(responseData.data.data);
+    } else if (responseData.error) {
+      toast.error(responseData.error.data.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
   const isValidIdAndPassword = user.id.length !== 0 && user.password.length >= 8 && !errorMsg.id && !errorMsg.password;
@@ -64,6 +74,7 @@ const LoginPage = () => {
           </Button>
         </Form>
       </Content>
+      <ToastContainer />
     </Container>
   );
 };

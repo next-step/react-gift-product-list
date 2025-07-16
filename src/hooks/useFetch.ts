@@ -9,6 +9,14 @@ interface UseFetchOptions {
   data?: Object;
   baseUrl?: boolean;
 }
+interface ErrorData {
+  data: {
+    status: string;
+    statusCode: number;
+    message: string;
+  };
+}
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const defaultOptions: UseFetchOptions = {
@@ -26,7 +34,7 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
   const [isError, setIsError] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
-  const fetchData = useCallback(async (): Promise<T | null> => {
+  const fetchData = useCallback(async (): Promise<{ data: T | null; error: ErrorData | undefined }> => {
     const base = mergedOptions.baseUrl ? BASE_URL : undefined;
     const fetchUrl = new URL(url, base);
 
@@ -41,12 +49,15 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
       const response = await axios<T>(fetchUrl.href, { method: mergedOptions.method, data: mergedOptions.data });
       setIsError(false);
       setData(response.data);
-      return response.data;
+      return { data: response.data, error: undefined };
     } catch (error) {
       console.error("Error fetching themes data:", error);
       setIsError(true);
       setData(null);
-      return null;
+      if (axios.isAxiosError<ErrorData>(error)) {
+        return { data: null, error: error.response?.data };
+      }
+      return { data: null, error: undefined };
     } finally {
       setIsLoading(false);
     }
