@@ -3,9 +3,9 @@ import axios from 'axios';
 import type { Category } from '@/types/category';
 
 interface UseCategoryThemesResult {
-  themes: Category[] | null;
-  isLoading: boolean;
-  isError: boolean;
+  data: Category[] | null;
+  pending: boolean;
+  error: boolean;
 }
 
 const fetchCategoryThemes = async (): Promise<Category[]> => {
@@ -16,27 +16,27 @@ const fetchCategoryThemes = async (): Promise<Category[]> => {
 };
 
 export const useCategoryThemes = (): UseCategoryThemesResult => {
-  const [themes, setThemes] = useState<Category[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [data, setData] = useState<Category[] | null>(null);
+  const [pending, setPending] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      setIsLoading(true);
-      setIsError(false);
+      setPending(true);
+      setError(false);
       try {
-        const data = await fetchCategoryThemes();
-        setThemes(data);
+        const result = await fetchCategoryThemes();
+        setData(result);
       } catch {
-        setIsError(true);
-        setThemes(null);
+        setError(true);
+        setData(null);
       } finally {
-        setIsLoading(false);
+        setPending(false);
       }
     };
 
     load();
   }, []);
 
-  return { themes, isLoading, isError };
+  return { data, pending, error };
 };

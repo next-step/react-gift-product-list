@@ -7,10 +7,10 @@ const GRID_MIN_HEIGHT = 250;
 const CATEGORY_IMAGE_SIZE = 50;
 
 const CategorySection = () => {
-  const { themes, isLoading, isError } = useCategoryThemes();
+  const themes = useCategoryThemes();
 
   const renderContent = () => {
-    if (isLoading) {
+    if (themes.pending) {
       return (
         <Grid>
           <LoadingWrapper>{loading}</LoadingWrapper>
@@ -18,17 +18,17 @@ const CategorySection = () => {
       );
     }
 
-    if (isError) {
+    if (themes.error) {
       return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</EmptyText>;
     }
 
-    if (!themes || themes.length === 0) {
+    if (!themes.data || themes.data.length === 0) {
       return <EmptyText>{ERROR_MESSAGES.NO_THEMES_AVAILABLE}</EmptyText>;
     }
 
     return (
       <Grid>
-        {themes.map(theme => (
+        {themes.data.map(theme => (
           <Item key={theme.themeId}>
             <CategoryImage src={theme.image} alt={theme.name} />
             <CategoryText>{theme.name}</CategoryText>

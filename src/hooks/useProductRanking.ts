@@ -3,9 +3,9 @@ import axios from 'axios';
 import type { Product } from '@/types/product';
 
 interface UseProductRankingResult {
-  products: Product[] | null;
-  isLoading: boolean;
-  isError: boolean;
+  data: Product[] | null;
+  pending: boolean;
+  error: boolean;
 }
 
 const fetchProductRankings = async (
@@ -23,27 +23,27 @@ export const useProductRanking = (
   targetType: string,
   rankType: string
 ): UseProductRankingResult => {
-  const [products, setProducts] = useState<Product[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [data, setData] = useState<Product[] | null>(null);
+  const [pending, setPending] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      setIsLoading(true);
-      setIsError(false);
+      setPending(true);
+      setError(false);
       try {
-        const data = await fetchProductRankings(targetType, rankType);
-        setProducts(data);
+        const result = await fetchProductRankings(targetType, rankType);
+        setData(result);
       } catch {
-        setIsError(true);
-        setProducts(null);
+        setError(true);
+        setData(null);
       } finally {
-        setIsLoading(false);
+        setPending(false);
       }
     };
 
     load();
   }, [targetType, rankType]);
 
-  return { products, isLoading, isError };
+  return { data, pending, error };
 };

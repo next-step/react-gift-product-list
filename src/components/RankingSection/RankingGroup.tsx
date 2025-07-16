@@ -18,16 +18,16 @@ const RankingGroup = () => {
   const targetType = searchParams.get('targetType') || 'ALL';
   const rankType = searchParams.get('rankType') || 'MANY_WISH';
 
-  const { products, isLoading, isError } = useProductRanking(
-    targetType,
-    rankType
-  );
+  const productRanking = useProductRanking(targetType, rankType);
 
-  const isExpanded = products !== null && visibleCount === products.length;
+  const isExpanded =
+    productRanking.data !== null && visibleCount === productRanking.data.length;
 
   const toggleVisibleCount = () => {
-    if (products) {
-      setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : products.length);
+    if (productRanking.data) {
+      setVisibleCount(
+        isExpanded ? INITIAL_VISIBLE_COUNT : productRanking.data.length
+      );
     }
   };
 
@@ -42,15 +42,19 @@ const RankingGroup = () => {
   };
 
   const renderContent = () => {
-    if (isLoading) return loading;
-    if (isError || !products)
+    if (productRanking.pending) return loading;
+
+    if (productRanking.error || !productRanking.data) {
       return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_PRODUCTS}</EmptyText>;
-    if (products.length === 0)
+    }
+
+    if (productRanking.data.length === 0) {
       return <EmptyText>{ERROR_MESSAGES.NO_PRODUCTS_AVAILABLE}</EmptyText>;
+    }
 
     const visibleProducts = isExpanded
-      ? products
-      : products.slice(0, INITIAL_VISIBLE_COUNT);
+      ? productRanking.data
+      : productRanking.data.slice(0, INITIAL_VISIBLE_COUNT);
 
     return (
       <>
