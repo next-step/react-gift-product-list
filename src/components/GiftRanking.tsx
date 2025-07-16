@@ -128,9 +128,27 @@ export default function GiftRanking() {
   const [hasError, setHasError] = useState(false);
 
   const fetchRanking = async (gender: string, type: string) => {
+    const targetMap: Record<string, string> = {
+      all: 'ALL',
+      female: 'FEMALE',
+      male: 'MALE',
+      teen: 'TEEN',
+    };
+
+    const typeMap: Record<string, string> = {
+      want: 'MANY_WISH',
+      give: 'MANY_RECEIVE',
+      wish: 'MANY_WISH_RECEIVE',
+    };
+
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/products/ranking?gender=${gender}&type=${type}`);
+      const targetType = targetMap[gender] || 'ALL';
+      const rankType = typeMap[type] || 'MANY_WISH_RECEIVE';
+
+      const res = await fetch(
+        `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`,
+      );
       const data = await res.json();
 
       // 테스트용 딜레이
