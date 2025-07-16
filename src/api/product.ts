@@ -30,3 +30,7 @@ export const fetchProductRanking = (
     },
   });
 };
+
+export const fetchProductById = (productId: number): Promise<Product> => {
+  return apiClient.get(`/products/${productId}`);
+};

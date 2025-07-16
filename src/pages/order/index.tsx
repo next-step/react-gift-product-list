@@ -13,15 +13,16 @@ import ProductInfo from "@/pages/order/components/ProductInfo";
 import OrderFooter from "@/pages/order/components/OrderFooter";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { mockRankingData } from "@/mock/mockData";
+import { useProductDetail } from "@/hooks/useProductDetail";
 import { validateReceiverCount } from "@/utils/validators";
+import { ERROR_MESSAGES } from "@/constants/messages";
 
 export default function OrderPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
 
   const id = Number(productId);
-  const product = mockRankingData.find((p) => p.id === id);
+  const { product, loading, error } = useProductDetail(id);
 
   const messageCardRef = useRef<MessageCardHandle>(null);
   const senderInfoRef = useRef<SenderInfoHandle>(null);
@@ -34,6 +35,7 @@ export default function OrderPage() {
     (sum, receiver) => sum + receiver.quantity,
     0,
   );
+
   const totalPrice = product?.price.sellingPrice
     ? product.price.sellingPrice * totalQuantity
     : 0;
@@ -42,9 +44,7 @@ export default function OrderPage() {
     const isMessageValid = messageCardRef.current?.validate() ?? false;
     const isSenderValid = senderInfoRef.current?.validate() ?? false;
 
-    if (!isMessageValid || !isSenderValid) {
-      return;
-    }
+    if (!isMessageValid || !isSenderValid) return;
 
     const receiverError = validateReceiverCount(receivers.length);
     if (receiverError) {
@@ -61,7 +61,6 @@ export default function OrderPage() {
     ].join("\n");
 
     window.alert(alertMessage.trim());
-
     navigate("/");
   };
 
@@ -69,8 +68,12 @@ export default function OrderPage() {
     setReceivers(newReceivers);
   }, []);
 
+  if (error) return null;
+  if (loading) {
+    return <Placeholder>{ERROR_MESSAGES.PRODUCT.LOAD}</Placeholder>;
+  }
   if (!product) {
-    return <div>상품 정보를 찾을 수 없습니다.</div>;
+    return <Placeholder>{ERROR_MESSAGES.PRODUCT.FAIL_TO_LOAD}</Placeholder>;
   }
 
   return (
@@ -86,7 +89,6 @@ export default function OrderPage() {
       />
       <SectionDivider />
       <ReceiverListSection onChange={handleReceiverChange} />
-
       <SectionDivider />
       <ProductInfo
         name={product.name}
@@ -102,4 +104,11 @@ export default function OrderPage() {
 const SectionDivider = styled.div`
   height: 12px;
   background-color: ${({ theme }) => theme.colors.semantic.background.disabled};
+`;
+
+const Placeholder = styled.div`
+  text-align: center;
+  padding: 40px 0;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.semantic.text.disabled};
 `;
