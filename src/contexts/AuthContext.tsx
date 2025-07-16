@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 
 interface User {
   email: string;
@@ -21,21 +27,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const login = (user: User) => {
+  const login = useCallback((user: User) => {
     setUser(user);
     localStorage.setItem('user', JSON.stringify(user));
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('user');
-  };
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+    }),
+    [user, login, logout],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

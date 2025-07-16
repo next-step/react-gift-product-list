@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { categories } from '@/data/categories';
+import { useEffect, useState } from 'react';
 
 const Box = styled.div`
   background-color: white;
@@ -10,9 +10,9 @@ const List = styled.ul`
   display: flex;
   gap: 17px;
 
-  flex-direction: row; // 가로로 배치
+  flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between; // 항목들이 균등하게 배치
+  justify-content: space-between;
 `;
 
 const Title = styled.h1`
@@ -27,7 +27,7 @@ const Title = styled.h1`
 `;
 
 const Item = styled.li`
-  width: calc(16% - 17px); // 화면이 좁아져도 5개씩 배치되도록 설정
+  width: 20%;
   text-align: center;
 
   cursor: pointer;
@@ -38,24 +38,73 @@ const Item = styled.li`
 const Img = styled.img`
   width: 50px;
   height: 50px;
+  border-radius: 15px;
+  margin-bottom: 3px;
 `;
 
 const Name = styled.div`
   font-size: 12px;
 `;
 
-function CategoryList() {
+type Theme = {
+  themeId: number;
+  name: string;
+  image: string;
+};
+
+function CategoryList({ onHide }: { onHide?: () => void }) {
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetch(`${import.meta.env.VITE_API_URL}/api/themes`)
+      .then((res) => {
+        if (!res.ok) throw new Error('서버 에러');
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data.data)) {
+          setThemes(data.data);
+          if (data.data.length === 0 && onHide) onHide();
+        } else {
+          setThemes([]);
+          if (onHide) onHide();
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('데이터를 불러오지 못했습니다.');
+        setLoading(false);
+        if (onHide) onHide();
+      });
+  }, [onHide]);
   return (
     <Box>
       <Title>선물 테마</Title>
-      <List>
-        {categories.map((cat) => (
-          <Item key={cat.themeId}>
-            <Img src={cat.image} alt={cat.name} />
-            <Name>{cat.name}</Name>
-          </Item>
-        ))}
-      </List>
+      {(() => {
+        if (loading) {
+          return <div>로딩 중 ... </div>;
+        }
+        if (error) {
+          return <div>{error}</div>;
+        }
+        if (themes.length === 0) {
+          return null;
+        }
+        return (
+          <List>
+            {themes.map((cat) => (
+              <Item key={cat.themeId}>
+                <Img src={cat.image} alt={cat.name} />
+                <Name>{cat.name}</Name>
+              </Item>
+            ))}
+          </List>
+        );
+      })()}
     </Box>
   );
 }

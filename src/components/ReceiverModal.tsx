@@ -15,7 +15,7 @@ type FormValues = {
 };
 
 interface ReceiverModalProps {
-  receivers: Receiver[];
+  initialReceivers: Receiver[];
   setReceivers: (receivers: Receiver[]) => void;
   onClose: () => void;
 }
@@ -183,10 +183,10 @@ function checkDuplicatePhone(
   errors: FieldErrors<FormValues>,
 ) {
   const phoneCount: Record<string, number> = {};
-  receivers.forEach((r: Receiver) => {
+  receivers.forEach((r) => {
     if (r.phone) phoneCount[r.phone] = (phoneCount[r.phone] || 0) + 1;
   });
-  receivers.forEach((r: Receiver, idx: number) => {
+  receivers.forEach((r, idx) => {
     if (r.phone && phoneCount[r.phone] > 1) {
       setError(`receivers.${idx}.phone`, {
         type: 'duplicate',
@@ -198,11 +198,11 @@ function checkDuplicatePhone(
   });
 }
 
-const ReceiverModal: React.FC<ReceiverModalProps> = ({
-  receivers: initialReceivers,
+const ReceiverModal = ({
+  initialReceivers,
   setReceivers,
   onClose,
-}) => {
+}: ReceiverModalProps) => {
   const {
     control,
     handleSubmit,
@@ -323,7 +323,7 @@ const ReceiverModal: React.FC<ReceiverModalProps> = ({
                     })}
                     hasError={!!errors.receivers?.[idx]?.phone}
                     placeholder="전화번호를 입력하세요."
-                    onChange={(e) => {
+                    onChange={() => {
                       checkDuplicatePhone(
                         getValues('receivers'),
                         setError,

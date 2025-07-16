@@ -88,6 +88,20 @@ const filterOptions = [
     icon: <span className="icon">🧑🏻</span>,
   },
 ];
+const tabList = [
+  {
+    type: RANK_TYPE.MANY_WISH,
+    label: '받고 싶어한',
+  },
+  {
+    type: RANK_TYPE.MANY_GIFT,
+    label: '많이 선물한',
+  },
+  {
+    type: RANK_TYPE.MANY_RECEIVE,
+    label: '위시로 받은',
+  },
+];
 
 function RankingFilter() {
   const [targetType, setTargetType] = useState(() => {
@@ -123,24 +137,15 @@ function RankingFilter() {
         ))}
       </FilterBar>
       <TabBar>
-        <TabBtn
-          active={rankType === RANK_TYPE.MANY_WISH}
-          onClick={() => setRankType(RANK_TYPE.MANY_WISH)}
-        >
-          받고 싶어한
-        </TabBtn>
-        <TabBtn
-          active={rankType === RANK_TYPE.MANY_GIFT}
-          onClick={() => setRankType(RANK_TYPE.MANY_GIFT)}
-        >
-          많이 선물한
-        </TabBtn>
-        <TabBtn
-          active={rankType === RANK_TYPE.MANY_RECEIVE}
-          onClick={() => setRankType(RANK_TYPE.MANY_RECEIVE)}
-        >
-          위시로 받은
-        </TabBtn>
+        {tabList.map((tab) => (
+          <TabBtn
+            key={tab.type}
+            active={rankType === tab.type}
+            onClick={() => setRankType(tab.type)}
+          >
+            {tab.label}
+          </TabBtn>
+        ))}
       </TabBar>
     </>
   );

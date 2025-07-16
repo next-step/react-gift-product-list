@@ -5,6 +5,7 @@ import NoticeBanner from '@/components/NoticeBanner';
 import RankingFilter from '@/components/RankingFilter';
 import ProductList from '@/components/ProductList';
 import Header from '@/components/Header';
+import { useState, useCallback } from 'react';
 
 const Container = styled.div`
   max-width: 720px;
@@ -21,6 +22,10 @@ const PageBackground = styled.div`
 `;
 
 function MainPage() {
+  const [showCategory, setShowCategory] = useState(true);
+  const handleHideCategory = useCallback(() => {
+    setShowCategory(false);
+  }, []);
   return (
     <>
       <Header />
@@ -28,7 +33,7 @@ function MainPage() {
         <PageBackground>
           <FriendSelectBox />
         </PageBackground>
-        <CategoryList />
+        {showCategory && <CategoryList onHide={handleHideCategory} />}
         <NoticeBanner />
         <RankingFilter />
         <ProductList />

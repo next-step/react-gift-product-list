@@ -69,10 +69,7 @@ function LoginPage() {
   const from = searchParams.get('from') || ROUTE_PATH.HOME;
 
   const {
-    email,
-    password,
-    emailError,
-    pwError,
+    form,
     isButtonActive,
     handleEmailChange,
     handlePasswordChange,
@@ -92,23 +89,23 @@ function LoginPage() {
               <Input
                 type="email"
                 placeholder="이메일"
-                value={email}
+                value={form.email}
                 onChange={handleEmailChange}
                 onBlur={handleEmailBlur}
-                error={!!emailError}
+                error={!!form.emailError}
               />
-              {emailError && <ErrorMsg>{emailError}</ErrorMsg>}
+              {form.emailError && <ErrorMsg>{form.emailError}</ErrorMsg>}
             </div>
             <div>
               <Input
                 type="password"
                 placeholder="비밀번호"
-                value={password}
+                value={form.password}
                 onChange={handlePasswordChange}
                 onBlur={handlePasswordBlur}
-                error={!!pwError}
+                error={!!form.pwError}
               />
-              {pwError && <ErrorMsg>{pwError}</ErrorMsg>}
+              {form.pwError && <ErrorMsg>{form.pwError}</ErrorMsg>}
             </div>
             <Button
               type="submit"

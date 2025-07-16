@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { colors } from '../styles/tokens/color';
-import { typography } from '../styles/tokens/typography';
 
 const Banner = styled.div`
   position: relative;
