@@ -130,7 +130,7 @@ function OrderForm({ productData }: { productData: ProductData }) {
             <ProductCard productData={productData} />
           </InputGroup>
           <FooterButton type="submit">
-            {productMockData.price.sellingPrice *
+            {productData.price *
               receivers.reduce(
                 (sum: number, r: Receiver) => sum + parseInt(r.quantity),
                 0
