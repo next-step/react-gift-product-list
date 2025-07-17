@@ -35,6 +35,15 @@ export interface Product {
   brandInfo: BrandInfo
 }
 
+// * 상품 요약 정보
+export interface ProductSummary {
+  id: number
+  name: string
+  brandName: string
+  price: number
+  imageURL: string
+}
+
 // * 유효성 검증 함수 (외부 입력 시 오류 방지)
 export function isValidTargetType(value: string): value is TargetType {
   return Object.values(TargetType).includes(value as TargetType)

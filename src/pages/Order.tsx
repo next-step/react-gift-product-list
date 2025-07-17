@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { OrderFormProvider, useOrderForm } from '@/contexts/order'
 import { orderCardMock, type CardData } from '@/features/order'
-import { productListMock } from '@/features/product'
 import { ROUTE_PATH } from '@/Router'
 import { OrderCardSection, ReceiverSection, SenderSection } from '@/features/order/components'
 import { theme } from '@/styles/theme'
 import { Button, PageContainer, Typography } from '@/components/ui'
 import { NotFound } from '@/pages/NotFound'
-import type { Product } from '@/api/types/product'
+import type { ProductSummary } from '@/api/types/product'
+import { fetchProductSummary } from '@/api/services/product'
+import { useFetch } from '@/hooks/useFetch'
 
 // * 주문하기 페이지 (주문하기 폼 Provider 포함)
 export const Order = () => {
@@ -26,7 +26,10 @@ export const OrderContent = () => {
   const navigate = useNavigate()
   // * URL 파라미터로 부터 상품 id 값 가져오기
   const { id } = useParams<{ id: string }>()
-  const [productInfo, setProductInfo] = useState<Product>()
+  const { data: productInfo } = useFetch<ProductSummary>(
+    () => fetchProductSummary(Number(id)),
+    [id],
+  )
 
   // * 카드 리스트
   const cardList: CardData[] = orderCardMock
@@ -46,12 +49,6 @@ export const OrderContent = () => {
   // * 폼 데이터 실시간 추적
   const watchedData = watch()
   const { selectedCard } = watchedData
-
-  // * 상품 데이터 id 를 통한 필터링
-  useEffect(() => {
-    const newProductInfo = productListMock.find((product) => product.id === Number(id))
-    if (newProductInfo) setProductInfo(newProductInfo)
-  }, [id])
 
   // * 폼 제출 핸들러
   const onSubmit = handleSubmit((data) => {
@@ -74,7 +71,7 @@ export const OrderContent = () => {
     const totalQuantity = data.receivers.reduce((sum, r) => sum + r.count, 0)
 
     // * 총 가격 계산
-    const totalPrice = getTotalPrice(productInfo.price.sellingPrice)
+    const totalPrice = getTotalPrice(productInfo.price)
 
     alert(
       `주문이 완료되었습니다!\n\n` +
@@ -89,7 +86,7 @@ export const OrderContent = () => {
   })
 
   // * 주문 총액 계산
-  const totalPrice = productInfo ? getTotalPrice(productInfo.price.sellingPrice) : 0
+  const totalPrice = productInfo ? getTotalPrice(productInfo.price) : 0
 
   // * 상품 정보가 없을 경우 NotFound 페이지로 이동하도록 처리
   if (!productInfo) return <NotFound />
@@ -120,7 +117,7 @@ export const OrderContent = () => {
           <ProductDetails>
             <ProductNameContainer>
               <ProductName variant="subtitle2Regular">{productInfo.name}</ProductName>
-              <ProductBrand variant="label2Regular">{productInfo.brandInfo.name}</ProductBrand>
+              <ProductBrand variant="label2Regular">{productInfo.brandName}</ProductBrand>
             </ProductNameContainer>
             <ProductPriceContainer>
               <ProductPriceLabel
@@ -134,19 +131,8 @@ export const OrderContent = () => {
               >
                 상품가
               </ProductPriceLabel>
-              {/* 할인되는 경우만 할인율 & 원래 가격(중간 줄) 추가 표시 */}
-              {productInfo.price.discountRate > 0 && (
-                <>
-                  <ProductDiscountRate variant="title2Bold">
-                    {productInfo.price.discountRate}%
-                  </ProductDiscountRate>
-                  <ProductBasicPrice variant="title2Bold" css={{ textDecoration: 'line-through' }}>
-                    {productInfo.price.basicPrice.toLocaleString()}원
-                  </ProductBasicPrice>
-                </>
-              )}
               <ProductSellingPrice variant="title2Bold">
-                {productInfo.price.sellingPrice.toLocaleString()}원
+                {productInfo.price.toLocaleString()}원
               </ProductSellingPrice>
             </ProductPriceContainer>
           </ProductDetails>
@@ -241,16 +227,6 @@ const ProductPriceContainer = styled.div`
 
 // * 상품 가격 라벨
 const ProductPriceLabel = styled(Typography)``
-
-// * 상품 할인율
-const ProductDiscountRate = styled(Typography)`
-  color: ${theme.semanticColors.status.info};
-`
-
-// * 상품 원래 가격
-const ProductBasicPrice = styled(Typography)`
-  color: ${theme.semanticColors.text.sub};
-`
 
 // * 상품 판매가
 const ProductSellingPrice = styled(Typography)`

@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   // Product 관련
   PRODUCTS: {
     RANKING: '/api/products/ranking',
+    SUMMARY: (productId: number) => `/api/products/${productId}/summary`,
   },
 
   // Theme 관련

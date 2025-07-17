@@ -1,6 +1,6 @@
 import apiClient from '@/api'
 import { API_ENDPOINTS } from '@/api/constants/endpoints'
-import { RankType, TargetType, type Product } from '@/api/types/product'
+import { RankType, TargetType, type Product, type ProductSummary } from '@/api/types/product'
 
 // * 상품 랭킹 목록 조회하기
 export const fetchProductRankList = async (
@@ -13,5 +13,13 @@ export const fetchProductRankList = async (
       rankType,
     },
   })
+  return res.data.data
+}
+
+// * 상품 요약 정보 조회
+export const fetchProductSummary = async (productId: number): Promise<ProductSummary> => {
+  const res = await apiClient.get<{ data: ProductSummary }>(
+    API_ENDPOINTS.PRODUCTS.SUMMARY(productId),
+  )
   return res.data.data
 }

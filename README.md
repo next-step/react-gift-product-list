@@ -27,7 +27,7 @@
   - [x] 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주기. ( [react-toastify](https://www.npmjs.com/package/react-toastify) 라이브러리 사용)
 
 - 주문하기 기능
-  - [ ] `/products/:productId/summary` api를 사용하여 제품 정보를 가져오기
+  - [x] `/products/:productId/summary` api를 사용하여 제품 정보를 가져오기
   - [ ] 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결시키기
   - [ ] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채우기
   - [ ] `/order` api를 사용하여 주문하기 기능을 완성하기
