@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import {
   StyledImage,
@@ -7,6 +6,7 @@ import {
   StyledPresentThemeItemP,
 } from '@styles/Home/PresentTheme/StyledPresnetThemeItem';
 import { StyledPresentThemeCommonP } from '@src/styles/Home/StyledPresentThemeCommonP';
+import { ApiClient } from '@src/api/FetchData';
 
 interface Theme {
   themeId: number;
@@ -34,8 +34,8 @@ const PresentThemeItem = () => {
     const fetchThemes = async () => {
       try {
         // const response = await axios.get(process.env.VITE_API_BASE_URL + '/themes');
-        const response = await axios.get('http://localhost:3000/api/themes');
-        setThemes(response.data);
+        const data = await ApiClient('GET', 'themes', null, '');
+        setThemes(data);
         setError(false);
       } catch (error) {
         console.error('Error fetching Theme data:', error);
