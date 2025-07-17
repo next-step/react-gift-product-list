@@ -22,6 +22,7 @@ import { getProudctSummary } from "@/api/products";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import PageWrapper from "@/components/Common/Wrapper";
 
 const Order = () => {
   const [item, setItem] = useState<SummaryGiftProduct | null>(null);
@@ -34,7 +35,7 @@ const Order = () => {
     const fetchOrderItem = async () => {
       if (!productId) return;
       try {
-        const res = await getProudctSummary(Number(productId));
+        const res = await getProudctSummary(1);
         setItem(res.data.data);
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -125,7 +126,7 @@ const Order = () => {
   };
 
   return (
-    <>
+    <PageWrapper>
       <Header title="선물하기" />
       <OrderContainer
         onSubmit={handleSubmit(handleOrderSubmit, () =>
@@ -227,7 +228,7 @@ const Order = () => {
         onAdd={handleModalAddOrEdit}
         initialReceives={receivers}
       />
-    </>
+    </PageWrapper>
   );
 };
 
