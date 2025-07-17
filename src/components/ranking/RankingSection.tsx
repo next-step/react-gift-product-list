@@ -57,6 +57,32 @@ const RankingSection = () => {
     );
   };
 
+  const renderContent = () => {
+    if (isLoading) {
+      return <RankingSkeleton />;
+    }
+
+    if (error) {
+      return null;
+    }
+
+    return (
+      <>
+        <ProductGrid
+          products={data?.data || []}
+          showMore={showMore}
+          onProductClick={handleProductClick}
+        />
+
+        {data?.data && data.data.length > 6 && (
+          <MoreButton onClick={() => setShowMore(!showMore)}>
+            {showMore ? '접기' : '더보기'}
+          </MoreButton>
+        )}
+      </>
+    );
+  };
+
   return (
     <Section title="실시간 급상승 선물랭킹" spacing="md">
       <FilterButtonGroup
@@ -73,23 +99,7 @@ const RankingSection = () => {
         onChange={(value) => handleParamChange('rank', value)}
       />
 
-      {isLoading ? (
-        <RankingSkeleton />
-      ) : error ? null : (
-        <>
-          <ProductGrid
-            products={data?.data || []}
-            showMore={showMore}
-            onProductClick={handleProductClick}
-          />
-
-          {data?.data && data.data.length > 6 && (
-            <MoreButton onClick={() => setShowMore(!showMore)}>
-              {showMore ? '접기' : '더보기'}
-            </MoreButton>
-          )}
-        </>
-      )}
+      {renderContent()}
     </Section>
   );
 };
