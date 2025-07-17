@@ -103,6 +103,7 @@ export default function OrderPage() {
       <SenderInfo
         ref={senderInfoRef}
         onChange={(name) => setSenderName(name)}
+        initialValue={user?.name}
       />
       <SectionDivider />
       <ReceiverListSection onChange={handleReceiverChange} />
