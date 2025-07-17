@@ -32,7 +32,7 @@ export const MAX_RECEIVERS: number = 10;
 export const DEFAULT_RECEIVER = {
   name: "",
   phoneNumber: "",
-  quantity: 0,
+  quantity: "",
 } as const;
 
 export const RECEIVER_MODIFIY_BUTTON = "수정";

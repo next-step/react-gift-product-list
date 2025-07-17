@@ -1,9 +1,13 @@
-import type { Receiver } from "./Receiver";
+interface OrderReceiver {
+  name: string;
+  phoneNumber: string;
+  quantity: number;
+}
 
 export interface Order {
   productId: number;
   message: string;
   messageCardId: string;
   ordererName: string;
-  receivers: Receiver[];
+  receivers: OrderReceiver[];
 }

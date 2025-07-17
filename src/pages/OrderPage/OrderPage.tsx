@@ -66,12 +66,19 @@ function OrderPage() {
         })
       );
 
+      // receivers의 quantity를 string에서 number로 변환
+      const transformedReceivers = receivers.map((receiver) => ({
+        name: receiver.name,
+        phoneNumber: receiver.phoneNumber,
+        quantity: Number(receiver.quantity),
+      }));
+
       const order: Order = {
         productId: product?.id || 0,
         message: formValues.cardMessage,
         messageCardId: messageCard.id.toString(),
         ordererName: formValues.senderName,
-        receivers: receivers,
+        receivers: transformedReceivers,
       };
 
       console.log(order);
