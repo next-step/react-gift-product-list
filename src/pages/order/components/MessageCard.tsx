@@ -9,10 +9,11 @@ export type MessageCardHandle = {
 
 type Props = {
   onMessageChange?: (message: string) => void;
+  onCardChange?: (cardId: string) => void;
 };
 
 const MessageCard = forwardRef<MessageCardHandle, Props>(
-  ({ onMessageChange }, ref) => {
+  ({ onCardChange, onMessageChange }, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [message, setMessage] = useState(
       mockCardTemplateData[0].defaultTextMessage,
@@ -28,6 +29,10 @@ const MessageCard = forwardRef<MessageCardHandle, Props>(
       const newMessage = mockCardTemplateData[index].defaultTextMessage;
       setMessage(newMessage);
       onMessageChange?.(newMessage);
+
+      const selectedCardId = mockCardTemplateData[index].id;
+      onCardChange?.(String(selectedCardId));
+
       setError("");
     };
 

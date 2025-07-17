@@ -17,7 +17,7 @@ import { validateReceiverCount } from "@/utils/validators";
 import { ERROR_MESSAGES } from "@/constants/messages";
 import { useProductSummary } from "@/hooks/useProductSummary";
 import { useAuth } from "@/hooks/useAuth";
-
+import { useOrder } from "@/hooks/useOrder";
 import { toast } from "react-toastify";
 
 export default function OrderPage() {
@@ -27,12 +27,14 @@ export default function OrderPage() {
   const id = Number(productId);
   const { product, loading, error } = useProductSummary(id);
   const { user } = useAuth();
+  const { submitOrder } = useOrder();
 
   const messageCardRef = useRef<MessageCardHandle>(null);
   const senderInfoRef = useRef<SenderInfoHandle>(null);
 
   const [receivers, setReceivers] = useState<Receiver[]>([]);
   const [message, setMessage] = useState("");
+  const [messageCardId, setMessageCardId] = useState("");
   const [senderName, setSenderName] = useState(user?.name ?? "");
 
   const totalQuantity = receivers.reduce(
@@ -42,7 +44,7 @@ export default function OrderPage() {
 
   const totalPrice = product?.price ? product.price * totalQuantity : 0;
 
-  const handleOrderClick = () => {
+  const handleOrderClick = async () => {
     const isMessageValid = messageCardRef.current?.validate() ?? false;
     const isSenderValid = senderInfoRef.current?.validate() ?? false;
 
@@ -54,16 +56,22 @@ export default function OrderPage() {
       return;
     }
 
-    const alertMessage = [
-      `주문이 완료되었습니다.`,
-      `상품명: ${product?.name}`,
-      `구매 수량: ${receivers.length}`,
-      `발신자 이름: ${senderName}`,
-      `메시지: ${message}`,
-    ].join("\n");
+    if (!product) {
+      toast.error(ERROR_MESSAGES.PRODUCT.NONE);
+      return;
+    }
 
-    window.alert(alertMessage.trim());
-    navigate("/");
+    await submitOrder({
+      productId: product.id,
+      message,
+      messageCardId,
+      ordererName: senderName,
+      receivers: receivers.map((r) => ({
+        name: r.name,
+        phoneNumber: r.phone,
+        quantity: r.quantity,
+      })),
+    });
   };
 
   const handleReceiverChange = useCallback((newReceivers: Receiver[]) => {
@@ -89,6 +97,7 @@ export default function OrderPage() {
       <MessageCard
         ref={messageCardRef}
         onMessageChange={(msg) => setMessage(msg)}
+        onCardChange={(id) => setMessageCardId(id)}
       />
       <SectionDivider />
       <SenderInfo
