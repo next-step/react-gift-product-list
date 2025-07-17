@@ -8,9 +8,8 @@ import {
   StyledPresentRankingItemPresentItem,
   StyledPresentRankingNumContainer,
 } from '@src/components/Home/PresentRanking/Item/StyledPresentRankingItem';
-import { useRankingItem } from './useRankingItem';
+import { useRankingItem } from '@hooks/useRankingItem';
 import type { Good } from '@src/types/Goods';
-
 const BASIC_RANKING_COMPONENT_NUMBER = 6;
 const MANY_RANKING_COMPONENT_NUMBER = 18;
 
@@ -26,6 +25,7 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
       navigate(`${URLS.order}?productId=${item.id}`);
     }
   };
+
   const { goods, isLoading, isError } = useRankingItem();
 
   if (isLoading) {

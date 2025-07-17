@@ -1,12 +1,14 @@
 import StyledRankingAnyTagItem from '@src/components/Home/PresentRanking/Item/StyledRankingAnyTagItem';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-const RANK_TAG_LIST: [string, RankTagTypeList][] = [
-  ['많이 찜한', 'MANY_WISH'],
-  ['많이 받은', 'MANY_RECEIVE'],
-  ['많이 찜하고 받은', 'MANY_WISH_RECEIVE'],
-];
+interface RANK_TAG_LIST_TYPE {
+  [key: string]: string;
+}
+const RANK_TAG_LIST: RANK_TAG_LIST_TYPE = {
+  MANY_WISH: '많이 찜한',
+  MANY_RECEIVE: '많이 받은',
+  MANY_WISH_RECEIVE: '많이 찜하고 받은',
+};
 type RankTagTypeList = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
 
 const RankingAnyTagItem = () => {
@@ -14,29 +16,31 @@ const RankingAnyTagItem = () => {
   const { search } = useLocation();
   const [selected, setSelected] = useState<RankTagTypeList>('MANY_WISH');
 
-  const isValidSelectedOption = (value: string): value is RankTagTypeList => {
-    return RANK_TAG_LIST.some(([, code]) => code === value);
+  const isValidSelectedOption = (key: string): key is RankTagTypeList => {
+    // return RANK_TAG_LIST.hasOwnProperty(key);
+    // RANK_TAG_LIST의 타입을 우리가 정의했으므로 object의 함수인 hasOwnProperty를 사용할 수 없는 문제
+    return RANK_TAG_LIST[key] !== undefined;
   };
   useEffect(() => {
     const params = new URLSearchParams(search);
-    const value = params.get('rankType');
-    if (value && isValidSelectedOption(value)) {
-      setSelected(value);
+    const rankType = params.get('rankType');
+    if (rankType && isValidSelectedOption(rankType)) {
+      setSelected(rankType);
     } else {
       params.set('rankType', selected);
       navigate(`?${params.toString()}`, { replace: true });
     }
   }, [search, navigate, selected]);
 
-  const handleClick = (value: RankTagTypeList) => {
+  const handleClick = (rankType: RankTagTypeList) => {
     const params = new URLSearchParams(search);
-    params.set('rankType', value);
+    params.set('rankType', rankType);
     navigate(`?${params.toString()}`, { replace: true });
   };
   return (
     <>
-      {RANK_TAG_LIST.map((item: string[]) => {
-        const tag = item[1] as RankTagTypeList;
+      {Object.entries(RANK_TAG_LIST).map(([key, value]) => {
+        const tag = key as RankTagTypeList;
         return (
           <StyledRankingAnyTagItem
             key={tag}
@@ -44,7 +48,7 @@ const RankingAnyTagItem = () => {
             onClick={() => handleClick(tag)}
             isSelected={selected === tag}
           >
-            {item[0].toLowerCase()}
+            {value}
           </StyledRankingAnyTagItem>
         );
       })}
