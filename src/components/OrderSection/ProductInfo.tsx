@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
 
+interface ProductSummary {
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+}
+
 interface ProductInfoProps {
-  product: {
-    name: string;
-    brandName: string;
-    price: number;
-    imageURL: string;
-  };
+  product: ProductSummary;
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
