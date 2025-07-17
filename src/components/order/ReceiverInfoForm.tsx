@@ -3,8 +3,10 @@ import styled from "@emotion/styled";
 import { ErrorPlaceholder } from "@/components/common/ErrorMessage";
 import { X } from "lucide-react";
 import { useFormContext, type FieldPath } from "react-hook-form";
-import type { OrderFormData } from "@/contexts/order";
-import type { ReceiverKeys } from "@/contexts/order/order-schema";
+import type {
+  OrderFormData,
+  ReceiverKeys,
+} from "@/contexts/order/order-schema";
 
 const ReceiverInfoContainer = styled.div({
   display: "flex",

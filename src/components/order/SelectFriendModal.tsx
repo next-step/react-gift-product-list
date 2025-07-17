@@ -1,10 +1,10 @@
 import { Button } from "@/components/common";
 import { ReceiverInfoForm } from "@/components/order/ReceiverInfoForm";
-import { useOrderForm } from "@/contexts/order";
-import { type OrderFormData, orderSchema } from "@/contexts/order";
+import { type OrderFormData, orderSchema } from "@/contexts/order/order-schema";
 import styled from "@emotion/styled";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useOrderForm } from "@/hooks/order";
 
 const ModalContainer = styled.div(({ theme }) => ({
   display: "flex",

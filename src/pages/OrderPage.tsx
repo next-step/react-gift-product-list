@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "@/components/common";
 import {
   CardSelectorBar,
   OrderButton,
@@ -7,7 +8,7 @@ import {
   SelectedCardView,
   SenderInfoSection,
 } from "@/components/order";
-import { OrderProviderWrapper } from "@/contexts/order";
+import { OrderProvider } from "@/contexts/order/OrderProvider";
 import { OverlayProvider } from "@/contexts/overlay/OverlayProvider";
 import { useOrderPageLogic } from "@/hooks/order/useOrderPageLogic";
 import styled from "@emotion/styled";
@@ -20,7 +21,9 @@ const BlankSpace = styled.div(({ theme }) => ({
 }));
 
 const OrderPageContent = () => {
-  const { order, handleOrderSubmit } = useOrderPageLogic();
+  const { order, handleOrderSubmit, isLoading } = useOrderPageLogic();
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <OverlayProvider>
@@ -41,8 +44,8 @@ const OrderPageContent = () => {
 
 export const OrderPage = () => {
   return (
-    <OrderProviderWrapper>
+    <OrderProvider>
       <OrderPageContent />
-    </OrderProviderWrapper>
+    </OrderProvider>
   );
 };

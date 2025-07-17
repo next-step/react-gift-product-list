@@ -1,4 +1,4 @@
-import { useOrderForm } from "@/contexts/order";
+import { useOrderForm } from "@/hooks/order";
 import styled from "@emotion/styled";
 
 const ReceiverTable = styled.table(({ theme }) => ({
@@ -53,7 +53,7 @@ export const SelectedReceiverTable = () => {
   const { watch } = useOrderForm();
   const receivers = watch("receivers");
 
-  if (receivers?.length === 0) return null;
+  if (!receivers || receivers.length === 0) return null;
 
   return (
     <ReceiverTable>
@@ -65,7 +65,7 @@ export const SelectedReceiverTable = () => {
         </ReceiverTableRow>
       </ReceiverTableHeader>
       <ReceiverTableBody>
-        {receivers?.map(receiver => (
+        {receivers.map(receiver => (
           <ReceiverTableRow
             key={`${receiver.receiverName}-${receiver.receiverPhone}`}
           >

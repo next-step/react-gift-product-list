@@ -1,7 +1,7 @@
 import { Button } from "@/components/common";
 import { SelectedReceiverTable } from "@/components/order/SelectedReceiverTable";
 import { SelectFriendModal } from "@/components/order/SelectFriendModal";
-import { useOrderForm } from "@/contexts/order";
+import { useOrderForm } from "@/hooks/order";
 import { useOverlay } from "@/hooks/overlay/useOverlay";
 import styled from "@emotion/styled";
 

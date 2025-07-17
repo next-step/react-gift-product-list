@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@/components/common";
-import { useOrderForm } from "@/contexts/order";
-import { useCardTemplate } from "@/hooks/order/useCardTemplate";
+import { useCardTemplate, useOrderForm } from "@/hooks/order";
+
 import styled from "@emotion/styled";
 
 const SelectedCardContainer = styled.div(({ theme }) => ({
@@ -47,18 +47,21 @@ const MessageInput = styled.textarea<{ hasError?: boolean }>(
 );
 
 export const SelectedCardView = () => {
-  const { register, errors } = useOrderForm();
-  const currentCardTemplate = useCardTemplate();
+  const {
+    register,
+    formState: { errors },
+  } = useOrderForm();
+  const { cardTemplate } = useCardTemplate();
 
   return (
     <SelectedCardContainer>
       <SelectedCardImage
-        id={String(currentCardTemplate.cardTemplate?.id)}
-        src={currentCardTemplate.cardTemplate?.imageUrl}
+        id={String(cardTemplate?.id)}
+        src={cardTemplate?.imageUrl || undefined}
         alt="선택된 카드 이미지"
       />
       <MessageInput
-        placeholder={currentCardTemplate.cardTemplate?.defaultTextMessage}
+        placeholder={cardTemplate?.defaultTextMessage}
         hasError={!!errors.message}
         {...register("message")}
       />
