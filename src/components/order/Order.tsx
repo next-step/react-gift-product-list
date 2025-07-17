@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cardData } from "@/data/cardData";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -29,6 +29,15 @@ import { css } from "@emotion/react";
 import ReceiverModal from "@/components/order/ReceiverModal";
 import type { Theme } from "@emotion/react";
 import ReceiverInfoTable from "@/components/order/ReceiverInfoTable";
+import axios from "axios";
+
+type Product = {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+};
 
 const Order: React.FC = () => {
   const theme = useTheme();
@@ -42,6 +51,7 @@ const Order: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [receivers, setReceivers] = useState<FormData["order"]>([]);
   const navigate = useNavigate();
+  const [product, setProduct] = useState<Product | null>(null);
   const totalQuantity =
     receivers.length === 0
       ? 0
@@ -88,6 +98,23 @@ const Order: React.FC = () => {
 
   const selectedGiftId = id ? parseInt(id, 10) : undefined;
   const selectedGift = giftData.find((gift) => gift.id === selectedGiftId);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL_PRODUCT}/${id}/summary`
+        );
+        setProduct(response.data.data);
+      } catch (error) {
+        console.error("상품 정보 로딩 실패:", error);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   return (
     <div css={WrapperStyle(theme)}>
