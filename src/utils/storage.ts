@@ -57,7 +57,11 @@ const isUserInfo = (value: unknown): value is UserInfo => {
     typeof value === "object" &&
     value !== null &&
     "email" in value &&
-    typeof (value as { email: unknown }).email === "string"
+    typeof (value as { email: unknown }).email === "string" &&
+    "authToken" in value &&
+    typeof (value as { authToken: unknown }).authToken === "string" &&
+    "name" in value &&
+    typeof (value as { name: unknown }).name === "string"
   );
 };
 
