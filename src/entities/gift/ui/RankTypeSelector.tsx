@@ -1,11 +1,14 @@
-import { rankType, type RankType } from "@/entities/gift/constants/rankType";
+import { rankType, type RankTypeQuery } from "@/entities/gift/constants/rankType";
 
 import { useQueryParamState } from "@/shared/hooks/useQueryParamState";
 
 import * as Styles from "./RankTypeSelector.styled";
 
 export const RankTypeSelector = () => {
-    const [selectedRankType, setSelectedRankType] = useQueryParamState("rankType", "MANY_WISH");
+    const [selectedRankType, setSelectedRankType] = useQueryParamState<RankTypeQuery>(
+        "rankType",
+        "MANY_WISH",
+    );
 
     return (
         <Styles.SelectorContainer>
@@ -13,8 +16,7 @@ export const RankTypeSelector = () => {
                 return (
                     <RankTypeSelectorItem
                         key={rank.query}
-                        label={rank.label}
-                        query={rank.query}
+                        rank={rank}
                         isActive={selectedRankType === rank.query}
                         onSelect={setSelectedRankType}
                     />
@@ -24,14 +26,14 @@ export const RankTypeSelector = () => {
     );
 };
 
-export interface RankTypeSelectorItemProps extends RankType {
+export interface RankTypeSelectorItemProps {
+    rank: (typeof rankType)[number];
     isActive: boolean;
-    onSelect: (query: string) => void;
+    onSelect: (query: RankTypeQuery) => void;
 }
 
 export const RankTypeSelectorItem = ({
-    label,
-    query,
+    rank: { query, label },
     isActive = false,
     onSelect,
 }: RankTypeSelectorItemProps) => {

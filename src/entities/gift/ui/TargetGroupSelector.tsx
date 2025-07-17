@@ -1,11 +1,14 @@
-import { targetGroup } from "@/entities/gift/constants/targetType";
+import { targetGroup, type TargetGroupQuery } from "@/entities/gift/constants/targetType";
 
 import { useQueryParamState } from "@/shared/hooks/useQueryParamState";
 
 import * as Styles from "./TargetGroupSelector.styled";
 
 export const TargetGroupSelector = () => {
-    const [selectedGroup, setSelectedGroup] = useQueryParamState("targetType", "ALL");
+    const [selectedGroup, setSelectedGroup] = useQueryParamState<TargetGroupQuery>(
+        "targetType",
+        "ALL",
+    );
 
     return (
         <Styles.SelectorContainer>
@@ -26,7 +29,7 @@ export const TargetGroupSelector = () => {
 export interface TargetGroupSelectorItemProps {
     group: (typeof targetGroup)[number];
     isActive: boolean;
-    onSelect: (query: string) => void;
+    onSelect: (query: TargetGroupQuery) => void;
 }
 
 export const TargetGroupSelectorItem = ({
