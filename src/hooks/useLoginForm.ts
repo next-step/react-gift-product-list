@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
 
-// useLoginForm.ts 파일 상단에 추가
 export const MIN_PASSWORD_LENGTH = 8;
 
 interface UseLoginFormProps {
   onSuccess: () => void;
 }
-// 이메일 유효성 검사
+
 const validateEmail = (value: string) => {
   if (!value) return 'ID를 입력해주세요.';
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,7 +15,6 @@ const validateEmail = (value: string) => {
   return '';
 };
 
-// 비밀번호 유효성 검사
 const validatePassword = (value: string) => {
   if (!value) return 'PW를 입력해주세요.';
   if (value.length < MIN_PASSWORD_LENGTH)

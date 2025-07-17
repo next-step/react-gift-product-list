@@ -25,7 +25,7 @@ const FilterBar = styled.div`
   gap: 32px;
   margin-bottom: 10px;
   align-items: flex-end;
-  flex-wrap: wrap; // 한 줄에 다 안 들어가면 자동 줄바꿈
+  flex-wrap: wrap;
 `;
 
 const TabBar = styled.div`
@@ -45,7 +45,7 @@ const TabBtn = styled.button<{ active?: boolean }>`
 
   border: none;
   padding: 14px 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
@@ -74,17 +74,17 @@ const filterOptions = [
   },
   {
     type: TARGET_TYPE.FEMALE,
-    label: '여성',
+    label: '여성이',
     icon: <span className="icon">👩🏻</span>,
   },
   {
     type: TARGET_TYPE.MALE,
-    label: '남성',
+    label: '남성이',
     icon: <span className="icon">👨🏻</span>,
   },
   {
     type: TARGET_TYPE.TEENAGER,
-    label: '청소년',
+    label: '청소년이',
     icon: <span className="icon">🧑🏻</span>,
   },
 ];
