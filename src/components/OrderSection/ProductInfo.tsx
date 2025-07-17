@@ -1,11 +1,5 @@
 import styled from '@emotion/styled';
-
-interface ProductSummary {
-  name: string;
-  brandName: string;
-  price: number;
-  imageURL: string;
-}
+import type { ProductSummary } from '@/types/product';
 
 interface ProductInfoProps {
   product: ProductSummary;

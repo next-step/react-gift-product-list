@@ -16,14 +16,7 @@ import { FormProvider } from 'react-hook-form';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import type { OrderFormValues } from '@/types/order';
 import { loading } from '@/components/common/Loading';
-
-interface ProductSummary {
-  id: number;
-  name: string;
-  brandName: string;
-  price: number;
-  imageURL: string;
-}
+import type { ProductSummary } from '@/types/product';
 
 const getProductSummaryUrl = (id: string) =>
   `${import.meta.env.VITE_API_BASE_URL}/api/products/${id}/summary`;
