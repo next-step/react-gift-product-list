@@ -21,7 +21,9 @@ const RankingSection = () => {
   const toggleShowAll = () => setShowAll((prev) => !prev);
 
   const navigate = useNavigate();
-  const isLoggedIn = useAuthContext();
+
+  const { user } = useAuthContext();
+  const isLoggedIn = !!user;
 
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -25,7 +25,7 @@ const Login = () => {
       });
       const data = res.data.data;
       login({ authToken: data.authToken, email: data.email, name: data.name });
-      navigate(from);
+      navigate(from, { replace: true });
     } catch (err) {
       if (axios.isAxiosError(err)) {
         if (
