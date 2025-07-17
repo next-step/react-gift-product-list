@@ -9,7 +9,6 @@ import Loading from '@/components/Loading';
 import useRanking from '../hooks/useRanking';
 import toLocaleString from '@/utils/toLocaleString';
 
-
 interface ButtonProps {
   isActive: boolean;
 }
