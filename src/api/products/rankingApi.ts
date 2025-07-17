@@ -28,7 +28,7 @@ interface RankingApiProps {
 }
 
 const RankingApi = ({ activeGenerationButton, activeFilterButton }: RankingApiProps) => {
-  const [rankingDatas, setrankingDatas] = useState<GiftRankingItem[]>([]);
+  const [rankingDatas, setRankingDatas] = useState<GiftRankingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const RankingApi = ({ activeGenerationButton, activeFilterButton }: RankingApiPr
           `${API_BASE_URL}/api/products/ranking?targetType=${activeGenerationButton}&rankType=${activeFilterButton}`
         );
         const { data } = response;
-        setrankingDatas(data.data);
+        setRankingDatas(data.data);
       } catch (error) {
         console.error(error);
       } finally {
