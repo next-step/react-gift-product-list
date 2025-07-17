@@ -4,8 +4,8 @@ import {
   StyledPresentThemeDiv,
   StyledPresentThemeItemDiv,
   StyledPresentThemeItemP,
-} from '@styles/Home/PresentTheme/StyledPresnetThemeItem';
-import { StyledPresentThemeCommonP } from '@src/styles/Home/StyledPresentThemeCommonP';
+} from '@src/components/Home/PresentTheme/Item/StyledPresnetThemeItem';
+import { StyledPresentThemeCommonP } from '@src/components/Home/PresentTheme/StyledPresentThemeCommonP';
 import { ApiClient } from '@src/api/FetchData';
 
 interface Theme {

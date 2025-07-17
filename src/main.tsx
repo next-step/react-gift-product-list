@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
-import { reset } from '@src/styles/Common/reset.ts';
+import { reset } from '@src/styles/reset.ts';
 import { Global, ThemeProvider } from '@emotion/react';
 import { theme } from './theme/theme';
 

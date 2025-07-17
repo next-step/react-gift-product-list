@@ -1,7 +1,5 @@
 import { URLS } from '@assets/urls';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import type { ProductRanking, ProductRankings } from '@src_types/ProductRankings';
+import { useNavigate } from 'react-router-dom';
 import {
   StyledPresentRankingItemBrandName,
   StyledPresentRankingItemDiv,
@@ -9,19 +7,17 @@ import {
   StyledPresentRankingItemPrasentPrice,
   StyledPresentRankingItemPresentItem,
   StyledPresentRankingNumContainer,
-} from '@src/styles/Home/PresentRanking/StyledPresentRankingItem';
-import { ApiClient } from '@src/api/FetchData';
-
+} from '@src/components/Home/PresentRanking/Item/StyledPresentRankingItem';
+import { useRankingItem } from '@hooks/useRankingItem';
+import type { Good } from '@src/types/Goods';
 const BASIC_RANKING_COMPONENT_NUMBER = 6;
 const MANY_RANKING_COMPONENT_NUMBER = 18;
 
 const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
-  const { search } = useLocation();
-
   const repeatCnt = isVisible ? MANY_RANKING_COMPONENT_NUMBER : BASIC_RANKING_COMPONENT_NUMBER;
   const navigate = useNavigate();
 
-  const handleItemClick = (item: ProductRanking) => {
+  const handleItemClick = (item: Good) => {
     if (!sessionStorage.getItem('email')) {
       sessionStorage.setItem('redirectProductId', String(item.id));
       navigate(URLS.login);
@@ -30,59 +26,17 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
     }
   };
 
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [isError, setError] = useState<boolean>(false);
-  const [productRanking, setProductRanking] = useState<ProductRankings>({
-    data: [
-      {
-        id: 0,
-        name: '',
-        price: {
-          basicPrice: 0,
-          sellingPrice: 0,
-          discountRate: 0,
-        },
-        imageURL: 'none',
-        brandInfo: {
-          id: 0,
-          name: '',
-          imageURL: 'none',
-        },
-      },
-    ],
-  });
+  const { goods, isLoading, isError } = useRankingItem();
 
-  useEffect(() => {
-    const params = new URLSearchParams(search);
-    const rankType = params.get('rankType');
-    const targetType = params.get('targetType');
-    const typeUrls = `?targetType=${targetType}&rankType=${rankType}`;
-
-    const fetchProductRanking = async () => {
-      try {
-        // const response = await axios.get(process.env.VITE_API_BASE_URL + '/ranking');
-        //const response = await axios.get('http://localhost:3000/api/products/ranking' + typeUrls);
-        const data = await ApiClient('GET', 'products/ranking', null, typeUrls);
-        setProductRanking(data);
-        setError(false);
-      } catch (error) {
-        console.error('Error fetching Product Ranking data:', error);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProductRanking();
-  }, [isLoading, isError, search]);
   if (isLoading) {
     return <div>Loading</div>;
-  } else if (isError || productRanking.data.length <= 0) {
+  } else if (isError || goods?.data.length === 0) {
     return <StyledPresentRankingItemDiv>상품 없음</StyledPresentRankingItemDiv>;
   } else {
     return (
       <>
-        {productRanking &&
-          productRanking.data.slice(0, repeatCnt).map((item: ProductRanking, index: number) => (
+        {goods &&
+          goods.data.slice(0, repeatCnt).map((item: Good, index: number) => (
             <div key={item.id} onClick={() => handleItemClick(item)} style={{ cursor: 'pointer' }}>
               <StyledPresentRankingItemDiv>
                 <StyledPresentRankingNumContainer index={index + 1}>

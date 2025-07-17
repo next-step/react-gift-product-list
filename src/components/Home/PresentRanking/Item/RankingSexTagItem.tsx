@@ -1,14 +1,16 @@
-import StyledRankingSexTagItemBtn from '@styles/Home/RankingTagItem/StyledRankingSexTagItemBtn';
+import StyledRankingSexTagItemBtn from '@src/components/Home/PresentRanking/Item/StyledRankingSexTagItemBtn';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-const TARGET_ITEM_LIST: [string, TARGET_ITEM_TYPE][] = [
-  ['전체', 'ALL'],
-  ['여성이', 'FEMALE'],
-  ['남성이', 'MALE'],
-  ['청소년이', 'TEEN'],
-];
+interface TARGET_ITEM_LIST {
+  [key: string]: string;
+}
+const TARGET_ITEM_LIST: TARGET_ITEM_LIST = {
+  ALL: '전체',
+  FEMALE: '여성이',
+  MALE: '남성이',
+  TEEN: '청소년이',
+};
 type TARGET_ITEM_TYPE = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
 
 const StyledRankingSexTagItem = styled.div`
@@ -26,30 +28,30 @@ const RankingSexTagItem = () => {
   const { search } = useLocation();
   const [selected, setSelected] = useState<TARGET_ITEM_TYPE>('ALL');
 
-  const isValidSelectedOption = (value: string): value is TARGET_ITEM_TYPE => {
-    return TARGET_ITEM_LIST.some(([, code]) => code === value);
+  const isValidSelectedOption = (key: string): key is TARGET_ITEM_TYPE => {
+    return TARGET_ITEM_LIST[key] !== undefined;
   };
 
   useEffect(() => {
     const params = new URLSearchParams(search);
-    const value = params.get('targetType');
-    if (value && isValidSelectedOption(value)) {
-      setSelected(value);
+    const key = params.get('targetType');
+    if (key && isValidSelectedOption(key)) {
+      setSelected(key);
     } else {
       params.set('targetType', selected);
       navigate(`?${params.toString()}`, { replace: true });
     }
   }, [search, navigate, selected]);
 
-  const handleClick = (value: TARGET_ITEM_TYPE) => {
+  const handleClick = (key: TARGET_ITEM_TYPE) => {
     const params = new URLSearchParams(search);
-    params.set('targetType', value);
+    params.set('targetType', key);
     navigate(`?${params.toString()}`, { replace: true });
   };
   return (
     <>
-      {TARGET_ITEM_LIST.map((item: [string, TARGET_ITEM_TYPE]) => {
-        const tag = item[1] as TARGET_ITEM_TYPE;
+      {Object.entries(TARGET_ITEM_LIST).map(([key, value]) => {
+        const tag = key as TARGET_ITEM_TYPE;
         return (
           <StyledRankingSexTagItemBtn
             isSelected={selected === tag}
@@ -57,7 +59,7 @@ const RankingSexTagItem = () => {
             onClick={() => handleClick(tag)}
           >
             <StyledRankingSexTagItem className='ranking-sex-tag-item' />
-            <p>{item[0].toLowerCase()}</p>
+            <p>{value}</p>
           </StyledRankingSexTagItemBtn>
         );
       })}

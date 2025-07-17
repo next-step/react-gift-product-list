@@ -6,7 +6,7 @@ import {
   StyledLoginButton,
   StyledLoginComponentDiv,
   StyledLoginKakoLogo,
-} from '@src/styles/Login/StyledLoginFormContainer';
+} from '@src/components/Login/StyledLoginFormContainer';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +26,6 @@ const LoginForm: React.FC<LoginFormProp> = ({ onLoginSuccess }) => {
 
     sessionStorage.setItem('username', username);
     sessionStorage.setItem('email', id);
-    onLoginSuccess?.();
 
     const redirectProductId = sessionStorage.getItem('redirectProductId');
     if (redirectProductId) {
@@ -35,6 +34,7 @@ const LoginForm: React.FC<LoginFormProp> = ({ onLoginSuccess }) => {
     } else {
       navigate(URLS.home);
     }
+    onLoginSuccess?.();
   };
 
   const isLoginButtonEnabled = useMemo(() => {

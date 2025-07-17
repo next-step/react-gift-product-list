@@ -6,7 +6,7 @@ import {
   StyledOrderCardContainer,
   StyledOrderCardSideScrollConntainer,
   StyledOrderTemplateContainer,
-} from '@src/styles/Order/StyledOrderCardTemplateContainer';
+} from '@src/components/Order/OrderCardTemplate/StyledOrderCardTemplateContainer';
 
 const OrderCardTemplateContainer = () => {
   // 목 데이터 템플릿에서 선택된 템플릿을 저장하기 위한 state 값

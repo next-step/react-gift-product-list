@@ -1,5 +1,5 @@
-import PresentRankingItem from '@components/Home/PresentRanking/PresentRankingItem';
-import RankingTagContainer from '@components/Home/PresentRanking/RankingTagContainer';
+import PresentRankingItem from '@src/components/Home/PresentRanking/Item/PresentRankingItem';
+import RankingTagContainer from '@src/components/Home/PresentRanking/Cotainer/RankingTagContainer';
 import { useState } from 'react';
 import {
   StyledPresenetRankingAddItemBtn,
@@ -7,7 +7,7 @@ import {
   StyledPresentRankingContainer,
   StyledPresentRankingContainerTitle,
   StyledPrsentRankingDiv,
-} from '@styles/Home/PresentRanking/StyledPresentRankingContainer';
+} from '@src/components/Home/PresentRanking/Cotainer/StyledPresentRankingContainer';
 
 const PresentRankingContainer = () => {
   const [isVisible, setisVisible] = useState(false);

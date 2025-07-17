@@ -1,4 +1,4 @@
-export interface ProductRanking {
+export interface Good {
   id: number;
   name: string;
   price: {
@@ -13,6 +13,6 @@ export interface ProductRanking {
     imageURL: string;
   };
 }
-export interface ProductRankings {
-  data: ProductRanking[];
+export interface Goods {
+  data: Good[];
 }

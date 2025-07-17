@@ -1,10 +1,10 @@
-import PresentThemeItem from './PresentThemeItem';
+import PresentThemeItem from '@components/Home/PresentTheme/Item/PresentThemeItem';
 import {
   StyledExtraContainer,
   StyledExtraFristP,
   StyledExtraSecondP,
   StyledPresentContainer,
-} from '@styles/Home/PresentTheme/StyledPresentThemeContainer';
+} from '@src/components/Home/PresentTheme/Container/StyledPresentThemeContainer';
 
 const PresentThemeConatiner = () => {
   return (
