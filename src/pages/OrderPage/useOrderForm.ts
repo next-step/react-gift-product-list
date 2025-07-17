@@ -4,8 +4,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import axios from 'axios';
 import { SENDER_NAME_ERROR } from '@/components/SenderForm/constants';
-import { RECEIVER_REQUIRED_MESSAGE } from './constants';
+import {
+  RECEIVER_REQUIRED_MESSAGE,
+  ORDER_COMPLETE_MESSAGE,
+  ORDER_PROCESSING_ERROR_MESSAGE,
+  ORDER_ERROR_MESSAGE,
+  LOGIN_REQUIRED_MESSAGE,
+} from './constants';
 import { useLogin } from '@/contexts/LoginContext';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '@/constants/paths';
 
 interface ReceiverFormInput {
   name: string;
@@ -28,6 +36,7 @@ export function useOrderForm(
 ) {
   const { userInfo } = useLogin();
   const [receivers, setReceivers] = useState<Receivers>([]);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -67,12 +76,20 @@ export function useOrderForm(
       const responseData = response.data;
 
       if (responseData.data.success) {
-        alert('주문이 완료되었습니다.');
+        alert(
+          `${ORDER_COMPLETE_MESSAGE}\n\n상품명: ${product!.name}\n총 수량: ${totalQuantity}개\n보내는 분: ${data.senderName}\n메시지: ${data.message}`
+        );
+        navigate(PATH.HOME);
       } else {
-        alert('주문 처리 중 오류가 발생했습니다.');
+        alert(ORDER_PROCESSING_ERROR_MESSAGE);
       }
     } catch (error) {
-      alert('주문 중 오류가 발생했습니다.');
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        alert(LOGIN_REQUIRED_MESSAGE);
+        navigate(PATH.LOGIN);
+      } else {
+        alert(ORDER_ERROR_MESSAGE);
+      }
     }
   };
 
