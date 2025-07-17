@@ -1,4 +1,4 @@
-import useApiRequest from '../useApiRequest';
+import useApiRequest from './useApiRequest';
 import { fetchRanking } from '@/api/RankingApi';
 import type { Product } from '@/types/Product';
 

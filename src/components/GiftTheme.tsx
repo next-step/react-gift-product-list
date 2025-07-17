@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import CategoryItem from './CategoryItem';
 import { spinner } from './common/Spinner';
-import useGiftTheme from '@/hooks/apihooks/useGiftTheme';
+import useGiftTheme from '@/hooks/useGiftTheme';
 
 const Wrapper = styled.section`
   margin-top: ${({ theme }) => theme.spacing.spacing6};

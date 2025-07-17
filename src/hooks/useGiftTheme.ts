@@ -1,4 +1,4 @@
-import useApiRequest from '../useApiRequest';
+import useApiRequest from './useApiRequest';
 import { fetchThemes } from '@/api/ThemeApi';
 import type { GiftThemeType } from '@/types/theme';
 

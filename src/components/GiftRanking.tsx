@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import type { Product } from '@/types/Product';
 import RankingItem from './RankingItem';
 import { spinner } from './common/Spinner';
-import useGiftRanking from '@/hooks/apihooks/useGiftRanking';
+import useGiftRanking from '@/hooks/useGiftRanking';
 
 const Wrapper = styled.section`
   margin-top: ${({ theme }) => theme.spacing.spacing10};

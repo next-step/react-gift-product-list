@@ -12,8 +12,8 @@ import ReceiverInfo from '@/components/order/ReceiverInfo';
 import ProductInfo from '@/components/order/ProductInfo';
 import OrderButton from '@/components/order/OrderButton';
 
+import { useProductSummary } from '@/hooks/useProductSummary';
 import { isBlank } from '@/utils/validation';
-import { products } from '@/mock/productsData';
 import { cardTemplates } from '@/mock/cardTemplates';
 import type { Receiver } from '@/types/order';
 
@@ -35,7 +35,7 @@ interface FormValues {
 export default function OrderPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const product = products.find((p) => p.id === Number(id));
+  const { product, loading } = useProductSummary(id);
   const defaultTpl = cardTemplates[0];
   const [receivers, setReceivers] = useState<Receiver[]>([]);
 
@@ -54,6 +54,7 @@ export default function OrderPage() {
     },
   });
 
+  if (loading) return <div>로딩 중...</div>;
   if (!product) return <div>상품을 찾을 수 없습니다.</div>;
 
   const onSubmit = (data: FormValues) => {
@@ -105,11 +106,7 @@ export default function OrderPage() {
         <ProductInfo product={product} />
 
         {/* 주문하기 버튼 */}
-        <OrderButton
-          priceSum={product.price.sellingPrice}
-          qty={totalQty}
-          onClick={handleSubmit(onSubmit)}
-        />
+        <OrderButton priceSum={product.price} qty={totalQty} onClick={handleSubmit(onSubmit)} />
       </Wrapper>
     </MobileLayout>
   );
