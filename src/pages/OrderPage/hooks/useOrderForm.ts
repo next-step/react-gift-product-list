@@ -10,15 +10,10 @@ import {
 } from "../schemas";
 import { FORM_FIELD } from "../constants/formField";
 import { useAuth } from "@/contexts/AuthContext";
+import type { Receiver } from "@/types/Receiver";
 
 interface UseOrderFormProps {
   isSubmittedOnce: boolean;
-}
-
-export interface Receiver {
-  name: string;
-  phone: string;
-  quantity: string;
 }
 
 export const useOrderForm = ({ isSubmittedOnce }: UseOrderFormProps) => {

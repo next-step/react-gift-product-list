@@ -5,7 +5,6 @@ import {
   RECEIVER_MODAL_CONSTANTS,
   DEFAULT_RECEIVER,
 } from "../../../constants/receiverSection";
-import type { Receiver } from "../../../hooks/useOrderForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FORM_FIELD } from "../../../constants/formField";
 import { receiversSchema } from "../../../schemas";
@@ -24,6 +23,7 @@ import {
   CompleteButton,
   ReceiverList,
 } from "./ReceiverModal.styles";
+import type { Receiver } from "@/types/Receiver";
 
 interface FormData {
   receivers: Receiver[];

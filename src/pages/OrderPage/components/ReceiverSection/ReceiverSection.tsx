@@ -13,7 +13,7 @@ import { useState } from "react";
 import ReceiverModal from "./ReceiverModal/ReceiverModal";
 import ReceiverTable from "./ReceiverTable/ReceiverTable";
 import NoReceiver from "./NoReceiver/NoReceiver";
-import type { Receiver } from "../../hooks/useOrderForm";
+import type { Receiver } from "@/types/Receiver";
 
 interface ReceiverSectionComponentProps {
   receivers: Receiver[];

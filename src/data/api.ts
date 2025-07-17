@@ -4,6 +4,7 @@ import type { GiftThemeType } from "@/types/GiftThemeType";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import type { User } from "@/types/User";
 import type { ProductInfoSummary } from "@/types/ProductInfoSummary";
+import type { Order } from "@/types/Order";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -45,5 +46,15 @@ export const getProductInfo = async (
   id: string
 ): Promise<ProductInfoSummary> => {
   const response = await apiClient.get(`/api/products/${id}/summary`);
+  return response.data.data;
+};
+
+export const createOrder = async (authToken: string, order: Order) => {
+  const response = await apiClient.post("/api/order", order, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+  console.log(response);
   return response.data.data;
 };

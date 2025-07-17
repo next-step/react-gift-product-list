@@ -13,6 +13,9 @@ import { useOrderForm } from "./hooks/useOrderForm";
 import { ORDER_MESSAGES } from "./constants/alert";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
+import { useAuth } from "@/contexts/AuthContext";
+import type { Order } from "@/types/Order";
+import { createOrder } from "@/data/api";
 
 const OrderPageContainer = styled.div`
   display: flex;
@@ -25,6 +28,7 @@ function OrderPage() {
   const navigate = useNavigate();
   const [isSubmittedOnce, setIsSubmittedOnce] = useState(false);
   const { product, loading } = useProductInfo();
+  const { user } = useAuth();
 
   const {
     messageCard,
@@ -61,6 +65,23 @@ function OrderPage() {
           cardMessage: formValues.cardMessage,
         })
       );
+
+      const order: Order = {
+        productId: product?.id || 0,
+        message: formValues.cardMessage,
+        messageCardId: messageCard.id.toString(),
+        ordererName: formValues.senderName,
+        receivers: receivers,
+      };
+
+      console.log(order);
+
+      try {
+        const response = await createOrder(user?.authToken || "", order);
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
 
       navigate(ROUTES.HOME);
       return;
