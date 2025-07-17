@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import Loading from '@/components/Loading';
 import useRanking from '../hooks/useRanking';
+import toLocaleString from '@/utils/toLocaleString';
 
 interface ButtonProps {
   isActive: boolean;
@@ -49,7 +50,7 @@ const GiftRankingSection = () => {
                 <Image src={rank.imageURL} alt={rank.name} />
                 <ItemBrandName>{rank.brandInfo.name}</ItemBrandName>
                 <ItemName>{rank.name}</ItemName>
-                <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
+                <ItemPrice>{toLocaleString(rank.price.basicPrice)} 원</ItemPrice>
               </ItemContainer>
             </RankItem>
           ))}
