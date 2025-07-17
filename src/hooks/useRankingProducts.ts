@@ -7,7 +7,7 @@ import type { RankingResponse, TargetType, RankType } from '../api/types';
  * @param initialTargetType - 초기 대상 타입
  * @param initialRankType - 초기 랭킹 타입
  */
-function useRankingProducts(
+export function useRankingProducts(
   initialTargetType: TargetType = 'ALL',
   initialRankType: RankType = 'MANY_WISH'
 ) {
@@ -63,5 +63,3 @@ function useRankingProducts(
     refetch: () => fetchRankingProducts(targetType, rankType),
   };
 }
-
-export default useRankingProducts;

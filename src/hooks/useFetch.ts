@@ -13,7 +13,10 @@ interface FetchState<T> {
  * @param url - API 엔드포인트
  * @param options - Axios 요청 옵션
  */
-function useFetch<T>(url: string, options?: AxiosRequestConfig) {
+export const useFetch = function <T>(
+  url: string,
+  options?: AxiosRequestConfig
+) {
   const [state, setState] = useState<FetchState<T>>({
     data: null,
     isLoading: true,
@@ -51,6 +54,4 @@ function useFetch<T>(url: string, options?: AxiosRequestConfig) {
   }, [fetchData]);
 
   return { ...state, refetch };
-}
-
-export default useFetch;
+};

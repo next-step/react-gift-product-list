@@ -6,7 +6,7 @@ import type { Product } from '../api/types';
  * 특정 상품의 상세 정보를 가져오는 커스텀 훅
  * @param productId - 상품 ID
  */
-function useProduct(productId: string | number | undefined) {
+export const useProduct = (productId: string | number) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -37,6 +37,4 @@ function useProduct(productId: string | number | undefined) {
   }, [productId]);
 
   return { product, isLoading, error };
-}
-
-export default useProduct;
+};
