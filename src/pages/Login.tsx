@@ -1,19 +1,31 @@
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavigationBar from '@/common/NavigationBar';
 import Input from '@/common/Input';
 import LoginButton from '@/components/login/LoginButton';
 import { useLoginForm } from '@/hooks/useLoginForm';
+import { useAuth } from '@/context/AuthContext';
 import type { LoginFormInputs } from '@/hooks/useLoginForm';
 
 const LoginForm = () => {
+  const { login, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
   } = useLoginForm();
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
+
   const onSubmit = (data: LoginFormInputs) => {
     console.log('로그인 요청:', data);
+    login(data.id);
   };
 
   return (
