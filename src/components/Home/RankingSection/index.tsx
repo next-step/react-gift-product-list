@@ -10,12 +10,12 @@ import {
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import { getRanking } from "@/api/products";
-import type { SummaryGiftProduct } from "@/types/gift";
+import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 
 const RankingSection = () => {
   const [showAll, setShowAll] = useState(false);
-  const [rankingItems, setRankingItems] = useState<SummaryGiftProduct[]>([]);
+  const [rankingItems, setRankingItems] = useState<BasicGiftProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -93,7 +93,11 @@ const RankingSection = () => {
             <RankingItem
               key={item.id}
               rank={index + 1}
-              {...item}
+              id={item.id}
+              name={item.name}
+              imageURL={item.imageURL}
+              price={item.price}
+              brandInfo={item.brandInfo}
               onClick={() => handleClickItem(item.id)}
             />
           ))}

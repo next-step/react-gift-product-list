@@ -1,11 +1,11 @@
-import type { SummaryGiftProduct } from "@/types/gift";
+import type { BasicGiftProduct } from "@/types/gift";
 import instance from "./axiosInstance";
 import type { AxiosResponse } from "axios";
 
 export const getRanking = (
   targetType: string,
   rankType: string
-): Promise<AxiosResponse<{ data: SummaryGiftProduct[] }>> => {
+): Promise<AxiosResponse<{ data: BasicGiftProduct[] }>> => {
   return instance.get("/products/ranking", {
     params: { targetType, rankType },
   });

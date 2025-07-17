@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import type { GiftItem } from "@/types/gift";
+import type { BasicGiftProduct } from "@/types/gift";
 
-type RankingItemProps = GiftItem & {
+type RankingItemProps = BasicGiftProduct & {
   rank: number;
   highlightCondition?: (rank: number) => boolean;
   onClick?: () => void;
