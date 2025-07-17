@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      // 실제 API 호출
       const {
         email: userEmail,
         name,
@@ -34,6 +33,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         authToken,
       };
       setUser(userData);
+    } catch (error: any) {
+      // axios 에러 처리
+      if (error.response && error.response.data && error.response.data.data) {
+        const apiError = error.response.data.data;
+        throw new Error(apiError.message || '로그인에 실패했습니다.');
+      }
+      throw new Error('로그인에 실패했습니다.');
     } finally {
       setLoading(false);
     }
