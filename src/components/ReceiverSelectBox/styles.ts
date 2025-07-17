@@ -28,7 +28,9 @@ export const Title = styled.h1`
 `;
 export const Text = styled.p`
   font: ${({ theme }) => theme.typography.label1Regular};
-  color: ${({ theme }) => theme.colors.semantic.textDeafult};
+  color: ${({ theme }) => theme.colors.semantic.textDefault};
+    font-size: 1.2rem;
+    font-weight: 500;
 `;
 
 export const RecipientInfoBox = styled.div`
