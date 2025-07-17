@@ -7,8 +7,7 @@ import useLoginForm from '@/hooks/useLoginForm';
 import InputField from '@/components/common/InputField';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
-
-const DEFAULT_LOGIN_ERROR = '@kakao.com 이메일 주소만 가능합니다.';
+import { ERROR_MESSAGES } from '@/constants/validation';
 
 type FromState = {
   pathname: string;
@@ -50,7 +49,7 @@ const LoginFormSection = () => {
     } catch (err: unknown) {
       const message = isErrorWithMessage(err)
         ? err.response!.data!.message!
-        : DEFAULT_LOGIN_ERROR;
+        : ERROR_MESSAGES.INVALID_LOGIN_DOMAIN;
       toast.error(message);
     }
   };

@@ -18,19 +18,12 @@ import type { OrderFormValues } from '@/types/order';
 import { loading } from '@/components/common/Loading';
 import type { ProductSummary } from '@/types/product';
 import { ORDER_API_PATH, getProductSummaryPath } from '@/constants/api';
+import { ERROR_MESSAGES } from '@/constants/validation';
 
 const getProductSummaryUrl = (id: string) =>
   `${import.meta.env.VITE_API_BASE_URL}${getProductSummaryPath(id)}`;
 
 const ORDER_API_URL = `${import.meta.env.VITE_API_BASE_URL}${ORDER_API_PATH}`;
-
-const ERROR_MESSAGES = {
-  LOAD_PRODUCT_FAIL: '상품 정보를 불러오지 못했어요.',
-  EMPTY_RECEIVERS: '받는 사람을 한 명 이상 추가해주세요.',
-  ORDER_FAIL: '주문에 실패했어요. 잠시 후 다시 시도해주세요.',
-  LOGIN_REQUIRED: '로그인이 필요합니다.',
-  INVALID_ACCESS: '잘못된 접근입니다.',
-};
 
 const isAxiosErrorWithStatus = (
   err: unknown,
