@@ -20,12 +20,15 @@ import type { OrderType } from "@/schema/order";
 import type { SummaryGiftProduct } from "@/types/gift";
 import { getProudctSummary } from "@/api/products";
 import { useAuthContext } from "@/contexts/useAuthContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Order = () => {
   const [item, setItem] = useState<SummaryGiftProduct | null>(null);
   const { selectedCard, selectCard } = useCardSelection();
   const { productId } = useParams<{ productId: string }>();
   const { user } = useAuthContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderItem = async () => {
@@ -34,11 +37,22 @@ const Order = () => {
         const res = await getProudctSummary(Number(productId));
         setItem(res.data.data);
       } catch (err) {
-        console.error("상품 정보를 불러오는데 실패했습니다.", err);
+        if (axios.isAxiosError(err)) {
+          if (
+            err.response &&
+            err.response.status >= 400 &&
+            err.response.status < 500
+          ) {
+            toast.error(
+              err.response.data?.data?.message || "현재 없는 상품입니다."
+            );
+          }
+        }
+        navigate("/");
       }
     };
     fetchOrderItem();
-  }, [productId]);
+  }, [productId, navigate]);
 
   const {
     register,
@@ -90,8 +104,6 @@ const Order = () => {
       setValue("message", selectedCard.defaultTextMessage);
     }
   }, [selectedCard, getValues, setValue]);
-
-  const navigate = useNavigate();
 
   if (!item) return <p>상품 정보를 찾을 수 없습니다.</p>;
 
