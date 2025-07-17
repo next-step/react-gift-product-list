@@ -1,3 +1,4 @@
+import type { ProductInfoSummary } from "@/types/ProductInfoSummary";
 import { PRODUCT_INFO_CONSTANTS } from "../../constants/productInfo";
 import {
   ProductSection,
@@ -17,14 +18,6 @@ import {
 interface ProductInfoProps {
   product: ProductInfoSummary;
   quantity: string;
-}
-
-export interface ProductInfoSummary {
-  id: number;
-  name: string;
-  brandName: string;
-  price: number;
-  imageURL: string;
 }
 
 function ProductInfo({ product, quantity }: ProductInfoProps) {

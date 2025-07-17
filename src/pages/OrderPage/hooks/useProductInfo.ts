@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getProductInfo } from "@/data/api";
-import type { ProductInfoSummary } from "../components/ProductInfo/ProductInfo";
+import type { ProductInfoSummary } from "@/types/ProductInfoSummary";
 
 export function useProductInfo(): {
   product: ProductInfoSummary | null;
