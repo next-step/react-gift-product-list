@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { AuthContext } from './AuthContext';
 import type { UserInfo } from './AuthContext';
 import { login as loginApi } from '@/lib/api';
+import type { AxiosErrorResponse } from '@/types/api';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -34,18 +35,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       setUserInfo(newUserInfo);
       sessionStorage.setItem('kakaotech/userInfo', JSON.stringify(newUserInfo));
+      onSuccess?.();
 
-      if (onSuccess) {
-        setTimeout(onSuccess, 0);
-      }
-    } catch (error: any) {
-      if (error.response && error.response.status >= 400 && error.response.status < 500) {
-        const errorMessage = error.response.data?.data?.message || '로그인에 실패했습니다.';
-        toast.error(errorMessage);
+    } catch (error: unknown) {
+      const axiosError = error as AxiosErrorResponse;
+      
+      if (axiosError?.response) {
+        const status = axiosError.response.status;
+        const message = axiosError.response.data?.data?.message;
+
+        switch (status) {
+          case 400:
+            toast.error(message || '로그인에 실패했습니다.');
+            return;
+          default:
+            toast.error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+            return;
+        }
       } else {
-        toast.error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+        toast.error('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.');
       }
-      throw error;
     }
   }, []);
 

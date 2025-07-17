@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { orders } from '@/data/orders';
 import { getProductSummary } from '@/lib/api';
-import { type ProductSummary } from '@/types/api';
+import { type ProductSummary, type AxiosErrorResponse } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { Loading, ErrorMessage } from '@/components';
@@ -25,14 +25,25 @@ const Order = () => {
         
         const productData = await getProductSummary(parseInt(productId));
         setSuccess(productData);
-      } catch (error: any) {
-        if (error?.response?.status >= 400 && error?.response?.status < 500) {
-          const errorMessage = error?.response?.data?.data?.message || '현재 없는 상품입니다';
-          toast.error(errorMessage);
-          navigate('/');
-          return;
+      } catch (error: unknown) {
+        const axiosError = error as AxiosErrorResponse;
+        
+        if (axiosError?.response) {
+          const status = axiosError.response.status;
+          const message = axiosError.response.data?.data?.message;
+
+          switch (status) {
+            case 400:
+              toast.error(message || '현재 없는 상품입니다');
+              navigate('/');
+              return;
+            default:
+              setError();
+              return;
+          }
+        } else {
+          setError();
         }
-        setError();
       }
     };
 

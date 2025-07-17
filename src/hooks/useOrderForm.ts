@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { z, string } from 'zod';
 import { orders } from '@/data/orders';
 import { createOrder } from '@/lib/api';
-import { type OrderRequest } from '@/types/api';
+import { type OrderRequest, type AxiosErrorResponse } from '@/types/api';
 
 import { type ProductSummary } from '@/types/api';
 import { type TextAreaChangeHandler, type InputChangeHandler } from '@/components';
@@ -158,20 +158,28 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
 
       alert(orderInfo);
       navigate('/');
-    } catch (error: any) {
-      console.error('주문 실패:', error);   
-      if (error?.response?.status === 401) {
-        const errorMessage = error?.response?.data?.data?.message || '로그인이 필요합니다.';
-        toast.error(errorMessage);
-        navigate('/login');
-        return;
-      }     
-      if (error?.response?.status === 400) {
-        const errorMessage = error?.response?.data?.data?.message || '유효성 검사에 실패했습니다.';
-        toast.error(errorMessage);
-        return;
-      }    
-      alert('주문에 실패했습니다. 다시 시도해주세요.');
+    } catch (error: unknown) {
+      const axiosError = error as AxiosErrorResponse;
+      
+      if (axiosError?.response) {
+        const status = axiosError.response.status;
+        const message = axiosError.response.data?.data?.message;
+        
+        switch (status) {
+          case 401:
+            toast.error(message || '로그인이 필요합니다.');
+            navigate('/login');
+            return;
+          case 400:
+            toast.error(message || '유효성 검사에 실패했습니다.');
+            return;
+          default:
+            toast.error('주문에 실패했습니다. 다시 시도해주세요.');
+            return;
+        }
+      } else {
+        toast.error('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 

@@ -61,3 +61,22 @@ export interface LoginResponse {
 export interface ApiResponse<T> {
     data: T;
 }
+
+// 에러 관련 타입 정의
+export interface ApiErrorData {
+    status: string;
+    statusCode: number;
+    message: string;
+}
+
+export interface ApiErrorResponse {
+    data: ApiErrorData;
+}
+
+export interface AxiosErrorResponse {
+    response?: {
+        status: number;
+        data: ApiErrorResponse;
+    };
+    message: string;
+}
