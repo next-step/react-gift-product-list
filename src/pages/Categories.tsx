@@ -11,10 +11,14 @@ import Column from "@/components/Column"
 import Trending from "./Trending"
 import { useState, useEffect } from "react"
 import axios from "axios"
+import Lottie from "lottie-react"
+import LoadingAnimation from "@/assets/lottie/Loader.json"
+
 interface PresentItem {
   themeId: number
   name: string
   image: string
+  data: object
 }
 interface PresentCardProps {
   present: PresentItem
@@ -24,15 +28,17 @@ const PresentCard = ({ present }: PresentCardProps) => {
   return (
     <PresentCardStyle>
       <img src={present.image} alt="" />
-      <Text variant="label2Regular" margin="spacing2" padding="spacing2">
+      <Text variant="label2Regular" margin="spacing0" padding="spacing0">
         {present.name}
       </Text>
     </PresentCardStyle>
   )
 }
-
+interface ThemesResponse {
+  data: PresentItem[]
+}
 const PresentList = () => {
-  const [presents, setPresents] = useState<PresentItem[] | null>(null)
+  const [presents, setPresents] = useState<PresentItem[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -40,21 +46,39 @@ const PresentList = () => {
       setLoading(true)
       try {
         console.log("fetchData start")
-        const response = await axios.get<PresentItem[]>(
+        const response = await axios.get<ThemesResponse>(
           "http://localhost:3000/api/themes"
         )
         console.log(response)
+        console.log(response.data)
+        console.log(response.data.data)
         setPresents(response.data.data)
       } catch (e) {
         console.log(e)
       }
-      setLoading(false)
+      setTimeout(() => {
+        setLoading(false)
+      }, 1500)
     }
     fetchData()
   }, [])
-
+  const Loading = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "250px",
+          width: "100%",
+        }}
+      >
+        <Lottie animationData={LoadingAnimation} loop autoPlay />
+      </div>
+    )
+  }
   if (loading) {
-    return <div>대기 중...</div>
+    return <Loading />
   }
 
   if (!presents) {

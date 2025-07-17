@@ -8,8 +8,16 @@ const PresentCardStyle = styled.div`
   cursor: pointer;
 
   img {
-    width: 50px;
-    height: 50px;
+    width: 100%;
+    height: 100%;
+    max-width: 3.125rem;
+    max-height: 3.125rem;
+    min-width: 3.125rem;
+    min-height: 3.125rem;
+    border-radius: 18px;
+    object-fit: cover;
+    overflow: hidden;
+    background-color: rgb(243, 244, 245);
   }
 `
 
