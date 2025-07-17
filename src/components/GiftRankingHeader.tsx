@@ -18,23 +18,6 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
   setRankType,
 }) => {
   type RANK_TYPE = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
-import { useEffect } from "react";
-
-//fetch 경로
-type GiftRankingHeaderProps = {
-  target: string;
-  setTarget: React.Dispatch<React.SetStateAction<string>>;
-  rankType: string;
-  setRankType: React.Dispatch<React.SetStateAction<string>>;
-};
-
-const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
-  target,
-  setTarget,
-  rankType,
-  setRankType,
-}) => {
-  type RANK_TYPE = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
 
   const navigate = useNavigate();
   const theme = useTheme();
@@ -69,7 +52,6 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
     params.set("rankType", newRank);
     navigate(`${location.pathname}?${params.toString()}`);
   };
-
 
   return (
     <>
