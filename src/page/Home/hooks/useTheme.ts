@@ -1,7 +1,7 @@
 import fetchTheme from '@/api/themes/fetchTheme';
 import { useEffect, useState } from 'react';
 
-interface ThemeInfo {
+export interface ThemeInfo {
   themeId: number;
   name: string;
   image: string;

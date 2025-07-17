@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../apiBaseUrl';
-
-interface ThemeInfo {
-  themeId: number;
-  name: string;
-  image: string;
-}
+import type { ThemeInfo } from '@/page/Home/hooks/useTheme';
 
 interface ThemesResponse {
   data: ThemeInfo[];

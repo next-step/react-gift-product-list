@@ -21,7 +21,7 @@ interface GiftRankingItem {
   brandInfo: BrandInfo;
 }
 
-interface RankingApiProps {
+export interface RankingApiProps {
   activeGenerationButton: string;
   activeFilterButton: string;
 }
