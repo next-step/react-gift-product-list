@@ -5,6 +5,8 @@ import { useLoginForm } from '@/hooks/useLoginForm'
 import { useAuth } from '@/contexts/AuthContext'
 import { useEffect } from 'react'
 import { Layout } from '@/components/Layout/Layout'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -20,14 +22,28 @@ export function LoginPage() {
     }
   }, [user, navigate])
 
-  const submitLoginForm = (e: React.FormEvent) => {
+  const submitLoginForm = async (e: React.FormEvent) => {
     e.preventDefault()
     email.onBlur()
     password.onBlur()
 
-    if (validForm) {
-      login(email.value)
+    if (!validForm) return
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/login`,
+        {
+          email: email.value,
+          password: password.value,
+        }
+      )
+
+      const { email: userEmail, name, authToken } = response.data.data
+      login({ email: userEmail, name, authToken })
       navigate(from, { replace: true })
+    } catch (error: any) {
+      const message = error.response?.data.data.message
+      toast.error(typeof message === 'string' ? message : '잘못된 요청입니다.')
     }
   }
 

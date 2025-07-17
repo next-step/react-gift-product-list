@@ -11,6 +11,7 @@ import { ReceiverModal } from './ReceiverModal'
 import { ProductInfo } from './ProductInfo'
 
 import { useOrderForm } from '@/hooks/useOrderForm'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface OrderFormProps {
   product: Product
@@ -28,10 +29,12 @@ export interface FormValues {
 }
 
 export function OrderForm({ product }: OrderFormProps) {
+  const { user } = useAuth()
+
   const form = useForm<FormValues>({
     mode: 'onChange',
     defaultValues: {
-      sender: '',
+      sender: user?.name || '',
       message: cardMock[0].defaultTextMessage,
       receivers: [],
     },

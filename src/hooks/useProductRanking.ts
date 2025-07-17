@@ -30,7 +30,7 @@ export function useProductRanking() {
       const targetType = genderMap[gender]
       const rankType = topicMap[topic]
       const response = await axios.get<{ data: Product[] }>(
-        `http://localhost:3000/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
       )
       setProducts(response.data.data)
     } catch (err) {

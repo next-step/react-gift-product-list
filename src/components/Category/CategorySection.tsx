@@ -3,6 +3,7 @@ import { CategoryItem } from '@/components/Category/CategoryItem'
 import { FiPlus } from 'react-icons/fi'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface Theme {
   themeId: number
@@ -14,12 +15,13 @@ export function CategorySection() {
   const [themes, setThemes] = useState<Theme[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const { user } = useAuth()
 
   useEffect(() => {
     const fetchThemes = async () => {
       try {
         const response = await axios.get<{ data: Theme[] }>(
-          'http://localhost:3000/api/themes'
+          `${import.meta.env.VITE_API_BASE_URL}/api/themes`
         )
         console.log('theme data:', response.data.data)
         setThemes(response.data.data)
@@ -48,7 +50,11 @@ export function CategorySection() {
         <PlusIconWrapper>
           <FiPlus size={16} color="#000" />
         </PlusIconWrapper>
-        <MessageText>선물할 친구를 선택해 주세요.</MessageText>
+        <MessageText>
+          {user?.name
+            ? `${user?.name}님! 선물할 친구를 선택해 주세요.`
+            : '선물할 친구를 선택해 주세요.'}
+        </MessageText>
       </MessageBox>
 
       <Title>선물 테마</Title>

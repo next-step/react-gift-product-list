@@ -20,8 +20,8 @@ export function MyPage() {
         <Wrapper>
           <Title>마이 페이지</Title>
           <Message>
-            {user?.split('@')[0]}님 안녕하세요! <br />
-            이메일 주소는 {user}입니다.
+            {user?.name}님 안녕하세요! <br />
+            이메일 주소는 {user?.email}입니다.
           </Message>
           <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
         </Wrapper>
