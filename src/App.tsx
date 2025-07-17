@@ -13,7 +13,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const containerStyle = css`
   max-width: 720px;
@@ -33,6 +34,7 @@ const App = () => {
         <div css={containerStyle}>
           <AuthProvider>
             <BrowserRouter>
+              <ToastContainer position="top-right" autoClose={3000} />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
@@ -44,7 +46,6 @@ const App = () => {
           </AuthProvider>
         </div>
       </QueryClientProvider>
-
     </ThemeProvider>
   );
 };

@@ -1,9 +1,14 @@
 import { createContext, useContext, useState } from 'react';
 
+interface UserInfo {
+  email: string;
+  name: string;
+  authToken: string;
+}
 interface AuthContextType {
   isAuthenticated: boolean;
-  userEmail: string | null;
-  login: (email: string) => void;
+  userInfo: UserInfo | null;
+  login: (info: UserInfo) => void;
   logout: () => void;
 }
 
@@ -16,25 +21,26 @@ export const AuthProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [userEmail, setUserEmail] = useState<string | null>(() => {
-    return localStorage.getItem('userEmail');
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(() => {
+    const stored = localStorage.getItem('userInfo');
+    return stored ? JSON.parse(stored) : null;
   });
 
-  const isAuthenticated = userEmail !== null;
+  const isAuthenticated = userInfo !== null;
 
-  const login = (email: string) => {
-    setUserEmail(email);
-    localStorage.setItem('userEmail', email);
+  const login = (info: UserInfo) => {
+    setUserInfo(info);
+    localStorage.setItem('userInfo', JSON.stringify(info));
   };
 
   const logout = () => {
-    setUserEmail(null);
-    localStorage.removeItem('userEmail');
+    setUserInfo(null);
+    localStorage.removeItem('userInfo');
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, userEmail, login, logout }}
+      value={{ isAuthenticated, userInfo, login, logout }}
     >
       {children}
     </AuthContext.Provider>
