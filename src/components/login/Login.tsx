@@ -6,6 +6,7 @@ import Input from "@/components/login/Input";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useValidate } from "@/components/login/useValidate";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const loginURL = import.meta.env.VITE_API_BASE_URL_LOGIN;
 
@@ -78,7 +79,17 @@ const Login = () => {
 
               navigate("/my");
             } catch (error) {
-              console.log("error:", error);
+              if (axios.isAxiosError(error)) {
+                const status = error.response?.status;
+                if (status && status >= 400 && status < 500) {
+                  const message =
+                    error.response?.data?.message || "요청이 잘못되었습니다.";
+                  toast.error(`${message}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                  });
+                }
+              }
             }
           }
         }}
