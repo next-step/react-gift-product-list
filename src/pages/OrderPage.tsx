@@ -94,6 +94,14 @@ const OrderPage = () => {
     } catch (err: any) {
       if (err.response?.status === 401) {
         toast.error('로그인이 필요합니다.');
+        navigate(ROUTES.LOGIN, {
+          state: {
+            from: {
+              pathname: location.pathname,
+              search: location.search,
+            },
+          },
+        });
       } else {
         toast.error('주문에 실패했어요. 잠시 후 다시 시도해주세요.');
       }
