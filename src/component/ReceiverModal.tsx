@@ -78,7 +78,7 @@ const ReceiverModal = ({ isOpen, onClose }: Props) => {
             </SimpleButton>
           </div>
           <ScrollBox>
-            {fields.map((field, i) => (
+            {fields.map((_, i) => (
               <div key={i}>
                 {i >= 1 && <Hr1Gray />}
                 <ReceiverOne>

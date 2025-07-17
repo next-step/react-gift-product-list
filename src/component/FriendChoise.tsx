@@ -1,6 +1,5 @@
 import theme from '@/styles/theme'
 import styled from '@emotion/styled'
-import React from 'react'
 
 const MySection = styled.section`
     width: 100%;

@@ -6,7 +6,7 @@ import GiftTheme from '@/component/GiftTheme'
 import { DefaultDiv } from '../styles/Common.styled'
 
 
-const main = () => {
+const Main = () => {
   return (
     <DefaultDiv>
       <FriendChoise/>
@@ -17,4 +17,4 @@ const main = () => {
   )
 }
 
-export default main
+export default Main
