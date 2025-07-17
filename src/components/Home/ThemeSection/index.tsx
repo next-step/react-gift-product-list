@@ -1,31 +1,16 @@
 import type { ThemeType } from "@/types/theme";
-import { useState, useEffect } from "react";
+import { useCallback } from "react";
 import { SectionContainer, SectionTitle } from "../../Common/SectionLayout";
 import { getThemes } from "@/api/themes";
 import styled from "@emotion/styled";
 import ThemeItem from "./ThemeItem";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
+import { useFetchData } from "@/hooks/useFetchData";
 
 const ThemeSection = () => {
-  const [themes, setThemes] = useState<ThemeType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const fetchFn = useCallback(() => getThemes(), []);
 
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const res = await getThemes();
-        setThemes(res.data.data);
-      } catch (err) {
-        console.error(err);
-        setError("에러");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchThemes();
-  }, []);
+  const { data, loading, error } = useFetchData<ThemeType[]>(fetchFn);
 
   if (error) {
     return <></>;
@@ -35,10 +20,10 @@ const ThemeSection = () => {
     <SectionContainer>
       <SectionTitle>선물 테마</SectionTitle>
       {loading ? (
-        <LoadingSpinner color="#ffffff" loading={loading} size={35} />
+        <LoadingSpinner color="#000000" loading={loading} size={35} />
       ) : (
         <ThemeGrid>
-          {themes.map((t) => (
+          {(data ?? []).map((t) => (
             <ThemeItem key={t.themeId} name={t.name} image={t.image} />
           ))}
         </ThemeGrid>

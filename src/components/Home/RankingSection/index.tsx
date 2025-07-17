@@ -2,7 +2,7 @@ import TargetCategory from "./TargetCategory";
 import RankingCategory from "./RankingCategory";
 import RankingItem from "./RankingItem";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   SectionContainer,
   SectionTitle,
@@ -12,12 +12,10 @@ import { useAuthContext } from "@/contexts/useAuthContext";
 import { getRanking } from "@/api/products";
 import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
+import { useFetchData } from "@/hooks/useFetchData";
 
 const RankingSection = () => {
   const [showAll, setShowAll] = useState(false);
-  const [rankingItems, setRankingItems] = useState<BasicGiftProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const RANK_COUNT = showAll ? 21 : 6;
   const toggleShowAll = () => setShowAll((prev) => !prev);
@@ -56,21 +54,12 @@ const RankingSection = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchRanking = async () => {
-      try {
-        setLoading(true);
-        const res = await getRanking(targetType, rankType);
-        setRankingItems(res.data.data);
-      } catch (err) {
-        console.error(err);
-        setError("랭킹데이터 에러");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRanking();
-  }, [targetType, rankType]);
+  const fetchFn = useCallback(
+    () => getRanking(targetType, rankType),
+    [targetType, rankType]
+  );
+
+  const { data, loading, error } = useFetchData<BasicGiftProduct[]>(fetchFn);
 
   if (error) {
     return (
@@ -86,10 +75,10 @@ const RankingSection = () => {
       <TargetCategory selected={targetType} onChange={handleGenderChange} />
       <RankingCategory selected={rankType} onChange={handleCategoryChange} />
       {loading ? (
-        <LoadingSpinner color="#ffffff" loading={loading} size={35} />
+        <LoadingSpinner color="#000000" loading={loading} size={35} />
       ) : (
         <RankingGrid>
-          {rankingItems.slice(0, RANK_COUNT).map((item, index) => (
+          {(data ?? []).slice(0, RANK_COUNT).map((item, index) => (
             <RankingItem
               key={item.id}
               rank={index + 1}
