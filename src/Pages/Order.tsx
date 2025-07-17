@@ -19,11 +19,13 @@ import type { Receiver } from "@/schema/receiver";
 import type { OrderType } from "@/schema/order";
 import type { SummaryGiftProduct } from "@/types/gift";
 import { getProudctSummary } from "@/api/products";
+import { useAuthContext } from "@/contexts/useAuthContext";
 
 const Order = () => {
   const [item, setItem] = useState<SummaryGiftProduct | null>(null);
   const { selectedCard, selectCard } = useCardSelection();
   const { productId } = useParams<{ productId: string }>();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchOrderItem = async () => {
@@ -46,7 +48,7 @@ const Order = () => {
     formState: { errors },
   } = useForm<OrderType>({
     resolver: zodResolver(OrderSchema),
-    defaultValues: { senderName: "", message: "" },
+    defaultValues: { senderName: user?.name || "", message: "" },
     mode: "onSubmit",
   });
 
