@@ -4,6 +4,8 @@ import PromoBanner from './PromoBanner';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const GiftCategorySelectorStyle = styled.div`
   width: auto;
   height: auto;
@@ -82,7 +84,7 @@ function GiftCategorySelectorItemBox() {
   useEffect(() => {
     const fetchThemes = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/themes');
+        const response = await axios.get(`${baseUrl}/themes`);
         setThemes(response.data.data);
       } catch (error) {
         console.error('Error fetching weather data:', error); // 디버깅 코드 나중에 제거하자

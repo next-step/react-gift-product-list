@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const RealtimeRankWrapper = styled.div`
   width: auto;
   height: auto;
@@ -212,7 +214,7 @@ function RealtimeRankItemWrapper({selectedGroup, selectedType}: {selectedGroup: 
       
       setIsLoading(true);
       try {
-        const response = await axios.get(`http://localhost:3000/api/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
+        const response = await axios.get(`${baseUrl}/api/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
         setRanking(response.data.data);
         setIsError(false);
       } catch (error) {
@@ -247,7 +249,7 @@ function RealtimeRankItemWrapper({selectedGroup, selectedType}: {selectedGroup: 
   if(isError || ranking.length === 0) {
     return <div>상품이 없습니다</div>;
   }
-  
+
   return (
     <RealtimeRankItemWrapperStyle>
         <RealtimeRankItemGrid>{(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
