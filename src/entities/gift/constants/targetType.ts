@@ -1,10 +1,4 @@
-export type UserGroup = {
-    query: string;
-    iconText: string;
-    label: string;
-};
-
-export const userGroup: UserGroup[] = [
+export const targetGroup = [
     {
         query: "ALL",
         iconText: "ALL",
@@ -26,3 +20,5 @@ export const userGroup: UserGroup[] = [
         label: "청소년이",
     },
 ] as const;
+
+export type UserGroupQuery = (typeof targetGroup)[number]["query"];

@@ -1,21 +1,19 @@
-import { userGroup, type UserGroup } from "@/entities/gift/constants/userGroup";
+import { targetGroup } from "@/entities/gift/constants/targetType";
 
 import { useQueryParamState } from "@/shared/hooks/useQueryParamState";
 
-import * as Styles from "./UserGroupSelector.styled";
+import * as Styles from "./TargetGroupSelector.styled";
 
-export const UserGroupSelector = () => {
+export const TargetGroupSelector = () => {
     const [selectedGroup, setSelectedGroup] = useQueryParamState("targetType", "ALL");
 
     return (
         <Styles.SelectorContainer>
-            {userGroup.map((group) => {
+            {targetGroup.map((group) => {
                 return (
-                    <UserGroupSelectorItem
+                    <TargetGroupSelectorItem
                         key={group.query}
-                        query={group.query}
-                        iconText={group.iconText}
-                        label={group.label}
+                        group={group}
                         isActive={selectedGroup === group.query}
                         onSelect={setSelectedGroup}
                     />
@@ -25,18 +23,17 @@ export const UserGroupSelector = () => {
     );
 };
 
-export interface UserGroupSelectorItemProps extends UserGroup {
+export interface TargetGroupSelectorItemProps {
+    group: (typeof targetGroup)[number];
     isActive: boolean;
     onSelect: (query: string) => void;
 }
 
-export const UserGroupSelectorItem = ({
-    query,
-    iconText,
-    label,
+export const TargetGroupSelectorItem = ({
+    group: { query, iconText, label },
     isActive,
     onSelect,
-}: UserGroupSelectorItemProps) => {
+}: TargetGroupSelectorItemProps) => {
     return (
         <Styles.ItemContainer onClick={() => onSelect(query)}>
             <Styles.ItemIconText isActive={isActive}>{iconText}</Styles.ItemIconText>
