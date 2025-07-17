@@ -1,28 +1,43 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import type { Category } from '@/types/category';
+import { CATEGORY_THEMES_API_PATH } from '@/constants/api';
 
-export const useCategoryThemes = () => {
-  const [themes, setThemes] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+interface UseCategoryThemesResult {
+  data: Category[] | null;
+  pending: boolean;
+  error: boolean;
+}
+
+const fetchCategoryThemes = async (): Promise<Category[]> => {
+  const res = await axios.get<{ data: Category[] }>(
+    `${import.meta.env.VITE_API_BASE_URL}${CATEGORY_THEMES_API_PATH}`
+  );
+  return res.data.data;
+};
+
+export const useCategoryThemes = (): UseCategoryThemesResult => {
+  const [data, setData] = useState<Category[] | null>(null);
+  const [pending, setPending] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const fetchThemes = async () => {
+    const load = async () => {
+      setPending(true);
+      setError(false);
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/themes`
-        );
-        const json = await res.json();
-        setThemes(json.data);
+        const result = await fetchCategoryThemes();
+        setData(result);
       } catch {
-        setIsError(true);
+        setError(true);
+        setData(null);
       } finally {
-        setIsLoading(false);
+        setPending(false);
       }
     };
 
-    fetchThemes();
+    load();
   }, []);
 
-  return { themes, isLoading, isError };
+  return { data, pending, error };
 };

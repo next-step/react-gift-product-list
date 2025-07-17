@@ -1,43 +1,50 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Product } from '@/types/product';
+import { PRODUCT_RANKING_API_PATH } from '@/constants/api';
 
 interface UseProductRankingResult {
-  products: Product[] | null;
-  isLoading: boolean;
-  isError: boolean;
+  data: Product[] | null;
+  pending: boolean;
+  error: boolean;
 }
+
+const fetchProductRankings = async (
+  targetType: string,
+  rankType: string
+): Promise<Product[]> => {
+  const res = await axios.get<{ data: Product[] }>(
+    `${import.meta.env.VITE_API_BASE_URL}${PRODUCT_RANKING_API_PATH}`,
+    { params: { targetType, rankType } }
+  );
+  return res.data.data;
+};
 
 export const useProductRanking = (
   targetType: string,
   rankType: string
 ): UseProductRankingResult => {
-  const [products, setProducts] = useState<Product[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [data, setData] = useState<Product[] | null>(null);
+  const [pending, setPending] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const fetchRanking = async () => {
-      setIsLoading(true);
-      setIsError(false);
+    const load = async () => {
+      setPending(true);
+      setError(false);
       try {
-        const res = await axios.get<{ data: Product[] }>(
-          `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking`,
-          {
-            params: { targetType, rankType },
-          }
-        );
-        setProducts(res.data.data);
-      } catch (e) {
-        setIsError(true);
-        setProducts(null);
+        const result = await fetchProductRankings(targetType, rankType);
+        setData(result);
+      } catch {
+        setError(true);
+        setData(null);
       } finally {
-        setIsLoading(false);
+        setPending(false);
       }
     };
 
-    fetchRanking();
+    load();
   }, [targetType, rankType]);
 
-  return { products, isLoading, isError };
+  return { data, pending, error };
 };

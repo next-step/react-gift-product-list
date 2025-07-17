@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import type { Product } from '@/types/product';
+import type { ProductSummary } from '@/types/product';
 
 interface ProductInfoProps {
-  product: Product;
+  product: ProductSummary;
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
@@ -13,10 +13,10 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         <ProductImage src={product.imageURL} alt={product.name} />
         <ProductDetails>
           <ProductName>{product.name}</ProductName>
-          <BrandName>{product.brandInfo.name}</BrandName>
+          <BrandName>{product.brandName}</BrandName>
           <ProductPrice>
             <span>상품가 </span>
-            {product.price.sellingPrice.toLocaleString()}원
+            {product.price.toLocaleString()}원
           </ProductPrice>
         </ProductDetails>
       </ProductWrapper>

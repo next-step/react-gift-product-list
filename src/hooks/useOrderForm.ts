@@ -1,21 +1,26 @@
 import { useForm } from 'react-hook-form';
 import { useState, useMemo } from 'react';
 import { messageCards } from '@/data/messageCards';
-import type { Product } from '@/types/product';
 import type { OrderFormValues } from '@/types/order';
+import { useAuth } from '@/contexts/AuthContext';
+import type { ProductSummary } from '@/types/product';
 
-export const useOrderForm = (product: Product | undefined) => {
+const DEFAULT_CARD = messageCards[0];
+
+export const useOrderForm = (product: ProductSummary | undefined) => {
+  const { user } = useAuth();
+
   const methods = useForm<OrderFormValues>({
     defaultValues: {
-      senderName: '',
-      textMessage: messageCards[0].defaultTextMessage,
+      senderName: user?.name ?? '',
+      textMessage: DEFAULT_CARD.defaultTextMessage,
       receivers: [],
     },
   });
 
   const { setValue, watch, handleSubmit } = methods;
 
-  const [selectedCardId, setSelectedCardId] = useState(messageCards[0].id);
+  const [selectedCardId, setSelectedCardId] = useState(DEFAULT_CARD.id);
 
   const receiverList = watch('receivers');
 
@@ -25,7 +30,7 @@ export const useOrderForm = (product: Product | undefined) => {
   );
 
   const totalPrice = useMemo(
-    () => (product ? totalQuantity * product.price.sellingPrice : 0),
+    () => (product ? totalQuantity * product.price : 0),
     [totalQuantity, product]
   );
 

@@ -1,19 +1,19 @@
 import styled from '@emotion/styled';
-import type { Product } from '@/types/product';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { ROUTES } from '@/constants/routes';
+import type { Product } from '@/types/product';
 
 interface ProductCardProps {
-  item: Product;
+  product: Product;
   rank: number;
 }
 
-const ProductCard = ({ item, rank }: ProductCardProps) => {
+const ProductCard = ({ product, rank }: ProductCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const targetPath = ROUTES.ORDER(rank);
+  const targetPath = ROUTES.ORDER(product.id);
 
   const handleClick = () => {
     if (user) {
@@ -33,11 +33,11 @@ const ProductCard = ({ item, rank }: ProductCardProps) => {
   return (
     <Card onClick={handleClick}>
       <RankBadge rank={rank}>{rank}</RankBadge>
-      <Image src={item.imageURL} alt={item.name} />
-      <Brand>{item.brandInfo.name}</Brand>
-      <Name>{item.name}</Name>
+      <Image src={product.imageURL} alt={product.name} />
+      <Brand>{product.brandInfo.name}</Brand>
+      <Name>{product.name}</Name>
       <Price>
-        {item.price.sellingPrice.toLocaleString()} <span>원</span>
+        {product.price.sellingPrice.toLocaleString()} <span>원</span>
       </Price>
     </Card>
   );
@@ -56,7 +56,7 @@ const Image = styled.img`
   aspect-ratio: 1;
   border-radius: 8px;
   margin-bottom: ${({ theme }) => theme.spacing[2]};
-  object-fit: fit;
+  object-fit: cover;
 `;
 
 const Brand = styled.p`

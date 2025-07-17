@@ -6,11 +6,21 @@ import { ROUTES } from '@/constants/routes';
 import useLoginForm from '@/hooks/useLoginForm';
 import InputField from '@/components/common/InputField';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
+import { ERROR_MESSAGES } from '@/constants/validation';
 
 type FromState = {
   pathname: string;
   search?: string;
 };
+
+const isErrorWithMessage = (
+  err: unknown
+): err is { response?: { data?: { message?: string } } } =>
+  typeof err === 'object' &&
+  err !== null &&
+  'response' in err &&
+  typeof (err as any).response?.data?.message === 'string';
 
 const LoginFormSection = () => {
   const { login } = useAuth();
@@ -24,29 +34,24 @@ const LoginFormSection = () => {
     ? fromState.pathname + (fromState.search ?? '')
     : ROUTES.HOME;
 
-  const { userInfo, handleChange, errors, validateField, isValidForm } =
-    useLoginForm();
+  const { email, password, isValid } = useLoginForm();
 
-  const isLoginField = (name: string): name is 'email' | 'password' => {
-    return name === 'email' || name === 'password';
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (isLoginField(name)) {
-      handleChange(name, value);
-    }
-  };
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isEmailOk = validateField('email');
-    const isPasswordOk = validateField('password');
+    const isEmailOk = email.validate();
+    const isPasswordOk = password.validate();
     if (!isEmailOk || !isPasswordOk) return;
 
-    login({ email: userInfo.email });
-    navigate(redirectTo, { replace: true });
+    try {
+      await login({ email: email.value, password: password.value });
+      navigate(redirectTo, { replace: true });
+    } catch (err: unknown) {
+      const message = isErrorWithMessage(err)
+        ? err.response!.data!.message!
+        : ERROR_MESSAGES.INVALID_LOGIN_DOMAIN;
+      toast.error(message);
+    }
   };
 
   return (
@@ -55,25 +60,25 @@ const LoginFormSection = () => {
       <FormWrapper onSubmit={handleLogin}>
         <InputWrapper>
           <InputField
+            {...email.register}
             name="email"
             type="email"
-            value={userInfo.email}
-            onChange={handleInputChange}
-            onBlur={() => validateField('email')}
-            error={errors.email}
+            value={email.value}
+            onBlur={email.validate}
+            error={email.error}
             placeholder="이메일"
           />
           <InputField
+            {...password.register}
             name="password"
             type="password"
-            value={userInfo.password}
-            onChange={handleInputChange}
-            onBlur={() => validateField('password')}
-            error={errors.password}
+            value={password.value}
+            onBlur={password.validate}
+            error={password.error}
             placeholder="비밀번호"
           />
         </InputWrapper>
-        <LoginButton disabled={!isValidForm}>로그인</LoginButton>
+        <LoginButton disabled={!isValid}>로그인</LoginButton>
       </FormWrapper>
     </Wrapper>
   );
