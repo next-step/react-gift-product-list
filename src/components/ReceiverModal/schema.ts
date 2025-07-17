@@ -20,7 +20,6 @@ export type Receiver = z.infer<typeof ReceiverSchema>;
 export const FormSchema = z.object({
   receivers: z
     .array(ReceiverSchema)
-    .min(1)
     .max(
       MAX_RECEIVERS,
       `${MAX_RECEIVERS_HINT_PREFIX}${MAX_RECEIVERS}${MAX_RECEIVERS_HINT_SUFFIX}`

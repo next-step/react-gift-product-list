@@ -54,8 +54,8 @@ const ReceiverModal: React.FC<ReceiverModalProps> = ({
 
   const footerContent = (
     <>
-      <S.CancelButton onClick={onClose}>{CANCEL_BUTTON_TEXT}</S.CancelButton>
-      <S.FinishButton onClick={handleSubmit(onSubmit)}>
+      <S.CancelButton type="button" onClick={onClose}>{CANCEL_BUTTON_TEXT}</S.CancelButton>
+      <S.FinishButton type="button" onClick={handleSubmit(onSubmit)}>
         {fields.length}
         {COMPLETE_BUTTON_SUFFIX}
       </S.FinishButton>
@@ -72,6 +72,7 @@ const ReceiverModal: React.FC<ReceiverModalProps> = ({
       </S.HintText>
       <S.HintText>{DUPLICATE_PHONE_HINT}</S.HintText>
       <S.AddButton
+        type="button"
         onClick={handleAddReceiver}
         disabled={fields.length >= MAX_RECEIVERS}
       >

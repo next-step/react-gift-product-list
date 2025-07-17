@@ -30,7 +30,7 @@ const ReceiverSelectBox: React.FC<ReceiverSelectBoxProps> = ({
     <S.Frame>
       <S.Header>
         <S.Title>{RECEIVER_TITLE}</S.Title>
-        <S.Box onClick={onClick} style={{ cursor: 'pointer' }}>
+        <S.Box type="button" onClick={onClick} style={{ cursor: 'pointer' }}>
           <S.Text>
             {recipients.length > 0 ? EDIT_BUTTON_TEXT : ADD_BUTTON_TEXT}
           </S.Text>

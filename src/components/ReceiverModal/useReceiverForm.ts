@@ -47,6 +47,10 @@ export const useReceiverForm = ({
   };
 
   const onSubmit = (data: FormValues) => {
+    if (data.receivers.length === 0) {
+      alert('받는사람은 1명 이상이어야 합니다.');
+      return;
+    }
     onComplete(data.receivers);
     onClose();
   };
