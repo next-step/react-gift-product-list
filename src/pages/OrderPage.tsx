@@ -11,7 +11,7 @@ import { cardTemplates } from '@/data/cardTemplates';
 import type { Recipient } from '@/types';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
-import { ROUTE_HOME } from '@/constants';
+import { ROUTE_HOME, ROUTE_LOGIN } from '@/constants';
 import { postOrder } from '@/api';
 
 interface OrderFormData {
@@ -300,8 +300,18 @@ const OrderPage = () => {
       const msg = `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
       alert(msg);
       navigate('/');
-    } catch (error) {
-      alert('주문에 실패했습니다.');
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const message =
+        error?.response?.data?.data?.message || '주문에 실패했습니다.';
+      if (status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate(ROUTE_LOGIN, { replace: true });
+      } else if (status && status >= 400 && status < 500) {
+        toast.error(message);
+      } else {
+        alert('주문에 실패했습니다.');
+      }
     }
   });
 
