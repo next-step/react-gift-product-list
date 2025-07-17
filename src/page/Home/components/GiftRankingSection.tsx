@@ -2,12 +2,11 @@ import styled from '@emotion/styled';
 import { filters, generations } from '@/data/categoryDatas';
 import useSearchParamState from '../hooks/useSearchParamState';
 import useToggleCollapse from '../hooks/useToggleCollapse';
-
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import Loading from '@/components/Loading';
-import RankingApi from '@/api/products/rankingApi';
+import useRankingApi from '@/api/products/useRankingApi';
 
 interface ButtonProps {
   isActive: boolean;
@@ -21,7 +20,7 @@ const GiftRankingSection = () => {
     activeFilterButton,
   } = useSearchParamState();
 
-  const { rankingDatas, loading } = RankingApi({ activeGenerationButton, activeFilterButton });
+  const { rankingDatas, loading } = useRankingApi({ activeGenerationButton, activeFilterButton });
 
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
   const { isLoggedIn } = useUserInfo();
