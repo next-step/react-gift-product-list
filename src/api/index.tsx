@@ -7,7 +7,7 @@ export async function login({
   email: string;
   password: string;
 }) {
-  const response = await axios.post('/login', { email, password });
+  const response = await axios.post('/api/login', { email, password });
 
   return response.data;
 }
