@@ -21,11 +21,13 @@ const OrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedCard, setSelectedCard] = useState<Card>(cards[0]);
+  const sessionUserInfo = sessionStorage.getItem("kakaotech/userInfo");
+  const defaultName = sessionUserInfo ? JSON.parse(sessionUserInfo).name : "";
   const methods = useForm<OrderFormValue>({
     mode: "onChange",
     defaultValues: {
       message: selectedCard.defaultTextMessage,
-      sender: "",
+      sender: defaultName,
       receiver: [],
     },
   });
