@@ -16,20 +16,21 @@ import type { FullOrderFormValues } from "@/utils/validator";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import type { ProductSummary } from "@/types/api_types";
 import { useAuth } from "@/contexts/AuthContext";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 
 const OrderPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const productId = Number(id);
   const { data: product, status } = useApiRequest<ProductSummary>({
-    url: `/api/products/${productId}/summary`,
+    url: API_ENDPOINTS.PRODUCT_SUMMARY(productId),
     method: "get",
   });
 
   const { userInfo } = useAuth();
 
   const createOrderRequest = useApiRequest<{ success: boolean }>({
-    url: "/api/order",
+    url: API_ENDPOINTS.ORDER,
     method: "post",
     manual: true,
     headers: {

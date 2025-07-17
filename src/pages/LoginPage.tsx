@@ -9,6 +9,7 @@ import { loginSchema } from "@/utils/validator";
 import type { LoginFormValues } from "@/utils/validator";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import { toast } from "react-toastify";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const LoginPage = () => {
     name: string;
     authToken: string;
   }>({
-    url: "/api/login",
+    url: API_ENDPOINTS.LOGIN,
     method: "post",
     manual: true,
   });
