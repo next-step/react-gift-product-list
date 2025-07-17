@@ -4,6 +4,11 @@ import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
+const fetchThemes = async () => {
+  const { data } = await axios(`${API_BASE}/api/themes`);
+  return data.data;
+};
+
 export const useFetchThemes = () => {
   const [themes, setThemes] = useState<CategoryTheme[]>([]);
   const [themesLoading, setThemesLoading] = useState(true);
@@ -12,8 +17,8 @@ export const useFetchThemes = () => {
   useEffect(() => {
     setThemesLoading(true);
     setThemesError(false);
-    axios(`${API_BASE}/api/themes`)
-      .then(({ data }) => setThemes(data.data))
+    fetchThemes()
+      .then(setThemes)
       .catch(() => setThemesError(true))
       .finally(() => setThemesLoading(false));
   }, []);

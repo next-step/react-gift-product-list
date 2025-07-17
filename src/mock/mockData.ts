@@ -119,19 +119,32 @@ export const products: Product[] = Array.from({ length: 12 }, (_, i) => ({
   id: mockProduct.id + i,
 }));
 
+const TAB_IDS = {
+  ALL: 'ALL',
+  FEMALE: 'FEMALE',
+  MALE: 'MALE',
+  TEEN: 'TEEN',
+} as const;
+
+const FILTER_IDS = {
+  MANY_WISH: 'MANY_WISH',
+  MANY_RECEIVE: 'MANY_RECEIVE',
+  MANY_WISH_RECEIVE: 'MANY_WISH_RECEIVE',
+} as const;
+
 export const tabs = [
-  { id: 'ALL', label: '전체', icon: 'ALL' },
-  { id: 'FEMALE', label: '여성이', icon: '👩' },
-  { id: 'MALE', label: '남성이', icon: '👨' },
-  { id: 'TEEN', label: '청소년이', icon: '🧑' },
+  { id: TAB_IDS.ALL, label: '전체', icon: 'ALL' },
+  { id: TAB_IDS.FEMALE, label: '여성이', icon: '👩' },
+  { id: TAB_IDS.MALE, label: '남성이', icon: '👨' },
+  { id: TAB_IDS.TEEN, label: '청소년이', icon: '🧑' },
 ] as const;
 export type Tab = (typeof tabs)[number];
 export type TabId = Tab['id'];
 
 export const filters = [
-  { id: 'MANY_WISH', label: '받고 싶어한' },
-  { id: 'MANY_RECEIVE', label: '많이 선물한' },
-  { id: 'MANY_WISH_RECEIVE', label: '위시로 받은' },
+  { id: FILTER_IDS.MANY_WISH, label: '받고 싶어한' },
+  { id: FILTER_IDS.MANY_RECEIVE, label: '많이 선물한' },
+  { id: FILTER_IDS.MANY_WISH_RECEIVE, label: '위시로 받은' },
 ] as const;
 export type Filter = (typeof filters)[number];
 export type FilterId = Filter['id'];
