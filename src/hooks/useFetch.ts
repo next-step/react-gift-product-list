@@ -7,7 +7,7 @@ interface UseFetchOptions {
   autoFetch?: boolean;
   dependency?: React.DependencyList;
   data?: Object;
-  baseUrl?: boolean;
+  baseUrl?: string;
 }
 interface ErrorData {
   data: {
@@ -25,7 +25,7 @@ const defaultOptions: UseFetchOptions = {
   autoFetch: true,
   dependency: [],
   data: {},
-  baseUrl: true,
+  baseUrl: "",
 };
 
 const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => {
@@ -35,7 +35,7 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
   const [data, setData] = useState<T | null>(null);
 
   const fetchData = useCallback(async (): Promise<{ data: T | null; error: ErrorData | undefined }> => {
-    const base = mergedOptions.baseUrl ? BASE_URL : undefined;
+    const base = mergedOptions.baseUrl ? mergedOptions.baseUrl : BASE_URL;
     const fetchUrl = new URL(url, base);
 
     if (mergedOptions.params) {
