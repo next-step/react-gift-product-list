@@ -10,9 +10,14 @@ import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BatchReceiverInput from "@src/components/OrderPanels/BatchReceiverInput";
 import { useForm, Controller, FormProvider, useWatch } from "react-hook-form";
-import { fetchOrder, type OrderBody } from "@src/apis/BackEnd/apiList";
+import {
+  ORDER_CODE,
+  postOrder,
+  type OrderBody
+} from "@src/apis/BackEnd/apiList";
 import { ToastContainer, toast } from "react-toastify";
 import type { ProductData } from "@src/pages/OrderPage";
+import usePostState from "@src/hooks/usePostState";
 
 export type Receiver = {
   id: string;
@@ -46,19 +51,9 @@ function OrderForm({ productData }: { productData: ProductData }) {
     }
   });
 
-  const orderSuccess = (data: FormType) => {
-    alert(
-      `주문이 완료되었습니다.\n상품명: ${
-        productData.name
-      }\n구매 수량: ${receivers.reduce(
-        (sum: number, r: Receiver) => sum + parseInt(r.quantity),
-        0
-      )}\n발신자 이름: ${data.sender}\n메세지: ${data.message}`
-    );
-    navigate(PATH.MAIN);
-  };
+  const { status, result, error, post } = usePostState(postOrder);
 
-  const orderHandler = async (data: FormType) => {
+  const orderHandler = async () => {
     const orderInfo: OrderBody = {
       productId: productData.id,
       message: formHooks.getValues("message"),
@@ -70,25 +65,46 @@ function OrderForm({ productData }: { productData: ProductData }) {
         quantity: parseInt(receiver.quantity)
       }))
     };
-    if (userContext?.authToken.value) {
-      const response = await fetchOrder(orderInfo, userContext.authToken.value);
-      if (response?.status) {
-        if (response.status === 401) {
-          redirectLogin(PATH.ORDER, params.id);
-          return;
-        }
-        if (response.status >= 400 && response.status < 500) {
-          toast(response.data.data.message, {
+    post(orderInfo, userContext?.authToken.value ?? "");
+  };
+
+  useEffect(() => {
+    if (status === "pending") return;
+
+    if (status === "error") {
+      switch (error?.status) {
+        case ORDER_CODE.NOT_VALID:
+          toast(error.message, {
             type: "error",
+            hideProgressBar: true,
             position: "bottom-center"
           });
-        }
-        if (response.status === 201) {
-          orderSuccess(data);
-        }
+          break;
+        case ORDER_CODE.LOGIN_REQUIRED:
+          redirectLogin(PATH.ORDER, params.id);
+          break;
+      }
+      return;
+    }
+
+    if (status === "done") {
+      if (result.data.success) {
+        alert(
+          `주문이 완료되었습니다.\n상품명: ${
+            productData.name
+          }\n구매 수량: ${receivers.reduce(
+            (sum: number, r: Receiver) => sum + parseInt(r.quantity),
+            0
+          )}\n발신자 이름: ${formHooks.getValues(
+            "sender"
+          )}\n메세지: ${formHooks.getValues("message")}`
+        );
+        navigate(PATH.MAIN);
+      } else {
+        alert("주문에 실패하였습니다.");
       }
     }
-  };
+  }, [status]);
 
   const receivers = useWatch({
     control: formHooks.control,

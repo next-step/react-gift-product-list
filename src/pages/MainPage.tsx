@@ -10,7 +10,6 @@ function Mainpage() {
   const toastContext = useContext(ToastContext);
 
   useEffect(() => {
-    console.log(toastContext!.message.value);
     if (toastContext!.message.value) {
       toast(toastContext!.message.value, {
         type: "error",

@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { fetchLogin } from "@src/apis/BackEnd/apiList";
+import { LOGIN_CODE, postLogin } from "@src/apis/BackEnd/apiList";
 import UserContext from "@src/contexts/UserContext";
+import usePostState from "@src/hooks/usePostState";
 import theme from "@src/styles/kakaoTheme";
 import { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -36,33 +37,38 @@ function LoginForm() {
   const emailValue = watch("email");
   const passwordValue = watch("password");
 
+  const { status, result, error, post } = usePostState(postLogin);
+
   const nagivateToRedirectionTarget = () => {
     navigate(redirectPath ? decodeURIComponent(redirectPath) : "/");
   };
 
   const handleLogin = async (data: LoginFormData) => {
-    const response = await fetchLogin(data.email, data.password);
-
-    if (!response) {
-      console.error("fetchLogin에 실패하였습니다.");
-      return;
-    }
-
-    if (response.status >= 400 && response.status < 500) {
-      toast(response.data.data.message, {
-        type: "error",
-        hideProgressBar: true,
-        position: "bottom-center"
-      });
-      return;
-    }
-
-    const authData = response.data;
-    userContext?.authToken.setValue(authData.data.authToken);
-    userContext?.email.setValue(authData.data.email);
-    userContext?.user.setValue(authData.data.name);
-    nagivateToRedirectionTarget();
+    post(data.email, data.password);
   };
+
+  useEffect(() => {
+    if (status === "pending") return;
+
+    if (status === "error") {
+      if (error?.status === LOGIN_CODE.WRONG_FORMAT) {
+        toast(error.message, {
+          type: "error",
+          hideProgressBar: true,
+          position: "bottom-center"
+        });
+      }
+      return;
+    }
+
+    if (status === "done") {
+      const authData = result;
+      userContext?.authToken.setValue(authData!.data.authToken);
+      userContext?.email.setValue(authData!.data.email);
+      userContext?.user.setValue(authData!.data.name);
+      nagivateToRedirectionTarget();
+    }
+  }, [status]);
 
   useEffect(() => {
     if (userContext?.authToken.value) {

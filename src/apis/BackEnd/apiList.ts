@@ -1,8 +1,22 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { BE } from "./apiEndPoints";
 import instance from "./axios/instance";
 
 const ALIVEMESSAGE = "pong~!@#$%^&*()";
+
+function handleError(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    throw {
+      status: error.response?.status,
+      message: error.response?.data?.data?.message
+    };
+  }
+
+  throw {
+    status: 500,
+    message: "알 수 없는 오류입니다."
+  };
+}
 
 export async function fetchServerAlive() {
   try {
@@ -29,8 +43,7 @@ export async function fetchThemes() {
 
     return body.data;
   } catch (error) {
-    console.error(error);
-    return null;
+    handleError(error);
   }
 }
 
@@ -45,40 +58,31 @@ export async function fetchRealTimeRankings(
     const body = response.data;
     return body.data;
   } catch (error) {
-    console.error(error);
-    return null;
+    handleError(error);
   }
 }
 
-export async function fetchLogin(email: string, password: string) {
+export const LOGIN_CODE = { WRONG_FORMAT: 400 };
+export async function postLogin(email: string, password: string) {
   try {
     const response = await instance.post(BE.API.LOGIN.BASE, {
       email,
       password
     });
-    return response;
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response ?? null;
-    } else {
-      console.error(error);
-    }
-    return null;
+    handleError(error);
   }
 }
 
+export const PRODUCT_SUMMARY_CODE = { NO_PRODUCT: 404 };
 export async function fetchProductSummary(id: string) {
   try {
     const response = await instance.get(BE.API.PRODUCT.SUMMARY(id));
     const body = response.data;
     return body.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response ?? null;
-    } else {
-      console.error(error);
-    }
-    return null;
+    handleError(error);
   }
 }
 
@@ -94,20 +98,16 @@ export type OrderBody = {
   }[];
 };
 
-export async function fetchOrder(orderInfo: OrderBody, authToken: string) {
+export const ORDER_CODE = { NOT_VALID: 400, LOGIN_REQUIRED: 401 };
+export async function postOrder(orderInfo: OrderBody, authToken: string) {
   try {
     const response = await instance.post(BE.API.ORDER.BASE, orderInfo, {
       headers: {
         Authorization: `${authToken}`
       }
     });
-    return response;
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response ?? null;
-    } else {
-      console.error(error);
-    }
-    return null;
+    handleError(error);
   }
 }
