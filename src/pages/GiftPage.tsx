@@ -15,10 +15,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { getThemes, getRanking } from '@/api/services';
 import { useFetch } from '@/hooks/useFetch';
+import { RankingGridSkeleton } from '@/components/RankingGridSkeleton';
 
 export const GiftPage = () => {
   const [gender, setGender] = useState<GenderFilter>('ALL');
-  const [sort, setSort] = useState<SortFilter>('GIVE');
+  const [sort, setSort] = useState<SortFilter>('WANT');
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
@@ -52,10 +53,17 @@ export const GiftPage = () => {
       {categories && <CategoryGrid items={categories} />}
       <Banner />
       <RankingTabs gender={gender} sort={sort} onChange={handleTab} />
-      {isRankingLoading && <div>랭킹 정보를 불러오는 중...</div>}
-      {rankingError && <div>랭킹 정보를 불러오는 데 실패했습니다.</div>}
-      {rankingList && <RankingGrid items={rankingList} onCardClick={handleCardClick} />}
-    </Layout>
+      {isRankingLoading ? (
+        <RankingGridSkeleton />
+      ) : rankingError ? (
+        <div>랭킹 정보를 불러오는 데 실패했습니다.</div>
+      ) : (
+        rankingList && rankingList.length > 0 ? (
+          <RankingGrid items={rankingList} onCardClick={handleCardClick} />
+        ) : (
+          <div>표시할 상품 목록이 없습니다.</div>
+        )
+      )}</Layout>
   );
 };
 
