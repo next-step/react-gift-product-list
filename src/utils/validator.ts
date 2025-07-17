@@ -22,7 +22,7 @@ export const orderSchema = z.object({
 
 export const receiverSchema = z.object({
   name: z.string().trim().min(1, "받는 사람 이름이 반드시 필요해요."),
-  phone: z
+  phoneNumber: z
     .string()
     .trim()
     .regex(/^010\d{8}$/, "전화번호는 01012341234 형식으로 입력하세요."),
@@ -40,8 +40,8 @@ export const receiverArraySchema = baseReceiverArraySchema.superRefine(
   ({ receivers }, ctx) => {
     const phoneMap = new Map<string, number[]>();
     receivers.forEach((receiver, index) => {
-      const indices = phoneMap.get(receiver.phone) ?? [];
-      phoneMap.set(receiver.phone, [...indices, index]);
+      const indices = phoneMap.get(receiver.phoneNumber) ?? [];
+      phoneMap.set(receiver.phoneNumber, [...indices, index]);
     });
     for (const indices of phoneMap.values()) {
       if (indices.length > 1) {
@@ -49,7 +49,7 @@ export const receiverArraySchema = baseReceiverArraySchema.superRefine(
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "중복된 전화번호입니다.",
-            path: ["receivers", i, "phone"],
+            path: ["receivers", i, "phoneNumber"],
           });
         });
       }

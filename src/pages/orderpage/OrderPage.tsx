@@ -21,16 +21,21 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const productId = Number(id);
-  const {
-    data: product,
-    status,
-    error,
-  } = useApiRequest<ProductSummary>({
+  const { data: product, status } = useApiRequest<ProductSummary>({
     url: `/api/products/${productId}/summary`,
     method: "get",
   });
 
   const { userInfo } = useAuth();
+
+  const createOrderRequest = useApiRequest<{ success: boolean }>({
+    url: "/api/order",
+    method: "post",
+    manual: true,
+    headers: {
+      Authorization: userInfo?.authToken || "",
+    },
+  });
 
   useEffect(() => {
     if (status === "error") {
@@ -66,16 +71,43 @@ const OrderPage = () => {
     return <Navigate to="/notfound" replace />;
   }
 
-  const onSubmit = (data: FullOrderFormValues) => {
+  const onSubmit = async (data: FullOrderFormValues) => {
+    if (data.receivers.length === 0) {
+      toast.error("받는 사람이 없습니다.");
+      return;
+    }
+
     if (!product) return;
-    console.log(data);
-    alert(
-      `주문이 완료되었습니다.\n상품명: ${product.name}\n구매 수량: ${data.receivers.reduce(
-        (acc, cur) => acc + cur.quantity,
-        0
-      )}\n발신자 이름: ${data.sender}\n메시지: ${data.message}`
-    );
-    navigate("/", { replace: true });
+
+    try {
+      const result = await createOrderRequest.refetch({
+        data: {
+          productId: product.id,
+          message: data.message,
+          messageCardId: "default-card",
+          ordererName: data.sender,
+          receivers: data.receivers,
+        },
+      });
+
+      if (result?.data?.success) {
+        alert(
+          `주문이 완료되었습니다.
+상품명: ${product.name}
+구매 수량: ${data.receivers.reduce((acc, cur) => acc + cur.quantity, 0)}
+발신자 이름: ${data.sender}
+메시지: ${data.message}`
+        );
+        navigate("/", { replace: true });
+      }
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        toast.error("인증에 실패했습니다.");
+        navigate("/login", { replace: true });
+      } else {
+        toast.error("주문에 실패했습니다.");
+      }
+    }
   };
 
   if (!product) {

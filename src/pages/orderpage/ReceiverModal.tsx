@@ -31,7 +31,7 @@ const ReceiverModal = ({
       receivers:
         initialReceivers.length > 0
           ? initialReceivers
-          : [{ name: "", phone: "", quantity: 1 }],
+          : [{ name: "", phoneNumber: "", quantity: 1 }],
     });
   }, [initialReceivers]);
 
@@ -55,7 +55,7 @@ const ReceiverModal = ({
             </Notice>
             <AddButton
               type="button"
-              onClick={() => append({ name: "", phone: "", quantity: 1 })}
+              onClick={() => append({ name: "", phoneNumber: "", quantity: 1 })}
               disabled={fields.length >= 10}
             >
               추가하기

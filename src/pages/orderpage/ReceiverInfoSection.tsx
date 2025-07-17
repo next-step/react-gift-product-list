@@ -8,7 +8,7 @@ import type { FullOrderFormValues } from "@/utils/validator";
 const ReceiverInfoSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialReceivers, setInitialReceivers] = useState<
-    { name: string; phone: string; quantity: number }[]
+    { name: string; phoneNumber: string; quantity: number }[]
   >([]);
   const { setValue, watch } = useFormContext<FullOrderFormValues>();
   const receivers = watch("receivers");
@@ -23,7 +23,7 @@ const ReceiverInfoSection = () => {
   };
 
   const handleSubmitReceiverData = (data: {
-    receivers: { name: string; phone: string; quantity: number }[];
+    receivers: { name: string; phoneNumber: string; quantity: number }[];
   }) => {
     setValue("receivers", data.receivers);
     setIsModalOpen(false);
@@ -57,7 +57,7 @@ const ReceiverInfoSection = () => {
             {receivers.map((field, index) => (
               <tr key={index}>
                 <td>{field.name}</td>
-                <td>{field.phone}</td>
+                <td>{field.phoneNumber}</td>
                 <td>{field.quantity}</td>
               </tr>
             ))}
