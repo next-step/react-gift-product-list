@@ -1,8 +1,7 @@
 import TheHeader from "@/components/layout/TheHeader";
 import { useParams, useLocation, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ROUTE_PATH } from "@/routes/paths";
-import { gifts } from "@/data/gift";
 import { cards } from "@/data/card";
 import type { Card } from "@/types/card";
 import styled from "@emotion/styled";
@@ -14,6 +13,9 @@ import { useUserInfo } from "@/contexts/UserInfoContext";
 import { FormProvider, useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import type { OrderFormValue } from "@/types/receiver";
+import { fetchProductsSummary } from "@/api/productSummary";
+import useApiRequest from "@/hooks/useApiRequest";
+import { toast } from "react-toastify";
 
 const OrderPage = () => {
   const location = useLocation();
@@ -45,12 +47,24 @@ const OrderPage = () => {
   }, [location.pathname, navigate, userInfo]);
 
   const { id } = useParams<{ id: string }>();
-  const gift = gifts.find(gift => gift.id.toString() === id);
+  const requestFn = useCallback(() => fetchProductsSummary(Number(id)), [id]);
+  const {
+    data: gift,
+    isLoading,
+    isError,
+    error,
+  } = useApiRequest({
+    requestFn,
+  });
 
-  if (!gift) {
-    navigate(ROUTE_PATH.NOT_FOUND, { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (!gift && !isLoading && isError) {
+      toast.error(error);
+      navigate(ROUTE_PATH.HOME, { replace: true });
+    }
+  }, [gift, isLoading, isError, navigate, error]);
+
+  if (!gift) return null;
 
   const onValid: SubmitHandler<OrderFormValue> = data => {
     const totalCount = data.receiver.reduce(
@@ -84,7 +98,7 @@ const OrderPage = () => {
             <ReceiverSection />
             <GiftInformationSection selectedGift={gift} />
             <Button type="submit">
-              {gift.price.sellingPrice *
+              {gift.price *
                 watchedReceiver.reduce(
                   (total, receiver) => total + Number(receiver.count || 0),
                   0,

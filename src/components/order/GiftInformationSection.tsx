@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import type { Gift } from "@/types/gift";
+import type { GiftSummary } from "@/types/gift";
 
 type GiftInformationSectionProps = {
-  selectedGift: Gift;
+  selectedGift: GiftSummary;
 };
 
 const GiftInformationSection = ({
@@ -15,10 +15,10 @@ const GiftInformationSection = ({
         <Img src={selectedGift.imageURL} alt={selectedGift.name} />
         <div>
           <GiftName>{selectedGift.name}</GiftName>
-          <GiftBrand>{selectedGift.brandInfo.name}</GiftBrand>
+          <GiftBrand>{selectedGift.brandName}</GiftBrand>
           <GiftPrice>
             <Span>상품가 </Span>
-            {selectedGift.price.sellingPrice}원
+            {selectedGift.price}원
           </GiftPrice>
         </div>
       </GiftDiv>

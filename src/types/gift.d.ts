@@ -20,6 +20,14 @@ export interface Gift {
   brandInfo: BrandInfo;
 }
 
+export type GiftSummary = {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+};
+
 export type TargetType = (typeof targetType)[number]["id"];
 
 export type RankType = (typeof rankType)[number]["id"];
