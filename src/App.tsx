@@ -29,7 +29,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/notfound" element={<NotFound />} />
           <Route path="/my" element={<ProtectedRoute><My /></ProtectedRoute>} />
-          <Route path="/order" element={<Order />} />
+          <Route path="/order" element={<ProtectedRoute><Order /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/notfound" replace />} />
         </Routes>
       </BrowserRouter>
