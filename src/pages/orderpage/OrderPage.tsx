@@ -15,6 +15,7 @@ import { fullOrderSchema } from "@/utils/validator";
 import type { FullOrderFormValues } from "@/utils/validator";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import type { ProductSummary } from "@/types/api_types";
+import { useAuth } from "@/contexts/AuthContext";
 
 const OrderPage = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const OrderPage = () => {
     url: `/api/products/${productId}/summary`,
     method: "get",
   });
+
+  const { userInfo } = useAuth();
 
   useEffect(() => {
     if (status === "error") {
@@ -44,7 +47,7 @@ const OrderPage = () => {
     resolver: zodResolver(fullOrderSchema),
     defaultValues: {
       message: "",
-      sender: "",
+      sender: userInfo?.name ?? "",
       receivers: [],
     },
   });
