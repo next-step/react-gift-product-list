@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { theme } from '../styles/theme';
 import { IconFilterItem } from './common/IconFilterItem';
+import { RankingGrid } from './RankingGrid';
+import { useGiftRankingFilter } from '../hooks/useGiftRankingFilter';
 
 const filters = [
   { key: 'all', label: '전체', icon: 'ALL' },
@@ -12,10 +13,13 @@ const filters = [
 
 type FilterKey = (typeof filters)[number]['key'];
 
-const tabOptions = ['받고 싶어한', '많이 선물한', '위시로 받은'];
+const tabOptions = [
+  '받고 싶어한',
+  '많이 선물한',
+  '위시로 받은',
+] as const;
 
-const LOCAL_FILTER_KEY = 'gift_filter_selected';
-const LOCAL_TAB_KEY = 'gift_tab_selected';
+type TabOption = (typeof tabOptions)[number];
 
 const IconFilterContainer = styled.div`
   display: flex;
@@ -55,38 +59,20 @@ const TabButton = styled.button<{ selected: boolean }>`
   border: none;
 `;
 
-function getValidStoredValue<T>(
-  key: string,
-  validValues: T[],
-  defaultValue: T
-): T {
-  const stored = localStorage.getItem(key);
-  return validValues.includes(stored as T)
-    ? (stored as T)
-    : defaultValue;
-}
-
 export default function GiftRankingFilter() {
-  const [selected, setSelected] = useState<FilterKey>(() =>
-    getValidStoredValue(
-      LOCAL_FILTER_KEY,
-      filters.map(f => f.key),
-      filters[0].key
-    )
-  );
-
-  const [selectedTab, setSelectedTab] = useState(() =>
-    getValidStoredValue(LOCAL_TAB_KEY, tabOptions, tabOptions[0])
-  );
+  const {
+    selectedFilter,
+    selectedTab,
+    setSelectedFilter,
+    setSelectedTab,
+  } = useGiftRankingFilter();
 
   const handleFilterChange = (key: FilterKey) => {
-    setSelected(key);
-    localStorage.setItem(LOCAL_FILTER_KEY, key);
+    setSelectedFilter(key);
   };
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = (tab: TabOption) => {
     setSelectedTab(tab);
-    localStorage.setItem(LOCAL_TAB_KEY, tab);
   };
 
   return (
@@ -99,7 +85,7 @@ export default function GiftRankingFilter() {
             key={key}
             label={label}
             icon={icon}
-            selected={selected === key}
+            selected={selectedFilter === key}
             onClick={() => handleFilterChange(key)}
           />
         ))}
@@ -116,6 +102,7 @@ export default function GiftRankingFilter() {
           </TabButton>
         ))}
       </TabBar>
+      <RankingGrid />
     </Container>
   );
 }

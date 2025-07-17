@@ -3,6 +3,9 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
+import { useGiftRanking } from '../hooks/useGiftRanking';
+import type { GiftItem } from '../types/GiftItem';
+import { useGiftRankingFilter } from '../hooks/useGiftRankingFilter';
 
 const Container = styled.div`
   padding: 24px;
@@ -68,50 +71,24 @@ const MoreButton = styled.button`
   margin: 24px auto 0;
   display: block;
   padding: 12px 24px;
-  border: gray;
+  border: 1px solid gray;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
+  background: white;
 `;
-interface GiftItem {
-  id: number;
-  name: string;
-  imageURL: string;
-  price: {
-    basicPrice: number;
-    discountRate: number;
-    sellingPrice: number;
-  };
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
-}
-
-export const giftItem: GiftItem = {
-  id: 123,
-  name: 'BBQ 양념치킨+크림치즈볼+콜라1.25L',
-  imageURL:
-    'https://st.kakaocdn.net/product/gift/product/20231030175450_53e90ee9708f45ffa45b3f7b4bc01c7c.jpg',
-  price: {
-    basicPrice: 29000,
-    discountRate: 0,
-    sellingPrice: 29000,
-  },
-  brandInfo: {
-    id: 2088,
-    name: 'BBQ',
-    imageURL:
-      'https://st.kakaocdn.net/product/gift/gift_brand/20220216170226_38ba26d8eedf450683200d6730757204.png',
-  },
-};
-
-const mockData: GiftItem[] = Array(21).fill(giftItem);
 
 export const RankingGrid = () => {
-  const navigate = useNavigate();
+  const { selectedFilter, selectedTab } = useGiftRankingFilter();
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  const {
+    data: products,
+    loading,
+    error,
+  } = useGiftRanking(selectedFilter, selectedTab);
 
   const handleClick = (id: number) => {
     if (isAuthenticated) {
@@ -121,29 +98,42 @@ export const RankingGrid = () => {
     }
   };
 
-  const [visibleCount, setVisibleCount] = useState(6);
+  const handleMore = () =>
+    setVisibleCount(prev =>
+      products ? Math.min(prev + 6, products.length) : prev
+    );
 
-  const handleMore = () => setVisibleCount(mockData.length);
+  if (loading)
+    return <Container>상품 랭킹을 불러오는 중입니다...</Container>;
+  if (error || !products)
+    return <Container>상품 정보를 불러오지 못했습니다.</Container>;
+  if (products.length === 0)
+    return <Container>표시할 상품이 없습니다.</Container>;
 
   return (
     <Container>
       <Grid>
-        {mockData.slice(0, visibleCount).map((item, index) => (
-          <GiftCard key={index} onClick={() => handleClick(item.id)}>
-            <RankBadge index={index}>{index + 1}</RankBadge>
-
-            <ProductImage src={item.imageURL} alt={item.name} />
-            <ProductInfo>
-              <Brand>{item.brandInfo.name}</Brand>
-              <Name>{item.name}</Name>
-              <Price>
-                {item.price.sellingPrice.toLocaleString()}원
-              </Price>
-            </ProductInfo>
-          </GiftCard>
-        ))}
+        {products
+          .slice(0, visibleCount)
+          .map((item: GiftItem, index) => (
+            <GiftCard
+              key={item.id}
+              onClick={() => handleClick(item.id)}
+            >
+              <RankBadge index={index}>{index + 1}</RankBadge>
+              <ProductImage src={item.imageURL} alt={item.name} />
+              <ProductInfo>
+                <Brand>{item.brandInfo.name}</Brand>
+                <Name>{item.name}</Name>
+                <Price>
+                  {item.price.sellingPrice.toLocaleString()}원
+                </Price>
+              </ProductInfo>
+            </GiftCard>
+          ))}
       </Grid>
-      {visibleCount < mockData.length && (
+
+      {visibleCount < products.length && (
         <MoreButton onClick={handleMore}>더보기</MoreButton>
       )}
     </Container>
