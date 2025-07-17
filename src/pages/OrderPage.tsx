@@ -25,6 +25,29 @@ interface ProductSummary {
   imageURL: string;
 }
 
+const getProductSummaryUrl = (id: string) =>
+  `${import.meta.env.VITE_API_BASE_URL}/api/products/${id}/summary`;
+
+const ORDER_API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/order`;
+
+const ERROR_MESSAGES = {
+  LOAD_PRODUCT_FAIL: '상품 정보를 불러오지 못했어요.',
+  EMPTY_RECEIVERS: '받는 사람을 한 명 이상 추가해주세요.',
+  ORDER_FAIL: '주문에 실패했어요. 잠시 후 다시 시도해주세요.',
+  LOGIN_REQUIRED: '로그인이 필요합니다.',
+  INVALID_ACCESS: '잘못된 접근입니다.',
+};
+
+const isAxiosErrorWithStatus = (
+  err: unknown,
+  status: number
+): err is { response: { status: number } } =>
+  typeof err === 'object' &&
+  err !== null &&
+  'response' in err &&
+  typeof (err as any).response?.status === 'number' &&
+  (err as any).response.status === status;
+
 const OrderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -36,11 +59,11 @@ const OrderPage = () => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get<{ data: ProductSummary }>(
-          `${import.meta.env.VITE_API_BASE_URL}/api/products/${id}/summary`
+          getProductSummaryUrl(id!)
         );
         setProduct(res.data.data);
-      } catch (err: any) {
-        toast.error('상품 정보를 불러오지 못했어요.', {
+      } catch {
+        toast.error(ERROR_MESSAGES.LOAD_PRODUCT_FAIL, {
           toastId: 'product-load-fail',
         });
         navigate(ROUTES.HOME);
@@ -65,13 +88,13 @@ const OrderPage = () => {
 
   const onSubmit = async (data: OrderFormValues) => {
     if (data.receivers.length === 0) {
-      toast.error('받는 사람을 한 명 이상 추가해주세요.');
+      toast.error(ERROR_MESSAGES.EMPTY_RECEIVERS);
       return;
     }
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/order`,
+        ORDER_API_URL,
         {
           productId: product?.id,
           message: data.textMessage,
@@ -98,9 +121,9 @@ const OrderPage = () => {
           `메시지: ${data.textMessage}`
       );
       navigate(ROUTES.HOME);
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        toast.error('로그인이 필요합니다.');
+    } catch (err: unknown) {
+      if (isAxiosErrorWithStatus(err, 401)) {
+        toast.error(ERROR_MESSAGES.LOGIN_REQUIRED);
         navigate(ROUTES.LOGIN, {
           state: {
             from: {
@@ -110,13 +133,13 @@ const OrderPage = () => {
           },
         });
       } else {
-        toast.error('주문에 실패했어요. 잠시 후 다시 시도해주세요.');
+        toast.error(ERROR_MESSAGES.ORDER_FAIL);
       }
     }
   };
 
   if (isLoading) return loading;
-  if (!product) return <div>잘못된 접근입니다.</div>;
+  if (!product) return <div>{ERROR_MESSAGES.INVALID_ACCESS}</div>;
 
   return (
     <>
