@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { cardData } from "@/data/cardData";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { giftData } from "@/data/giftData";
 import CardView from "@/components/order/CardView";
 import {
   CardWrapperStyle,
@@ -87,7 +86,7 @@ const Order: React.FC = () => {
     if (hasError) return;
 
     alert(
-      `주문 상품명: ${selectedGift?.name}\n` +
+      `주문 상품명: ${product?.name}\n` +
         `보내는 사람: ${SenderNameRef.current?.value}\n` +
         `메시지: ${GiftMessageRef.current?.value}\n` +
         `받는 사람 수: ${receivers.length}명\n` +
@@ -95,9 +94,6 @@ const Order: React.FC = () => {
     );
     navigate("/");
   };
-
-  const selectedGiftId = id ? parseInt(id, 10) : undefined;
-  const selectedGift = giftData.find((gift) => gift.id === selectedGiftId);
 
   useEffect(() => {
     if (!id) return;
@@ -107,7 +103,9 @@ const Order: React.FC = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL_PRODUCT}/${id}/summary`
         );
+
         setProduct(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         console.error("상품 정보 로딩 실패:", error);
       }
@@ -186,14 +184,14 @@ const Order: React.FC = () => {
       <div css={productWrapper(theme)}>
         <img
           css={productImage(theme)}
-          src={selectedGift?.imageURL}
-          alt={selectedGift?.name}
+          src={product?.imageURL}
+          alt={product?.name}
         />
         <div css={productInfoStyle(theme)}>
-          <p css={productNameStyle(theme)}>{selectedGift?.name}</p>
-          <p css={productBrandStyle(theme)}>{selectedGift?.brandInfo.name}</p>
+          <p css={productNameStyle(theme)}>{product?.name}</p>
+          <p css={productBrandStyle(theme)}>{product?.brandName}</p>
           <p css={productPriceStyle(theme)}>
-            <strong>{selectedGift?.price.basicPrice.toLocaleString()}</strong>원
+            <strong>{product?.price.toLocaleString()}</strong>원
           </p>
         </div>
       </div>
@@ -205,8 +203,7 @@ const Order: React.FC = () => {
           css={totalPriceBoxStyle}
         >
           <p css={SubmitStyle(theme)}>
-            {(selectedGift?.price?.sellingPrice || 0) * totalQuantity}원
-            주문하기
+            {(product?.price || 0) * totalQuantity}원 주문하기
           </p>
         </div>
       </div>
