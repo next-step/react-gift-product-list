@@ -38,7 +38,7 @@ function ReceiverSectionComponent({
     <ReceiverSection>
       <ReceiverSectionHeader>
         <SectionTitle>{RECEIVER_SECTION_CONSTANTS.TITLE}</SectionTitle>
-        <ShowModalButton onClick={handleOpenModal}>
+        <ShowModalButton type="button" onClick={handleOpenModal}>
           {RECEIVER_MODIFIY_BUTTON}
         </ShowModalButton>
       </ReceiverSectionHeader>
