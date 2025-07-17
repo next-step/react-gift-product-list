@@ -192,7 +192,7 @@ const OrderPage = () => {
   const navigate = useNavigate();
 
   // API에서 상품 정보 가져오기
-  const { product, isLoading, error } = useProduct(productId);
+  const { product, isLoading, error } = useProduct(productId ?? '');
 
   // 주문 정보만 관리하는 폼
   const {
