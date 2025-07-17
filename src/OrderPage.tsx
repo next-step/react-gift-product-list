@@ -6,15 +6,18 @@ import ReceiverModalSection from "@/sections/OrderSection/ReceiverModalSection";
 import ProductInfoSection from "@/sections/OrderSection/ProductInfoSection";
 import BottomOrderBar from "@/sections/OrderSection/BottomOrderBar";
 import { useParams, useNavigate } from "react-router";
-import { giftRankingData } from "@/mocks/giftRankingData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { messageCardData } from "@/mocks/messageCardData";
 import { withAuth } from "@/hoc/withAuth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { orderSchema, type OrderFormData } from "@/utils/validateOrderSchema";
 import * as z from "zod";
-
+import { getProductSummary, type ProductSummary } from "@/apis/product";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth";
+import { orderProduct } from "@/apis/order";
 
 type FormData = z.infer<typeof orderSchema>;
 
@@ -22,12 +25,37 @@ function OrderPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const rank = Number(id);
-  const repeatedData = Array(12).fill(null).flatMap(() => giftRankingData);
-  const product = repeatedData[rank - 1];
+  const productId = Number(id);
+  const [product, setProduct] = useState<ProductSummary | null>(null);
+
+  useEffect(() => {
+    if (isNaN(productId)) {
+      navigate("/");
+      return;
+    }
+
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductSummary(productId);
+        setProduct(data);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data?.message ?? "상품 정보를 불러올 수 없습니다.");
+        } else {
+          toast.error("알 수 없는 오류가 발생했습니다.");
+        }
+        navigate("/");
+      }
+    };
+
+    fetchProduct();
+  }, [productId, navigate]);
+
 
   const defaultCardId = messageCardData[0]?.id ?? 1;
   const [selectedCardId, setSelectedCardId] = useState(defaultCardId);
+
+  const { user } = useAuth();
 
   const {
     register,
@@ -46,24 +74,50 @@ function OrderPage() {
     },
   });
 
+  useEffect(() => {
+    if (user?.name) {
+      setValue("sender", user.name);
+    }
+  }, [user?.name, setValue]);
+
   const totalQuantity = watch("receivers").reduce((sum, r) => sum + (r.quantity || 0), 0);
 
-  const totalPrice = product?.price.sellingPrice * totalQuantity;
+  const totalPrice = product ? product.price * totalQuantity : 0;
 
-  const onSubmit = (data: FormData) => {
-    const receiverLines = data.receivers.map((r) => `- ${r.name} / ${r.phone} / 수량: ${r.quantity}`).join("\n");
-    const message = 
-`🎁 ${rank}등 상품 주문 완료!
-보낸 사람: ${data.sender}
-메시지: ${data.message}
-받는 사람 목록:
-${receiverLines}`;
+  const onSubmit = async (data: FormData) => {
+    if (!product) return;
+    try {
+      await orderProduct({
+        productId: product.id,
+        message: data.message,
+        messageCardId: String(selectedCardId),
+        ordererName: data.sender,
+        receivers: data.receivers.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone,
+          quantity: r.quantity,
+        })),
+      }, user?.authToken || "");
+      const message =
+        `주문이 완료되었습니다.
+상품명: ${product?.name}
+구매 수량: ${totalQuantity}
+발신자 이름: ${data.sender}
+메시지: ${data.message}`;
 
-    alert(message);
-    navigate("/");
+      alert(message);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        toast.error("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+        navigate("/login");
+      } else {
+        toast.error("주문에 실패했습니다. 다시 시도해주세요.")
+      }
+    }
   };
 
-  if (!product || isNaN(rank) || rank < 1 || rank > repeatedData.length) {
+  if (!product) {
     return <PageContainer>존재하지 않는 상품입니다.</PageContainer>;
   }
 
@@ -95,8 +149,8 @@ ${receiverLines}`;
           product={{
             imageUrl: product.imageURL,
             name: product.name,
-            brand: product.brandInfo.name,
-            price: product.price.sellingPrice,
+            brand: product.brandName,
+            price: product.price,
           }}
         />
         <BottomOrderBar totalPrice={totalPrice} isValid onOrder={handleSubmit(onSubmit)} />
