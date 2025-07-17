@@ -1,40 +1,21 @@
-import { useState, useEffect } from 'react';
-import { getProductById } from '../api/products';
-import type { Product } from '../api/types';
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+import { useFetch } from './useFetch';
+import type { ProductResponse } from '../api/types';
 
 /**
  * 특정 상품의 상세 정보를 가져오는 커스텀 훅
  * @param productId - 상품 ID
  */
-export const useProduct = (productId: string | number) => {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+export const useProduct = (productId: string | number | undefined) => {
+  // productId가 없으면 빈 문자열을 전달하여 404 에러 발생시킴
+  const url = productId
+    ? `${baseURL}/api/products/${productId}`
+    : `${baseURL}/api/products/`;
+  const result = useFetch<ProductResponse>(url);
 
-  useEffect(() => {
-    if (!productId) {
-      setError(new Error('상품 ID가 필요합니다.'));
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchProduct = async () => {
-      try {
-        setIsLoading(true);
-        const productResponse = await getProductById(productId);
-        setProduct(productResponse.data); // API 응답에서 .data 필드 사용
-        setError(null);
-      } catch (err) {
-        console.error('상품 정보 가져오기 실패:', err);
-        setError(err as Error);
-        setProduct(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [productId]);
-
-  return { product, isLoading, error };
+  return {
+    product: result.data?.data || null,
+    isLoading: result.isLoading,
+    error: result.error,
+  };
 };
