@@ -18,10 +18,6 @@ function Ranking() {
   } = useRanking();
 
   useEffect(() => {
-    // const sex = localStorage.getItem('selectedSex');
-    // setSelectedSex((sex as SexType) || 'ALL');
-    // const category = localStorage.getItem('selectedCategory');
-    // setSelectCategory((category as CategoryType) || 'MANY_WISH');
     getRank();
   }, [selectedSex, selectCategory]);
 
