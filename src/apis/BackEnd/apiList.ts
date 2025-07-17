@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BE } from "./apiEndPoints";
 import instance from "./axios/instance";
 
