@@ -38,7 +38,7 @@ export function useFetch<T>({
           isLoading: false,
           isError: true,
         });
-        return;
+        return null;
       }
 
       setFetchState({
@@ -46,6 +46,8 @@ export function useFetch<T>({
         isLoading: false,
         isError: false,
       });
+
+      return data;
     } catch (error) {
       errorHandler(error);
 
@@ -54,6 +56,8 @@ export function useFetch<T>({
         isLoading: false,
         isError: true,
       });
+
+      throw error;
     }
   };
 

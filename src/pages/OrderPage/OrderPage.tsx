@@ -8,7 +8,7 @@ import ProductInfo from "./components/ProductInfo/ProductInfo";
 import { useProductInfo } from "./hooks/useProductInfo";
 import { ROUTES } from "@/constants/routes";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOrderForm } from "./hooks/useOrderForm";
 import { ORDER_MESSAGES } from "./constants/alert";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -17,6 +17,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { Order } from "@/types/Order";
 import { createOrder } from "@/data/api";
 import { AxiosError } from "axios";
+import { useFetch } from "@/hooks/useFetch";
+import { API_ERROR_MESSAGES } from "./constants/apiMessage";
 
 const OrderPageContainer = styled.div`
   display: flex;
@@ -30,6 +32,32 @@ function OrderPage() {
   const [isSubmittedOnce, setIsSubmittedOnce] = useState(false);
   const { product, loading } = useProductInfo();
   const { user } = useAuth();
+
+  const [order, setOrder] = useState<Order | null>(null);
+
+  const { data } = useFetch<{ success: boolean }>({
+    fetchFn: () => {
+      if (!order) {
+        return Promise.reject(new Error(API_ERROR_MESSAGES.ORDER_NOT_FOUND));
+      }
+      return createOrder(user?.authToken || "", order);
+    },
+    errorHandler: (error) => {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          navigate(ROUTES.LOGIN);
+        }
+      }
+    },
+    enabled: !!order, // order가 있을 때만 실행
+    deps: [order], // order가 변경되면 자동 실행
+  });
+
+  useEffect(() => {
+    if (data && data.success) {
+      navigate(ROUTES.HOME);
+    }
+  }, [data, navigate]);
 
   const {
     messageCard,
@@ -72,7 +100,7 @@ function OrderPage() {
         quantity: Number(receiver.quantity),
       }));
 
-      const order: Order = {
+      const orderData: Order = {
         productId: product?.id || 0,
         message: formValues.cardMessage,
         messageCardId: messageCard.id.toString(),
@@ -80,18 +108,7 @@ function OrderPage() {
         receivers: transformedReceivers,
       };
 
-      try {
-        await createOrder(user?.authToken || "", order);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 401) {
-            navigate(ROUTES.LOGIN);
-            return;
-          }
-        }
-      }
-
-      navigate(ROUTES.HOME);
+      setOrder(orderData);
       return;
     }
   };
