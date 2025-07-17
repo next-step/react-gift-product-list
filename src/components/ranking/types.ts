@@ -32,3 +32,4 @@ export type behaviorProps = {
   selected: BehaviorParam | null;
   onSelect: (option: BehaviorParam) => void;
 
+};

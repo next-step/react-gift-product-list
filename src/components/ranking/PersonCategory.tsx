@@ -36,7 +36,6 @@ const PersonCategory = ({ options, selected, onSelect }: personProps) => {
       {options.map((o) => (
         <PersonBtn key={o.label} onClick={() => onSelect(o.param)}>
           <PersonImage selected={selected === o.param}>
-
             {o.emoji}
           </PersonImage>
           <p>{o.label}</p>
