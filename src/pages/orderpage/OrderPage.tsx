@@ -1,7 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import MessageCardSection from "@/pages/orderpage/MessageCardSection";
 import SenderInfoSection from "@/pages/orderpage/SenderInfoSection";
 import ReceiverInfoSection from "@/pages/orderpage/ReceiverInfoSection";
@@ -27,6 +29,17 @@ const OrderPage = () => {
     method: "get",
   });
 
+  useEffect(() => {
+    if (status === "error") {
+      toast.error("오류가 발생했습니다. 홈으로 이동합니다.", {
+        position: "top-center",
+      });
+      setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 1000);
+    }
+  }, [status, navigate]);
+
   const methods = useForm<FullOrderFormValues>({
     resolver: zodResolver(fullOrderSchema),
     defaultValues: {
@@ -44,7 +57,7 @@ const OrderPage = () => {
     return <p>로딩 중...</p>;
   }
   if (status === "error") {
-    return <Navigate to="/notfound" replace />;
+    return null;
   }
   if (status === "success" && !product) {
     return <Navigate to="/notfound" replace />;
