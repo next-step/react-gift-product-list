@@ -16,3 +16,14 @@ export const mockProduct = {
   },
 }
 export const mockProductList = [mockProduct, mockProduct, mockProduct]; // 배열로 감싸기
+export interface Product {
+  id: number
+  imageURL: string
+  name: string
+  brandInfo?: {
+    name: string
+  }
+  price: {
+    sellingPrice: number
+  }
+}

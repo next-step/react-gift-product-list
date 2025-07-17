@@ -32,9 +32,23 @@ export const OrderPage = () => {
   const didNavigate = useRef(false)
   const { productId } = useParams()
   const navigate = useNavigate()
-  const product =
-    mockProductList.find((item) => item.id === Number(productId)) ||
-    mockProductList[0]
+
+  const [product, setProduct] = useState(null)
+  useEffect(() => {
+    if (!productId) return
+
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`/api/products/${productId}`)
+        const data = await res.json()
+        setProduct(data.data)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchProduct()
+  }, [productId])
   const [orderCompleted, setOrderCompleted] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
   const selectedCard = CardData.find((card) => card.id === selectedCardId)

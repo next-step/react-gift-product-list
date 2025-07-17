@@ -9,13 +9,14 @@ import MyPage from './pages/MyPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './contexts/AuthContext'
 import OrderPage from './pages/OrderPage'
-
+import { CategoryItem } from './pages/CategoryItem';
 export const PATHS = {
   HOME: '/',
   LOGIN: '/login',
   NOT_FOUND: '*',
   ORDER: '/order/:productId',
   MY: '/my',
+  CATEGORY: '/category/:themeId',
 }as const
 const authProtected = (element: React.ReactNode) => (
   <ProtectedRoute>{element}</ProtectedRoute>
@@ -40,6 +41,9 @@ const router = createBrowserRouter([
   {
     path: PATHS.NOT_FOUND,
     element: authProtected(<NotFoundPage />),
+  },
+  { path: PATHS.CATEGORY,
+    element: authProtected(<CategoryItem />), 
   },
 ])
 const Root = () => {
