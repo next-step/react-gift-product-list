@@ -118,10 +118,10 @@
   - [x] 로그인 성공 시 내려오는 authToken 과 email, name 을 userInfo storage 에 저장
   - [x] 4XX 에러가 발생하면 Toast 를 통해 에러 메시지를 띄움
     - [react-toastify](https://www.npmjs.com/package/react-toastify) 라이브러리 사용
-- [ ] 주문하기 기능
+- [x] 주문하기 기능
   - [x] `/api/products/:productsId/summary` api 를 사용하여 제품 정보를 가져오기
   - [x] 4XX 에러가 발생하면 Toast 를 통해 에러 메시지를 보여주고, 선물하기 홈으로 연결
   - [x] 보내는 사람 Input Field 에 userInfo 의 name 을 defaultValue 로 채우기
-  - [ ] `/api/order` api 를 사용하여 주문하기 기능을 완성
+  - [x] `/api/order` api 를 사용하여 주문하기 기능을 완성
     - [x] 주문하기 api 의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken 을 넣어야 함
-    - [ ] 주문하기 api 에서 401 에러가 발생하면 로그인 페이지로 연결
+    - [x] 주문하기 api 에서 401 에러가 발생하면 로그인 페이지로 연결

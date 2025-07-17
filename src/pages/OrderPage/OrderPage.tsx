@@ -16,6 +16,7 @@ import { LoadingContainer } from "../HomePage/components/Category/Category.style
 import { useAuth } from "@/contexts/AuthContext";
 import type { Order } from "@/types/Order";
 import { createOrder } from "@/data/api";
+import { AxiosError } from "axios";
 
 const OrderPageContainer = styled.div`
   display: flex;
@@ -80,10 +81,14 @@ function OrderPage() {
       };
 
       try {
-        const response = await createOrder(user?.authToken || "", order);
-        console.log(response);
+        await createOrder(user?.authToken || "", order);
       } catch (error) {
-        console.error(error);
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 401) {
+            navigate(ROUTES.LOGIN);
+            return;
+          }
+        }
       }
 
       navigate(ROUTES.HOME);
