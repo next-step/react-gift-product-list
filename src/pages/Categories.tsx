@@ -3,16 +3,14 @@ import PresentLayout from "@/components/PresentLayout"
 import Text from "@/components/Text"
 import PlusNewPerson from "./PlusNewPerson"
 import PresentCardStyle from "@/components/PresentCardStyle"
-import { useContext } from "react"
-import { PresentThemeContext } from "@/context/PresentThemeContext"
 import Layout from "@/components/Layout"
 import Blank from "@/components/Blank"
 import Column from "@/components/Column"
 import Trending from "./Trending"
 import { useState, useEffect } from "react"
 import axios from "axios"
-import Lottie from "lottie-react"
-import LoadingAnimation from "@/assets/lottie/Loader.json"
+import Loading from "@/components/PresentTheme/Loading"
+import ThemeNotFound from "@/components/PresentTheme/ThemeNotFound"
 
 interface PresentItem {
   themeId: number
@@ -62,27 +60,13 @@ const PresentList = () => {
     }
     fetchData()
   }, [])
-  const Loading = () => {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "250px",
-          width: "100%",
-        }}
-      >
-        <Lottie animationData={LoadingAnimation} loop autoPlay />
-      </div>
-    )
-  }
+
   if (loading) {
     return <Loading />
   }
 
-  if (!presents) {
-    return <div>hi</div>
+  if (!presents.length) {
+    return <ThemeNotFound />
   }
 
   return (
