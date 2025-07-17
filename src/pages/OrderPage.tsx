@@ -6,6 +6,7 @@ import { Section } from '@/components/layout';
 import Container from '@/components/layout/Container';
 import { RecipientList, RecipientModal } from '@/components/order';
 import { useProduct } from '@/hooks';
+import { useAuth } from '@/hooks';
 import { cardTemplates } from '@/data/cardTemplates';
 import type { Recipient } from '@/types';
 
@@ -188,6 +189,7 @@ const BackButton = styled.button`
 `;
 
 const OrderPage = () => {
+  const { user } = useAuth();
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
 
@@ -205,7 +207,7 @@ const OrderPage = () => {
     defaultValues: {
       selectedCardId: cardTemplates[0].id,
       message: cardTemplates[0].defaultTextMessage || '',
-      sender: '',
+      sender: user?.name || '',
       recipients: [],
     },
     mode: 'onChange',
