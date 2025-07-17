@@ -1,10 +1,50 @@
+import axiosInstance from '@apis/axiosInstance';
 import styled from '@emotion/styled';
-import giftThemes from '@data/giftCategory.json';
+import { useEffect, useState } from 'react';
 interface GiftTheme {
   themeId: number;
   name: string;
   image: string;
 }
+
+const CategorySection = () => {
+  const [themes, setThemes] = useState<GiftTheme[]>([]);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const loadThemes = async () => {
+      try {
+        const res = await axiosInstance.get('/themes');
+        console.log(res);
+        const data = res.data;
+        setThemes(data.data);
+      } catch (error) {
+        console.error('테마를 불러오는 중 오류 발생: ', error);
+        setHasError(true);
+      }
+    };
+    loadThemes();
+  }, []);
+
+  if (hasError || themes.length === 0) return null;
+
+  return (
+    <Section>
+      <SectionTitle>선물 테마</SectionTitle>
+      <Grid>
+        {themes.map((theme: GiftTheme) => (
+          <Item key={theme.themeId}>
+            <Image src={theme.image} alt={theme.name} />
+            <Label>{theme.name}</Label>
+          </Item>
+        ))}
+      </Grid>
+    </Section>
+  );
+};
+
+export default CategorySection;
+
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing4};
 `;
@@ -32,21 +72,3 @@ const SectionTitle = styled.div(({ theme }) => ({
   ...theme.typography.label1Bold,
   marginBottom: theme.spacing.spacing3,
 }));
-
-const CategorySection = () => {
-  return (
-    <Section>
-      <SectionTitle>선물 테마</SectionTitle>
-      <Grid>
-        {giftThemes.map((theme: GiftTheme) => (
-          <Item key={theme.themeId}>
-            <Image src={theme.image} alt={theme.name} />
-            <Label>{theme.name}</Label>
-          </Item>
-        ))}
-      </Grid>
-    </Section>
-  );
-};
-
-export default CategorySection;

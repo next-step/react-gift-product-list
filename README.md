@@ -28,3 +28,10 @@
 - 재사용성을 위해 API 유틸 구성
   - api 폴더 만들고 axiosInstance.ts 파일 작성
   - 기본 설정을 포함한 Axios 인스턴스 생성
+
+#### theme(카테고리) API 섹션 구현
+
+- 가독성 위해 스타일드 컴포넌트 위치 이동
+- apis 경로를 못찾는 오류가 생겨 alias 추가
+- useState로 필요한 상태 정의 (로딩 제외)
+- useEffect로 API 요청 로직 구현
