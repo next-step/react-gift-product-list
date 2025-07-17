@@ -35,9 +35,6 @@ const GiftRankingSection = () => {
     selectedSort
   );
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   return (
     <Section>
       <Heading>실시간 급상승 선물랭킹</Heading>
@@ -53,8 +50,10 @@ const GiftRankingSection = () => {
           localStorage.setItem('selectedSort', tab);
         }}
       />
-      {products.length === 0 && <None>'상품이 없습니다.'</None>}
-      <GiftRankingGrid products={products} />
+      {isLoading && <None></None>}
+      {error && <div>Error: {error.message}</div>}
+      {!isLoading && !error && products.length === 0 && <None>'상품이 없습니다.'</None>}
+      {!isLoading && !error && <GiftRankingGrid products={products} />}
     </Section>
   );
 };
