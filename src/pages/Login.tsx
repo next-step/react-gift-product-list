@@ -23,9 +23,9 @@ const LoginForm = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  const onSubmit = (data: LoginFormInputs) => {
+  const onSubmit = async (data: LoginFormInputs) => {
     console.log('로그인 요청:', data);
-    login(data.id);
+    await login(data.id, data.password);
   };
 
   return (
@@ -35,14 +35,8 @@ const LoginForm = () => {
       <FormWrapper onSubmit={handleSubmit(onSubmit)}>
         <InputWrapper>
           <Input
-            {...register('id', {
-              required: 'ID를 입력해주세요.',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: '유효한 이메일 형식이 아닙니다.',
-              },
-            })}
-            name="id"
+            {...register('id')}
+            type="email"
             placeholder="이메일"
             hasError={!!errors.id}
           />
@@ -51,14 +45,7 @@ const LoginForm = () => {
 
         <InputWrapper>
           <Input
-            {...register('password', {
-              required: 'PW를 입력해주세요.',
-              minLength: {
-                value: 8,
-                message: 'PW는 최소 8글자 이상이어야 합니다.',
-              },
-            })}
-            name="password"
+            {...register('password')}
             type="password"
             placeholder="비밀번호"
             hasError={!!errors.password}
