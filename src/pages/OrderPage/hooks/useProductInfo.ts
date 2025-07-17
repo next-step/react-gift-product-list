@@ -5,6 +5,7 @@ import type { ProductInfoSummary } from "@/types/ProductInfoSummary";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/constants/routes";
 import { AxiosError } from "axios";
+import { API_ERROR_MESSAGES } from "../constants/apiMessage";
 
 export function useProductInfo(): {
   product: ProductInfoSummary | null;
@@ -32,7 +33,7 @@ export function useProductInfo(): {
           const errorStatus = error.response?.status;
 
           if (errorStatus && errorStatus >= 400 && errorStatus < 500) {
-            toast.error("현재 없는 상품입니다");
+            toast.error(API_ERROR_MESSAGES.PRODUCT_NOT_FOUND);
           }
 
           setProduct(null);

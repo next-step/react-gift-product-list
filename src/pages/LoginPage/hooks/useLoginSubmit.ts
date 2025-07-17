@@ -4,7 +4,7 @@ import { getUserInfo } from "@/data/api";
 import { AxiosError } from "axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { API_LOGIN_ERROR_MESSAGES } from "../constants/labels";
+import { API_LOGIN_ERROR_MESSAGES } from "../constants/apiMessage";
 
 function useLoginSubmit() {
   const navigate = useNavigate();
