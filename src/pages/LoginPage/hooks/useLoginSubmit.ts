@@ -1,7 +1,9 @@
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserInfo } from "@/data/api";
+import { AxiosError } from "axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function useLoginSubmit() {
   const navigate = useNavigate();
@@ -21,7 +23,14 @@ function useLoginSubmit() {
       const response = await getUserInfo(email, password);
       login(response.email, response.name, response.authToken);
     } catch (error) {
-      console.error(error);
+      if (error instanceof AxiosError) {
+        const errorStatus = error.response?.status;
+
+        if (errorStatus && errorStatus >= 400 && errorStatus < 500) {
+          toast.error("@kakao.com 이메일 주소만 가능합니다.");
+        }
+      }
+      return;
     }
 
     const redirectPath = searchParams.get("redirect");

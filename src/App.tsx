@@ -10,6 +10,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import MyPage from "./pages/MyPage/MyPage";
 import { ROUTES } from "./constants/routes";
 import OrderPage from "./pages/OrderPage/OrderPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const globalStyles = css`
   body {
@@ -32,6 +34,12 @@ function App() {
           </Routes>
         </ViewportContainer>
       </AuthProvider>
+      <ToastContainer
+        position="bottom-center"
+        newestOnTop={false}
+        closeOnClick
+        hideProgressBar={true}
+      />
     </ThemeProvider>
   );
 }
