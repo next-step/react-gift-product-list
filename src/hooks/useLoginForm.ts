@@ -74,11 +74,9 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
           email: form.email,
           password: form.password,
         });
-        login({
-          email: data.email,
-          name: data.name,
-          authToken: data.authToken,
-        });
+        console.log('로그인 응답: ');
+        const { email, name, authToken } = data.data;
+        login({ email, name, authToken });
         onSuccess();
       } catch (error) {
         toast.error('네트워크 오류가 발생했습니다.');
