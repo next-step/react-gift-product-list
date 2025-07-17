@@ -4,4 +4,5 @@ export const API_PATHS = {
   LOGIN: "/api/login",
   PRODUCT_SUMMARY: (productId: string | number) =>
     `/api/products/${productId}/summary`,
+  ORDER: "/api/order",
 };

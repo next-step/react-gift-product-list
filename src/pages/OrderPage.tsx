@@ -16,6 +16,8 @@ import type { OrderFormValue } from "@/types/order";
 import { fetchProductsSummary } from "@/api/productSummary";
 import useApiRequest from "@/hooks/useApiRequest";
 import { toast } from "react-toastify";
+import type { OrderRequest } from "@/types/order";
+import { postOrder } from "@/api/order";
 
 const OrderPage = () => {
   const location = useLocation();
@@ -23,6 +25,7 @@ const OrderPage = () => {
   const [selectedCard, setSelectedCard] = useState<Card>(cards[0]);
   const sessionUserInfo = sessionStorage.getItem("kakaotech/userInfo");
   const defaultName = sessionUserInfo ? JSON.parse(sessionUserInfo).name : "";
+  const token = sessionUserInfo ? JSON.parse(sessionUserInfo).authToken : "";
   const methods = useForm<OrderFormValue>({
     mode: "onChange",
     defaultValues: {
@@ -74,16 +77,36 @@ const OrderPage = () => {
       0,
     );
 
-    alert(
-      [
-        "주문이 완료되었습니다.",
-        `상품명: ${gift.name}`,
-        `구매 수량: ${totalCount}개`,
-        `보낸 사람: ${data.sender}`,
-        `메시지: ${data.message}`,
-      ].join("\n"),
-    );
-    navigate(ROUTE_PATH.HOME, { replace: true });
+    const orderRequestData: OrderRequest = {
+      productId: Number(id),
+      message: data.message,
+      messageCardId: String(selectedCard.id),
+      ordererName: data.sender,
+      receivers: data.receiver.map(receiver => ({
+        name: receiver.name,
+        phoneNumber: receiver.phoneNumber,
+        quantity: Number(receiver.quantity),
+      })),
+    };
+
+    postOrder(orderRequestData, token)
+      .then(() => {
+        alert(
+          [
+            "주문이 완료되었습니다.",
+            `상품명: ${gift.name}`,
+            `구매 수량: ${totalCount}개`,
+            `보낸 사람: ${data.sender}`,
+            `메시지: ${data.message}`,
+          ].join("\n"),
+        );
+        navigate(ROUTE_PATH.HOME, { replace: true });
+      })
+      .catch(err => {
+        toast.error(
+          err.errorMessage || "주문에 실패했습니다. 다시 시도해주세요.",
+        );
+      });
   };
 
   return (
