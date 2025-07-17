@@ -10,4 +10,9 @@ export default defineConfig({
       '@': '/src', // @를 쓰면 src 폴더를 가리키게 됨
     },
   },
+  server: {
+    proxy: {
+      '/login': 'http://localhost:3000',
+    },
+  },
 });
