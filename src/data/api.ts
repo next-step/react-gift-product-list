@@ -3,6 +3,7 @@ import { END_POINTS } from "./endPoints";
 import type { GiftThemeType } from "@/types/GiftThemeType";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import type { User } from "@/types/User";
+import type { ProductInfoSummary } from "@/pages/OrderPage/components/ProductInfo/ProductInfo";
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -37,5 +38,12 @@ export const getUserInfo = async (
     email,
     password,
   });
+  return response.data.data;
+};
+
+export const getProductInfo = async (
+  id: string
+): Promise<ProductInfoSummary> => {
+  const response = await apiClient.get(`/api/products/${id}/summary`);
   return response.data.data;
 };

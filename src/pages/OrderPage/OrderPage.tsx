@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useOrderForm } from "./hooks/useOrderForm";
 import { ORDER_MESSAGES } from "./constants/alert";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
 
 const OrderPageContainer = styled.div`
   display: flex;
@@ -22,7 +24,7 @@ const OrderPageContainer = styled.div`
 function OrderPage() {
   const navigate = useNavigate();
   const [isSubmittedOnce, setIsSubmittedOnce] = useState(false);
-  const product = useProductInfo();
+  const { product, loading } = useProductInfo();
 
   const {
     messageCard,
@@ -65,9 +67,23 @@ function OrderPage() {
     }
   };
 
-  if (!product) {
+  if (loading) {
+    return (
+      <Layout>
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
+      </Layout>
+    );
+  }
+
+  if (!loading && !product) {
     navigate(ROUTES.NOT_FOUND);
-    return;
+    return null;
+  }
+
+  if (!product) {
+    return null;
   }
 
   const totalQuantity = receivers.reduce(

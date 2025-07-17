@@ -1,16 +1,38 @@
 import { useParams } from "react-router-dom";
-import { trendingGiftsMockData } from "@/data/trendingGfitsMockData";
-import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
+import { useState, useEffect } from "react";
+import { getProductInfo } from "@/data/api";
+import type { ProductInfoSummary } from "../components/ProductInfo/ProductInfo";
 
-export function useProductInfo(): TrendingGiftsType | null {
+export function useProductInfo(): {
+  product: ProductInfoSummary | null;
+  loading: boolean;
+} {
   const { id } = useParams<{ id: string }>();
+  const [product, setProduct] = useState<ProductInfoSummary | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!id) return null;
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      setProduct(null);
+      return;
+    }
 
-  // 현재는 mock 데이터로 대체
-  const product = trendingGiftsMockData.find(
-    (item) => item.id === parseInt(id, 10)
-  );
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const productData = await getProductInfo(id);
+        setProduct(productData);
+      } catch (error) {
+        console.error("상품 없음:", error);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return product || null;
+    fetchProduct();
+  }, [id]);
+
+  return { product, loading };
 }
