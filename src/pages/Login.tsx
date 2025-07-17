@@ -1,3 +1,4 @@
+import { loginApi } from '@/api/services/auth'
 import { Button, PageContainer, typographyMixin } from '@/components/ui'
 import { useAuth } from '@/contexts/auth'
 import { LOGIN_CONTENT, loginSchema, type LoginFormData } from '@/features/user'
@@ -33,17 +34,19 @@ export const Login = () => {
   })
 
   // * 로그인 폼 제출 핸들러
-  const onSubmit = (data: LoginFormData) => {
-    // ! 이메일에서 이름을 추출해서 사용
-    // ? 실제로는 서버에서 받은 사용자 정보를 사용
-    const name = data.email.split('@')[0]
-
-    // * 로그인 정보 저장 (쿠키에 암호화되어 저장)
-    login({
-      name,
+  const onSubmit = async (data: LoginFormData) => {
+    const { email, name } = await loginApi({
       email: data.email,
+      password: data.password,
     })
 
+    // * 로그인 정보 저장 (쿠키에 암호화되어 저장)
+    // TODO: 이 부분은 이전에 context api를 활용하여 안전하게 쿠키에 저장 시에 사용하던 로직으로
+    // TODO: 이번에는 남겨두고(일단 이번 미션에 집중) api 쪽 코드에 추후 적용할 예정
+    login({
+      email,
+      name,
+    })
     // * 로그인 시 이전 페이지로 리다이렉트
     navigate(from, { replace: true }) // * replace로 히스토리 정리
   }
