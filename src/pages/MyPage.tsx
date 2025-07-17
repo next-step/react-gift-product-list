@@ -40,6 +40,7 @@ export const MyPage = () => {
       <Header title="선물하기" />
       <MyPageContainer>
         <div>{`로그인된 이메일: ${user?.email}`}</div>
+        <div>{`로그인된 이름: ${user?.name}`}</div>
         <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
       </MyPageContainer>
     </AppContainer>

@@ -1,14 +1,17 @@
+// src/contexts/AuthContext.tsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 interface User {
   email: string;
+  name: string;
+  authToken: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string) => void;
+  login: (userInfo: User) => void;
   logout: () => void;
 }
 
@@ -17,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const storedUser = sessionStorage.getItem('user');
     if (storedUser) {
@@ -25,10 +29,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
-  const login = (email: string) => {
-    const newUser: User = { email };
-    setUser(newUser);
-    sessionStorage.setItem('user', JSON.stringify(newUser));
+  const login = (userInfo: User) => {
+    setUser(userInfo);
+    sessionStorage.setItem('user', JSON.stringify(userInfo));
   };
 
   const logout = () => {

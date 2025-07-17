@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { cardData, products } from '@/mock/mockData';
+import { cardData } from '@/mock/mockData';
 import { Header } from '@/components/Header/Header';
 import { SuccessModal } from '@/components/SuccessModal/SuccessModal';
 import { useModal } from '@/hooks/useModal';
@@ -11,6 +11,14 @@ import { RecipientModal } from '@/components/RecipientInput/RecipientModal';
 import { RecipientList } from '@/components/RecipientInput/RecipientList';
 import { orderFormSchema, type OrderFormData, type RecipientData } from '@/schemas/orderSchema';
 import { colors } from '@/styles/tokens';
+import { fetchProductSummary } from '@/api/fetchProductSummary';
+import { toast } from 'react-toastify';
+import type { Product } from '@/types';
+import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { fetchOrder, type OrderRequest } from '@/api/fetchOrder';
+import { AxiosError } from 'axios';
 
 const Container = styled.div`
   max-width: 720px;
@@ -237,14 +245,27 @@ export const OrderPage: React.FC = () => {
   const productIdParam = searchParams.get('productId');
   const productId = productIdParam ? parseInt(productIdParam, 10) : null;
 
-  const selectedProduct = products.find((p) => p.id === productId) || products[0];
   const [selectedCard, setSelectedCard] = useState<number>(cardData[0].id);
+
   const [recipients, setRecipients] = useState<RecipientData[]>([]);
   const [isRecipientModalOpen, setIsRecipientModalOpen] = useState(false);
-
+  const { user } = useAuth();
   const successModal = useModal();
   const selectedCardData = cardData.find((card) => card.id === selectedCard);
-
+  const navigate = useNavigate();
+  const [product, setProduct] = useState<Product | null>(null);
+  useEffect(() => {
+    if (productId) {
+      fetchProductSummary(productId.toString())
+        .then(setProduct)
+        .catch((error) => {
+          if (error.response && error.response.status >= 400 && error.response.status < 500) {
+            toast.error('상품 정보를 불러올 수 없습니다.');
+            navigate('/');
+          }
+        });
+    }
+  }, [productId, navigate]);
   const {
     register,
     handleSubmit,
@@ -254,7 +275,7 @@ export const OrderPage: React.FC = () => {
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
       message: selectedCardData?.defaultTextMessage || '축하해요.',
-      senderName: '',
+      senderName: user?.name || '',
       recipients: [],
     },
   });
@@ -285,13 +306,34 @@ export const OrderPage: React.FC = () => {
   };
 
   // 폼 제출
-  const onSubmit = (data: OrderFormData) => {
-    const submitData = {
-      ...data,
-      recipients: recipients,
+  const onSubmit = async (data: OrderFormData) => {
+    if (!product || !user) return;
+
+    const orderData: OrderRequest = {
+      productId: product.id,
+      message: data.message,
+      messageCardId: selectedCardData?.id + '', // string 변환
+      ordererName: data.senderName,
+      receivers: recipients.map((r) => ({
+        name: r.name,
+        phoneNumber: r.phone,
+        quantity: r.quantity,
+      })),
     };
-    console.log('주문 데이터:', submitData);
-    successModal.openModal();
+
+    try {
+      await fetchOrder(orderData, user.authToken);
+      successModal.openModal();
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      if (err?.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+      } else if (err?.response?.status === 400) {
+        toast.error(err.response.data?.message || '주문 요청이 올바르지 않습니다.');
+      } else {
+        toast.error('주문에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
   };
 
   return (
@@ -361,17 +403,15 @@ export const OrderPage: React.FC = () => {
             <ProductItem>
               <ProductImage>
                 <img
-                  src={selectedProduct.imageURL}
-                  alt={selectedProduct.name}
+                  src={product?.imageURL}
+                  alt={product?.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }}
                 />
               </ProductImage>
               <ProductDetails>
-                <h3>{selectedProduct.name}</h3>
-                <ProductBrand>{selectedProduct.brandInfo.name}</ProductBrand>
-                <ProductPrice>
-                  상품가 {selectedProduct.price.sellingPrice.toLocaleString()}원
-                </ProductPrice>
+                <h3>{product?.name}</h3>
+                <ProductBrand>{product?.brandInfo.name}</ProductBrand>
+                <ProductPrice>상품가 {product?.price.sellingPrice.toLocaleString()}원</ProductPrice>
               </ProductDetails>
             </ProductItem>
           </ProductInfo>
@@ -389,9 +429,11 @@ export const OrderPage: React.FC = () => {
       <SuccessModal showSuccessModal={successModal.isOpen} onClose={successModal.closeModal} />
 
       <OrderButton form="order-form" type="submit" disabled={recipients.length === 0}>
-        {(
-          selectedProduct.price.sellingPrice * recipients.reduce((sum, r) => sum + r.quantity, 0)
-        ).toLocaleString()}
+        {product?.price.sellingPrice
+          ? (
+              product.price.sellingPrice * recipients.reduce((sum, r) => sum + r.quantity, 0)
+            ).toLocaleString()
+          : '0'}
         원 주문하기
       </OrderButton>
     </Container>

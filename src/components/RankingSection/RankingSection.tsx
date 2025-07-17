@@ -71,9 +71,9 @@ export const RankingSection = () => {
     }
   };
 
-  const handleProductClick = () => {
+  const handleProductClick = (productId: string) => {
     if (user) {
-      navigate(ROUTE_PATH.ORDER);
+      navigate(`${ROUTE_PATH.ORDER}?productId=${productId}`);
     } else {
       navigate(ROUTE_PATH.LOGIN);
     }
@@ -97,7 +97,10 @@ export const RankingSection = () => {
       {displayedProducts.length === 0 ? (
         <div>상품 목록이 없습니다.</div>
       ) : (
-        <ProductGrid products={displayedProducts} onProductClick={handleProductClick} />
+        <ProductGrid
+          products={displayedProducts}
+          onProductClick={(product) => handleProductClick(product.id.toString())}
+        />
       )}
       <ButtonContainer>
         <Button onClick={handleToggleView}>{buttonText}</Button>

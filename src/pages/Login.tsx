@@ -5,6 +5,9 @@ import { useLocation, useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/shared/RoutePath';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
+import { fetchLogin } from '@/api/fetchLogin';
+import { AxiosError } from 'axios';
 
 const AppContainer = styled.div`
   width: 720px;
@@ -116,12 +119,32 @@ export const Login: React.FC = () => {
     isValid,
   } = useLoginForm();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValid) return;
-    alert(`이메일: ${email}\n비밀번호: ${password}`);
-    login(email);
-    navigate(from, { replace: true });
+
+    if (!email.endsWith('@kakao.com')) {
+      toast.error('카카오 이메일(@kakao.com)만 사용 가능합니다.');
+      return;
+    }
+    if (password.length < 8) {
+      toast.error('비밀번호는 8자 이상이어야 합니다.');
+      return;
+    }
+
+    try {
+      const res = await fetchLogin(email, password); // { email, name, authToken }
+
+      login({
+        email: res.email,
+        name: res.name,
+        authToken: res.authToken,
+      });
+
+      navigate(from, { replace: true });
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      toast.error(err.message || '로그인에 실패했습니다.');
+    }
   };
 
   return (

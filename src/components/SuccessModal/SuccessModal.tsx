@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router';
 
 const Modal = styled.div<{ show: boolean }>`
   position: fixed;
@@ -61,12 +62,17 @@ export const SuccessModal = ({
   showSuccessModal: boolean;
   onClose: () => void;
 }) => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    onClose();
+    navigate('/');
+  };
   return (
     <Modal show={showSuccessModal}>
       <ModalContent>
         <SuccessModalTitle>주문이 완료되었습니다! 🎉</SuccessModalTitle>
         <SuccessMessage>선물이 성공적으로 주문되었습니다.</SuccessMessage>
-        <ModalButton onClick={onClose}>확인</ModalButton>
+        <ModalButton onClick={handleClick}>확인</ModalButton>
       </ModalContent>
     </Modal>
   );
