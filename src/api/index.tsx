@@ -11,3 +11,7 @@ export async function login({
 
   return response.data;
 }
+
+export async function fetchProductSummary(productId: number) {
+  return axios.get(`/api/products/${productId}/summary`);
+}

@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { orderCardTemplates } from '@/data/ordercardtemplates';
-import { useParams } from 'react-router-dom';
-import { products } from '@/data/products';
-import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import ReceiverModal from '@/components/ReceiverModal';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchProductSummary } from '@/api/index';
+import { toast } from 'react-toastify';
 
 const cards = orderCardTemplates;
 
@@ -164,10 +164,15 @@ const InputWrapper = styled.div`
 `;
 
 function OrderPage() {
-  const { productId } = useParams<{ productId: string }>();
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [message, setMessage] = useState('축하해요.');
-  const [sender, setSender] = useState('');
+
+  const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+  const [sender, setSender] = useState(userInfo.name || '');
+
+  const { productId } = useParams(); // URL에서 productId 추출
+  const navigate = useNavigate();
+  const [product, setProduct] = useState<ProductSummary | null>(null);
 
   type Receiver = {
     name: string;
@@ -175,15 +180,37 @@ function OrderPage() {
     quantity: number;
   };
 
+  type ProductSummary = {
+    id: number;
+    name: string;
+    brandName: string;
+    price: number;
+    imageURL: string;
+  };
+
   const [receivers, setReceivers] = useState<Receiver[]>([]);
 
   const [messageError, setMessageError] = useState('');
   const [senderError, setSenderError] = useState('');
 
-  const product = products.find((p) => p.id === Number(productId));
-  const price = product ? product.price.sellingPrice : 0;
+  const price = product ? product.price : 0;
 
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
+
+  useEffect(() => {
+    async function getProduct() {
+      try {
+        const res = await fetchProductSummary(Number(productId));
+        setProduct(res.data.data); // 실제 상품 정보는 res.data.data에 있음!
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message || '상품 정보를 불러올 수 없습니다.',
+        );
+        navigate('/'); // 홈으로 이동
+      }
+    }
+    getProduct();
+  }, [productId, navigate]);
 
   const validate = () => {
     let valid = true;
@@ -204,8 +231,6 @@ function OrderPage() {
 
     return valid;
   };
-
-  const navigate = useNavigate();
 
   const handleOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -232,6 +257,7 @@ function OrderPage() {
     (sum, r) => sum + Number(r.quantity),
     0,
   );
+
   return (
     <>
       <Header />
@@ -465,10 +491,8 @@ function OrderPage() {
               <ProductImage src={product.imageURL} alt={product.name} />
               <ProductInfo>
                 <ProductName>{product.name}</ProductName>
-                <BrandName>{product.brandInfo.name}</BrandName>
-                <Price>
-                  상품가 {product.price.sellingPrice.toLocaleString()}원
-                </Price>
+                <BrandName>{product.brandName}</BrandName>
+                <Price>상품가 {product.price.toLocaleString()}원</Price>
               </ProductInfo>
             </ProductCard>
           </ProductSection>
