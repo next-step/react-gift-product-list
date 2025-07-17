@@ -52,7 +52,9 @@ const GiftRankingSection = () => {
       />
       {isLoading && <None></None>}
       {error && <div>Error: {error.message}</div>}
-      {!isLoading && !error && products.length === 0 && <None>'상품이 없습니다.'</None>}
+      {!isLoading && !error && products.length === 0 && (
+        <None>'상품이 없습니다.'</None>
+      )}
       {!isLoading && !error && <GiftRankingGrid products={products} />}
     </Section>
   );

@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE, PRODUCT_ID_MISSING_MESSAGE } from './constants';
+import {
+  FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE,
+  PRODUCT_ID_MISSING_MESSAGE,
+} from './constants';
 
 interface ProductSummary {
   id: number;
@@ -38,7 +41,9 @@ const useGetProductSummary = (): UseProductSummaryResult => {
         return;
       }
       try {
-        const response = await axios.get(`/api/products/${productId}/summary`, { signal });
+        const response = await axios.get(`/api/products/${productId}/summary`, {
+          signal,
+        });
         setProduct(response.data.data);
       } catch (e) {
         if (axios.isCancel(e)) {

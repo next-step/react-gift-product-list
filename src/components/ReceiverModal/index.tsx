@@ -54,7 +54,9 @@ const ReceiverModal: React.FC<ReceiverModalProps> = ({
 
   const footerContent = (
     <>
-      <S.CancelButton type="button" onClick={onClose}>{CANCEL_BUTTON_TEXT}</S.CancelButton>
+      <S.CancelButton type="button" onClick={onClose}>
+        {CANCEL_BUTTON_TEXT}
+      </S.CancelButton>
       <S.FinishButton type="button" onClick={handleSubmit(onSubmit)}>
         {fields.length}
         {COMPLETE_BUTTON_SUFFIX}

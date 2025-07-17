@@ -56,22 +56,26 @@ export function useOrderForm(
     }
 
     try {
-      const response = await axios.post('/api/order', {
-        productId: product!.id,
-        message: data.message,
-        messageCardId: data.messageCardId,
-        ordererName: data.senderName,
-        receivers: receivers.map((r) => ({
-          name: r.name,
-          phoneNumber: r.phone,
-          quantity: r.quantity,
-        })),
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: userInfo?.authToken,
+      const response = await axios.post(
+        '/api/order',
+        {
+          productId: product!.id,
+          message: data.message,
+          messageCardId: data.messageCardId,
+          ordererName: data.senderName,
+          receivers: receivers.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.quantity,
+          })),
         },
-      });
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: userInfo?.authToken,
+          },
+        }
+      );
 
       const responseData = response.data;
 

@@ -84,7 +84,12 @@ const LoginPage = () => {
           />
           {pwError && <ErrorMessage>{pwError}</ErrorMessage>}
         </InputWrapper>
-        <LoginButton disabled={!(isValid && emailTouched && pwTouched)} onClick={handleLogin}>로그인</LoginButton>
+        <LoginButton
+          disabled={!(isValid && emailTouched && pwTouched)}
+          onClick={handleLogin}
+        >
+          로그인
+        </LoginButton>
       </Container>
     </>
   );
