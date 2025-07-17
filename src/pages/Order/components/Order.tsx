@@ -10,6 +10,8 @@ import { orderCardMock } from "@/assets/orderCardMock";
 import { rankingItemMock } from "@/assets/rankingItemMock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import { getCookieValue } from "@/utils/cookie";
+import { AUTH_COOKIE_KEY_NAME } from "@/contexts/authContext";
 
 interface OrderProps {
   children: React.ReactNode;
@@ -53,7 +55,7 @@ export type RecipientType = z.infer<typeof RecipientSchema>;
 const defaultValues: OrderFormType = {
   cardId: orderCardMock[0].id,
   message: orderCardMock[0].defaultTextMessage,
-  sender: "",
+  sender: getCookieValue(AUTH_COOKIE_KEY_NAME) || "",
   recipients: [],
   productId: rankingItemMock[0].id,
 };
