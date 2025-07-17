@@ -35,4 +35,12 @@ apiClient.interceptors.response.use(
   }
 );
 
+export async function loginApi(email: string, password: string) {
+  const response = await axios.post('http://localhost:3000/api/login', {
+    email,
+    password,
+  });
+  return response.data.data;
+}
+
 export default apiClient;
