@@ -10,3 +10,7 @@ export const LOGIN_ERROR_MESSAGES = {
   PASSWORD_EMPTY: "PW를 입력해주세요.",
   PASSWORD_FORMAT_INVALID: "PW는 최소 8자 이상이어야 합니다.",
 } as const;
+
+export const API_LOGIN_ERROR_MESSAGES = {
+  EMAIL_FORMAT_INVALID: "@kakao.com 이메일 주소만 가능합니다.",
+} as const;

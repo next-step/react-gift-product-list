@@ -4,6 +4,7 @@ import { getUserInfo } from "@/data/api";
 import { AxiosError } from "axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_LOGIN_ERROR_MESSAGES } from "../constants/labels";
 
 function useLoginSubmit() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function useLoginSubmit() {
         const errorStatus = error.response?.status;
 
         if (errorStatus && errorStatus >= 400 && errorStatus < 500) {
-          toast.error("@kakao.com 이메일 주소만 가능합니다.");
+          toast.error(API_LOGIN_ERROR_MESSAGES.EMAIL_FORMAT_INVALID);
         }
       }
       return;
