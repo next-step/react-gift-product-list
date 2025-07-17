@@ -27,7 +27,7 @@ interface RankingApiProps {
   activeFilterButton: string;
 }
 
-const RankingApi = ({ activeGenerationButton, activeFilterButton }: RankingApiProps) => {
+const useRankingApi = ({ activeGenerationButton, activeFilterButton }: RankingApiProps) => {
   const [rankingDatas, setRankingDatas] = useState<GiftRankingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,4 +51,4 @@ const RankingApi = ({ activeGenerationButton, activeFilterButton }: RankingApiPr
   return { rankingDatas, loading };
 };
 
-export default RankingApi;
+export default useRankingApi;

@@ -12,7 +12,7 @@ interface ThemesResponse {
   data: ThemeInfo[];
 }
 
-const ThemeApi = () => {
+const useThemeApi = () => {
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -36,4 +36,4 @@ const ThemeApi = () => {
   return { themes, loading, error };
 };
 
-export default ThemeApi;
+export default useThemeApi;

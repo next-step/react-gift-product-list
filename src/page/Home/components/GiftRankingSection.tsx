@@ -6,12 +6,9 @@ import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import Loading from '@/components/Loading';
-<<<<<<< HEAD
 import useRanking from '../hooks/useRanking';
 import toLocaleString from '@/utils/toLocaleString';
-=======
-import RankingApi from '@/api/products/rankingApi';
->>>>>>> 7aec6e0 (refactor: API 모듈 구조 리팩토링)
+
 
 interface ButtonProps {
   isActive: boolean;
@@ -25,11 +22,9 @@ const GiftRankingSection = () => {
     activeFilterButton,
   } = useSearchParamState();
 
-<<<<<<< HEAD
+
   const { rankingDatas, loading } = useRanking({ activeGenerationButton, activeFilterButton });
-=======
-  const { rankingDatas, loading } = RankingApi({ activeGenerationButton, activeFilterButton });
->>>>>>> 7aec6e0 (refactor: API 모듈 구조 리팩토링)
+
 
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
   const { isLoggedIn } = useUserInfo();
