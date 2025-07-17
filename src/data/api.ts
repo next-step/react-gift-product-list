@@ -52,9 +52,8 @@ export const getProductInfo = async (
 export const createOrder = async (authToken: string, order: Order) => {
   const response = await apiClient.post("/api/order", order, {
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: authToken,
     },
   });
-  console.log(response);
   return response.data.data;
 };

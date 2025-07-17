@@ -66,10 +66,8 @@ function OrderPage() {
         })
       );
 
-      // receivers의 quantity를 string에서 number로 변환
       const transformedReceivers = receivers.map((receiver) => ({
-        name: receiver.name,
-        phoneNumber: receiver.phoneNumber,
+        ...receiver,
         quantity: Number(receiver.quantity),
       }));
 
@@ -80,8 +78,6 @@ function OrderPage() {
         ordererName: formValues.senderName,
         receivers: transformedReceivers,
       };
-
-      console.log(order);
 
       try {
         const response = await createOrder(user?.authToken || "", order);
