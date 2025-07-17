@@ -20,13 +20,19 @@ type OrderFormContextType = {
 const OrderFormContext = createContext<OrderFormContextType | undefined>(undefined)
 
 // * 주문 폼 Provider
-export function OrderFormProvider({ children }: { children: ReactNode }) {
+export function OrderFormProvider({
+  children,
+  defaultSender,
+}: {
+  children: ReactNode
+  defaultSender?: string
+}) {
   // * React Hook Form 설정
   const form = useForm<OrderFormData>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
       cardMessage: orderCardMock[0].defaultTextMessage,
-      sender: '',
+      sender: defaultSender ?? '',
       receivers: [],
       selectedCard: orderCardMock[0],
     },

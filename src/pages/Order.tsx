@@ -10,12 +10,16 @@ import { NotFound } from '@/pages/NotFound'
 import type { ProductSummary } from '@/api/types/product'
 import { fetchProductSummary } from '@/api/services/product'
 import { useFetch } from '@/hooks/useFetch'
+import { STORAGES } from '@/api/constants/storages'
 
 // * 주문하기 페이지 (주문하기 폼 Provider 포함)
 export const Order = () => {
+  const storedUser = localStorage.getItem(STORAGES.AUTH)
+  const userInfo = storedUser ? JSON.parse(storedUser) : null
+
   return (
     // * Context API를 통해 전역적으로 관리되는 주문하기 폼 적용
-    <OrderFormProvider>
+    <OrderFormProvider defaultSender={userInfo?.name}>
       <OrderContent />
     </OrderFormProvider>
   )
