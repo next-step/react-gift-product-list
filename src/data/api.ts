@@ -35,7 +35,7 @@ export const getUserInfo = async (
   email: string,
   password: string
 ): Promise<User> => {
-  const response = await apiClient.post("/api/login", {
+  const response = await apiClient.post(END_POINTS.LOGIN, {
     email,
     password,
   });
@@ -45,12 +45,14 @@ export const getUserInfo = async (
 export const getProductInfo = async (
   id: string
 ): Promise<ProductInfoSummary> => {
-  const response = await apiClient.get(`/api/products/${id}/summary`);
+  const response = await apiClient.get(
+    END_POINTS.PRODUCT_INFO.replace(":id", id)
+  );
   return response.data.data;
 };
 
 export const createOrder = async (authToken: string, order: Order) => {
-  const response = await apiClient.post("/api/order", order, {
+  const response = await apiClient.post(END_POINTS.ORDER, order, {
     headers: {
       Authorization: authToken,
     },
