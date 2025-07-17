@@ -4,6 +4,7 @@ import MobileLayout from '@/layouts/MobileLayout';
 import NavBar from '@/components/NavBar';
 import logo from '@/assets/logo.svg';
 import KakaoButton from '@/components/common/KakaoButton';
+
 import { emailRegex, MIN_PASSWORD_LENGTH } from '@/utils/validation';
 import useLoginForm from '@/hooks/useLoginForm';
 import { useAuth } from '@/hooks/useAuth';
@@ -73,9 +74,13 @@ export default function LoginPage() {
 
   if (user) return <Navigate to="/my" replace />;
 
-  const onSubmit = () => {
-    login(values.email);
-    navigate(from, { replace: true });
+  const onSubmit = async () => {
+    try {
+      await login(values.email, values.password);
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
   return (
