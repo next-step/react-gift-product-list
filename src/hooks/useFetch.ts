@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 
@@ -20,10 +20,13 @@ function useFetch<T>(url: string, options?: AxiosRequestConfig) {
     error: null,
   });
 
-  const fetchData = async () => {
+  // options 객체의 참조를 안정화
+  const stableOptions = useMemo(() => options, [options]);
+
+  const fetchData = useCallback(async () => {
     try {
       setState((prev) => ({ ...prev, isLoading: true }));
-      const response = await axios(url, { ...options });
+      const response = await axios(url, { ...stableOptions });
       setState({
         data: response.data,
         isLoading: false,
@@ -36,16 +39,16 @@ function useFetch<T>(url: string, options?: AxiosRequestConfig) {
         error: error as Error,
       });
     }
-  };
+  }, [url, stableOptions]);
 
   useEffect(() => {
     fetchData();
-  }, [url, JSON.stringify(options)]); // options 객체 변경 감지를 위해 stringify
+  }, [fetchData]);
 
   // 수동으로 데이터를 다시 불러오는 함수 제공
-  const refetch = () => {
+  const refetch = useCallback(() => {
     fetchData();
-  };
+  }, [fetchData]);
 
   return { ...state, refetch };
 }
