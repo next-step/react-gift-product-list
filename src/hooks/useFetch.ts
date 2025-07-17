@@ -46,7 +46,7 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
 
     try {
       setIsLoading(true);
-      const response = await axios<T>(fetchUrl.href, { method: mergedOptions.method, data: mergedOptions.data });
+      const response = await axios<T>(fetchUrl.toString(), { method: mergedOptions.method, data: mergedOptions.data });
       setIsError(false);
       setData(response.data);
       return { data: response.data, error: undefined };
