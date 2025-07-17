@@ -1,19 +1,14 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useNavigate, generatePath } from 'react-router-dom';
 import { Section } from '@/components/layout';
 import FilterButtonGroup from './FilterButtonGroup';
 import ProductGrid from './ProductGrid';
 import MoreButton from './MoreButton';
-import { type Product } from './ProductCard';
-import {
-  getValidValue,
-  getValidValues,
-  generateRankingProducts,
-} from '@/utils';
+import { getValidValue, getValidValues } from '@/utils';
 import { targetOptions, rankOptions, ROUTE_ORDER } from '@/constants';
-
-type TargetType = (typeof targetOptions)[number]['value'];
-type RankType = (typeof rankOptions)[number]['value'];
+import { useRankingProducts } from '@/hooks';
+import type { Product } from '@/api/types';
+import RankingSkeleton from './RankingSkeleton';
 
 const RankingSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,39 +25,16 @@ const RankingSection = () => {
   const targetType = getValidValue(
     targetParam,
     targetValidValues,
-    'ALL' as TargetType
+    'ALL' as (typeof targetOptions)[number]['value']
   );
   const rankType = getValidValue(
     rankParam,
     rankValidValues,
-    'MANY_WISH' as RankType
+    'MANY_WISH' as (typeof rankOptions)[number]['value']
   );
 
-  // 유효하지 않은 URL 파라미터가 있으면 기본값으로 수정
-  useEffect(() => {
-    const needsUpdate =
-      (targetParam && targetParam !== targetType) ||
-      (rankParam && rankParam !== rankType);
-
-    if (needsUpdate) {
-      setSearchParams(
-        (prev) => {
-          const newParams = new URLSearchParams(prev);
-          if (targetParam && targetParam !== targetType) {
-            newParams.set('target', targetType);
-          }
-          if (rankParam && rankParam !== rankType) {
-            newParams.set('rank', rankType);
-          }
-          return newParams;
-        },
-        { replace: true }
-      ); // replace로 히스토리에 남기지 않음
-    }
-  }, [targetParam, rankParam, targetType, rankType, setSearchParams]);
-
-  // 랭킹 데이터 생성 최적화 - 매번 재생성 방지
-  const rankingProducts = useMemo(() => generateRankingProducts(), []);
+  // API 호출 - targetType과 rankType을 각각 전달
+  const { data, isLoading, error } = useRankingProducts(targetType, rankType);
 
   // 공통 Parameter Handler로 통합
   const handleParamChange = (key: string, value: string) => {
@@ -75,10 +47,39 @@ const RankingSection = () => {
 
   // 상품 클릭 시 주문 페이지로 이동
   const handleProductClick = (product: Product) => {
+    console.log('상품 클릭:', product.id, product.name);
+
+    // 실제 상품 ID를 사용
     navigate(
       generatePath(`${ROUTE_ORDER}/:productId`, {
-        productId: String(product.productId),
+        productId: String(product.id),
       })
+    );
+  };
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <RankingSkeleton />;
+    }
+
+    if (error) {
+      return null;
+    }
+
+    return (
+      <>
+        <ProductGrid
+          products={data?.data || []}
+          showMore={showMore}
+          onProductClick={handleProductClick}
+        />
+
+        {data?.data && data.data.length > 6 && (
+          <MoreButton onClick={() => setShowMore(!showMore)}>
+            {showMore ? '접기' : '더보기'}
+          </MoreButton>
+        )}
+      </>
     );
   };
 
@@ -98,15 +99,7 @@ const RankingSection = () => {
         onChange={(value) => handleParamChange('rank', value)}
       />
 
-      <ProductGrid
-        products={rankingProducts}
-        showMore={showMore}
-        onProductClick={handleProductClick}
-      />
-
-      <MoreButton onClick={() => setShowMore(!showMore)}>
-        {showMore ? '접기' : '더보기'}
-      </MoreButton>
+      {renderContent()}
     </Section>
   );
 };

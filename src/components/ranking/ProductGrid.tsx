@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import ProductCard, { type Product } from './ProductCard';
+import ProductCard from './ProductCard';
+import type { Product } from '@/api/types';
 
 interface ProductGridProps {
   products: Product[];
@@ -16,24 +17,35 @@ const GridContainer = styled.div<{ showMore: boolean }>`
   margin-bottom: ${(props) => props.theme.spacing.spacing4};
 `;
 
+const EmptyState = styled.div`
+  text-align: center;
+  padding: ${(props) => props.theme.spacing.spacing8} 0;
+  color: ${(props) => props.theme.semanticColors.text.sub};
+  font-size: ${(props) => props.theme.typography.body1Regular.fontSize};
+`;
+
 const ProductGrid = ({
   products,
   showMore,
   onProductClick,
 }: ProductGridProps) => {
+  if (!products || products.length === 0) {
+    return <EmptyState>상품 목록이 없습니다</EmptyState>;
+  }
+
   const displayProducts = showMore
     ? products.slice(0, 21)
     : products.slice(0, 6);
 
   return (
     <GridContainer showMore={showMore}>
-      {displayProducts.map((product) => (
+      {displayProducts.map((product, index) => (
         <div
           key={product.id}
           onClick={() => onProductClick?.(product)}
           style={{ cursor: onProductClick ? 'pointer' : undefined }}
         >
-          <ProductCard product={product} />
+          <ProductCard product={product} rank={index + 1} />
         </div>
       ))}
     </GridContainer>
