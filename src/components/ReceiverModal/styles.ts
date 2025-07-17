@@ -18,7 +18,8 @@ export const AddButton = styled.button`
   margin-top: 10px;
 
   &:disabled {
-    background-color: ${({ theme }) => theme.colors.semantic.backgroundDisabled};
+    background-color: ${({ theme }) =>
+      theme.colors.semantic.backgroundDisabled};
     color: ${({ theme }) => theme.colors.semantic.textDisabled};
     cursor: not-allowed;
   }
@@ -48,8 +49,6 @@ export const ErrorMessage = styled.p`
   font-size: ${({ theme }) => theme.spacing.spacing3};
   margin-top: ${({ theme }) => theme.spacing.spacing3};
 `;
-
-
 
 export const ModalTitle = styled.h2`
   margin-top: 8px;

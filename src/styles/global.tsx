@@ -9,7 +9,8 @@ const reset = css`
     padding: 0;
   }
 
-  html, body {
+  html,
+  body {
     height: 100%;
     font-family: 'Pretendard', sans-serif;
     background-color: #eeeff1;
@@ -21,7 +22,8 @@ const reset = css`
     color: inherit;
   }
 
-  ul, ol {
+  ul,
+  ol {
     list-style: none;
   }
 

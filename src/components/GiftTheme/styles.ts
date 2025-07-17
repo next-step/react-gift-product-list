@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 
 export const Section = styled.section`
-  padding: ${({ theme }) => theme.spacing.spacing10} ${({ theme }) => theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing10}
+    ${({ theme }) => theme.spacing.spacing4};
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
 `;
 
 export const Title = styled.h3`
-  font : ${({ theme }) => theme.typography.title1Bold};
+  font: ${({ theme }) => theme.typography.title1Bold};
   color: ${({ theme }) => theme.colors.semantic.textDefault};
   margin-bottom: ${({ theme }) => theme.spacing.spacing4};
 `;
@@ -30,7 +31,7 @@ export const Image = styled.img`
 `;
 
 export const Label = styled.div`
-  font : ${({ theme }) => theme.typography.label2Regular};
+  font: ${({ theme }) => theme.typography.label2Regular};
   color: ${({ theme }) => theme.colors.semantic.textDefault};
   margin-top: ${({ theme }) => theme.spacing.spacing1};
 `;

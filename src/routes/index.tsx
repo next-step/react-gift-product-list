@@ -12,7 +12,11 @@ import OrderPage from '@/pages/OrderPage';
 export const router = createBrowserRouter([
   {
     path: PATH.HOME,
-    element: <LoginProvider><PageLayout /></LoginProvider>,
+    element: (
+      <LoginProvider>
+        <PageLayout />
+      </LoginProvider>
+    ),
     children: [
       { path: '', element: <HomePage /> },
       { path: PATH.LOGIN.slice(1), element: <LoginPage /> },

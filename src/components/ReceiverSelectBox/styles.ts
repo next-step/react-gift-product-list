@@ -4,7 +4,8 @@ export const Frame = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
   margin-top: ${({ theme }) => theme.spacing.spacing3};
-  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing4}
+    ${({ theme }) => theme.spacing.spacing3};
 `;
 export const Header = styled.div`
   display: flex;
@@ -26,8 +27,8 @@ export const Title = styled.h1`
   font: ${({ theme }) => theme.typography.title2Bold};
 `;
 export const Text = styled.p`
-    font: ${({ theme }) => theme.typography.label1Regular};
-    color: ${({ theme }) => theme.colors.semantic.textDeafult};
+  font: ${({ theme }) => theme.typography.label1Regular};
+  color: ${({ theme }) => theme.colors.semantic.textDeafult};
 `;
 
 export const RecipientInfoBox = styled.div`
@@ -45,7 +46,6 @@ export const RecipientHeader = styled.div`
   margin-bottom: 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid #eee;
-
 
   & > p {
     margin: 0;

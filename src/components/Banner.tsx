@@ -7,7 +7,7 @@ const Frame = styled.div`
 const Box = styled.div`
   background-color: ${({ theme }) => theme.colors.semantic.kakaoYellow};
   padding: ${({ theme }) => theme.spacing.spacing4};
-  border-radius: ${({ theme }) => theme.spacing.spacing4};;
+  border-radius: ${({ theme }) => theme.spacing.spacing4};
 `;
 const Strong = styled.span`
   font: ${({ theme }) => theme.typography.title2Bold};

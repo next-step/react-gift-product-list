@@ -22,13 +22,18 @@ interface ReceiverSelectBoxProps {
   recipients: Recipient[];
 }
 
-const ReceiverSelectBox: React.FC<ReceiverSelectBoxProps> = ({ onClick, recipients = [] }) => {
+const ReceiverSelectBox: React.FC<ReceiverSelectBoxProps> = ({
+  onClick,
+  recipients = [],
+}) => {
   return (
     <S.Frame>
       <S.Header>
         <S.Title>{RECEIVER_TITLE}</S.Title>
         <S.Box onClick={onClick} style={{ cursor: 'pointer' }}>
-          <S.Text>{recipients.length > 0 ? EDIT_BUTTON_TEXT : ADD_BUTTON_TEXT}</S.Text>
+          <S.Text>
+            {recipients.length > 0 ? EDIT_BUTTON_TEXT : ADD_BUTTON_TEXT}
+          </S.Text>
         </S.Box>
       </S.Header>
 
@@ -46,7 +51,10 @@ const ReceiverSelectBox: React.FC<ReceiverSelectBoxProps> = ({ onClick, recipien
               <S.RecipientInfo key={index}>
                 <p>{recipient.name}</p>
                 <p>{recipient.phone}</p>
-                <p>{recipient.quantity}{QUANTITY_UNIT}</p>
+                <p>
+                  {recipient.quantity}
+                  {QUANTITY_UNIT}
+                </p>
               </S.RecipientInfo>
             ))}
           </>

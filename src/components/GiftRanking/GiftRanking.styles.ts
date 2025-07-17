@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 export const Section = styled.section`
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
-  padding: ${({ theme }) => theme.spacing.spacing11} ${({ theme }) => theme.spacing.spacing5};
+  padding: ${({ theme }) => theme.spacing.spacing11}
+    ${({ theme }) => theme.spacing.spacing5};
 `;
 
 export const Heading = styled.h2`
@@ -30,13 +31,17 @@ export const CategoryTab = styled.button<{ isSelected: boolean }>`
 
 export const TabCircle = styled.div<{ isSelected: boolean }>`
   background-color: ${({ theme, isSelected }) =>
-    isSelected ? theme.colors.semantic.info : theme.colors.semantic.backgroundDisabled};
+    isSelected
+      ? theme.colors.semantic.info
+      : theme.colors.semantic.backgroundDisabled};
   color: ${({ theme, isSelected }) =>
-    isSelected ? theme.colors.semantic.backgroundDefault : theme.colors.semantic.textSub};
+    isSelected
+      ? theme.colors.semantic.backgroundDefault
+      : theme.colors.semantic.textSub};
   border-radius: ${({ theme }) => theme.spacing.spacing5};
   width: ${({ theme }) => theme.spacing.spacing12};
   height: ${({ theme }) => theme.spacing.spacing12};
-  font : ${({ theme }) => theme.typography.label1Bold};
+  font: ${({ theme }) => theme.typography.label1Bold};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,7 +58,7 @@ export const SortRow = styled.div`
 
 export const SortTab = styled.button<{ isSelected: boolean }>`
   all: unset;
-  font : ${({ theme }) => theme.typography.label2Bold};
+  font: ${({ theme }) => theme.typography.label2Bold};
   color: ${({ theme, isSelected }) =>
     isSelected ? theme.colors.semantic.info : theme.colors.semantic.textSub};
   cursor: pointer;

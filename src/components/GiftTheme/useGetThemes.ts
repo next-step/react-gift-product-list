@@ -2,34 +2,34 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export interface Theme {
-    themeId: number;
-    name: string;
-    image: string;
+  themeId: number;
+  name: string;
+  image: string;
 }
 
 interface ApiResponse {
-    data: Theme[];
+  data: Theme[];
 }
 
 export const useGetThemes = () => {
-    const [themes, setThemes] = useState<Theme[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-        const fetchThemes = async () => {
-            try {
-                const response = await axios.get<ApiResponse>(`/api/themes`);
-                setThemes(response.data.data);
-            } catch (error) {
-                setError(error as Error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const response = await axios.get<ApiResponse>(`/api/themes`);
+        setThemes(response.data.data);
+      } catch (error) {
+        setError(error as Error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchThemes();
-    }, []);
+    fetchThemes();
+  }, []);
 
-    return { themes, loading, error };
+  return { themes, loading, error };
 };

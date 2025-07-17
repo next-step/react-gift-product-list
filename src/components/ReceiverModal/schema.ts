@@ -21,7 +21,10 @@ export const FormSchema = z.object({
   receivers: z
     .array(ReceiverSchema)
     .min(1)
-    .max(MAX_RECEIVERS, `${MAX_RECEIVERS_HINT_PREFIX}${MAX_RECEIVERS}${MAX_RECEIVERS_HINT_SUFFIX}`)
+    .max(
+      MAX_RECEIVERS,
+      `${MAX_RECEIVERS_HINT_PREFIX}${MAX_RECEIVERS}${MAX_RECEIVERS_HINT_SUFFIX}`
+    )
     .superRefine((receivers: Receiver[], ctx: z.RefinementCtx) => {
       const seen = new Set<string>();
       receivers.forEach((r: Receiver, i: number) => {

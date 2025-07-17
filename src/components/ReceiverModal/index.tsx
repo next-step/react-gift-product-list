@@ -1,7 +1,12 @@
 import React from 'react';
 import Modal from '@/components/common/Modal';
 import * as S from './styles';
-import { Input, InputRow, Label, ErrorMessage } from '@/components/SenderForm/styles';
+import {
+  Input,
+  InputRow,
+  Label,
+  ErrorMessage,
+} from '@/components/SenderForm/styles';
 import {
   NAME_LABEL,
   PHONE_LABEL,

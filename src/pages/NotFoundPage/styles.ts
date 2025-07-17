@@ -29,7 +29,8 @@ export const Description = styled.p`
 `;
 
 export const Button = styled.button`
-  padding: ${({ theme }) => theme.spacing.spacing3} ${({ theme }) => theme.spacing.spacing6};
+  padding: ${({ theme }) => theme.spacing.spacing3}
+    ${({ theme }) => theme.spacing.spacing6};
   border-radius: ${({ theme }) => theme.spacing.spacing2};
   background-color: ${({ theme }) => theme.colors.semantic.kakaoYellow};
   font: ${({ theme }) => theme.typography.body2Bold};

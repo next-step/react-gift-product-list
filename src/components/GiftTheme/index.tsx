@@ -1,11 +1,4 @@
-import {
-  Section,
-  Title,
-  Grid,
-  Item,
-  Image,
-  Label
-} from './styles';
+import { Section, Title, Grid, Item, Image, Label } from './styles';
 import { type Theme, useGetThemes } from './useGetThemes';
 
 const GiftThemeSection = () => {

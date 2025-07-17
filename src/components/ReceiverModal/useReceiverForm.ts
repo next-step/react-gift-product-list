@@ -1,10 +1,7 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import {
-  MAX_RECEIVERS,
-  DEFAULT_RECEIVER,
-} from './constants';
+import { MAX_RECEIVERS, DEFAULT_RECEIVER } from './constants';
 import { FormSchema, type FormValues, type Receivers } from './schema';
 
 interface UseReceiverFormProps {
@@ -27,9 +24,7 @@ export const useReceiverForm = ({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       receivers:
-        initialReceivers.length > 0
-          ? initialReceivers
-          : [DEFAULT_RECEIVER],
+        initialReceivers.length > 0 ? initialReceivers : [DEFAULT_RECEIVER],
     },
     mode: 'onChange',
   });

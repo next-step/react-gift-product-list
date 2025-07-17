@@ -52,7 +52,9 @@ export function useOrderForm(product: { name: string; price: number }) {
     );
   };
 
-  const handleReceiverModalComplete = (selectedReceivers: ReceiverFormInput[]) => {
+  const handleReceiverModalComplete = (
+    selectedReceivers: ReceiverFormInput[]
+  ) => {
     setReceivers(selectedReceivers);
   };
 

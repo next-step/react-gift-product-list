@@ -32,7 +32,7 @@ const useGetRanking = (targetType: CategoryValue, rankType: SortValue) => {
       setIsLoading(true);
       try {
         const response = await axios.get<ApiResponse>(
-          `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`,
+          `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
         );
         setProducts(response.data.data);
       } catch (error) {

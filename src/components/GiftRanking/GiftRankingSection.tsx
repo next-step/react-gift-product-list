@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { Section, Heading, None } from '@/components/GiftRanking/GiftRanking.styles';
+import {
+  Section,
+  Heading,
+  None,
+} from '@/components/GiftRanking/GiftRanking.styles';
 import { GiftRankingFilter } from '@/components/GiftRanking/GiftRankingFilter';
 import GiftRankingGrid from '@/components/GiftRanking/GiftRankingGrid';
 import useGetRanking from './useGetRanking';
@@ -10,19 +14,26 @@ const GiftRankingSection = () => {
   const getInitialCategory = (): CategoryValue => {
     const stored = localStorage.getItem('selectedCategory');
     return (
-      (CATEGORY_OPTIONS.find((option) => option.value === stored)?.value || 'ALL')
+      CATEGORY_OPTIONS.find((option) => option.value === stored)?.value || 'ALL'
     );
   };
 
   const getInitialSort = (): SortValue => {
     const stored = localStorage.getItem('selectedSort');
-    return SORT_OPTIONS.find((option) => option.value === stored)?.value || 'MANY_WISH';
+    return (
+      SORT_OPTIONS.find((option) => option.value === stored)?.value ||
+      'MANY_WISH'
+    );
   };
 
-  const [selectedCategory, setSelectedCategory] = useState<CategoryValue>(getInitialCategory);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryValue>(getInitialCategory);
   const [selectedSort, setSelectedSort] = useState<SortValue>(getInitialSort);
 
-  const { products, isLoading, error } = useGetRanking(selectedCategory, selectedSort);
+  const { products, isLoading, error } = useGetRanking(
+    selectedCategory,
+    selectedSort
+  );
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

@@ -18,13 +18,20 @@ interface MessageCardProps {
 }
 
 function MessageCard({ register, setValue }: MessageCardProps) {
-  const [selectedCardId, setSelectedCardId] = useState<number>(messageCards[0].id);
-  const selectedCardData = messageCards.find((card) => card.id === selectedCardId);
+  const [selectedCardId, setSelectedCardId] = useState<number>(
+    messageCards[0].id
+  );
+  const selectedCardData = messageCards.find(
+    (card) => card.id === selectedCardId
+  );
 
   useEffect(() => {
     if (selectedCardData) {
       const defaultMessage = selectedCardData.defaultTextMessage;
-      setValue('message', defaultMessage, { shouldDirty: true, shouldValidate: true });
+      setValue('message', defaultMessage, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
     }
   }, [selectedCardData, setValue]);
 

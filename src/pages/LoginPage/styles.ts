@@ -9,8 +9,8 @@ export const Container = styled.div`
 `;
 
 export const Logo = styled.img`
-    width: 120px;
-    height: auto;
+  width: 120px;
+  height: auto;
 `;
 export const ErrorMessage = styled.p`
   font: ${({ theme }) => theme.typography.label2Regular};
@@ -30,11 +30,13 @@ export const Input = styled.input<{ isError: boolean }>`
   width: 360px;
   padding: ${({ theme }) => theme.spacing.spacing3};
   margin-bottom: ${({ theme }) => theme.spacing.spacing6};
-  font : ${({ theme }) => theme.typography.body2Regular};
+  font: ${({ theme }) => theme.typography.body2Regular};
   border: none;
   border-bottom: 1px solid
     ${({ isError, theme }) =>
-    isError ? theme.colors.semantic.critical : theme.colors.semantic.borderDefault};
+      isError
+        ? theme.colors.semantic.critical
+        : theme.colors.semantic.borderDefault};
   background: transparent;
   outline: none;
   color: ${({ theme }) => theme.colors.semantic.textDefault};
@@ -55,13 +57,14 @@ export const LoginButton = styled.button`
   width: 360px;
   padding: ${({ theme }) => theme.spacing.spacing3};
   background-color: ${({ theme }) => theme.colors.semantic.kakaoYellow};
-  font : ${({ theme }) => theme.typography.label2Regular};
+  font: ${({ theme }) => theme.typography.label2Regular};
   border-radius: ${({ theme }) => theme.spacing.spacing1};
   cursor: pointer;
   margin-top: ${({ theme }) => theme.spacing.spacing10};
   &:disabled {
-    background-color: ${({ theme }) => theme.colors.semantic.backgroundDisabled};;
+    background-color: ${({ theme }) =>
+      theme.colors.semantic.backgroundDisabled};
     cursor: not-allowed;
-    color: ${({ theme }) => theme.colors.semantic.textDisabled};;
+    color: ${({ theme }) => theme.colors.semantic.textDisabled};
   }
 `;

@@ -31,8 +31,7 @@ const Icon = styled.button`
 `;
 
 const Title = styled.button`
-  font: ${({ theme }) =>
-    theme.typography.title1Bold};
+  font: ${({ theme }) => theme.typography.title1Bold};
 `;
 
 const NavigationBar = () => {

@@ -12,5 +12,5 @@ createRoot(document.getElementById('root')!).render(
       <GlobalStyles />
       <RouterProvider router={router} />
     </ThemeProvider>
-  </StrictMode>,
+  </StrictMode>
 );

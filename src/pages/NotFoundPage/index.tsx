@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Container, Image, Title, Description, Button } from "./styles"
+import { Container, Image, Title, Description, Button } from './styles';
 import NotFoundImg from '@/assets/not-found.png';
 
 const NotFoundPage = () => {
