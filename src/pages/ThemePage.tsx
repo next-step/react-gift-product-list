@@ -1,44 +1,58 @@
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchProductSummary } from "@src/apis/BackEnd/apiList";
+import { fetchThemeInfo } from "@src/apis/BackEnd/apiList";
 import useFetchState from "@src/hooks/useFetchState";
 import PendingSpinner from "@src/components/shared/PendingSpinner";
-import OrderForm from "@src/components/OrderPanels/OrderForm";
+import HeroPanel from "@src/components/ThemePanels/HeroPanel";
+import ThemePanel from "@src/components/ThemePanels/ThemePanel";
+import styled from "@emotion/styled";
 
-export type ProductData = {
-  imageURL: string;
-  id: number;
-  name: string;
-  brandName: string;
-  price: number;
+export type ThemeInfo = {
+  data: {
+    backgroundColor: string;
+    description: number;
+    name: string;
+    themeId: string;
+    title: number;
+  };
 };
 
 function ThemePage() {
   const navigate = useNavigate();
   const themeId = useParams().id ?? "";
   const update = useCallback(async () => {
-    const response = await fetchProductSummary(themeId);
+    const response = await fetchThemeInfo(themeId);
     if (!response) {
       console.error("fetchProductSummary에 실패하였습니다.");
       return;
     }
 
-    // if (response.status >= 400 && response.status < 500) {
-    //   navigate(`/?err=${encodeURIComponent(response.data.data.message)}`);
-    //   return;
-    // }
+    if (response.status === 404) {
+      navigate(`/?err=${encodeURIComponent(response.data.data.message)}`);
+      return;
+    }
 
-    return response;
+    return response.data;
   }, [themeId]);
 
-  const productData = useFetchState<ProductData>(update);
+  const themeInfo = useFetchState<ThemeInfo>(update);
 
   return (
     <>
-      {productData.status === "pending" && <PendingSpinner />}
-      {productData.status === "done" && <>Theme Panel {themeId}</>}
+      {themeInfo.status === "pending" && <PendingSpinner />}
+      {themeInfo.status === "done" && (
+        <ThemePageWrapper>
+          <HeroPanel themeInfo={themeInfo.data!} />
+          <ThemePanel />
+        </ThemePageWrapper>
+      )}
     </>
   );
 }
+
+const ThemePageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default ThemePage;

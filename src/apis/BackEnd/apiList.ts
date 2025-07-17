@@ -111,3 +111,17 @@ export async function fetchOrder(orderInfo: OrderBody, authToken: string) {
     return null;
   }
 }
+
+export async function fetchThemeInfo(themeId: string) {
+  try {
+    const response = await instance.get(BE.API.THEME.INFO(themeId));
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response ?? null;
+    } else {
+      console.error(error);
+    }
+    return null;
+  }
+}
