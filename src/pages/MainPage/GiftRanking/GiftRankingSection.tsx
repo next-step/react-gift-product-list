@@ -22,18 +22,28 @@ interface Product {
 }
 
 const GiftRankingSection = () => {
-  // const repeatedProducts = productList.slice(0, 9);
-
   const receivers = ['전체', '여성이', '남성이', '청소년이'];
   const sorts = ['받고 싶어한', '많이 선물한', '위시로 받은'];
+  const receiverOptions = [
+    { text: '전체', apiValue: 'ALL' },
+    { text: '여성이', apiValue: 'FEMALE' },
+    { text: '남성이', apiValue: 'MALE' },
+    { text: '청소년이', apiValue: 'TEEN' },
+  ];
+
+  const sortOptions = [
+    { text: '받고 싶어한', apiValue: 'MANY_WISH' },
+    { text: '많이 선물한', apiValue: 'MANY_RECEIVE' },
+    { text: '위시로 받은', apiValue: 'MANY_WISH_RECEIVE' },
+  ];
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const initialReceiver = searchParams.get('receiver') || '전체';
-  const initialSort = searchParams.get('sort') || '받고 싶어한';
+  const initialTargetType = searchParams.get('targetType') || 'ALL';
+  const initialRankType = searchParams.get('rankType') || 'MANY_WISH';
 
-  const [selectedReceiver, setSelectedReceiver] = useState(initialReceiver);
-  const [selectedSort, setSelectedSort] = useState(initialSort);
+  const [selectedTargetType, setSelectedTargetType] = useState<string>(initialTargetType);
+  const [selectedRankType, setSelectedRankType] = useState<string>(initialRankType);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,49 +51,18 @@ const GiftRankingSection = () => {
 
   useEffect(() => {
     setSearchParams({
-      receiver: selectedReceiver,
-      sort: selectedSort,
+      targetType: selectedTargetType,
+      rankType: selectedRankType,
     });
-  }, [selectedReceiver, selectedSort, setSearchParams]);
-
-  const mapFilterToApiParam = useCallback((filter: string, type: 'receiver' | 'sort') => {
-    if (type === 'receiver') {
-      switch (filter) {
-        case '전체':
-          return 'ALL';
-        case '여성이':
-          return 'FEMALE';
-        case '남성이':
-          return 'MALE';
-        case '청소년이':
-          return 'TEEN';
-        default:
-          return 'ALL';
-      }
-    } else {
-      switch (filter) {
-        case '받고 싶어한':
-          return 'MANY_WISH';
-        case '많이 선물한':
-          return 'MANY_RECEIVE';
-        case '위시로 받은':
-          return 'MANY_WISH_RECEIVE';
-        default:
-          return 'MANY_WISH';
-      }
-    }
-  }, []);
+  }, [selectedTargetType, selectedRankType, setSearchParams]);
 
   const fetchRankingProducts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
-    const receiverParam = mapFilterToApiParam(selectedReceiver, 'receiver');
-    const sortParam = mapFilterToApiParam(selectedSort, 'sort');
-
     try {
       const response = await fetch(
-        `http://localhost:3000/api/products/ranking?receiver=${receiverParam}&sort=${sortParam}`
+        `http://localhost:3000/api/products/ranking?targetType=${selectedTargetType}&rankType=${selectedRankType}`
       );
 
       if (!response.ok) {
@@ -102,16 +81,35 @@ const GiftRankingSection = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedReceiver, selectedSort, mapFilterToApiParam]);
+  }, [selectedTargetType, selectedRankType]);
 
   useEffect(() => {
     fetchRankingProducts();
   }, [fetchRankingProducts]);
 
+  const handleReceiverSelect = useCallback((text: string) => {
+    const apiValue = receiverOptions.find((opt) => opt.text === text)?.apiValue || 'ALL';
+    setSelectedTargetType(apiValue);
+  }, []);
+
+  const handleSortSelect = useCallback((text: string) => {
+    const apiValue = sortOptions.find((opt) => opt.text === text)?.apiValue || 'MANY_WISH';
+    setSelectedRankType(apiValue);
+  }, []);
+
+  const currentReceiverText =
+    receiverOptions.find((opt) => opt.apiValue === selectedTargetType)?.text || '전체';
+  const currentSortText =
+    sortOptions.find((opt) => opt.apiValue === selectedRankType)?.text || '받고 싶어한';
+
   return (
     <S.Section>
-      <FilterGroup items={receivers} selected={selectedReceiver} onSelect={setSelectedReceiver} />
-      <FilterGroup items={sorts} selected={selectedSort} onSelect={setSelectedSort} />
+      <FilterGroup
+        items={receivers}
+        selected={currentReceiverText}
+        onSelect={handleReceiverSelect}
+      />
+      <FilterGroup items={sorts} selected={currentSortText} onSelect={handleSortSelect} />
       {isLoading ? (
         <S.LoadingMessage>상품 목록을 불러오는 중...</S.LoadingMessage>
       ) : error ? (
