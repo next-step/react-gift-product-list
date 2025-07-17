@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { validateId, validatePw } from '@/utils/validation';
 import { useAuth } from '@/contexts/AuthContext'; 
+import { login as loginService } from '@/api/services';
 
 export const useLoginForm = () => {
   const [id, setId] = useState('');
@@ -35,14 +36,16 @@ export const useLoginForm = () => {
 
   const isValid = !!(id && !!pw && !idError && !pwError);
 
-  const onSubmit = () => {
+  const onSubmit = async() => {
     if (!isValid) return;
-    const user = {
-      id: id.split('@')[0], //@앞을 기준으로 id 설정
-      email: id,
-    };
-    login(user);
-    navigate(from, { replace: true });
+    try {
+      const { email, name, authToken } = await loginService(id, pw);
+      login({ email, name }, authToken);
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error(error);
+      alert('로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.');
+    }
   };
 
   return {
