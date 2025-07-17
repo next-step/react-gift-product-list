@@ -1,29 +1,42 @@
-import Header from '@/components/Common/Header';
-import Divider from '@/components/Common/Divider';
-import styled from '@emotion/styled';
-import { SectionContainer } from '@/components/Common/SectionLayout';
-import CardList from '@/components/Order/CardList';
-import { useCardSelection } from '@/hooks/useCardSelection';
-import { useParams, useNavigate } from 'react-router-dom';
-import { mockGiftItems } from '@/mocks/itemListMock';
-import { useEffect, useRef, useState } from 'react';
-import ReceiverListModal from '@/components/Order/ReceiverListModal';
+import Header from "@/components/Common/Header";
+import Divider from "@/components/Common/Divider";
+import styled from "@emotion/styled";
+import { SectionContainer } from "@/components/Common/SectionLayout";
+import CardList from "@/components/Order/CardList";
+import { useCardSelection } from "@/hooks/useCardSelection";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import ReceiverListModal from "@/components/Order/ReceiverListModal";
 import {
   InputWrapper,
   StyledInput,
   CaptionText,
-} from '@/components/Common/BorderInputBox';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { OrderSchema } from '@/schema/order';
-import type { Receiver } from '@/schema/receiver';
-import type { OrderType } from '@/schema/order';
+} from "@/components/Common/BorderInputBox";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { OrderSchema } from "@/schema/order";
+import type { Receiver } from "@/schema/receiver";
+import type { OrderType } from "@/schema/order";
+import type { SummaryGiftProduct } from "@/types/gift";
+import { getProudctSummary } from "@/api/products";
 
 const Order = () => {
-  const { itemId } = useParams<{ itemId: string }>();
-  const item = mockGiftItems.find((item) => item.id === Number(itemId));
-
+  const [item, setItem] = useState<SummaryGiftProduct | null>(null);
   const { selectedCard, selectCard } = useCardSelection();
+  const { productId } = useParams<{ productId: string }>();
+
+  useEffect(() => {
+    const fetchOrderItem = async () => {
+      if (!productId) return;
+      try {
+        const res = await getProudctSummary(Number(productId));
+        setItem(res.data.data);
+      } catch (err) {
+        console.error("상품 정보를 불러오는데 실패했습니다.", err);
+      }
+    };
+    fetchOrderItem();
+  }, [productId]);
 
   const {
     register,
@@ -33,18 +46,18 @@ const Order = () => {
     formState: { errors },
   } = useForm<OrderType>({
     resolver: zodResolver(OrderSchema),
-    defaultValues: { senderName: '', message: '' },
-    mode: 'onSubmit',
+    defaultValues: { senderName: "", message: "" },
+    mode: "onSubmit",
   });
 
   const handleSelectCard = (card: typeof selectedCard) => {
     selectCard(card!);
-    setValue('message', card!.defaultTextMessage);
+    setValue("message", card!.defaultTextMessage);
     hasUserEditedMessage.current = false;
   };
 
   const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue('message', e.target.value);
+    setValue("message", e.target.value);
   };
 
   const hasUserEditedMessage = useRef(false);
@@ -70,9 +83,9 @@ const Order = () => {
     if (
       selectedCard?.defaultTextMessage &&
       !hasUserEditedMessage.current &&
-      getValues('message') === ''
+      getValues("message") === ""
     ) {
-      setValue('message', selectedCard.defaultTextMessage);
+      setValue("message", selectedCard.defaultTextMessage);
     }
   }, [selectedCard, getValues, setValue]);
 
@@ -84,7 +97,7 @@ const Order = () => {
     (acc, curr) => acc + (curr.itemCount ?? 0),
     0
   );
-  const totalPrice = totalCount * (item?.price.sellingPrice ?? 0);
+  const totalPrice = totalCount * (item?.price ?? 0);
 
   const handleOrderSubmit = (data: OrderType) => {
     const hasNoReceivers = receivers.length < 1;
@@ -94,7 +107,7 @@ const Order = () => {
     alert(
       `주문 완료!\n상품: ${item?.name}\n수량: ${totalCount}\n보내는 사람: ${data.senderName}\n메시지: ${data.message}`
     );
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -117,13 +130,13 @@ const Order = () => {
                 <CardImage src={selectedCard.imageUrl} />
               </CardImageWraaper>
               <CardMessageTextArea
-                {...register('message')}
+                {...register("message")}
                 placeholder="메시지를 입력해주세요."
                 isError={!!errors.message}
                 onChange={onMessageChange}
               />
               <MessageTextAreaCaption isError={Boolean(errors.message)}>
-                {errors.message?.message || ' '}
+                {errors.message?.message || " "}
               </MessageTextAreaCaption>
             </SelectedCardPreview>
           )}
@@ -133,13 +146,13 @@ const Order = () => {
           <OrderSectionTitle>보내는 사람</OrderSectionTitle>
           <InputWrapper>
             <StyledInput
-              {...register('senderName')}
+              {...register("senderName")}
               placeholder="이름을 입력하세요."
               hasError={!!errors.senderName}
             />
             <CaptionText isError={Boolean(errors.senderName)}>
               {errors.senderName?.message ||
-                '* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.'}
+                "* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다."}
             </CaptionText>
           </InputWrapper>
         </SectionContainer>
@@ -151,7 +164,7 @@ const Order = () => {
               type="button"
               onClick={handleOpenReceiverModal}
             >
-              {receivers.length > 0 ? '수정' : '추가'}
+              {receivers.length > 0 ? "수정" : "추가"}
             </OpenReceiverListModalButton>
           </ReceiveContainerHeader>
 
@@ -184,11 +197,9 @@ const Order = () => {
           <ItemWrapper>
             <ItemImg src={item.imageURL} />
             <ItemTextInfoWrapper>
-              <ItemBrand>{item.brandInfo.name}</ItemBrand>
+              <ItemBrand>{item.brandName}</ItemBrand>
               <ItemName>{item.name}</ItemName>
-              <ItemPrice>
-                {item.price.sellingPrice.toLocaleString()}원
-              </ItemPrice>
+              <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
             </ItemTextInfoWrapper>
           </ItemWrapper>
         </SectionContainer>

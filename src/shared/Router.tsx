@@ -1,10 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from '@/Pages/Home';
-import Login from '@/Pages/Login';
-import NotFound from '@/Pages/NotFound';
-import MyPage from '@/Pages/MyPage';
-import LoginProtectedRoute from '@/shared/LoginProtectedRoute';
-import Order from '@/Pages/Order';
+import { Routes, Route } from "react-router-dom";
+import Home from "@/Pages/Home";
+import Login from "@/Pages/Login";
+import NotFound from "@/Pages/NotFound";
+import MyPage from "@/Pages/MyPage";
+import LoginProtectedRoute from "@/shared/LoginProtectedRoute";
+import Order from "@/Pages/Order";
 
 const Router = () => {
   return (
@@ -20,7 +20,7 @@ const Router = () => {
         }
       />
       <Route
-        path="/order/:itemId"
+        path="/order/:productId"
         element={
           <LoginProtectedRoute>
             <Order />

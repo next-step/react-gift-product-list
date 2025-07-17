@@ -10,12 +10,12 @@ import {
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import { getRanking } from "@/api/products";
-import type { GiftItem } from "@/types/gift";
+import type { SummaryGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 
 const RankingSection = () => {
   const [showAll, setShowAll] = useState(false);
-  const [rankingItems, setRankingItems] = useState<GiftItem[]>([]);
+  const [rankingItems, setRankingItems] = useState<SummaryGiftProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,11 +46,13 @@ const RankingSection = () => {
     });
   };
 
-  const handleClickItem = (itemId: number) => {
+  const handleClickItem = (productId: number) => {
     if (!isLoggedIn) {
-      navigate("/login", { state: { from: { pathname: `/order/${itemId}` } } });
+      navigate("/login", {
+        state: { from: { pathname: `/order/${productId}` } },
+      });
     } else {
-      navigate(`/order/${itemId}`);
+      navigate(`/order/${productId}`);
     }
   };
 
