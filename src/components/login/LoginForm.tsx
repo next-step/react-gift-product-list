@@ -12,7 +12,7 @@ import { userStorage } from "@/utils/userStorage";
 import { toast } from "react-toastify";
 
 type Props = {
-  onLoginSuccess: (email: string) => void;
+  onLoginSuccess: (email: string, token: string) => void; 
 };
 
 export const LoginForm = ({ onLoginSuccess }: Props) => {
@@ -27,6 +27,7 @@ export const LoginForm = ({ onLoginSuccess }: Props) => {
     if (!regex.test(email)) return "ID는 이메일 형식으로 입력해주세요.";
     return "";
   };
+
   const isKakaoEmail = (email: string) => {
     return email.endsWith("@kakao.com");
   };
@@ -69,9 +70,10 @@ export const LoginForm = ({ onLoginSuccess }: Props) => {
 
     try {
       const data = await login({ email, password });
-      userStorage.set(data); 
+      userStorage.set(data);
       toast.success("로그인 성공!");
-      onLoginSuccess(data.email);
+
+      onLoginSuccess(data.email, data.authToken);
     } catch (err: any) {
       const message =
         err?.response?.data?.data?.message || "로그인에 실패했습니다.";

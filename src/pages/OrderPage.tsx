@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 
 import { orderFormSchema } from "@/validations/orderSchema";
 import type { OrderFormValues } from "@/validations/orderSchema";
-
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Navigation } from "@/components/header/Navigation";
@@ -22,12 +21,22 @@ import OrderButton from "@/components/order/OrderButton";
 import { getProductSummary } from "@/api/product";
 import type { ProductSummary } from "@/api/product";
 import { createOrder } from "@/api/orderapi";
+import { useAuth } from "@/contexts/AuthContext";
 
 const OrderPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState<ProductSummary | null>(null);
   const [isReceiverModalOpen, setReceiverModalOpen] = useState(false);
+
+  const { token, isInitialized, isLoggedIn } = useAuth();
+
+  if (!isInitialized) return null;
+
+  if (!isLoggedIn) {
+    navigate("/login", { replace: true });
+    return null;
+  }
 
   const methods = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
@@ -43,10 +52,7 @@ const OrderPage = () => {
   const { handleSubmit, watch, setValue } = methods;
   const receivers = watch("receivers") ?? [];
 
-  const totalQuantity = receivers.reduce(
-    (sum, r) => sum + (r.quantity ?? 0),
-    0
-  );
+  const totalQuantity = receivers.reduce((sum, r) => sum + (r.quantity ?? 0), 0);
   const totalAmount = (product?.price.sellingPrice ?? 0) * totalQuantity;
 
   const onReceiverComplete = (data: OrderFormValues["receivers"]) => {
@@ -56,7 +62,6 @@ const OrderPage = () => {
   const onValid = async (data: OrderFormValues) => {
     if (!product) return;
 
-    const token = localStorage.getItem("authToken");
     if (!token) {
       toast.error("로그인이 필요합니다.");
       navigate("/login");
@@ -69,8 +74,7 @@ const OrderPage = () => {
       navigate("/", { replace: true });
     } catch (err: any) {
       const msg =
-        err?.response?.data?.data?.message ||
-        "주문 요청 중 오류가 발생했습니다.";
+        err?.response?.data?.data?.message || "주문 요청 중 오류가 발생했습니다.";
       toast.error(msg);
     }
   };
@@ -87,8 +91,7 @@ const OrderPage = () => {
       setProduct(data);
     } catch (err: any) {
       const msg =
-        err?.response?.data?.data?.message ||
-        "상품 정보를 불러오지 못했습니다.";
+        err?.response?.data?.data?.message || "상품 정보를 불러오지 못했습니다.";
       toast.error(msg);
       navigate("/not-found", { replace: true });
     }

@@ -14,8 +14,8 @@ const LoginPage = () => {
 
   const redirectPath = location.state?.from?.pathname || "/";
 
-  const handleLoginSuccess = (email: string) => {
-    login({ id: email, email });
+  const handleLoginSuccess = (email: string, token: string) => {
+    login({ id: email, email }, token);
     navigate(redirectPath, { replace: true });
   };
 
@@ -24,7 +24,7 @@ const LoginPage = () => {
       <Navigation />
       <Container>
         <Logo src="/assets/kakao_logo.svg" alt="카카오 로고" />
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
+        <LoginForm onLoginSuccess={handleLoginSuccess} /> {/* ✅ 이쪽도 수정됨 */}
         <ToastContainer
           position="bottom-center"
           autoClose={3000}
