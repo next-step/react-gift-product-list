@@ -9,10 +9,6 @@ import NotFoundPage from './pages/NotFoundPage';
 import { AuthProvider } from './contexts/AuthContext';
 import MyPage from './pages/MyPage';
 import Order from './pages/Order';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -24,28 +20,24 @@ const containerStyle = css`
   align-items: center;
 `;
 
-const queryClient = new QueryClient();
-
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <Global styles={reset} />
-        <div css={containerStyle}>
-          <AuthProvider>
-            <BrowserRouter>
-              <ToastContainer position="top-right" autoClose={3000} />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<NotFoundPage />} />
-                <Route path="/my" element={<MyPage />} />
-                <Route path="/order/:id" element={<Order />} />
-              </Routes>
-            </BrowserRouter>
-          </AuthProvider>
-        </div>
-      </QueryClientProvider>
+      <Global styles={reset} />
+      <div css={containerStyle}>
+        <AuthProvider>
+          <BrowserRouter>
+            <ToastContainer position="top-right" autoClose={3000} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<NotFoundPage />} />
+              <Route path="/my" element={<MyPage />} />
+              <Route path="/order/:id" element={<Order />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </div>
     </ThemeProvider>
   );
 };
