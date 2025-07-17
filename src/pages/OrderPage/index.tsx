@@ -23,10 +23,12 @@ import {
   CURRENCY_UNIT,
   PRODUCT_NOT_FOUND_MESSAGE,
 } from './constants';
+import { useLogin } from '@/contexts/LoginContext';
 import { useOrderForm } from './useOrderForm';
 import useGetProductSummary from './useGetProductSummary';
 
 function OrderPage() {
+  const { userInfo } = useLogin();
   const { product, loading, error } = useGetProductSummary();
   const {
     register,
@@ -37,7 +39,7 @@ function OrderPage() {
     receivers,
     handleReceiverModalComplete,
     totalQuantity,
-  } = useOrderForm(product);
+  } = useOrderForm(product, userInfo?.name);
 
   if (error) {
     return <div>{error.message}</div>;

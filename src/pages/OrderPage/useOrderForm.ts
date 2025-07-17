@@ -20,7 +20,10 @@ const OrderFormSchema = z.object({
 type OrderFormValues = z.infer<typeof OrderFormSchema>;
 type Receivers = ReceiverFormInput[];
 
-export function useOrderForm(product: { name: string; price: number } | null) {
+export function useOrderForm(
+  product: { name: string; price: number } | null,
+  senderName?: string
+) {
   const [receivers, setReceivers] = useState<Receivers>([]);
 
   const {
@@ -30,7 +33,7 @@ export function useOrderForm(product: { name: string; price: number } | null) {
     formState: { errors },
   } = useForm<OrderFormValues>({
     resolver: zodResolver(OrderFormSchema),
-    defaultValues: { senderName: '', message: '' },
+    defaultValues: { senderName: senderName, message: '' },
     mode: 'onChange',
   });
 
