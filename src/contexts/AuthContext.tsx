@@ -13,9 +13,14 @@ type User = {
   authToken: string;
 };
 
+type LoginParams = {
+  email: string;
+  password: string;
+};
+
 type AuthContextType = {
   user: User | null;
-  login: (params: { email: string; password: string }) => Promise<void>;
+  login: (params: LoginParams) => Promise<void>;
   logout: () => void;
   isLoggedIn: boolean;
   isLoading: boolean;
@@ -23,6 +28,8 @@ type AuthContextType = {
 };
 
 const SESSION_KEY = 'kakaotech/userInfo';
+const LOGIN_API_PATH = '/api/login';
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -37,18 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
+  const login = async ({ email, password }: LoginParams) => {
     const res = await axios.post<{ data: User }>(
-      `${import.meta.env.VITE_API_BASE_URL}/api/login`,
+      `${import.meta.env.VITE_API_BASE_URL}${LOGIN_API_PATH}`,
       { email, password }
     );
-
     const userData = res.data.data;
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(userData));
     setUser(userData);
