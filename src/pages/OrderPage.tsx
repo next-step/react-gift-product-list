@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { useAuth } from '@/contexts/AuthContext';
 import Navigation from '@/components/Navigation';
 import CardSelector from '@/components/OrderSection/CardSelector';
 import MessageInput from '@/components/OrderSection/MessageInput';
@@ -58,23 +58,46 @@ const OrderPage = () => {
     handleCardChange,
     selectedCardId,
     totalPrice,
-    totalQuantity,
   } = useOrderForm(product);
 
-  const onSubmit = (data: OrderFormValues) => {
+  const { authToken } = useAuth();
+
+  const onSubmit = async (data: OrderFormValues) => {
     if (data.receivers.length === 0) {
-      alert('받는 사람을 한 명 이상 추가해주세요.');
+      toast.error('받는 사람을 한 명 이상 추가해주세요.');
       return;
     }
 
-    alert(
-      `주문이 완료되었습니다.\n` +
-        `상품명: ${product?.name}\n` +
-        `구매 수량: ${totalQuantity}\n` +
-        `발신자 이름: ${data.senderName}\n` +
-        `메시지: ${data.textMessage}`
-    );
-    navigate(ROUTES.HOME);
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/order`,
+        {
+          productId: product?.id,
+          message: data.textMessage,
+          messageCardId: String(selectedCardId),
+          ordererName: data.senderName,
+          receivers: data.receivers.map(r => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.quantity,
+          })),
+        },
+        {
+          headers: {
+            Authorization: `${authToken}`,
+          },
+        }
+      );
+
+      toast.success('주문이 완료되었습니다!');
+      navigate(ROUTES.HOME);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+      } else {
+        toast.error('주문에 실패했어요. 잠시 후 다시 시도해주세요.');
+      }
+    }
   };
 
   if (isLoading) return loading;

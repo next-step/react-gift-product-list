@@ -19,6 +19,7 @@ type AuthContextType = {
   logout: () => void;
   isLoggedIn: boolean;
   isLoading: boolean;
+  authToken: string | null;
 };
 
 const SESSION_KEY = 'kakaotech/userInfo';
@@ -66,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         isLoggedIn: user !== null,
         isLoading,
+        authToken: user?.authToken ?? null,
       }}
     >
       {children}

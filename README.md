@@ -38,5 +38,5 @@
   - [x] 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결시켜요.
   - [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채워놔요.
   - [ ] **`/order`** api를 사용하여 주문하기 기능을 완성해주세요.
-  - [ ] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작해요.
+  - [x] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작해요.
   - [ ] 주문하기 API에서 401 에러가 발생하면 로그인 페이지로 연결시켜요.
