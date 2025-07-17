@@ -32,11 +32,7 @@ const CategorySection = () => {
   return (
     <Section>
       <SectionTitle>선물 테마</SectionTitle>
-      {loading && (
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
-      )}
+      {loading && <LoadingSpinner />}
 
       {!loading && !hasError && themes.length > 0 && (
         <Grid>
@@ -57,13 +53,6 @@ export default CategorySection;
 const Section = styled.section`
   height: 16.6875rem;
   padding: ${({ theme }) => theme.spacing.spacing4};
-`;
-
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 `;
 
 const Grid = styled.div`

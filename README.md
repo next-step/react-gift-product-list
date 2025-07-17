@@ -41,3 +41,13 @@
 - 로딩 컴포넌트 구현
 - 카테고리 섹션에 로딩 로직 및 상태 추가
 - UI 요소 개선
+
+#### 랭킹 섹션 API 요청 및 상태 처리 구현
+
+- Product, RankedProduct interface 설정
+- mockData에서 실제 데이터로 변경
+  - addRanking 메서드 구현
+- useSearchParams에서 rawExpanded 제거하고 state로 관리
+- styled-component 위치 변경
+- API 요청 로직 추가 (theme과 동일)
+- LoadingSpinner 리팩토링

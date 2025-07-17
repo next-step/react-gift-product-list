@@ -2,7 +2,11 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
 const LoadingSpinner = () => {
-  return <Spinner />;
+  return (
+    <LoadingContainer>
+      <Spinner />
+    </LoadingContainer>
+  );
 };
 
 export default LoadingSpinner;
@@ -22,3 +26,10 @@ const Spinner = styled.div(({ theme }) => ({
   animation: `${spin} 0.8s linear infinite`,
   margin: `2rem auto`,
 }));
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
