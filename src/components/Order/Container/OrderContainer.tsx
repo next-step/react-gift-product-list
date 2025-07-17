@@ -41,8 +41,6 @@ const OrderContainer = () => {
   });
   const {
     handleSubmit,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    register,
     control,
     watch,
     setValue,

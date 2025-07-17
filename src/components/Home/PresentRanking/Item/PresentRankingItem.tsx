@@ -26,7 +26,6 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
       navigate(`${URLS.order}?productId=${item.id}`);
     }
   };
-
   const { goods, isLoading, isError } = useRankingItem();
 
   if (isLoading) {

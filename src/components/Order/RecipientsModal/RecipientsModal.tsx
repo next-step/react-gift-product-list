@@ -88,35 +88,13 @@ const StyledRecipientsModalFooterBtnContainer = styled.div`
 `;
 
 const RecipientsModal = ({ onClose, onAdd, existedRecipients }: RecipientsModalProps) => {
-  // const {
-  //   // register,
-  //   // formState: { errors },
-  //   handleSubmit,
-  //   reset,
-  //   getValues,
-  //   control,
-  // } = useForm<RecipientsModalFormData>({
-  //   defaultValues: {
-  //     newRecipients: [], // 초기값은 비어있지만, useEffect에서 existedRecipients로 채워질 것
-  //   },
-  // });
-
   const methods = useForm<RecipientsModalFormData>({
     resolver: zodResolver(recipientsModalSchema),
     defaultValues: {
       newRecipients: [],
     },
   });
-  const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    register,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    formState: { errors },
-    handleSubmit,
-    reset,
-    getValues,
-    control,
-  } = methods;
+  const { handleSubmit, reset, getValues, control } = methods;
 
   const { fields, append, remove } = useFieldArray({
     control,
