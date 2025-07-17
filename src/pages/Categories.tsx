@@ -9,7 +9,8 @@ import Layout from "@/components/Layout"
 import Blank from "@/components/Blank"
 import Column from "@/components/Column"
 import Trending from "./Trending"
-
+import { useState, useEffect } from "react"
+import axios from "axios"
 interface PresentItem {
   themeId: number
   name: string
@@ -31,7 +32,35 @@ const PresentCard = ({ present }: PresentCardProps) => {
 }
 
 const PresentList = () => {
-  const presents = useContext(PresentThemeContext)
+  const [presents, setPresents] = useState<PresentItem[] | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    async function fetchData(): Promise<void> {
+      setLoading(true)
+      try {
+        console.log("fetchData start")
+        const response = await axios.get<PresentItem[]>(
+          "http://localhost:3000/api/themes"
+        )
+        console.log(response)
+        setPresents(response.data.data)
+      } catch (e) {
+        console.log(e)
+      }
+      setLoading(false)
+    }
+    fetchData()
+  }, [])
+
+  if (loading) {
+    return <div>대기 중...</div>
+  }
+
+  if (!presents) {
+    return <div>hi</div>
+  }
+
   return (
     <PresentLayout>
       {presents.map(function (Present) {
