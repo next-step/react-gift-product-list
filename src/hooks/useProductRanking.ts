@@ -8,12 +8,14 @@ interface UseProductRankingResult {
   error: boolean;
 }
 
+const PRODUCT_RANKING_API_PATH = '/api/products/ranking';
+
 const fetchProductRankings = async (
   targetType: string,
   rankType: string
 ): Promise<Product[]> => {
   const res = await axios.get<{ data: Product[] }>(
-    `${import.meta.env.VITE_API_BASE_URL}/api/products/ranking`,
+    `${import.meta.env.VITE_API_BASE_URL}${PRODUCT_RANKING_API_PATH}`,
     { params: { targetType, rankType } }
   );
   return res.data.data;
