@@ -23,21 +23,17 @@ const OrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedCard, setSelectedCard] = useState<Card>(cards[0]);
-  const sessionUserInfo = sessionStorage.getItem("kakaotech/userInfo");
-  const defaultName = sessionUserInfo ? JSON.parse(sessionUserInfo).name : "";
-  const token = sessionUserInfo ? JSON.parse(sessionUserInfo).authToken : "";
+  const userInfo = useUserInfo();
   const methods = useForm<OrderFormValue>({
     mode: "onChange",
     defaultValues: {
       message: selectedCard.defaultTextMessage,
-      sender: defaultName,
+      sender: userInfo?.name || "",
       receiver: [],
     },
   });
 
   const watchedReceiver = methods.watch("receiver");
-
-  const userInfo = useUserInfo();
 
   useEffect(() => {
     methods.setValue("message", selectedCard.defaultTextMessage);
@@ -89,7 +85,7 @@ const OrderPage = () => {
       })),
     };
 
-    postOrder(orderRequestData, token)
+    postOrder(orderRequestData, userInfo?.authToken || "")
       .then(() => {
         alert(
           [
