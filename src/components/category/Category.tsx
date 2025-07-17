@@ -7,41 +7,32 @@ import {
   CategoryItem,
   CategoryImage,
 } from './Category.styles';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import type { CategoryType } from '@/types/category';
+import { useFetch } from '@/hooks/useFetch';
 
 const Category = () => {
-  const [category, setCategory] = useState<CategoryType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const res = await axios.get('http://localhost:3000/api/themes');
-        const data = res.data.data;
-        if (data.length > 0) {
-          setCategory(data);
-          setIsLoading(false);
-        } else {
-          //데이터가 빈 배열일때
-          setCategory([]);
-        }
-      } catch (e) {
-        console.error(e);
-        setCategory([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchThemes();
-  }, []);
-  if (isLoading) {
-    return <div>📢카테고리가 로딩중입니다..</div>;
-  }
+   const fetchCategories = useCallback(() => {
+     return axios
+       .get('http://localhost:3000/api/themes')
+       .then((res) => res.data.data);
+   }, []);
 
-  if (category.length === 0) {
-    return <div>📭 선물 테마가 없습니다.</div>;
-  }
+   // ✅ useFetch 훅 사용
+   const {
+     data: category,
+     isLoading,
+     error,
+   } = useFetch<CategoryType[]>({
+     fetcher: fetchCategories,
+     initValue: [],
+   });
+
+   if (isLoading) return <div>📢 카테고리가 로딩중입니다..</div>;
+   if (error) return <div>❌ 오류 발생: {String(error)}</div>;
+   if (category.length === 0) return <div>📭 선물 테마가 없습니다.</div>;
+
 
   return (
     <CategoryWrapper>

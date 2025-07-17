@@ -3,11 +3,9 @@ import RankingItem from '../RankingItem';
 import { PaddingLg } from '../../common/Padding';
 import PersonCategory from '../PersonCategory';
 import BehaviorCategory from '../BehaviorCategory';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  // BEHAVIOR_FILTER_LABELS,
-  // PERSON_FILTER_LABELS,
   type BehaviorFilterLabels,
   type BehaviorParam,
   type PersonFilterLabels,
@@ -18,6 +16,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import axios from 'axios';
 import type { ProductType } from '@/types/product';
 import { RankingProducts, RankingTitle, RankingWrapper, ShowMoreBtn } from './Ranking.styles';
+import { useFetch } from '@/hooks/useFetch';
+// import api from '@/lib/axiosInstance';
 
 //필터 옵션
 const personFilterOptions: { label: PersonFilterLabels; emoji: string; param: PersonParam }[] = [
@@ -36,12 +36,14 @@ const behaviorOptions: { label: BehaviorFilterLabels; param: BehaviorParam }[] =
 const Ranking = () => {
   const navigator = useNavigate();
   const { user } = useAuth();
-  const [personParam, setPersonParam] = useState<PersonParam>('ALL');
-  const [behaviorParam, setBehaviorParam] = useState<BehaviorParam>('MANY_RECEIVE');
+
   const [showAll, setShowAll] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const queryPersonParams = searchParams.get('targetType') as PersonParam | null;
+  const queryBehaviorParam = searchParams.get('rankType') as BehaviorParam | null;
+  const [personParam, setPersonParam] = useState<PersonParam>(queryPersonParams||'ALL');
+  const [behaviorParam, setBehaviorParam] = useState<BehaviorParam>(queryBehaviorParam||'MANY_RECEIVE');
   const handlePersonSelect = (param: PersonParam) => {
     setPersonParam(param);
     searchParams.set('targetType', param);
@@ -59,40 +61,26 @@ const Ranking = () => {
       navigator(ROUTE_PATH.ORDER.replace(':productId', String(id)));
     }
   };
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        setIsLoading(true);
-        const res = await axios.get('http://localhost:3000/api/products/ranking', {
-          params: {
-            targetType: personParam,
-            rankType: behaviorParam,
-          },
-        });
-        const data = res.data.data;
-        if (data.length > 0) {
-          setProducts(data);
-          setIsLoading(false);
-        } else {
-          setProducts([]);
-        }
-      } catch (e) {
-        console.error(e);
-        setProducts([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getProducts();
+  const RankingFetcher = useCallback(() => {
+    return axios
+      .get('http://localhost:3000/api/products/ranking', {
+        params: { targetType: personParam, rankType: behaviorParam },
+      })
+      .then((res) => res.data.data);
   }, [personParam, behaviorParam]);
 
-  if (isLoading) return <div>📢 랭킹 데이터를 불러오고 있어요...</div>;
+  const { data: products, isLoading: isProductLoading } = useFetch<ProductType[]>({
+    fetcher: RankingFetcher,
+    initValue: [],
+  });
 
-  if (!isLoading && products.length === 0) {
-    return <div>📭 상품 랭킹이 없습니다.</div>;
-  }
   const visible = showAll ? products : products.slice(0, 6);
 
+  if (isProductLoading) return <div>📢 랭킹 데이터를 불러오고 있어요...</div>;
+
+  if (!isProductLoading && products.length === 0) {
+    return <div>📭 상품 랭킹이 없습니다.</div>;
+  }
   return (
     <RankingWrapper>
       <RankingTitle>실시간 급상승 선물랭킹</RankingTitle>
