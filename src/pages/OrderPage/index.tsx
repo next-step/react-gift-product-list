@@ -21,6 +21,7 @@ import {
   ORDER_INFO_TITLE,
   PRODUCT_PRICE_LABEL,
   CURRENCY_UNIT,
+  PRODUCT_NOT_FOUND_MESSAGE,
 } from './constants';
 import { useOrderForm } from './useOrderForm';
 import useGetProductSummary from './useGetProductSummary';
@@ -38,16 +39,12 @@ function OrderPage() {
     totalQuantity,
   } = useOrderForm(product);
 
-  if (loading) {
-    return <div>Loading product information...</div>;
-  }
-
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>{error.message}</div>;
   }
 
   if (!product) {
-    return <div>Product not found.</div>;
+    return <div>{PRODUCT_NOT_FOUND_MESSAGE}</div>;
   }
 
   return (
@@ -63,6 +60,7 @@ function OrderPage() {
         initialReceivers={receivers}
         Trigger={<ReceiverSelectBox recipients={receivers} />}
       />
+      {loading && <Container></Container>}
       <Container>
         <Title>{ORDER_INFO_TITLE}</Title>
         <Box>

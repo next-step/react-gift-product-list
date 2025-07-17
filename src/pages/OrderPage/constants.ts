@@ -3,3 +3,7 @@ export const FINAL_ORDER_DATA_LOG = 'Final Order Data:';
 export const ORDER_INFO_TITLE = '주문 정보';
 export const PRODUCT_PRICE_LABEL = '상품가';
 export const CURRENCY_UNIT = '원';
+export const PRODUCT_ID_MISSING_MESSAGE = '상품 ID가 누락되었습니다.';
+export const FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE = '상품 정보를 불러오는데 실패했습니다.';
+export const ERROR_OCCURRED_MESSAGE = '에러가 발생했습니다.';
+export const PRODUCT_NOT_FOUND_MESSAGE = 'Product not found.';

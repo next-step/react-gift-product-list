@@ -13,6 +13,7 @@ import { PATH } from '@/constants/paths';
 import { useLogin } from '@/contexts/LoginContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { EMAIL_POSSIBLE, ERROR_OCCURRED_MESSAGE } from './constants';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -42,12 +43,12 @@ const LoginPage = () => {
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           if (error.response.status >= 400 && error.response.status < 500) {
-            toast.error(error.response.data.message || '@kakao.com 이메일만 가능합니다.');
+            toast.error(error.response.data.message || EMAIL_POSSIBLE);
           } else {
-            toast.error('알 수 없는 오류가 발생했습니다.');
+            toast.error(ERROR_OCCURRED_MESSAGE);
           }
         } else {
-          toast.error('알 수 없는 오류가 발생했습니다.');
+          toast.error(ERROR_OCCURRED_MESSAGE);
         }
       }
     }
