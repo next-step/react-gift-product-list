@@ -1,13 +1,15 @@
 import React from 'react';
+import type { UseFormRegisterReturn } from 'react-hook-form';
 import { IconButton, InputField } from '@/components';
+import type { InputType } from '@/components/atoms/Input';
 import { X } from 'lucide-react';
 import * as S from './styles';
 
 interface FormField {
   label: string;
   placeholder: string;
-  registerProps: any;
-  type: string;
+  registerProps: UseFormRegisterReturn;
+  type: InputType;
   error?: string;
 }
 
