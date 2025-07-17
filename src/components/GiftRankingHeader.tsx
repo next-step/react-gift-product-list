@@ -2,13 +2,22 @@ import { css } from "@emotion/react";
 import type { Theme } from "@emotion/react";
 import { useTheme } from "@emotion/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-const GiftRankingHeader = () => {
-  const [target, setTarget] = useState("ALL");
-  const [rankType, setRank] = useState("MANY_WISH");
+type GiftRankingHeaderProps = {
+  target: string;
+  setTarget: React.Dispatch<React.SetStateAction<string>>;
+  rankType: string;
+  setRankType: React.Dispatch<React.SetStateAction<string>>;
+};
 
-  type RANK_TYPE = "MANY_WISH" | "MANY_GIVE" | "MANY_WANT";
+const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
+  target,
+  setTarget,
+  rankType,
+  setRankType,
+}) => {
+  type RANK_TYPE = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
 
   const navigate = useNavigate();
   const theme = useTheme();
@@ -19,12 +28,12 @@ const GiftRankingHeader = () => {
     const initTarget = searchParams.get("target") || "ALL";
     const initRank = (searchParams.get("rankType") as RANK_TYPE) || "MANY_WISH";
     setTarget(initTarget);
-    setRank(initRank);
+    setRankType(initRank);
     const params = new URLSearchParams(location.search);
     params.set("target", initTarget);
     params.set("rankType", initRank);
     navigate(`${location.pathname}?${params.toString()}`);
-  }, [location.pathname, location.search, navigate]);
+  }, [location.pathname, location.search, navigate, setRankType, setTarget]);
 
   const handleTargetClick = (newTarget: string) => {
     setTarget(newTarget);
@@ -35,14 +44,13 @@ const GiftRankingHeader = () => {
   };
 
   const handleRankClick = (newRank: string) => {
-    setRank(newRank);
+    setRankType(newRank);
     const params = new URLSearchParams(location.search);
     params.set("target", target);
     params.set("rankType", newRank);
     navigate(`${location.pathname}?${params.toString()}`);
   };
-  //👩🏻
-  //
+
   return (
     <>
       <div css={textStyle(theme)}>실시간 급상승 선물랭킹</div>
@@ -64,47 +72,47 @@ const GiftRankingHeader = () => {
 
         <div css={filterContainerStyle(theme)}>
           <div
-            onClick={() => handleTargetClick("WOMAN")}
+            onClick={() => handleTargetClick("FEMALE")}
             css={[
               iconStyle(theme),
-              target === "WOMAN" && selectedTargetStyle(theme),
+              target === "FEMALE" && selectedTargetStyle(theme),
             ]}
           >
             👩🏻
           </div>
-          <p css={target === "WOMAN" ? selectedTargetStyle(theme) : undefined}>
+          <p css={target === "FEMALE" ? selectedTargetStyle(theme) : undefined}>
             여성이
           </p>
         </div>
 
         <div css={filterContainerStyle(theme)}>
           <div
-            onClick={() => handleTargetClick("MAN")}
+            onClick={() => handleTargetClick("MALE")}
             css={[
               iconStyle(theme),
-              target === "MAN" && selectedTargetStyle(theme),
+              target === "MALE" && selectedTargetStyle(theme),
             ]}
           >
             👨🏻
           </div>
-          <p css={target === "MAN" && selectedTargetStyle(theme)}>남성이</p>
+          <p css={target === "MALE" && selectedTargetStyle(theme)}>남성이</p>
         </div>
       </div>
       <div css={tabContainerStyle(theme)}>
         <div
-          onClick={() => handleRankClick("MANY_WANT")}
+          onClick={() => handleRankClick("MANY_WISH_RECEIVE")}
           css={[
             tabItemStyle(theme),
-            rankType === "MANY_WANT" && selectedRankStyle(theme),
+            rankType === "MANY_WISH_RECEIVE" && selectedRankStyle(theme),
           ]}
         >
           받고 싶어한
         </div>
         <div
-          onClick={() => handleRankClick("MANY_GIVE")}
+          onClick={() => handleRankClick("MANY_RECEIVE")}
           css={[
             tabItemStyle(theme),
-            rankType === "MANY_GIVE" && selectedRankStyle(theme),
+            rankType === "MANY_RECEIVE" && selectedRankStyle(theme),
           ]}
         >
           많이 선물한
