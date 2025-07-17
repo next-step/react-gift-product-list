@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 export const ThemeContainerWrapper = styled.ul`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   flex-wrap: wrap;
   width: 100%;
   padding: 25px;
