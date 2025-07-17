@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseFetchOptions {
@@ -6,6 +6,7 @@ interface UseFetchOptions {
   params?: Record<string, string | number>;
   autoFetch?: boolean;
   dependency?: React.DependencyList;
+  headers?: AxiosHeaders;
   body?: Object;
   baseUrl?: string;
 }
@@ -26,6 +27,7 @@ const useFetch = <T>(
     params = undefined,
     autoFetch = true,
     dependency = undefined,
+    headers = undefined,
     body = undefined,
     baseUrl = "",
   }: UseFetchOptions = {},
@@ -46,7 +48,7 @@ const useFetch = <T>(
 
     try {
       setIsLoading(true);
-      const response = await axios<T>(fetchUrl.toString(), { method, data: body });
+      const response = await axios<T>(fetchUrl.toString(), { method, headers, data: body });
       setIsError(false);
       setData(response.data);
       return { data: response.data, error: undefined };
