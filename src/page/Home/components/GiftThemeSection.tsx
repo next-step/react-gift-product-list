@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import Loading from '@/components/Loading';
-import useThemeApi from '@/api/themes/useThemeApi';
+import useTheme from '../hooks/useTheme';
 
 const GiftThemeSection = () => {
-  const { themes, loading, error } = useThemeApi();
+  const { themes, loading, error } = useTheme();
 
   if (loading || error) return <></>;
 

@@ -1,6 +1,5 @@
-import axios from 'axios';
+import fetchTheme from '@/api/themes/fetchTheme';
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../apiBaseUrl';
 
 interface ThemeInfo {
   themeId: number;
@@ -8,11 +7,7 @@ interface ThemeInfo {
   image: string;
 }
 
-interface ThemesResponse {
-  data: ThemeInfo[];
-}
-
-const useThemeApi = () => {
+const useTheme = () => {
   const [themes, setThemes] = useState<ThemeInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -20,9 +15,8 @@ const useThemeApi = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<ThemesResponse>(`${API_BASE_URL}/api/themes`);
-        const { data } = response;
-        setThemes(data.data);
+        const data = await fetchTheme();
+        setThemes(data);
       } catch (error) {
         setError(true);
         console.error('Error fetching themes:', error);
@@ -36,4 +30,4 @@ const useThemeApi = () => {
   return { themes, loading, error };
 };
 
-export default useThemeApi;
+export default useTheme;

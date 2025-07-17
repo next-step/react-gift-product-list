@@ -1,6 +1,5 @@
-import axios from 'axios';
+import fetchRanking from '@/api/products/fetchRanking';
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../apiBaseUrl';
 
 interface BrandInfo {
   id: number;
@@ -27,18 +26,15 @@ interface RankingApiProps {
   activeFilterButton: string;
 }
 
-const useRankingApi = ({ activeGenerationButton, activeFilterButton }: RankingApiProps) => {
+const useRanking = ({ activeGenerationButton, activeFilterButton }: RankingApiProps) => {
   const [rankingDatas, setRankingDatas] = useState<GiftRankingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/products/ranking?targetType=${activeGenerationButton}&rankType=${activeFilterButton}`
-        );
-        const { data } = response;
-        setRankingDatas(data.data);
+        const data = await fetchRanking({ activeGenerationButton, activeFilterButton });
+        setRankingDatas(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -51,4 +47,4 @@ const useRankingApi = ({ activeGenerationButton, activeFilterButton }: RankingAp
   return { rankingDatas, loading };
 };
 
-export default useRankingApi;
+export default useRanking;
