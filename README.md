@@ -51,3 +51,8 @@
 - styled-component 위치 변경
 - API 요청 로직 추가 (theme과 동일)
 - LoadingSpinner 리팩토링
+
+#### API 요청 함수 리팩토링
+
+- theme 요청 리팩토링
+- ranking 요청 리팩토링

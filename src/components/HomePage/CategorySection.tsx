@@ -1,4 +1,4 @@
-import axiosInstance from '@apis/axiosInstance';
+import { fetchThemes } from '@apis/themeApi';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
@@ -16,8 +16,7 @@ const CategorySection = () => {
   useEffect(() => {
     const loadThemes = async () => {
       try {
-        const res = await axiosInstance.get('/themes');
-        const data = res.data;
+        const data = await fetchThemes();
         setThemes(data.data);
       } catch (error) {
         console.error('테마를 불러오는 중 오류 발생: ', error);

@@ -1,4 +1,4 @@
-import axiosInstance from '@apis/axiosInstance';
+import { fetchRankedProducts } from '@apis/rankingApi';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
@@ -86,12 +86,7 @@ const RankingSection = () => {
         const apiTargetType = Target_MAP[selectedTarget];
         const apiRankType = Rank_MAP[selectedRank];
 
-        console.log(apiRankType, apiTargetType);
-
-        const res = await axiosInstance.get(
-          `/products/ranking?targetType=${apiTargetType}&rankType=${apiRankType}`
-        );
-        const data = res.data;
+        const data = await fetchRankedProducts(apiTargetType, apiRankType);
         const rankedProducts = addRanking(data.data);
         setProducts(rankedProducts);
       } catch (error) {
