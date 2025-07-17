@@ -1,8 +1,8 @@
 import * as S from './ProductInfo.styles'
-import type { Product } from '@/data/products'
+import type { ProductSummary } from '@/features/Order/hooks/useProductSummary'
 
 interface ProductInfoProps {
-  product: Product
+  product: ProductSummary
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
@@ -13,9 +13,9 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         <S.ProductImage src={product.imageURL} alt={product.name} />
         <S.ProductDetails>
           <S.ProductName>{product.name}</S.ProductName>
-          <S.BrandName>{product.brandInfo.name}</S.BrandName>
+          <S.BrandName>{product.brandName}</S.BrandName>
           <S.ProductPrice>
-            상품가 {product.price.sellingPrice.toLocaleString()}원
+            상품가 {product.price.toLocaleString()}원
           </S.ProductPrice>
         </S.ProductDetails>
       </S.ProductCard>
