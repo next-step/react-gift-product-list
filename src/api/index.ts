@@ -43,4 +43,14 @@ export async function loginApi(email: string, password: string) {
   return response.data.data;
 }
 
+export async function postOrder(orderData: any, authToken: string) {
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+  const response = await axios.post(`${baseURL}/api/order`, orderData, {
+    headers: {
+      Authorization: authToken,
+    },
+  });
+  return response.data.data;
+}
+
 export default apiClient;

@@ -12,6 +12,7 @@ import type { Recipient } from '@/types';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import { ROUTE_HOME } from '@/constants';
+import { postOrder } from '@/api';
 
 interface OrderFormData {
   selectedCardId: number;
@@ -271,23 +272,37 @@ const OrderPage = () => {
 
   // 주문 제출 핸들러
   const handleOrderSubmit = handleSubmit(async (data) => {
-    if (!product) return;
+    if (!product || !user) return;
 
-    // 총 수량 계산
-    const totalQuantity = data.recipients.reduce(
-      (sum, recipient) => sum + recipient.quantity,
-      0
-    );
-    const totalPrice = product.price * totalQuantity;
-
-    // 안내 메시지 구성
-    const recipientList = data.recipients
-      .map((r, i) => `${i + 1}. ${r.name} (${r.phone}) - ${r.quantity}개`)
-      .join('\n');
-
-    const msg = `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
-    alert(msg);
-    navigate('/');
+    try {
+      const orderData = {
+        productId: product.id,
+        message: data.message,
+        messageCardId: String(selectedCardId),
+        ordererName: data.sender,
+        receivers: data.recipients.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone, // phone → phoneNumber
+          quantity: r.quantity,
+        })),
+      };
+      console.log('orderData to send:', orderData);
+      await postOrder(orderData, user.authToken);
+      // 안내 메시지 구성
+      const totalQuantity = data.recipients.reduce(
+        (sum, recipient) => sum + recipient.quantity,
+        0
+      );
+      const totalPrice = product.price * totalQuantity;
+      const recipientList = data.recipients
+        .map((r, i) => `${i + 1}. ${r.name} (${r.phone}) - ${r.quantity}개`)
+        .join('\n');
+      const msg = `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
+      alert(msg);
+      navigate('/');
+    } catch (error) {
+      alert('주문에 실패했습니다.');
+    }
   });
 
   // 로딩 중
