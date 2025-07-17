@@ -2,7 +2,8 @@ import { GiftCategory } from '@/mock/GiftCategory';
 import { GiftThemeSection, ThemeGrid, ThemeImage, ThemeItem, ThemeLabel, Title } from './GiftTheme.styled';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-const url = import.meta.env.VITE_API_BASE_URL ;
+const baseUrl = import.meta.env.VITE_API_BASE_URL ;
+const themeUrl = 'http://localhost:3000/api/themes'
 
 async function getTheme(url : string) {
     try {
@@ -17,11 +18,11 @@ async function getTheme(url : string) {
 
 const GiftTheme = () => {
 
-  const [,setThemes] = useState([]);
+  const [Themes,setThemes] = useState([]);
   useEffect(() => {
     const fetchTheme = async () => {
-      const data = await  getTheme (url);
-      if (data) setThemes(data);
+      const theme = await  getTheme (themeUrl);
+      if (theme) setThemes(theme.data);
     };
 
     fetchTheme();
@@ -31,7 +32,7 @@ const GiftTheme = () => {
     <GiftThemeSection>
       <Title>선물 테마</Title>
       <ThemeGrid>
-        {GiftCategory.map(({ themeId, name, image }) => (
+        {Themes.map(({ themeId, name, image}) => (
           <ThemeItem key={themeId} >
             <ThemeImage src={image} alt={name} />
             <ThemeLabel>{name}</ThemeLabel>
