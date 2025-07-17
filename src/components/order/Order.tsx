@@ -43,7 +43,7 @@ type Product = {
 const Order: React.FC = () => {
   const theme = useTheme();
   const [selectedId, setSelectedId] = useState<number>();
-  const { id } = useParams<{ id: string }>();
+  const { productId } = useParams<{ productId: string }>();
   const SenderNameRef = useRef<HTMLInputElement>(null);
   const GiftMessageRef = useRef<HTMLTextAreaElement>(null);
   const [messageError, setMessageError] = useState("");
@@ -53,6 +53,7 @@ const Order: React.FC = () => {
   const [receivers, setReceivers] = useState<FormData["order"]>([]);
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
+
   const totalQuantity =
     receivers.length === 0
       ? 0
@@ -96,19 +97,18 @@ const Order: React.FC = () => {
     );
     navigate("/");
   };
-
   const { user } = useUserInfo();
+  const orderURL = import.meta.env.VITE_API_BASE_URL_ORDER;
 
   useEffect(() => {
-    if (!id) return;
+    if (!productId) return;
 
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL_PRODUCT}/${id}/summary`
+          `${import.meta.env.VITE_API_BASE_URL_PRODUCT}/${productId}/summary`
         );
         setProduct(response.data.data);
-        console.log(response.data.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const status = error.response?.status;
@@ -128,7 +128,13 @@ const Order: React.FC = () => {
     };
 
     fetchProduct();
-  }, [id, navigate]);
+  }, [productId, navigate]);
+
+  const renewedReceivers = receivers.map((receiver) => ({
+    name: receiver.receiverName,
+    phoneNumber: receiver.phoneNumber,
+    quantity: receiver.quantity,
+  }));
 
   return (
     <div css={WrapperStyle(theme)}>
@@ -214,8 +220,24 @@ const Order: React.FC = () => {
       </div>
       <div css={fixedBottomStyle(theme)}>
         <div
-          onClick={() => {
+          onClick={async () => {
             handleSubmit();
+
+            axios.post(
+              orderURL,
+              {
+                productId: Number(productId),
+                message: GiftMessageRef.current?.value,
+                messageCardId: String(selectedId),
+                ordererName: SenderNameRef.current?.value,
+                receivers: renewedReceivers,
+              },
+              {
+                headers: {
+                  Authorization: user?.authToken,
+                },
+              }
+            );
           }}
           css={totalPriceBoxStyle}
         >
