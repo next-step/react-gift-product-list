@@ -47,7 +47,7 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
       setHasError(false);
       
       try {
-        const response = await fetchProductRankings(category); 
+        const response = await fetchProductRankings(category, gender);
         setProductRankings(response.data.data);
       } catch (error) {
         console.error('상품 랭킹 불러오기 실패:', error);
