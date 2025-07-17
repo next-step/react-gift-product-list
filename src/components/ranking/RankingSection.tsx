@@ -7,7 +7,7 @@ import MoreButton from './MoreButton';
 import { getValidValue, getValidValues } from '@/utils';
 import { targetOptions, rankOptions, ROUTE_ORDER } from '@/constants';
 import { useRankingProducts } from '@/hooks';
-import type { FilterOption, Product } from '@/api/types';
+import type { Product } from '@/api/types';
 import RankingSkeleton from './RankingSkeleton';
 
 const RankingSection = () => {
@@ -33,15 +33,8 @@ const RankingSection = () => {
     'MANY_WISH' as (typeof rankOptions)[number]['value']
   );
 
-  // API filter 매핑 - target과 rank를 합쳐서 필터로 변환
-  const getFilterFromParams = (): FilterOption => {
-    // 현재는 API가 단순 필터만 받으므로 'all'로 고정
-    // 향후 API에서 target/rank 조합을 지원하면 이 부분 확장
-    return 'all';
-  };
-
-  // API 호출
-  const { data, isLoading, error } = useRankingProducts(getFilterFromParams());
+  // API 호출 - targetType과 rankType을 각각 전달
+  const { data, isLoading, error } = useRankingProducts(targetType, rankType);
 
   // 공통 Parameter Handler로 통합
   const handleParamChange = (key: string, value: string) => {

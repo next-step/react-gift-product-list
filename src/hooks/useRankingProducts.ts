@@ -1,24 +1,32 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import type { RankingResponse, FilterOption } from '../api/types';
+import type { RankingResponse, TargetType, RankType } from '../api/types';
 
 /**
  * 실시간 급상승 선물 랭킹을 조회하는 커스텀 훅
- * @param initialFilter - 초기 필터 옵션
+ * @param initialTargetType - 초기 대상 타입
+ * @param initialRankType - 초기 랭킹 타입
  */
-function useRankingProducts(initialFilter: FilterOption = 'all') {
-  const [filter, setFilter] = useState<FilterOption>(initialFilter);
+function useRankingProducts(
+  initialTargetType: TargetType = 'ALL',
+  initialRankType: RankType = 'MANY_WISH'
+) {
+  const [targetType, setTargetType] = useState<TargetType>(initialTargetType);
+  const [rankType, setRankType] = useState<RankType>(initialRankType);
   const [data, setData] = useState<RankingResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchRankingProducts = async (currentFilter: FilterOption) => {
+  const fetchRankingProducts = async (
+    currentTargetType: TargetType,
+    currentRankType: RankType
+  ) => {
     try {
       setIsLoading(true);
       const response = await axios.get<RankingResponse>(
         'http://localhost:3000/api/products/ranking',
         {
-          params: { filter: currentFilter },
+          params: { targetType: currentTargetType, rankType: currentRankType },
         }
       );
       setData(response.data);
@@ -33,20 +41,26 @@ function useRankingProducts(initialFilter: FilterOption = 'all') {
   };
 
   useEffect(() => {
-    fetchRankingProducts(filter);
-  }, [filter]);
+    fetchRankingProducts(targetType, rankType);
+  }, [targetType, rankType]);
 
-  const changeFilter = (newFilter: FilterOption) => {
-    setFilter(newFilter);
+  const changeTargetType = (newTargetType: TargetType) => {
+    setTargetType(newTargetType);
+  };
+
+  const changeRankType = (newRankType: RankType) => {
+    setRankType(newRankType);
   };
 
   return {
     data,
     isLoading,
     error,
-    filter,
-    changeFilter,
-    refetch: () => fetchRankingProducts(filter),
+    targetType,
+    rankType,
+    changeTargetType,
+    changeRankType,
+    refetch: () => fetchRankingProducts(targetType, rankType),
   };
 }
 

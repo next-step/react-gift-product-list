@@ -38,10 +38,9 @@ export interface ProductResponse {
   data: Product;
 }
 
-// 필터 옵션 타입
-export type FilterOption = 'all' | 'price-asc' | 'price-desc' | 'popular';
-export type TargetOption = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
-export type RankOption = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
+// 랭킹 필터 타입 (API 명세에 맞게 수정)
+export type TargetType = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
+export type RankType = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
 
 // API 에러 타입
 export interface ApiError {
