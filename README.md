@@ -114,8 +114,8 @@
 ## 2 단계 - 로그인, 주문하기 API 구현하기
 
 - [ ] 로그인 기능
-  - [ ] `/login` api 를 사용하여 로그인 기능을 완성
-  - [ ] 로그인 성공 시 내려오는 authToken 과 email, name 을 userInfo storage 에 저장
+  - [x] `/api/login` api 를 사용하여 로그인 기능을 완성
+  - [x] 로그인 성공 시 내려오는 authToken 과 email, name 을 userInfo storage 에 저장
   - [ ] 4XX 에러가 발생하면 Toast 를 통해 에러 메시지를 띄움
     - [react-toastify](https://www.npmjs.com/package/react-toastify) 라이브러리 사용
 - [ ] 주문하기 기능

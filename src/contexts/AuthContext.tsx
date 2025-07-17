@@ -1,5 +1,4 @@
 import type { User } from "@/types/User";
-import { getUserName } from "@/utils/auth";
 import { createContext, useContext, useState } from "react";
 
 type AuthState =
@@ -7,7 +6,7 @@ type AuthState =
   | { user: User; isLoggedIn: true };
 
 type AuthContextType = AuthState & {
-  login: (email: string) => void;
+  login: (email: string, name: string, authToken: string) => void;
   logout: () => void;
 };
 
@@ -34,8 +33,8 @@ const getInitialAuthState = (): AuthState => {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>(getInitialAuthState());
 
-  const login = (email: string) => {
-    const newUser: User = { email, name: getUserName(email), authToken: "" };
+  const login = (email: string, name: string, authToken: string) => {
+    const newUser: User = { email, name, authToken };
 
     setAuthState({
       user: newUser,

@@ -42,7 +42,7 @@ function LoginPage() {
     <Layout>
       <LoginContainer>
         <KakaoLogo>kakao</KakaoLogo>
-        <LoginForm onSubmit={(e) => handleSubmit(e, email)}>
+        <LoginForm onSubmit={(e) => handleSubmit(e, email, password)}>
           <InputFieldGroup>
             <IDField
               value={email}
