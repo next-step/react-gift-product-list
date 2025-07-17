@@ -4,6 +4,7 @@ import Category from '@/components/filter/Category';
 import GiftGrid from '@/components/gift-ranking/GiftGrid';
 import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
+import { isValidGender, isValidCategory } from '@/utils/validateFilter';
 
 const Title = styled.div`
   font-size: 20px;
@@ -15,11 +16,14 @@ const Title = styled.div`
 const Filter = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedGender = searchParams.get('gender') || 'all';
-  const selectedCategory = searchParams.get('category') || 'popular';
+  const genderParam = searchParams.get('gender') || 'all';
+  const categoryParam = searchParams.get('category') || 'MANY_WISH';
+
+  const selectedGender = isValidGender(genderParam) ? genderParam : 'all';
+  const selectedCategory = isValidCategory(categoryParam) ? categoryParam : 'MANY_WISH';
 
   const handleGenderChange = (value: string) => {
-    searchParams.set('gender', value); 
+    searchParams.set('gender', value);
     setSearchParams(searchParams);
   };
 
