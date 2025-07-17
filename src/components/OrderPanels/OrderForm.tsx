@@ -4,7 +4,6 @@ import ProductCard from "@src/components/OrderPanels/ProductCard";
 import AdvancedInput from "@src/components/shared/AdvancedInput";
 import InputGroup from "@src/components/shared/InputGroup";
 import UserContext from "@src/contexts/UserContext";
-import { productMockData } from "@src/mock/productMockData";
 import { PATH } from "@src/router/Router";
 import theme from "@src/styles/kakaoTheme";
 import { useContext, useEffect } from "react";
@@ -73,7 +72,6 @@ function OrderForm({ productData }: { productData: ProductData }) {
     };
     if (userContext?.authToken.value) {
       const response = await fetchOrder(orderInfo, userContext.authToken.value);
-      console.log(response);
       if (response?.status) {
         if (response.status === 401) {
           redirectLogin(PATH.ORDER, params.id);
