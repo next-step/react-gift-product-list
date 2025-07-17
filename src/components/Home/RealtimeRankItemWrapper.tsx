@@ -104,6 +104,7 @@ const SpinnerWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `
+
 const Spinner = styled.div`
   border: 4px solid #f3f3f3;
   border-top: 4px solid #333;
@@ -118,96 +119,110 @@ const Spinner = styled.div`
   }
 `;
 
-function RealtimeRankItemWrapper({selectedGroup, selectedType}: {selectedGroup: string; selectedType: string}) {
+const ErrorMessageWrapper = styled.div`
+    width: auto;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
+const ErrorMessage = styled.p`
+    
+`
+function RealtimeRankItemWrapper({ selectedGroup, selectedType }: { selectedGroup: string; selectedType: string }) {
     const [ranking, setRanking] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
-  
+
     const navigate = useNavigate();
-  
+
     // 그룹과 타입state가 바뀔때마다 axios로 데이터 요청후 그에맞는 state 세팅
     useEffect(() => {
-      const fetchRanking = async () => {
-        
-        setIsLoading(true);
-        try {
-          const response = await axios.get(`${baseUrl}/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
-          setRanking(response.data.data);
-          setIsError(false);
-        } catch (error) {
-          console.error('Error fetching ranking data:', error);
-          setIsError(true);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-  
-      fetchRanking();
+        const fetchRanking = async () => {
+
+            setIsLoading(true);
+            try {
+                const response = await axios.get(`${baseUrl}/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
+                setRanking(response.data.data);
+                setIsError(false);
+            } catch (error) {
+                console.error('Error fetching ranking data:', error);
+                setIsError(true);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchRanking();
     }, [selectedGroup, selectedType]);
-  
+
     // 더보기버튼 클릭시 state를 반전해주는 핸들러
     const handleCollapsedClick = () => {
-      setIsCollapsed(!isCollapsed);
+        setIsCollapsed(!isCollapsed);
     }
-  
+
     // item클릭시 해당 item정보들을 url query로들고 Order페이지로 가는 핸들러
     const handleItemClick = (brandInfo: any, id: any, imageURL: any, name: any, price: any) => {
-      const query = new URLSearchParams({ brandInfo: brandInfo.name, id: id.toString(), imageURL, name, price: price.basicPrice, }).toString();
-  
-      navigate(`/order?${query}`);
-    }
-    
-    if(isLoading) {
-      return <SpinnerWrapper>
-          <Spinner/>
-      </SpinnerWrapper>
-    }
-  
-    if(isError || ranking.length === 0) {
-      return <div>상품이 없습니다</div>;
-    }
-  
-    return (
-      <RealtimeRankItemWrapperStyle>
-          <RealtimeRankItemGrid>{(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
-            <RealtimeRankItem
-              key={item.id}
-              onClick={() =>
-                handleItemClick(
-                  item.brandInfo,
-                  item.id,
-                  item.imageURL,
-                  item.name,
-                  item.price,
-                )
-              }
-            >
-              <RealtimeItemImg
-                src={item.imageURL}
-                alt={item.name}
-              >
-              </RealtimeItemImg>
-              <RealtimeItemTxt>{item.brandInfo.name}</RealtimeItemTxt>
-              <RealtimeItemSubTxt>{item.brandInfo.name}</RealtimeItemSubTxt>
-              <RealtimeItemPriceTxt>
-                {item.price.sellingPrice} 원
-              </RealtimeItemPriceTxt>
-            </RealtimeRankItem>
-          ))}</RealtimeRankItemGrid>
-    
-          {/* 더보기 접기 버튼 */}
-          <ExtraBtnWrapper>
-            <ExtraBtn
-              onClick={() => {
-                handleCollapsedClick();
-              }}
-            >
-              {isCollapsed ? '접기' : '더보기'}
-            </ExtraBtn>
-          </ExtraBtnWrapper>
-      </RealtimeRankItemWrapperStyle>
-    );
-  }
+        const query = new URLSearchParams({ brandInfo: brandInfo.name, id: id.toString(), imageURL, name, price: price.basicPrice, }).toString();
 
-  export default RealtimeRankItemWrapper;
+        navigate(`/order?${query}`);
+    }
+
+    if (isLoading) {
+        return <SpinnerWrapper>
+            <Spinner />
+        </SpinnerWrapper>
+    }
+
+    if (isError || ranking.length === 0) {
+        return <ErrorMessageWrapper>
+            <ErrorMessage>상품이 없습니다</ErrorMessage>
+        </ErrorMessageWrapper>
+
+    }
+
+    return (
+        <RealtimeRankItemWrapperStyle>
+            <RealtimeRankItemGrid>{(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
+                <RealtimeRankItem
+                    key={item.id}
+                    onClick={() =>
+                        handleItemClick(
+                            item.brandInfo,
+                            item.id,
+                            item.imageURL,
+                            item.name,
+                            item.price,
+                        )
+                    }
+                >
+                    <RealtimeItemImg
+                        src={item.imageURL}
+                        alt={item.name}
+                    >
+                    </RealtimeItemImg>
+                    <RealtimeItemTxt>{item.brandInfo.name}</RealtimeItemTxt>
+                    <RealtimeItemSubTxt>{item.brandInfo.name}</RealtimeItemSubTxt>
+                    <RealtimeItemPriceTxt>
+                        {item.price.sellingPrice} 원
+                    </RealtimeItemPriceTxt>
+                </RealtimeRankItem>
+            ))}</RealtimeRankItemGrid>
+
+            {/* 더보기 접기 버튼 */}
+            <ExtraBtnWrapper>
+                <ExtraBtn
+                    onClick={() => {
+                        handleCollapsedClick();
+                    }}
+                >
+                    {isCollapsed ? '접기' : '더보기'}
+                </ExtraBtn>
+            </ExtraBtnWrapper>
+        </RealtimeRankItemWrapperStyle>
+    );
+}
+
+export default RealtimeRankItemWrapper;
