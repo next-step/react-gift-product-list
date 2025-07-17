@@ -1,6 +1,11 @@
 import { TabGroup, Tab } from '@/components/filter/Category.style';
 
-const categoryOptions = ['받고 싶어한', '많이 선물한', '위시로 받은'];
+const categoryOptions = [
+  { key: 'MANY_WISH', label: '받고 싶어한' },
+  { key: 'MANY_RECEIVE', label: '많이 선물한' },
+  { key: 'MANY_WISH_RECEIVE', label: '위시로 받은' },
+];
+
 interface CategoryProps {
   selectedCategory: string;
   onChange: (value: string) => void;
@@ -9,9 +14,9 @@ interface CategoryProps {
 const Category = ({ selectedCategory, onChange }: CategoryProps) => {
   return (
     <TabGroup>
-      {categoryOptions.map((option) => (
-        <Tab key={option} active={selectedCategory === option} onClick={() => onChange(option)}>
-          {option}
+      {categoryOptions.map(({ key, label }) => (
+        <Tab key={key} active={selectedCategory === key} onClick={() => onChange(key)}>
+          {label}
         </Tab>
       ))}
     </TabGroup>

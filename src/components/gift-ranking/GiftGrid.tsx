@@ -7,7 +7,7 @@ import { GridWrapper, MoreButton, ButtonWrapper } from '@/components/gift-rankin
 import { useAuth } from '@/context/AuthContext';
 import styled from '@emotion/styled';
 
-interface ProuductRanking {
+interface ProductRanking {
   id: number;
   name: string;
   imageURL: string;
@@ -21,19 +21,20 @@ interface ProuductRanking {
     discountRate: number;
   };
 }
+
 interface GiftGridProps {
   gender: string;
   category: string;
 }
 
-const LodingWrapper = styled.div`
+const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const GiftGrid = ({ gender, category }: GiftGridProps) => {
-  const [productRankings, setProductRankings] = useState<ProuductRanking[]>([]);
+  const [productRankings, setProductRankings] = useState<ProductRanking[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -45,9 +46,10 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
     const loadRanking = async () => {
       setIsLoading(true);
       setHasError(false);
-      
       try {
-        const response = await fetchProductRankings(category, gender);
+        const filter = category;
+        const genderQuery = gender === 'all' ? '' : gender;
+        const response = await fetchProductRankings(filter, genderQuery);
         setProductRankings(response.data.data);
       } catch (error) {
         console.error('상품 랭킹 불러오기 실패:', error);
@@ -57,7 +59,7 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
       }
     };
     loadRanking();
-  }, [ category, gender]);
+  }, [category, gender]);
 
   const handleCount = () => {
     if (visibleCount >= 21) {
@@ -66,13 +68,15 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
       setVisibleCount((prev) => prev + 6);
     }
   };
+
   if (isLoading) {
     return (
-      <LodingWrapper>
+      <LoadingWrapper>
         <FadeLoader color="#033128" height={15} width={5} />
-      </LodingWrapper>
+      </LoadingWrapper>
     );
   }
+
   if (hasError || productRankings.length === 0) {
     return null;
   }

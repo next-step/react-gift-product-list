@@ -1,21 +1,21 @@
 import { ButtonGroup, FilterItem, Label } from '@/components/filter/Gender.style';
 
 const genderOptions = [
-  { key: '전체', label: '전체', icon: 'ALL' },
-  { key: '여성이', label: '여성이', icon: '👩🏻' },
-  { key: '남성이', label: '남성이', icon: '👨🏻' },
-  { key: '청소년이', label: '청소년이', icon: '👦🏻' },
+  { key: 'all', label: '전체', icon: 'ALL' },
+  { key: 'female', label: '여성이', icon: '👩🏻' },
+  { key: 'male', label: '남성이', icon: '👨🏻' },
+  { key: 'teen', label: '청소년이', icon: '👦🏻' },
 ];
 
 interface GenderProps {
-  selectedGender: string;
+  selectedGender: string; 
   onChange: (value: string) => void;
 }
 
 const Gender = ({ selectedGender, onChange }: GenderProps) => {
   return (
     <ButtonGroup>
-      {genderOptions.map(({ key, icon }) => {
+      {genderOptions.map(({ key, icon, label }) => {
         const isActive = selectedGender === key;
 
         return (
@@ -27,7 +27,7 @@ const Gender = ({ selectedGender, onChange }: GenderProps) => {
                 <span>{icon}</span>
               )}
             </FilterItem>
-            <Label active={isActive}>{key}</Label>
+            <Label active={isActive}>{label}</Label>
           </div>
         );
       })}
