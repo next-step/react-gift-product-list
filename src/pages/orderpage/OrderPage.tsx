@@ -8,15 +8,24 @@ import ReceiverInfoSection from "@/pages/orderpage/ReceiverInfoSection";
 import ProductSummarySection from "@/pages/orderpage/ProductSummarySection";
 import { useForm, FormProvider } from "react-hook-form";
 import OrderButton from "@/components/common/BaseButton";
-import { MOCK_PRODUCTS } from "@/mocks/products_list_mock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fullOrderSchema } from "@/utils/validator";
 import type { FullOrderFormValues } from "@/utils/validator";
+import { useApiRequest } from "@/hooks/useApiRequest";
+import type { ProductSummary } from "@/types/api_types";
 
 const OrderPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const product = MOCK_PRODUCTS.find((item) => item.id === Number(id));
+  const productId = Number(id);
+  const {
+    data: product,
+    status,
+    error,
+  } = useApiRequest<ProductSummary>({
+    url: `/api/products/${productId}/summary`,
+    method: "get",
+  });
 
   const methods = useForm<FullOrderFormValues>({
     resolver: zodResolver(fullOrderSchema),
@@ -31,11 +40,18 @@ const OrderPage = () => {
     formState: { errors },
   } = methods;
 
-  if (!product) {
+  if (status === "loading") {
+    return <p>로딩 중...</p>;
+  }
+  if (status === "error") {
+    return <Navigate to="/notfound" replace />;
+  }
+  if (status === "success" && !product) {
     return <Navigate to="/notfound" replace />;
   }
 
   const onSubmit = (data: FullOrderFormValues) => {
+    if (!product) return;
     console.log(data);
     alert(
       `주문이 완료되었습니다.\n상품명: ${product.name}\n구매 수량: ${data.receivers.reduce(
@@ -45,6 +61,10 @@ const OrderPage = () => {
     );
     navigate("/", { replace: true });
   };
+
+  if (!product) {
+    return null;
+  }
 
   return (
     <FormProvider {...methods}>
