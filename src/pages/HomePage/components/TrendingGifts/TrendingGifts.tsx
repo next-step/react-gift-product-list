@@ -28,7 +28,7 @@ function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
   const [subTabIdx, setSubTabIdx] = useSubTab();
 
-  const { data, isLoading, isError } = useFetch<TrendingGiftsType>({
+  const { data, isLoading, isError } = useFetch<TrendingGiftsType[]>({
     fetchFn: () =>
       getTrendingGifts(TARGET_TYPE[mainTabIdx], RANK_TYPE[subTabIdx]),
     errorHandler: () => {
