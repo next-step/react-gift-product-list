@@ -47,8 +47,8 @@ const GiftRankingSection = () => {
               <RankNumber>{index + 1}</RankNumber>
               <ItemContainer>
                 <Image src={rank.imageURL} alt={rank.name} />
+                <ItemBrandName>{rank.brandInfo.name}</ItemBrandName>
                 <ItemName>{rank.name}</ItemName>
-                <ItemSubName>{rank.name}</ItemSubName>
                 <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
               </ItemContainer>
             </RankItem>
@@ -200,7 +200,7 @@ const ItemContainer = styled.div`
   box-sizing: border-box;
 `;
 
-const ItemName = styled.p`
+const ItemBrandName = styled.p`
   font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
   font-weight: ${({ theme }) => theme.typography.body2Regular.fontWeight};
   line-height: ${({ theme }) => theme.typography.body2Regular.lineHeight};
@@ -209,7 +209,7 @@ const ItemName = styled.p`
   text-align: left;
 `;
 
-const ItemSubName = styled.h6`
+const ItemName = styled.h6`
   font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
   font-weight: ${({ theme }) => theme.typography.body2Regular.fontWeight};
   line-height: ${({ theme }) => theme.typography.body2Regular.lineHeight};
