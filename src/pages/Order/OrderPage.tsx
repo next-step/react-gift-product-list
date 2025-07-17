@@ -35,7 +35,6 @@ const OrderPage = () => {
   const { productId } = useParams<{ productId: string }>();
   const { user } = UserManagement();
   const authToken = user?.authToken || '';
-
   const [product, setProduct] = useState<{
     id: number;
     name: string;
