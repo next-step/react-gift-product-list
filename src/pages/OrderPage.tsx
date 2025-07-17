@@ -102,10 +102,14 @@ const OrderPage = () => {
         );
         navigate(ROUTE_PATH.HOME, { replace: true });
       })
-      .catch(err => {
+      .catch(error => {
         toast.error(
-          err.errorMessage || "주문에 실패했습니다. 다시 시도해주세요.",
+          error.errorMessage || "주문에 실패했습니다. 다시 시도해주세요.",
         );
+        if (error.errorStatus === 401) {
+          navigate(ROUTE_PATH.LOGIN, { replace: true });
+          return;
+        }
       });
   };
 
