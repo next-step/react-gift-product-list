@@ -125,3 +125,29 @@ export async function fetchThemeInfo(themeId: string) {
     return null;
   }
 }
+
+export async function fetchThemeProducts(
+  themeId: string,
+  cursor: number = 0,
+  limit: number = 10
+) {
+  try {
+    const response = await instance.get(
+      BE.API.THEME.PRODUCTS(themeId) + `?cursor=${cursor}&limit=${limit}`
+    );
+
+    function delay(ms: number) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    await delay(1000);
+
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response ?? null;
+    } else {
+      console.error(error);
+    }
+    return null;
+  }
+}

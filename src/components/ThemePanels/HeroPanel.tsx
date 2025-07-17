@@ -26,7 +26,6 @@ const HeroPanelWrapper = styled.div<{ backgroundColor: string }>`
   gap: 10px;
   color: white;
   background-color: ${({ backgroundColor }) => backgroundColor};
-  width: 100%;
   padding: 20px;
 `;
 
