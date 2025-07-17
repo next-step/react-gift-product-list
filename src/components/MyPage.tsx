@@ -30,9 +30,7 @@ const MyPage: React.FC = () => {
       </div>
       <button
         onClick={() => {
-          sessionStorage.removeItem("email");
-          sessionStorage.removeItem("name");
-          sessionStorage.removeItem("authToken");
+          sessionStorage.removeItem("userInfo");
           navigate("/login");
         }}
         css={buttonStyle(theme)}
