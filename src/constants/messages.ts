@@ -9,6 +9,7 @@ export const ERROR_MESSAGES = {
 
   SYSTEM: {
     USER_LOAD_ERROR: "유저 정보 로드 중 오류가 발생했습니다.",
+    UNKNOWN: "알 수 없는 오류가 발생했습니다.",
   },
 
   VALIDATE: {
