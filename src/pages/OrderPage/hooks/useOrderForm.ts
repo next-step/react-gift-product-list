@@ -9,7 +9,7 @@ import {
   type SenderFormData,
 } from "../schemas";
 import { FORM_FIELD } from "../constants/formField";
-import SENDER_SECTION_CONSTANTS from "../constants/senderSection";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UseOrderFormProps {
   isSubmittedOnce: boolean;
@@ -22,6 +22,7 @@ export interface Receiver {
 }
 
 export const useOrderForm = ({ isSubmittedOnce }: UseOrderFormProps) => {
+  const { user } = useAuth();
   const [receivers, setReceivers] = useState<Receiver[]>([]);
 
   const {
@@ -59,7 +60,7 @@ export const useOrderForm = ({ isSubmittedOnce }: UseOrderFormProps) => {
   } = useForm<SenderFormData>({
     mode: isSubmittedOnce ? "onChange" : "onSubmit",
     defaultValues: {
-      senderName: SENDER_SECTION_CONSTANTS.DEFAULT_SENDER_NAME,
+      senderName: user?.name,
     },
     resolver: zodResolver(senderSchema),
   });
