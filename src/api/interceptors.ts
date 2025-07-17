@@ -21,7 +21,7 @@ export const attachInterceptors = (instance: AxiosInstance) => {
         const token = parsed.id;
 
         if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers.Authorization = `${token}`;
         }
       } catch (e) {
         console.error(ERROR_MESSAGES.SYSTEM.USER_LOAD_ERROR, e);
