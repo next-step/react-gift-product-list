@@ -11,6 +11,9 @@ import type { ProductSummary } from '@/api/types/product'
 import { fetchProductSummary } from '@/api/services/product'
 import { useFetch } from '@/hooks/useFetch'
 import { STORAGES } from '@/api/constants/storages'
+import type { CreateOrderRequest } from '@/api/types/order'
+import { createOrder } from '@/api/services/order'
+import { toast } from 'react-toastify'
 
 // * 주문하기 페이지 (주문하기 폼 Provider 포함)
 export const Order = () => {
@@ -55,7 +58,7 @@ export const OrderContent = () => {
   const { selectedCard } = watchedData
 
   // * 폼 제출 핸들러
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (!productInfo) return
 
     if (data.receivers.length === 0) {
@@ -63,36 +66,33 @@ export const OrderContent = () => {
       return
     }
 
-    // * 받는 사람들 정보를 문자열로 변환
-    const receiverInfo = data.receivers
-      .map(
-        (receiver, index) =>
-          `받는 사람 ${index + 1}: ${receiver.name} (${receiver.phone}) - ${receiver.count}개`,
-      )
-      .join('\n')
+    // * API 요청 데이터 생성
+    const orderRequest: CreateOrderRequest = {
+      productId: productInfo.id,
+      message: data.cardMessage,
+      messageCardId: `card${data.selectedCard.id}`,
+      ordererName: data.sender,
+      receivers: data.receivers.map((r) => ({
+        name: r.name,
+        phoneNumber: r.phone,
+        quantity: r.count,
+      })),
+    }
 
-    // * 총 수량 계산
-    const totalQuantity = data.receivers.reduce((sum, r) => sum + r.count, 0)
+    // * 주문하기 API 요청
+    const result = await createOrder(orderRequest)
 
-    // * 총 가격 계산
-    const totalPrice = getTotalPrice(productInfo.price)
-
-    alert(
-      `주문이 완료되었습니다!\n\n` +
-        `상품명: ${productInfo.name}\n` +
-        `총 수량: ${totalQuantity}개\n` +
-        `총 가격: ${totalPrice.toLocaleString()}원\n\n` +
-        `보낸 사람: ${data.sender}\n\n` +
-        `${receiverInfo}\n\n` +
-        `메시지: ${data.cardMessage}`,
-    )
-    navigate(ROUTE_PATH.HOME)
+    // * 성공시 홈으로 이동
+    if (result.success) {
+      toast.success('주문이 완료되었습니다!')
+      navigate(ROUTE_PATH.HOME)
+    }
   })
 
   // * 주문 총액 계산
   const totalPrice = productInfo ? getTotalPrice(productInfo.price) : 0
 
-  // * 4XX 에러 발생 시 홈으로 이동
+  // * 에러 발생 시 홈으로 이동
   if (isError) {
     navigate(ROUTE_PATH.HOME)
     return null
