@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Container,
   Title,
@@ -24,18 +23,10 @@ import {
   CURRENCY_UNIT,
 } from './constants';
 import { useOrderForm } from './useOrderForm';
+import useGetProductSummary from './useGetProductSummary';
 
 function OrderPage() {
-  const { productId } = useParams<{ productId: string }>();
-  // TODO: 다음과제에서 api로 바꾸기. 현재 mocakdata파일 삭제로 발생한 오류 방지용.
-  const product = {
-    id: parseInt(productId || '1'),
-    name: '임시 상품명',
-    imageURL: 'https://via.placeholder.com/100',
-    brand: '임시 브랜드',
-    price: 10000,
-  };
-
+  const { product, loading, error } = useGetProductSummary();
   const {
     register,
     handleSubmit,
@@ -46,6 +37,18 @@ function OrderPage() {
     handleReceiverModalComplete,
     totalQuantity,
   } = useOrderForm(product);
+
+  if (loading) {
+    return <div>Loading product information...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (!product) {
+    return <div>Product not found.</div>;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -66,7 +69,7 @@ function OrderPage() {
           <Image src={product.imageURL} alt={product.name} width="100" />
           <Label>
             <ProductName>{product.name}</ProductName>
-            <ProductBrand>{product.brand}</ProductBrand>
+            <ProductBrand>{product.brandName}</ProductBrand>
             <Price>
               <PriceName>{PRODUCT_PRICE_LABEL}</PriceName>
               <ProductPrice>

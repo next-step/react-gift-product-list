@@ -20,7 +20,7 @@ const OrderFormSchema = z.object({
 type OrderFormValues = z.infer<typeof OrderFormSchema>;
 type Receivers = ReceiverFormInput[];
 
-export function useOrderForm(product: { name: string; price: number }) {
+export function useOrderForm(product: { name: string; price: number } | null) {
   const [receivers, setReceivers] = useState<Receivers>([]);
 
   const {
