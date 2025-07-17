@@ -3,15 +3,15 @@ import type { FetchState } from "@/types/FetchState";
 
 interface UseFetchOptions<T> {
   fetchFn: () => Promise<T[]>;
-  errorMessage: string;
+  errorHandler: (error: unknown) => void;
   validateData?: ((data: T[]) => boolean)[];
   deps?: React.DependencyList;
 }
 
 export function useFetch<T>({
   fetchFn,
-  errorMessage,
   validateData,
+  errorHandler,
   deps = [],
 }: UseFetchOptions<T>) {
   const [fetchState, setFetchState] = useState<FetchState<T>>({
@@ -49,7 +49,7 @@ export function useFetch<T>({
           isError: false,
         });
       } catch (error) {
-        console.error(errorMessage, error);
+        errorHandler(error);
 
         setFetchState({
           data: null,
