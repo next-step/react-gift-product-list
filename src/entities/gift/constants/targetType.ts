@@ -21,4 +21,4 @@ export const targetGroup = [
     },
 ] as const;
 
-export type UserGroupQuery = (typeof targetGroup)[number]["query"];
+export type TargetGroupQuery = (typeof targetGroup)[number]["query"];
