@@ -24,5 +24,5 @@ export default function useOrderForm(initial = "") {
     return isValid;
   };
 
-  return { value, onChange, error, validate, phonevalidate };
+  return { value, onChange, error, validate, phonevalidate, setValue };
 }

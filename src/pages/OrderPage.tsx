@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useOrderForm from "../components/order/useOrderForm";
 import { useEffect, useState } from "react";
 import type { Receiver } from "@/types/order";
-import { productSummary } from "@/services/order";
+import { orderProduct, productSummary } from "@/services/order";
 import { showErrorToast } from "@/styles/toast";
 import { STORAGE_KEY } from "@/constants/storage";
 
@@ -38,14 +38,14 @@ export default function OrderPage() {
     fetchProduct();
   }, [itemId, navigate]);
 
-  const [senderName, setSenderName] = useState("");
-
   useEffect(() => {
     const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
     if (!userInfo) return;
 
     const user = JSON.parse(userInfo);
-    setSenderName(user.data.name || "");
+    const name = user.name || "";
+    console.log("로그인 유저 이름:", name);
+    sender.setValue(name);
   }, []);
 
   const totalQuantity = receiverList.reduce(
@@ -56,23 +56,65 @@ export default function OrderPage() {
   if (!product) return null;
   const totalPrice = product.data.price * totalQuantity;
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     const isMessageValid = message.validate();
     const isSenderValid = sender.validate();
     const isQuantityValid = receiverList.length > 0;
 
-    if (!isMessageValid || !isSenderValid || !isQuantityValid) {
+    if (!isMessageValid || !isSenderValid) {
       return;
     }
 
-    alert(`주문이 완료되었습니다.
+    if (!isQuantityValid) {
+      showErrorToast("받는 사람이 없습니다");
+      return;
+    }
+
+    try {
+      const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+      if (!userInfo) {
+        navigate("/login");
+        return;
+      }
+
+      const user = JSON.parse(userInfo);
+      const authToken = user.authToken;
+
+      if (!authToken) {
+        showErrorToast("로그인이 필요합니다.");
+        navigate("/login");
+        return;
+      }
+
+      await orderProduct(
+        {
+          productId: Number(itemId),
+          message: message.value,
+          messageCardId: "default-card",
+          ordererName: sender.value,
+          receivers: receiverList.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.quantity,
+          })),
+        },
+        authToken
+      );
+
+      alert(`주문이 완료되었습니다.
 상품명: ${product.name}
 총 구매 수량: ${totalQuantity}
 받는 사람 수: ${receiverList.length}명
 발신자 이름: ${sender.value}
 메시지: ${message.value}`);
 
-    navigate("/");
+      navigate("/");
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        showErrorToast("로그인이 필요합니다.");
+        navigate("/login");
+      }
+    }
   };
 
   return (
@@ -84,7 +126,7 @@ export default function OrderPage() {
       />
       <Divider />
       <SenderForm
-        value={senderName}
+        value={sender.value}
         onChange={sender.onChange}
         error={sender.error}
       />

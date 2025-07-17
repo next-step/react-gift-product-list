@@ -9,7 +9,7 @@ function userIdFromSession(): string | null {
     if (!userInfo) return null;
     const parsed = JSON.parse(userInfo);
 
-    return parsed.data.name;
+    return parsed.name;
   } catch {
     return null;
   }

@@ -18,8 +18,8 @@ export default function MyPage() {
 
     const user = JSON.parse(isLogIn);
 
-    setUserName(user.data.name);
-    setEmail(user.data.email);
+    setUserName(user.name);
+    setEmail(user.email);
   }, [navigate]);
 
   const LogOut = () => {

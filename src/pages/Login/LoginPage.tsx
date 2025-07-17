@@ -41,7 +41,14 @@ export default function LoginPage() {
 
     try {
       const user = await auth({ email, password });
-      sessionStorage.setItem(STORAGE_KEY.USER_INFO, JSON.stringify(user));
+
+      const userInfo = {
+        email: user.email,
+        name: user.name,
+        authToken: user.authToken,
+      };
+      sessionStorage.setItem(STORAGE_KEY.USER_INFO, JSON.stringify(userInfo));
+
       navigate(from, { replace: true });
     } catch (error: any) {
       if (error.response?.status >= 400 && error.response?.status < 500) {

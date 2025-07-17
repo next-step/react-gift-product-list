@@ -12,6 +12,6 @@ export type LoginResponse = {
 };
 
 export const auth = async (body: LoginRequest): Promise<LoginResponse> => {
-  const response = await baseHttp.post<LoginResponse>("/login", body);
-  return response.data;
+  const response = await baseHttp.post<{ data: LoginResponse }>("/login", body);
+  return response.data.data;
 };
