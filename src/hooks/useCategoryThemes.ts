@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Category } from '@/types/category';
+import { CATEGORY_THEMES_API_PATH } from '@/constants/api';
 
 interface UseCategoryThemesResult {
   data: Category[] | null;
   pending: boolean;
   error: boolean;
 }
-
-const CATEGORY_THEMES_API_PATH = '/api/themes';
 
 const fetchCategoryThemes = async (): Promise<Category[]> => {
   const res = await axios.get<{ data: Category[] }>(

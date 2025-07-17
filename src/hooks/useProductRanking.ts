@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Product } from '@/types/product';
+import { PRODUCT_RANKING_API_PATH } from '@/constants/api';
 
 interface UseProductRankingResult {
   data: Product[] | null;
   pending: boolean;
   error: boolean;
 }
-
-const PRODUCT_RANKING_API_PATH = '/api/products/ranking';
 
 const fetchProductRankings = async (
   targetType: string,

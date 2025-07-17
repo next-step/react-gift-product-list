@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import axios from 'axios';
+import { LOGIN_API_PATH, SESSION_STORAGE_KEY } from '@/constants/api';
 
 type User = {
   email: string;
@@ -27,9 +28,6 @@ type AuthContextType = {
   authToken: string | null;
 };
 
-const SESSION_KEY = 'kakaotech/userInfo';
-const LOGIN_API_PATH = '/api/login';
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -37,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem(SESSION_KEY);
+    const storedUser = sessionStorage.getItem(SESSION_STORAGE_KEY);
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -50,12 +48,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       { email, password }
     );
     const userData = res.data.data;
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(userData));
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
-    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
     setUser(null);
   };
 
