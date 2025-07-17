@@ -1,3 +1,10 @@
+export interface MessageCard {
+  id: number;
+  thumbUrl: string;
+  imageUrl: string;
+  defaultTextMessage: string;
+}
+
 export const MESSAGE_CARD_LIST = [
   {
     id: 904,
