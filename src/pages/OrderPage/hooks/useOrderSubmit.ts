@@ -11,6 +11,7 @@ import { API_ERROR_MESSAGES } from "../constants/apiMessage";
 import { AxiosError } from "axios";
 import { ROUTES } from "@/constants/routes";
 import { ORDER_MESSAGES } from "../constants/alert";
+import { isUnauthorized } from "@/constants/httpStatus";
 
 interface UseOrderSubmitProps {
   validateAllForms: () => Promise<boolean>;
@@ -46,7 +47,7 @@ export const useOrderSubmit = ({
     },
     errorHandler: (error) => {
       if (error instanceof AxiosError) {
-        if (error.response?.status === 401) {
+        if (error.response?.status && isUnauthorized(error.response?.status)) {
           navigate(ROUTES.LOGIN);
         }
       }

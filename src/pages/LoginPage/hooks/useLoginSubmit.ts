@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { API_LOGIN_ERROR_MESSAGES } from "../constants/apiMessage";
 import type { User } from "@/types/User";
 import { useFetch } from "@/hooks/useFetch";
+import { isClientError } from "@/constants/httpStatus";
 
 interface UseLoginSubmitProps {
   email: string;
@@ -24,7 +25,7 @@ function useLoginSubmit({ email, password }: UseLoginSubmitProps) {
       if (error instanceof AxiosError) {
         const errorStatus = error.response?.status;
 
-        if (errorStatus && errorStatus >= 400 && errorStatus < 500) {
+        if (errorStatus && isClientError(errorStatus)) {
           toast.error(API_LOGIN_ERROR_MESSAGES.EMAIL_FORMAT_INVALID);
         }
       }
