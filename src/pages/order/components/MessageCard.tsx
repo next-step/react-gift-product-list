@@ -22,7 +22,11 @@ const MessageCard = forwardRef<MessageCardHandle, Props>(
 
     useEffect(() => {
       onMessageChange?.(message);
+    }, [message, onMessageChange]);
+
+    useEffect(() => {
       onCardChange?.(String(mockCardTemplateData[selectedIndex].id));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSelect = (index: number) => {
