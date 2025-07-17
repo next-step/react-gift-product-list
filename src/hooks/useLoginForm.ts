@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 // useLoginForm.ts 파일 상단에 추가
 export const MIN_PASSWORD_LENGTH = 8;
@@ -65,13 +66,39 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
     setForm((prev) => ({ ...prev, pwError: validatePassword(form.password) }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isValidEmail && isValidPassword) {
-      const name = form.email.split('@')[0];
-      login({ email: form.email, name });
-      onSuccess();
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          toast.error(errorData.message || '로그인에 실패했습니다.');
+          return;
+        }
+
+        const data = await response.json();
+        // data: { authToken, email, name }
+        login({
+          email: data.email,
+          name: data.name,
+          authToken: data.authToken,
+        });
+        onSuccess();
+      } catch (error) {
+        toast.error('네트워크 오류가 발생했습니다.');
+      }
     }
   };
 
