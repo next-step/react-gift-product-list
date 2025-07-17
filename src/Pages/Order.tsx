@@ -5,7 +5,7 @@ import { SectionContainer } from "@/components/Common/SectionLayout";
 import CardList from "@/components/Order/CardList";
 import { useCardSelection } from "@/hooks/useCardSelection";
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import ReceiverListModal from "@/components/Order/ReceiverListModal";
 import {
   InputWrapper,
@@ -24,37 +24,20 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import PageWrapper from "@/components/Common/Wrapper";
 import { postOrder } from "@/api/order";
+import { useFetchData } from "@/hooks/useFetchData";
+import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 
 const Order = () => {
-  const [item, setItem] = useState<SummaryGiftProduct | null>(null);
   const { selectedCard, selectCard } = useCardSelection();
   const { productId } = useParams<{ productId: string }>();
   const { user } = useAuthContext();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchOrderItem = async () => {
-      if (!productId) return;
-      try {
-        const res = await getProudctSummary(Number(productId));
-        setItem(res.data.data);
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          if (
-            err.response &&
-            err.response.status >= 400 &&
-            err.response.status < 500
-          ) {
-            toast.error(
-              err.response.data?.data?.message || "현재 없는 상품입니다."
-            );
-          }
-        }
-        navigate("/");
-      }
-    };
-    fetchOrderItem();
-  }, [productId, navigate]);
+  const fetchFn = useCallback(
+    () => getProudctSummary(Number(productId)),
+    [productId]
+  );
+  const { data: item, loading } = useFetchData<SummaryGiftProduct>(fetchFn);
 
   const {
     register,
@@ -107,8 +90,6 @@ const Order = () => {
     }
   }, [selectedCard, getValues, setValue]);
 
-  if (!item) return <p>상품 정보를 찾을 수 없습니다.</p>;
-
   const totalCount = receivers.reduce(
     (acc, curr) => acc + (curr.itemCount ?? 0),
     0
@@ -160,100 +141,104 @@ const Order = () => {
   return (
     <PageWrapper>
       <Header title="선물하기" />
-      <OrderContainer
-        onSubmit={handleSubmit(handleOrderSubmit, () =>
-          setReceiverError(receivers.length < 1)
-        )}
-      >
-        <SectionContainer>
-          <CardList
-            selectedCardId={selectedCard?.id}
-            onSelectCard={handleSelectCard}
-          />
-
-          {selectedCard && (
-            <SelectedCardPreview>
-              <CardImageWraaper>
-                <CardImage src={selectedCard.imageUrl} />
-              </CardImageWraaper>
-              <CardMessageTextArea
-                {...register("message")}
-                placeholder="메시지를 입력해주세요."
-                isError={!!errors.message}
-                onChange={onMessageChange}
-              />
-              <MessageTextAreaCaption isError={Boolean(errors.message)}>
-                {errors.message?.message || " "}
-              </MessageTextAreaCaption>
-            </SelectedCardPreview>
+      {loading ? (
+        <LoadingSpinner color="#000000" loading={loading} size={35} />
+      ) : (
+        <OrderContainer
+          onSubmit={handleSubmit(handleOrderSubmit, () =>
+            setReceiverError(receivers.length < 1)
           )}
-        </SectionContainer>
-        <Divider />
-        <SectionContainer>
-          <OrderSectionTitle>보내는 사람</OrderSectionTitle>
-          <InputWrapper>
-            <StyledInput
-              {...register("senderName")}
-              placeholder="이름을 입력하세요."
-              hasError={!!errors.senderName}
+        >
+          <SectionContainer>
+            <CardList
+              selectedCardId={selectedCard?.id}
+              onSelectCard={handleSelectCard}
             />
-            <CaptionText isError={Boolean(errors.senderName)}>
-              {errors.senderName?.message ||
-                "* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다."}
-            </CaptionText>
-          </InputWrapper>
-        </SectionContainer>
-        <Divider />
-        <SectionContainer>
-          <ReceiveContainerHeader>
-            <OrderSectionTitle>받는 사람</OrderSectionTitle>
-            <OpenReceiverListModalButton
-              type="button"
-              onClick={handleOpenReceiverModal}
-            >
-              {receivers.length > 0 ? "수정" : "추가"}
-            </OpenReceiverListModalButton>
-          </ReceiveContainerHeader>
 
-          {receivers.length === 0 ? (
-            <ReceiverList error={receiverError}>
-              받는 사람이 없습니다.<br></br>받는 사람을 추가해주세요.
-            </ReceiverList>
-          ) : (
-            <ReceiverListTable>
-              <TableHead>
-                <HeadContent>이름</HeadContent>
-                <HeadContent>전화번호</HeadContent>
-                <HeadContent>수량</HeadContent>
-              </TableHead>
-              {receivers.map((r, i) => {
-                return (
-                  <TableBody key={i}>
-                    <BodyContent>{r.receiverName}</BodyContent>
-                    <BodyContent>{r.receiverPhoneNumber}</BodyContent>
-                    <BodyContent>{r.itemCount}</BodyContent>
-                  </TableBody>
-                );
-              })}
-            </ReceiverListTable>
-          )}
-        </SectionContainer>
-        <Divider />
-        <SectionContainer>
-          <OrderSectionTitle>상품 정보</OrderSectionTitle>
-          <ItemWrapper>
-            <ItemImg src={item.imageURL} />
-            <ItemTextInfoWrapper>
-              <ItemBrand>{item.brandName}</ItemBrand>
-              <ItemName>{item.name}</ItemName>
-              <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
-            </ItemTextInfoWrapper>
-          </ItemWrapper>
-        </SectionContainer>
-        <OrderButton type="submit">
-          {totalPrice.toLocaleString()}원 주문하기
-        </OrderButton>
-      </OrderContainer>
+            {selectedCard && (
+              <SelectedCardPreview>
+                <CardImageWraaper>
+                  <CardImage src={selectedCard.imageUrl} />
+                </CardImageWraaper>
+                <CardMessageTextArea
+                  {...register("message")}
+                  placeholder="메시지를 입력해주세요."
+                  isError={!!errors.message}
+                  onChange={onMessageChange}
+                />
+                <MessageTextAreaCaption isError={Boolean(errors.message)}>
+                  {errors.message?.message || " "}
+                </MessageTextAreaCaption>
+              </SelectedCardPreview>
+            )}
+          </SectionContainer>
+          <Divider />
+          <SectionContainer>
+            <OrderSectionTitle>보내는 사람</OrderSectionTitle>
+            <InputWrapper>
+              <StyledInput
+                {...register("senderName")}
+                placeholder="이름을 입력하세요."
+                hasError={!!errors.senderName}
+              />
+              <CaptionText isError={Boolean(errors.senderName)}>
+                {errors.senderName?.message ||
+                  "* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다."}
+              </CaptionText>
+            </InputWrapper>
+          </SectionContainer>
+          <Divider />
+          <SectionContainer>
+            <ReceiveContainerHeader>
+              <OrderSectionTitle>받는 사람</OrderSectionTitle>
+              <OpenReceiverListModalButton
+                type="button"
+                onClick={handleOpenReceiverModal}
+              >
+                {receivers.length > 0 ? "수정" : "추가"}
+              </OpenReceiverListModalButton>
+            </ReceiveContainerHeader>
+
+            {receivers.length === 0 ? (
+              <ReceiverList error={receiverError}>
+                받는 사람이 없습니다.<br></br>받는 사람을 추가해주세요.
+              </ReceiverList>
+            ) : (
+              <ReceiverListTable>
+                <TableHead>
+                  <HeadContent>이름</HeadContent>
+                  <HeadContent>전화번호</HeadContent>
+                  <HeadContent>수량</HeadContent>
+                </TableHead>
+                {receivers.map((r, i) => {
+                  return (
+                    <TableBody key={i}>
+                      <BodyContent>{r.receiverName}</BodyContent>
+                      <BodyContent>{r.receiverPhoneNumber}</BodyContent>
+                      <BodyContent>{r.itemCount}</BodyContent>
+                    </TableBody>
+                  );
+                })}
+              </ReceiverListTable>
+            )}
+          </SectionContainer>
+          <Divider />
+          <SectionContainer>
+            <OrderSectionTitle>상품 정보</OrderSectionTitle>
+            <ItemWrapper>
+              <ItemImg src={item?.imageURL} />
+              <ItemTextInfoWrapper>
+                <ItemBrand>{item?.brandName}</ItemBrand>
+                <ItemName>{item?.name}</ItemName>
+                <ItemPrice>{item?.price.toLocaleString()}원</ItemPrice>
+              </ItemTextInfoWrapper>
+            </ItemWrapper>
+          </SectionContainer>
+          <OrderButton type="submit">
+            {totalPrice.toLocaleString()}원 주문하기
+          </OrderButton>
+        </OrderContainer>
+      )}
       <ReceiverListModal
         open={isReceiverModalOpen}
         onClose={handleModalClose}
