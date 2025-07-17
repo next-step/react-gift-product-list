@@ -13,7 +13,10 @@ axiosInstance.interceptors.response.use(
     return response.data?.data ?? response.data;
   },
   error => {
-    return Promise.reject(error);
+    return Promise.reject({
+      ...error,
+      errorMessage: error.response?.data?.data?.message,
+    });
   },
 );
 
