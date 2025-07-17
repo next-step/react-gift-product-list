@@ -10,7 +10,7 @@ import {
   MessageTextarea,
 } from './styles';
 import { messageCards } from './mockData';
-import type { IFormData } from '@/types/order.d';
+import type { IFormData } from '@/pages/OrderPage/types';
 
 interface MessageCardProps {
   register: UseFormRegister<IFormData>;
@@ -32,8 +32,9 @@ function MessageCard({ register, setValue }: MessageCardProps) {
         shouldDirty: true,
         shouldValidate: true,
       });
+      setValue('messageCardId', String(selectedCardId));
     }
-  }, [selectedCardData, setValue]);
+  }, [selectedCardData, setValue, selectedCardId]);
 
   return (
     <Container>
