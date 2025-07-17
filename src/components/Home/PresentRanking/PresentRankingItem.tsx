@@ -1,5 +1,4 @@
 import { URLS } from '@assets/urls';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { ProductRanking, ProductRankings } from '@src_types/ProductRankings';
@@ -11,6 +10,7 @@ import {
   StyledPresentRankingItemPresentItem,
   StyledPresentRankingNumContainer,
 } from '@src/styles/Home/PresentRanking/StyledPresentRankingItem';
+import { ApiClient } from '@src/api/FetchData';
 
 const BASIC_RANKING_COMPONENT_NUMBER = 6;
 const MANY_RANKING_COMPONENT_NUMBER = 18;
@@ -61,8 +61,9 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
     const fetchProductRanking = async () => {
       try {
         // const response = await axios.get(process.env.VITE_API_BASE_URL + '/ranking');
-        const response = await axios.get('http://localhost:3000/api/products/ranking' + typeUrls);
-        setProductRanking(response.data);
+        //const response = await axios.get('http://localhost:3000/api/products/ranking' + typeUrls);
+        const data = await ApiClient('GET', 'products/ranking', null, typeUrls);
+        setProductRanking(data);
         setError(false);
       } catch (error) {
         console.error('Error fetching Product Ranking data:', error);

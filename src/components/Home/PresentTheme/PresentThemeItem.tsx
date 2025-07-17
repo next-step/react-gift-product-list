@@ -34,7 +34,7 @@ const PresentThemeItem = () => {
     const fetchThemes = async () => {
       try {
         // const response = await axios.get(process.env.VITE_API_BASE_URL + '/themes');
-        const data = await ApiClient('GET', 'themes', null);
+        const data = await ApiClient('GET', 'themes', null, '');
         setThemes(data);
         setError(false);
       } catch (error) {
