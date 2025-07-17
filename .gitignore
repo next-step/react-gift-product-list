@@ -25,3 +25,6 @@ dist-ssr
 
 .env
 .env.production
+
+# 기타 참고용 파일
+API_DOCS.md
