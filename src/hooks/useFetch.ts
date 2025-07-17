@@ -10,7 +10,7 @@ interface UseFetchOptions {
   body?: Object;
   baseUrl?: string;
 }
-interface ErrorData {
+export interface ErrorData {
   data: {
     status: string;
     statusCode: number;
@@ -36,34 +36,41 @@ const useFetch = <T>(
   const [isError, setIsError] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
-  const fetchData = useCallback(async (): Promise<{ data: T | null; error: ErrorData | undefined }> => {
-    const base = baseUrl ? baseUrl : BASE_URL;
-    const fetchUrl = new URL(url, base);
+  const fetchData = useCallback(
+    async (
+      fetchHeaders: AxiosHeaders | undefined = headers,
+      fetchBody: Object | undefined = body,
+      fetchParams: typeof params = params,
+    ): Promise<{ data: T | null; error: ErrorData | undefined }> => {
+      const base = baseUrl ? baseUrl : BASE_URL;
+      const fetchUrl = new URL(url, base);
 
-    if (params) {
-      for (const [name, value] of Object.entries(params)) {
-        fetchUrl.searchParams.append(name, String(value));
+      if (fetchParams) {
+        for (const [name, value] of Object.entries(fetchParams)) {
+          fetchUrl.searchParams.append(name, String(value));
+        }
       }
-    }
 
-    try {
-      setIsLoading(true);
-      const response = await axios<T>(fetchUrl.toString(), { method, headers, data: body });
-      setIsError(false);
-      setData(response.data);
-      return { data: response.data, error: undefined };
-    } catch (error) {
-      console.error("Error fetching themes data:", error);
-      setIsError(true);
-      setData(null);
-      if (axios.isAxiosError<ErrorData>(error)) {
-        return { data: null, error: error.response?.data };
+      try {
+        setIsLoading(true);
+        const response = await axios<T>(fetchUrl.toString(), { method, headers: fetchHeaders, data: fetchBody });
+        setIsError(false);
+        setData(response.data);
+        return { data: response.data, error: undefined };
+      } catch (error) {
+        console.error("Error fetching themes data:", error);
+        setIsError(true);
+        setData(null);
+        if (axios.isAxiosError<ErrorData>(error)) {
+          return { data: null, error: error.response?.data };
+        }
+        return { data: null, error: undefined };
+      } finally {
+        setIsLoading(false);
       }
-      return { data: null, error: undefined };
-    } finally {
-      setIsLoading(false);
-    }
-  }, [url, baseUrl, method, body, params]);
+    },
+    [url, baseUrl, method, body, params],
+  );
 
   useEffect(() => {
     if (autoFetch) {

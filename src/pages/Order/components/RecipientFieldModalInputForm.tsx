@@ -18,7 +18,7 @@ const RECIPIENT_INPUT_CONFIG = [
     type: "text",
   },
   {
-    key: "phone",
+    key: "phoneNumber",
     title: "전화번호",
     placeholder: "전화번호를 입력하세요.",
     type: "text",

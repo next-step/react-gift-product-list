@@ -1,17 +1,20 @@
-import { rankingItemMock } from "@/assets/rankingItemMock";
+import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
+import type { ProductData } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
 import { useFormContext } from "react-hook-form";
+import { useParams } from "react-router-dom";
 
 const OrderBtn = () => {
   const { watch } = useFormContext<OrderFormType>();
-  const productId = watch("productId");
-  const product = rankingItemMock.find((item) => item.id === productId);
+  const { productId } = useParams();
+  const { data } = useFetch<ProductData>(`api/products/${productId}/summary`);
+  const product = data?.data;
   const recipients = watch("recipients");
   const totalQuantity = recipients.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.quantity;
   }, 0);
-  const totalPrice = product ? product.price.sellingPrice * totalQuantity : 0;
+  const totalPrice = product ? product.price * totalQuantity : 0;
   return <Button type="submit">{totalPrice}원 주문하기</Button>;
 };
 

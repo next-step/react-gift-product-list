@@ -3,16 +3,12 @@ import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
-import type { ProductType } from "@/types/RankingProductType";
+import type { ProductData } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
 import { useCallback, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-
-interface ProductData {
-  data: ProductType;
-}
 
 const Product = () => {
   const { setValue } = useFormContext<OrderFormType>();

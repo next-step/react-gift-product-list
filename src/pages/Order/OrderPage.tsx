@@ -3,7 +3,20 @@ import Container from "@/components/common/Container";
 import Divider from "@/components/common/Divider";
 import Order from "@/pages/Order/components/Order";
 import { useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import useFetch, { type ErrorData } from "@/hooks/useFetch";
+import { getCookieValue } from "@/utils/cookie";
+import { AUTH_COOKIE_KEY_TOKEN, useAuth } from "@/contexts/authContext";
+import { AxiosHeaders } from "axios";
+import { toast } from "react-toastify";
+import { ROUTE_PATH } from "@/components/routes/routePath";
+import { useNavigate } from "react-router-dom";
+
+interface OrderData {
+  data: {
+    success: boolean;
+  };
+}
 
 const OrderPage = () => {
   return (
@@ -18,7 +31,44 @@ const OrderPageContent = () => {
   const { handleSubmit: createSubmitHandler, getValues } = useFormContext();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const onSubmit = (data: any) => console.log(data);
+  const [error, setError] = useState<ErrorData | undefined>(undefined);
+  const { data, fetchData } = useFetch<OrderData>("/api/order", { method: "POST", autoFetch: false });
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
+  const goLogin = useCallback(() => {
+    logout();
+    navigate(ROUTE_PATH.LOGIN);
+  }, [logout, navigate]);
+  const onSubmit = async (data: any) => {
+    const headers = new AxiosHeaders({ Authorization: getCookieValue(AUTH_COOKIE_KEY_TOKEN) ?? "" });
+    const body = {
+      productId: data.productId,
+      message: data.message,
+      messageCardId: `card${data.cardId}`,
+      ordererName: data.sender,
+      receivers: data.recipients,
+    };
+    const responseData = await fetchData(headers, body);
+    if (responseData.error) setError(responseData.error);
+  };
+  useEffect(() => {
+    if (data?.data.success) {
+      toast.success("주문에 성공했습니다.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        onClose: goHome,
+      });
+    }
+    if (error?.data.statusCode === 401) {
+      goLogin();
+    }
+  }, [data?.data, error, goHome, goLogin]);
   return (
     <Container>
       <Content onSubmit={createSubmitHandler(onSubmit)}>

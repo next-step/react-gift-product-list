@@ -19,7 +19,7 @@ interface OrderProps {
 
 const RecipientSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요."),
-  phone: z
+  phoneNumber: z
     .string()
     .min(1, "전화번호를 입력해주세요.")
     .regex(/^010\d{8}$/, "올바른 전화번호 형식이 아닙니다. 유효한 전화번호 형식(010xxxxxxxx)으로 입력해주세요."),
@@ -35,7 +35,7 @@ const OrderFormSchema = z.object({
     .check((ctx) => {
       const phoneNumbers = new Set<string>();
       ctx.value.forEach((recipient, index) => {
-        if (phoneNumbers.has(recipient.phone)) {
+        if (phoneNumbers.has(recipient.phoneNumber)) {
           ctx.issues.push({
             code: "custom",
             message: "중복된 전화번호가 있습니다.",
@@ -43,7 +43,7 @@ const OrderFormSchema = z.object({
             path: [index, "phone"],
           });
         }
-        phoneNumbers.add(recipient.phone);
+        phoneNumbers.add(recipient.phoneNumber);
       });
     }),
   productId: z.number(),
