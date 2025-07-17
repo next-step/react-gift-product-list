@@ -8,10 +8,20 @@ import InputField from '@/components/common/InputField';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
 
+const DEFAULT_LOGIN_ERROR = '@kakao.com 이메일 주소만 가능합니다.';
+
 type FromState = {
   pathname: string;
   search?: string;
 };
+
+const isErrorWithMessage = (
+  err: unknown
+): err is { response?: { data?: { message?: string } } } =>
+  typeof err === 'object' &&
+  err !== null &&
+  'response' in err &&
+  typeof (err as any).response?.data?.message === 'string';
 
 const LoginFormSection = () => {
   const { login } = useAuth();
@@ -32,18 +42,15 @@ const LoginFormSection = () => {
 
     const isEmailOk = email.validate();
     const isPasswordOk = password.validate();
-
     if (!isEmailOk || !isPasswordOk) return;
 
     try {
-      await login({
-        email: email.value,
-        password: password.value,
-      });
+      await login({ email: email.value, password: password.value });
       navigate(redirectTo, { replace: true });
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message ?? '@kakao.com 이메일 주소만 가능합니다.';
+    } catch (err: unknown) {
+      const message = isErrorWithMessage(err)
+        ? err.response!.data!.message!
+        : DEFAULT_LOGIN_ERROR;
       toast.error(message);
     }
   };
