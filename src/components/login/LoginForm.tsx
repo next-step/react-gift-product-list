@@ -9,6 +9,7 @@ import { postLogin } from "@/api/login";
 import useApiRequest from "@/hooks/useApiRequest";
 import type { User } from "@/types/user";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const LoginForm = () => {
     data: userData,
     isLoading,
     isError,
+    error,
     refetch: postLoginRequest,
   } = useApiRequest<User, [string, string]>({
     requestFn: postLogin,
@@ -44,6 +46,12 @@ const LoginForm = () => {
       navigate(redirectPath || ROUTE_PATH.HOME);
     }
   }, [userData, isLoading, isError, user, location.search, navigate]);
+
+  useEffect(() => {
+    if (isError && !isLoading) {
+      toast.error(error);
+    }
+  }, [isError, isLoading, error]);
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -75,9 +83,6 @@ const LoginForm = () => {
       >
         로그인
       </Button>
-      {isError && (
-        <ErrorMessage message="로그인에 실패했습니다. 다시 시도해주세요." />
-      )}
     </Form>
   );
 };

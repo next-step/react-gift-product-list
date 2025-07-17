@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import TheHeader from "@/components/layout/TheHeader";
 import LoginForm from "@/components/login/LoginForm";
 import KakaoLogo from "@/components/UI/KakaoLogo";
+import { ToastContainer } from "react-toastify";
 
 const LoginPage = () => {
   return (
@@ -10,6 +11,7 @@ const LoginPage = () => {
       <Main>
         <KakaoLogo size={"88px"} />
         <LoginForm />
+        <ToastContainer position="bottom-center" autoClose={3000} />
       </Main>
     </>
   );
