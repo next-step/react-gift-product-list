@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import type { LoginFormInputs } from '@/hooks/useLoginForm';
 
 const LoginForm = () => {
-  const { login, isLoggedIn } = useAuth();
+  const { login, isLoggedIn, isLoading } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -25,7 +25,11 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormInputs) => {
     console.log('로그인 요청:', data);
-    await login(data.id, data.password);
+    try {
+      await login(data.id, data.password);
+    } catch (error) {
+      console.error('Login submission error:', error);
+    }
   };
 
   return (
@@ -39,6 +43,7 @@ const LoginForm = () => {
             type="email"
             placeholder="이메일"
             hasError={!!errors.id}
+            disabled={isLoading}
           />
           {errors.id && <ErrorText>{errors.id.message}</ErrorText>}
         </InputWrapper>
@@ -49,11 +54,16 @@ const LoginForm = () => {
             type="password"
             placeholder="비밀번호"
             hasError={!!errors.password}
+            disabled={isLoading}
           />
           {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
         </InputWrapper>
 
-        <LoginButton type="submit" disabled={!isValid} />
+        <LoginButton
+          type="submit"
+          disabled={!isValid || isLoading}
+          isLoading={isLoading}
+        />
       </FormWrapper>
     </Layout>
   );

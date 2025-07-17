@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -32,7 +33,11 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       sessionStorage.removeItem('userInfo');
-      window.location.href = '/login';
+      toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

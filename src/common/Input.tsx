@@ -6,10 +6,21 @@ interface InputProps {
   type?: string;
   placeholder?: string;
   hasError?: boolean;
+  disabled?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ name, type = 'text', placeholder, hasError = false, ...props }, ref) => (
+  (
+    {
+      name,
+      type = 'text',
+      placeholder,
+      hasError = false,
+      disabled = false,
+      ...props
+    },
+    ref
+  ) => (
     <Layout>
       <StyledInput
         ref={ref}
@@ -17,6 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         type={type}
         placeholder={placeholder}
         hasError={hasError}
+        disabled={disabled}
         {...props}
       />
     </Layout>
@@ -34,7 +46,7 @@ const Layout = styled.div`
   width: 100%;
 `;
 
-const StyledInput = styled.input<{ hasError: boolean }>`
+const StyledInput = styled.input<{ hasError: boolean; disabled: boolean }>`
   padding: 12px 16px;
   border: none;
   border-bottom: 1.2px solid
@@ -42,6 +54,7 @@ const StyledInput = styled.input<{ hasError: boolean }>`
       hasError ? theme.colors.red700 : theme.colors.borderDefault};
   font-size: ${({ theme }) => theme.typography.fontSizes.title2};
   outline: none;
+  transition: border-bottom-color 0.2s ease;
 
   &:focus {
     border-bottom: 1.2px solid ${({ theme }) => theme.colors.gray700};
@@ -49,5 +62,15 @@ const StyledInput = styled.input<{ hasError: boolean }>`
 
   &::placeholder {
     color: #999999;
+  }
+
+  &:disabled {
+    background-color: #f5f5f5;
+    color: #999999;
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: #cccccc;
+    }
   }
 `;
