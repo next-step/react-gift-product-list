@@ -63,7 +63,7 @@ function OrderPage() {
   const orderSuccess = (data: FormType) => {
     alert(
       `주문이 완료되었습니다.\n상품명: ${
-        productMockData.name
+        productData.data?.name
       }\n구매 수량: ${receivers.reduce(
         (sum: number, r: Receiver) => sum + parseInt(r.quantity),
         0
