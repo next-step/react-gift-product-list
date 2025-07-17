@@ -9,6 +9,7 @@ import {
   type GenderFilter,
   type SortFilter,
 } from '@/components/RankingTabs';
+
 import { RankingGrid } from '@/components/RankingGrid';
 import type { GiftItem } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
