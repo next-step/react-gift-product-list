@@ -12,7 +12,7 @@ import GiftInformationSection from "@/components/order/GiftInformationSection";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { FormProvider, useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import type { OrderFormValue } from "@/types/receiver";
+import type { OrderFormValue } from "@/types/order";
 import { fetchProductsSummary } from "@/api/productSummary";
 import useApiRequest from "@/hooks/useApiRequest";
 import { toast } from "react-toastify";
@@ -70,7 +70,7 @@ const OrderPage = () => {
 
   const onValid: SubmitHandler<OrderFormValue> = data => {
     const totalCount = data.receiver.reduce(
-      (sum, receiver) => sum + Number(receiver.count),
+      (sum, receiver) => sum + Number(receiver.quantity),
       0,
     );
 
@@ -102,7 +102,7 @@ const OrderPage = () => {
             <Button type="submit">
               {gift.price *
                 watchedReceiver.reduce(
-                  (total, receiver) => total + Number(receiver.count || 0),
+                  (total, receiver) => total + Number(receiver.quantity || 0),
                   0,
                 )}
               원 주문하기
