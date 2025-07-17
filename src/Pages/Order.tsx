@@ -23,6 +23,7 @@ import { useAuthContext } from "@/contexts/useAuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PageWrapper from "@/components/Common/Wrapper";
+import { postOrder } from "@/api/order";
 
 const Order = () => {
   const [item, setItem] = useState<SummaryGiftProduct | null>(null);
@@ -35,7 +36,7 @@ const Order = () => {
     const fetchOrderItem = async () => {
       if (!productId) return;
       try {
-        const res = await getProudctSummary(1);
+        const res = await getProudctSummary(Number(productId));
         setItem(res.data.data);
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -113,16 +114,47 @@ const Order = () => {
     0
   );
   const totalPrice = totalCount * (item?.price ?? 0);
-
-  const handleOrderSubmit = (data: OrderType) => {
+  const handleOrderSubmit = async (data: OrderType) => {
     const hasNoReceivers = receivers.length < 1;
     setReceiverError(hasNoReceivers);
-    if (hasNoReceivers) return;
+    if (hasNoReceivers) {
+      toast.error("받는 사람이 없습니다.");
+      return;
+    }
 
-    alert(
-      `주문 완료!\n상품: ${item?.name}\n수량: ${totalCount}\n보내는 사람: ${data.senderName}\n메시지: ${data.message}`
-    );
-    navigate("/");
+    const payload = {
+      productId: Number(productId),
+      message: data.message,
+      messageCardId: selectedCard ? String(selectedCard.id) : "",
+      ordererName: data.senderName,
+      receivers: receivers.map((r) => ({
+        name: r.receiverName,
+        phoneNumber: r.receiverPhoneNumber,
+        quantity: r.itemCount ?? 1,
+      })),
+    };
+
+    try {
+      const res = await postOrder(payload);
+      if (res.data.data.success) {
+        alert(
+          `주문 완료!\n상품: ${item?.name}\n수량: ${totalCount}\n보내는 사람: ${data.senderName}\n메시지: ${data.message}`
+        );
+        navigate("/");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          if (err.response.status === 401) {
+            toast.error("로그인이 필요합니다.");
+            navigate("/login");
+          } else if (err.response.status === 400) {
+            toast.error("유효성 검사 실패");
+            navigate("/");
+          }
+        }
+      }
+    }
   };
 
   return (
