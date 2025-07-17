@@ -8,9 +8,11 @@ interface UseCategoryThemesResult {
   error: boolean;
 }
 
+const CATEGORY_THEMES_API_PATH = '/api/themes';
+
 const fetchCategoryThemes = async (): Promise<Category[]> => {
   const res = await axios.get<{ data: Category[] }>(
-    `${import.meta.env.VITE_API_BASE_URL}/api/themes`
+    `${import.meta.env.VITE_API_BASE_URL}${CATEGORY_THEMES_API_PATH}`
   );
   return res.data.data;
 };
