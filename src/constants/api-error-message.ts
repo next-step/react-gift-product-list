@@ -5,4 +5,6 @@ export const API_ERROR_MESSAGE = {
   LOGIN: "로그인 중 오류가 발생했습니다.",
   RANKING: "실시간 급상승 랭킹을 불러오는 중 오류가 발생했습니다.",
   THEMES: "테마를 불러오는 중 오류가 발생했습니다.",
+  PRODUCT: "상품을 불러오는 중 오류가 발생했습니다.",
+  ORDER: "주문처리 중 오류가 발생했습니다.",
 } as const;
