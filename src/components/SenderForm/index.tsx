@@ -6,6 +6,7 @@ import { SENDER_TITLE, SENDER_HINT } from './constants';
 interface SenderFormProps {
   register: UseFormRegister<IFormData>;
   errors: FieldErrors<IFormData>;
+  productPrice: number;
 }
 
 function SenderForm({ register, errors }: SenderFormProps) {

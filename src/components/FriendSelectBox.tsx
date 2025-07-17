@@ -38,7 +38,7 @@ const Text = styled.p`
 
 interface FriendSelectBoxProps {
   isLoggedIn: boolean;
-  userId: string | null;
+  userId: string | undefined;
 }
 
 const FriendSelectBox: React.FC<FriendSelectBoxProps> = ({
