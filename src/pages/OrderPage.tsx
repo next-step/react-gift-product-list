@@ -58,6 +58,7 @@ const OrderPage = () => {
     handleCardChange,
     selectedCardId,
     totalPrice,
+    totalQuantity,
   } = useOrderForm(product);
 
   const { authToken } = useAuth();
@@ -89,7 +90,13 @@ const OrderPage = () => {
         }
       );
 
-      toast.success('주문이 완료되었습니다!');
+      alert(
+        `주문이 완료되었습니다.\n` +
+          `상품명: ${product?.name}\n` +
+          `구매 수량: ${totalQuantity}\n` +
+          `발신자 이름: ${data.senderName}\n` +
+          `메시지: ${data.textMessage}`
+      );
       navigate(ROUTES.HOME);
     } catch (err: any) {
       if (err.response?.status === 401) {
