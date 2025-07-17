@@ -38,3 +38,25 @@ export const FilterButton = styled.button<{ isActive?: boolean }>`
       isActive ? theme.color.blue200 : theme.color.gray100};
   }
 `;
+
+// API 상태용 스타일 : 로딩, 에러, 상품없음
+export const LoadingMessage = styled.p`
+  text-align: center;
+  padding: 40px 0;
+  ${({ theme }) => theme.typography.body1Bold};
+  color: ${({ theme }) => theme.color.text.sub};
+`;
+
+export const ErrorMessage = styled.p`
+  text-align: center;
+  padding: 40px 0;
+  ${({ theme }) => theme.typography.body1Bold};
+  color: ${({ theme }) => theme.color.state.critical};
+`;
+
+export const NoProductMessage = styled.p`
+  text-align: center;
+  padding: 40px 0;
+  ${({ theme }) => theme.typography.body1Regular};
+  color: ${({ theme }) => theme.color.text.sub};
+`;
