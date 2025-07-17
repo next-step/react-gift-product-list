@@ -7,60 +7,8 @@ import MoreButton from './MoreButton';
 import { getValidValue, getValidValues } from '@/utils';
 import { targetOptions, rankOptions, ROUTE_ORDER } from '@/constants';
 import { useRankingProducts } from '@/hooks';
-import styled from '@emotion/styled';
 import type { FilterOption, Product } from '@/api/types';
-
-type TargetType = (typeof targetOptions)[number]['value'];
-type RankType = (typeof rankOptions)[number]['value'];
-
-// 로딩 스켈레톤 컴포넌트
-const LoadingContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: ${(props) => props.theme.spacing.spacing4};
-  margin-bottom: ${(props) => props.theme.spacing.spacing4};
-`;
-
-const SkeletonItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${(props) => props.theme.spacing.spacing2};
-  animation: pulse 1.5s infinite;
-
-  @keyframes pulse {
-    0% {
-      opacity: 0.6;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.6;
-    }
-  }
-`;
-
-const SkeletonImage = styled.div`
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  background-color: ${(props) => props.theme.colors.gray200};
-`;
-
-const SkeletonText = styled.div`
-  height: 16px;
-  border-radius: 4px;
-  background-color: ${(props) => props.theme.colors.gray200};
-  width: 80%;
-`;
-
-const SkeletonPrice = styled.div`
-  height: 20px;
-  border-radius: 4px;
-  background-color: ${(props) => props.theme.colors.gray200};
-  width: 60%;
-`;
+import RankingSkeleton from './RankingSkeleton';
 
 const RankingSection = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,12 +25,12 @@ const RankingSection = () => {
   const targetType = getValidValue(
     targetParam,
     targetValidValues,
-    'ALL' as TargetType
+    'ALL' as (typeof targetOptions)[number]['value']
   );
   const rankType = getValidValue(
     rankParam,
     rankValidValues,
-    'MANY_WISH' as RankType
+    'MANY_WISH' as (typeof rankOptions)[number]['value']
   );
 
   // API filter 매핑 - target과 rank를 합쳐서 필터로 변환
@@ -116,19 +64,6 @@ const RankingSection = () => {
     );
   };
 
-  const renderLoadingSkeleton = () => (
-    <LoadingContainer>
-      {Array.from({ length: 6 }).map((_, index) => (
-        <SkeletonItem key={index}>
-          <SkeletonImage />
-          <SkeletonText />
-          <SkeletonText />
-          <SkeletonPrice />
-        </SkeletonItem>
-      ))}
-    </LoadingContainer>
-  );
-
   return (
     <Section title="실시간 급상승 선물랭킹" spacing="md">
       <FilterButtonGroup
@@ -146,8 +81,8 @@ const RankingSection = () => {
       />
 
       {isLoading ? (
-        renderLoadingSkeleton()
-      ) : error ? null : ( // 에러시 아무것도 표시하지 않음
+        <RankingSkeleton />
+      ) : error ? null : (
         <>
           <ProductGrid
             products={data?.data || []}
