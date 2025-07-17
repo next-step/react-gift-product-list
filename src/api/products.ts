@@ -5,6 +5,7 @@ import type {
   RankType,
   ProductResponse,
 } from './types';
+import axios from 'axios';
 
 /**
  * 실시간 급상승 선물 랭킹을 조회합니다.
@@ -36,6 +37,14 @@ export const getProductById = async (
   );
   return response.data;
 };
+
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+export async function getProductSummary(productId: string) {
+  const response = await axios.get(
+    `${baseURL}/api/products/${productId}/summary`
+  );
+  return response.data.data;
+}
 
 export default {
   getRankingProducts,

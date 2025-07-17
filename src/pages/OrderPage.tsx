@@ -9,6 +9,9 @@ import { useProduct } from '@/hooks';
 import { useAuth } from '@/hooks';
 import { cardTemplates } from '@/data/cardTemplates';
 import type { Recipient } from '@/types';
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
+import { ROUTE_HOME } from '@/constants';
 
 interface OrderFormData {
   selectedCardId: number;
@@ -196,6 +199,17 @@ const OrderPage = () => {
   // API에서 상품 정보 가져오기
   const { product, isLoading, error } = useProduct(productId ?? '');
 
+  useEffect(() => {
+    if (error) {
+      // axios 에러 객체에서 메시지 추출
+      const message =
+        (error as any)?.response?.data?.data?.message ||
+        '상품 정보를 불러오지 못했습니다.';
+      toast.error(message);
+      navigate(ROUTE_HOME, { replace: true });
+    }
+  }, [error, navigate]);
+
   // 주문 정보만 관리하는 폼
   const {
     register,
@@ -264,7 +278,7 @@ const OrderPage = () => {
       (sum, recipient) => sum + recipient.quantity,
       0
     );
-    const totalPrice = product.price.sellingPrice * totalQuantity;
+    const totalPrice = product.price * totalQuantity;
 
     // 안내 메시지 구성
     const recipientList = data.recipients
@@ -382,11 +396,9 @@ const OrderPage = () => {
         <ProductInfo>
           <ProductImg src={product.imageURL} alt={product.name} />
           <ProductInfoText>
-            <ProductBrand>{product.brandInfo.name}</ProductBrand>
+            <ProductBrand>{product.brandName}</ProductBrand>
             <ProductName>{product.name}</ProductName>
-            <ProductPrice>
-              {product.price.sellingPrice.toLocaleString()}원
-            </ProductPrice>
+            <ProductPrice>{product.price.toLocaleString()}원</ProductPrice>
           </ProductInfoText>
         </ProductInfo>
       </Section>
