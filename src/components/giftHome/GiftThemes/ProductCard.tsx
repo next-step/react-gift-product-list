@@ -1,14 +1,18 @@
 import styled from '@emotion/styled';
-import { productData } from '@/data/PRODUCT_DATA';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import type { Product } from '@/api/ranking';
 
-const ProductCard = () => {
-  const { imageURL, name, price, brandInfo, id } = productData;
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
+  const { imageURL, name, price, brandInfo, id } = product;
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const goToCard = () => {
     if (isLoggedIn) {
       navigate(`/order/${id}`, {
         state: { imageURL, name, price, brandInfo },
@@ -19,7 +23,7 @@ const ProductCard = () => {
   };
 
   return (
-    <Card onClick={handleClick}>
+    <Card onClick={goToCard}>
       <ProductImage src={imageURL} alt={name} />
       <BrandName>{brandInfo.name}</BrandName>
       <Price>{price.basicPrice.toLocaleString()}원</Price>
@@ -34,6 +38,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+  cursor: pointer;
 `;
 
 const ProductImage = styled.img`

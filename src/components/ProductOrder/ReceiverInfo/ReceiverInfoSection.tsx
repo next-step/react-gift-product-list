@@ -51,7 +51,7 @@ const ReceiverInfoSection = () => {
 
       <ReceiverInfoModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        closeModal={() => setIsModalOpen(false)}
       />
     </Section>
   );

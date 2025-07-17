@@ -6,10 +6,10 @@ import InputOrder from '@/common/InputOrder';
 
 const ReceiverInfoModal = ({
   isOpen,
-  onClose,
+  closeModal,
 }: {
   isOpen: boolean;
-  onClose: () => void;
+  closeModal: () => void;
 }) => {
   const { control, getValues, trigger, setValue, formState } = useFormContext();
 
@@ -29,7 +29,7 @@ const ReceiverInfoModal = ({
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      closeModal();
     }
   };
 
@@ -56,13 +56,13 @@ const ReceiverInfoModal = ({
 
     if (!hasError) {
       setValue('recipients', tempRecipients);
-      onClose();
+      closeModal();
     }
   };
 
   const handleCancel = () => {
     setValue('tempRecipients', []);
-    onClose();
+    closeModal();
   };
 
   return (

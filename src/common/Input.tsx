@@ -5,40 +5,31 @@ interface InputProps {
   name?: string;
   type?: string;
   placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   hasError?: boolean;
 }
 
-const Input = ({
-  name,
-  type = 'text',
-  placeholder,
-  value,
-  onChange,
-  onBlur,
-  hasError = false,
-}: InputProps) => (
-  <Layout>
-    <StyledInput
-      name={name}
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      onBlur={onBlur}
-      hasError={hasError}
-    />
-  </Layout>
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ name, type = 'text', placeholder, hasError = false, ...props }, ref) => (
+    <Layout>
+      <StyledInput
+        ref={ref}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        hasError={hasError}
+        {...props}
+      />
+    </Layout>
+  )
 );
+
+Input.displayName = 'Input';
 
 export default Input;
 
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
   max-width: 388px;
   width: 100%;
 `;
