@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
-import { login } from '@/api/index';
+import { login as loginApi } from '@/api/index';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -70,16 +70,16 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
 
     if (isValidEmail && isValidPassword) {
       try {
-        const response = await fetch('/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: form.email,
-            password: form.password,
-          }),
+        const data = await loginApi({
+          email: form.email,
+          password: form.password,
         });
+        login({
+          email: data.email,
+          name: data.name,
+          authToken: data.authToken,
+        });
+        onSuccess();
 
         if (!response.ok) {
           const errorData = await response.json();
