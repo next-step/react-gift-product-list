@@ -19,3 +19,16 @@
 - [x] API 명세를 살펴보고 각 필터 선택 시 해당 필터에 맞는 API 요청
 - [x] 데이터를 불러오는 동안 로딩 화면 만들기
 - [x] 보여 줄 상품 목록이 없을경우 상품 목록이 없다는 문구 출력
+
+## Step2. 로그인, 주문하기 API 구현하기
+### 로그인 기능
+- [x] /login api 를 사용하여 로그인 기능 완성 
+- [x] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage 저장 및 활용
+- [x] 4XX 에러가 발생하면 Toast를 통해 에러메시지 표시
+### 주문하기 기능
+- [x] /products/:productId/summary api를 사용하여 제품 정보 가져오기
+- [x] 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지 표시 후 선물하기 홈으로 연결
+- [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채우기
+- [x] /order api를 사용하여 주문하기 기능 완성
+- [x] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken 넣어야 동작
+- [x] 주문하기 API에서 401 에러가 발생하면 로그인 페이지로 연결
