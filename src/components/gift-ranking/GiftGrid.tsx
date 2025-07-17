@@ -1,15 +1,71 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchProductRankings } from '@/api/productRankingApi';
+import { FadeLoader } from 'react-spinners';
 import GiftItem from '@/components/gift-ranking/GiftItem';
-import { GiftList } from '@/mock-data/GiftList';
 import { GridWrapper, MoreButton, ButtonWrapper } from '@/components/gift-ranking/Grid.style';
 import { useAuth } from '@/context/AuthContext';
-import type { Gift } from '@/types/gift';
+import styled from '@emotion/styled';
 
-const GiftGrid = () => {
+interface ProductRanking {
+  id: number;
+  name: string;
+  imageURL: string;
+  brandInfo: {
+    name: string;
+    imageURL: string;
+  };
+  price: {
+    basicPrice: number;
+    sellingPrice: number;
+    discountRate: number;
+  };
+}
+
+interface GiftGridProps {
+  gender: string;
+  category: string;
+}
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const EmptyMessage = styled.div`
+  color: ${({ theme }) => theme.color.red.red700};
+  font-size: 0.875rem;
+`;
+
+const GiftGrid = ({ gender, category }: GiftGridProps) => {
+  const [productRankings, setProductRankings] = useState<ProductRanking[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    const loadRanking = async () => {
+      setIsLoading(true);
+      setHasError(false);
+      try {
+        const rankType = category.toUpperCase(); 
+        const targetType = gender.toUpperCase(); 
+
+        const response = await fetchProductRankings(rankType, targetType);
+        setProductRankings(response.data.data);
+      } catch (error) {
+        console.error('상품 랭킹 불러오기 실패:', error);
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRanking();
+  }, [category, gender]);
 
   const handleCount = () => {
     if (visibleCount >= 21) {
@@ -19,7 +75,23 @@ const GiftGrid = () => {
     }
   };
 
-  const visibleGifts: Gift[] = GiftList.slice(0, visibleCount);
+  if (isLoading) {
+    return (
+      <LoadingWrapper>
+        <FadeLoader color="#033128" height={15} width={5} />
+      </LoadingWrapper>
+    );
+  }
+
+  if (hasError) {
+    return <EmptyMessage>상품을 불러오는 데 실패했습니다.</EmptyMessage>;
+  }
+
+  if (!isLoading && productRankings.length === 0) {
+    return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
+  }
+
+  const visibleGifts = productRankings.slice(0, visibleCount);
 
   return (
     <>
@@ -27,7 +99,12 @@ const GiftGrid = () => {
         {visibleGifts.map((gift, index) => (
           <GiftItem
             key={gift.id}
-            {...gift}
+            id={gift.id}
+            name={gift.name}
+            imageURL={gift.imageURL}
+            brand={gift.brandInfo.name}
+            price={gift.price.sellingPrice}
+            discountRate={gift.price.discountRate}
             rank={index + 1}
             onClick={() => {
               if (!isLoggedIn) {
@@ -41,7 +118,9 @@ const GiftGrid = () => {
         ))}
       </GridWrapper>
       <ButtonWrapper>
-        <MoreButton onClick={handleCount}>{visibleCount >= 21 ? '접기' : '더보기'}</MoreButton>
+        <MoreButton onClick={handleCount}>
+          {visibleCount >= productRankings.length ? '접기' : '더보기'}
+        </MoreButton>
       </ButtonWrapper>
     </>
   );
