@@ -1,11 +1,11 @@
 import { Container } from "@/components/layout/Container";
-import { OrderProviderWrapper } from "@/contexts/order";
+import { OrderProvider } from "@/contexts/order/OrderProvider";
 import type { ComponentType } from "react";
 
 export const withOrderProvider = (Story: ComponentType) => (
-  <OrderProviderWrapper>
+  <OrderProvider>
     <Container>
       <Story />
     </Container>
-  </OrderProviderWrapper>
+  </OrderProvider>
 );

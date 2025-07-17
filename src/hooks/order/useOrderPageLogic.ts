@@ -1,65 +1,117 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { generateMockArray } from "@/__mock__/generate-mock-array";
 import { useRouter } from "@/hooks/common/useRouter";
-import type { Order } from "@/types";
+import { useApiStatus } from "@/hooks/common/useApiStatus";
 import {
-  useOrderState,
-  useOrderForm,
   useOrderValidation,
   useOrderCalculation,
-} from "@/contexts/order";
+  useOrderForm,
+} from "@/hooks/order";
+import { getProductSummary } from "@/api/product";
+import { createOrder } from "@/api/order/create-order";
 
 export const useOrderPageLogic = () => {
-  const { goHomePage } = useRouter();
-  const { order, setOrder, resetOrder } = useOrderState();
-  const { validateAllFields } = useOrderForm();
-  const { isOrderComplete, getValidationErrors } = useOrderValidation();
+  const { goHomePage, goLoginPage } = useRouter();
+  const { watch, reset, setValue } = useOrderForm();
+  const { validateAllFields, isOrderComplete } = useOrderValidation();
   const { totalQuantity } = useOrderCalculation();
   const { id } = useParams<{ id: string }>();
 
+  const productApi = useApiStatus({
+    showErrorToast: true,
+  });
+
+  const orderApi = useApiStatus({
+    showSuccessToast: false,
+    showErrorToast: true,
+    rethrowError: true,
+  });
+
+  const order = watch();
+
   useEffect(() => {
     if (id) {
-      const foundProduct = generateMockArray().find(
-        item => item.id.toString() === id,
-      );
-      if (foundProduct) {
-        setOrder((prev: Order) => ({ ...prev, product: foundProduct }));
-      } else {
-        goHomePage();
-      }
+      productApi
+        .execute(async () => {
+          const productData = await getProductSummary(Number(id));
+
+          setValue("product", {
+            id: productData.id,
+            name: productData.name,
+            imageURL: productData.imageURL,
+            price: {
+              basicPrice: productData.price,
+              discountRate: 0,
+              sellingPrice: productData.price,
+            },
+            brandInfo: {
+              name: productData.brandName,
+              id: productData.id,
+              imageURL: productData.imageURL,
+            },
+          });
+
+          return productData;
+        })
+        .catch(() => {
+          goHomePage();
+        });
     }
-  }, [id, goHomePage, setOrder]);
+  }, [id]);
 
   const handleOrderSubmit = async () => {
     try {
       const isValidForm = await validateAllFields();
 
       if (!isValidForm) {
-        const errors = getValidationErrors();
-        alert(`유효성 검사 오류:\n${errors.join("\n")}`);
         return;
       }
 
       if (!isOrderComplete()) {
-        alert("필수 정보를 모두 입력해주세요.");
         return;
       }
+
+      if (!order.product) {
+        return;
+      }
+
+      await orderApi.execute(async () => {
+        return await createOrder({
+          productId: order.product!.id,
+          message: order.message,
+          messageCardId: String(order.cardTemplate?.id || ""),
+          ordererName: order.senderName,
+          receivers:
+            order.receivers?.map(receiver => ({
+              name: receiver.receiverName,
+              phoneNumber: receiver.receiverPhone,
+              quantity: receiver.quantity,
+            })) || [],
+        });
+      });
 
       alert(
         `주문이 완료되었습니다.\n상품명: ${order.product?.name}\n구매 수량:${totalQuantity} \n발신자 이름: ${order.senderName}\n메시지: ${order.message}`,
       );
-
-      resetOrder();
+      reset();
       goHomePage();
     } catch (error) {
       console.error("주문 처리 중 오류 발생:", error);
-      alert("주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+
+      if (
+        error instanceof Error &&
+        error.message.includes("로그인이 필요합니다")
+      ) {
+        goLoginPage({ redirect: false });
+        return;
+      }
     }
   };
 
   return {
     order,
     handleOrderSubmit,
+    isLoading: productApi.loading || orderApi.loading,
+    error: productApi.error || orderApi.error,
   };
 };
