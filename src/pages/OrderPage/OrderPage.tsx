@@ -77,12 +77,7 @@ function OrderPage() {
     );
   }
 
-  if (!loading && !product) {
-    navigate(ROUTES.NOT_FOUND);
-    return null;
-  }
-
-  if (!product) {
+  if (loading || !product) {
     return null;
   }
 
