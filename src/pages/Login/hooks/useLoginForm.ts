@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { UserManagement } from '../contexts/UserManagement';
 import { useEmailInput } from './useEmailInput';
 import { usePasswordInput } from './usePasswordInput';
-
+import { loginUser } from '../../../apis/auth';
 export const useLoginForm = () => {
   const email = useEmailInput();
   const password = usePasswordInput();
@@ -27,26 +27,10 @@ export const useLoginForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.value,
-          password: password.value,
-        }),
+      const resJson = await loginUser({
+        email: email.value,
+        password: password.value,
       });
-
-      const resJson = await response.json();
-
-      if (!response.ok) {
-        if (response.status >= 400 && response.status < 500) {
-          const errorMessage = resJson?.data?.message || '잘못된 요청입니다.';
-          toast.error(errorMessage);
-        } else {
-          toast.error('서버 오류가 발생했습니다.');
-        }
-        return;
-      }
 
       const { email: userEmail, name, authToken } = resJson.data;
 
@@ -57,8 +41,15 @@ export const useLoginForm = () => {
       });
 
       navigate(redirectPath, { replace: true });
-    } catch {
-      toast.error('네트워크 오류가 발생했습니다.');
+    } catch (err: any) {
+      if (err.status >= 400 && err.status < 500) {
+        const errorMessage = err.data?.data?.message || '잘못된 요청입니다.';
+        toast.error(errorMessage);
+      } else if (err instanceof TypeError) {
+        toast.error('네트워크 오류가 발생했습니다.');
+      } else {
+        toast.error('서버 오류가 발생했습니다.');
+      }
     } finally {
       setLoading(false);
     }
