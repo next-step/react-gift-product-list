@@ -32,6 +32,10 @@ const LoadingWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
+const EmptyMessage = styled.div`
+  color: ${({ theme }) => theme.color.red.red700};
+  font-size: 0.875rem;
+`;
 
 const GiftGrid = ({ gender, category }: GiftGridProps) => {
   const [productRankings, setProductRankings] = useState<ProductRanking[]>([]);
@@ -47,9 +51,10 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
       setIsLoading(true);
       setHasError(false);
       try {
-        const filter = category;
-        const genderQuery = gender === 'all' ? '' : gender;
-        const response = await fetchProductRankings(filter, genderQuery);
+        const rankType = category.toUpperCase(); 
+        const targetType = gender.toUpperCase(); 
+
+        const response = await fetchProductRankings(rankType, targetType);
         setProductRankings(response.data.data);
       } catch (error) {
         console.error('상품 랭킹 불러오기 실패:', error);
@@ -58,6 +63,7 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
         setIsLoading(false);
       }
     };
+
     loadRanking();
   }, [category, gender]);
 
@@ -77,8 +83,12 @@ const GiftGrid = ({ gender, category }: GiftGridProps) => {
     );
   }
 
-  if (hasError || productRankings.length === 0) {
-    return null;
+  if (hasError) {
+    return <EmptyMessage>상품을 불러오는 데 실패했습니다.</EmptyMessage>;
+  }
+
+  if (!isLoading && productRankings.length === 0) {
+    return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
   }
 
   const visibleGifts = productRankings.slice(0, visibleCount);
