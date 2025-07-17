@@ -8,6 +8,7 @@ import KakaoButton from '@/components/common/KakaoButton';
 import { emailRegex, MIN_PASSWORD_LENGTH } from '@/utils/validation';
 import useLoginForm from '@/hooks/useLoginForm';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'react-toastify';
 
 const Wrapper = styled.div`
   display: flex;
@@ -79,7 +80,7 @@ export default function LoginPage() {
       await login(values.email, values.password);
       navigate(from, { replace: true });
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 

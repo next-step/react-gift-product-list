@@ -24,6 +24,7 @@ export async function loginApi(data: LoginRequest): Promise<LoginResponse> {
       const errorBody = await res.json();
       message = errorBody.message || message;
     }
+
     throw new Error(message);
   }
 
