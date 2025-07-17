@@ -27,18 +27,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { cardTemplates } from '../../data/cardTemplates';
 import 'react-toastify/dist/ReactToastify.css';
-
-function useAuth() {
-  const authToken = localStorage.getItem('authToken') || '';
-  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-  return { authToken, userInfo };
-}
+import { UserManagement } from '../Login/contexts/UserManagement';
 
 const OrderPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
-  const { authToken, userInfo } = useAuth();
+  const { user } = UserManagement();
+  const authToken = user?.authToken || '';
 
   const [product, setProduct] = useState<{
     id: number;
@@ -63,7 +59,7 @@ const OrderPage = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      senderName: userInfo?.name || '',
+      senderName: user?.name || '',
       message: cardTemplates[0].defaultTextMessage,
     },
   });
@@ -208,12 +204,8 @@ const OrderPage = () => {
                 placeholder="이름을 입력하세요."
                 css={errors.senderName ? errorInputStyle : undefined}
               />
-              {errors.message && (
-                <p css={errorMessageStyle}>
-                  {typeof errors.message.message === 'string'
-                    ? errors.message.message
-                    : ''}
-                </p>
+              {errors.senderName && (
+                <p css={errorMessageStyle}>{errors.senderName.message}</p>
               )}
             </div>
             <p css={helperTextStyle(theme)}>
