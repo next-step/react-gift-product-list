@@ -17,7 +17,7 @@ const LoginPage = () => {
   const { login } = useAuth();
   const loginFetch = useFetch<AuthData>("api/login", {
     method: "POST",
-    data: { email: user.id, password: user.password },
+    body: { email: user.id, password: user.password },
     autoFetch: false,
   });
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

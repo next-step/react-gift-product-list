@@ -6,7 +6,7 @@ interface UseFetchOptions {
   params?: Record<string, string | number>;
   autoFetch?: boolean;
   dependency?: React.DependencyList;
-  data?: Object;
+  body?: Object;
   baseUrl?: string;
 }
 interface ErrorData {
@@ -19,34 +19,34 @@ interface ErrorData {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const defaultOptions: UseFetchOptions = {
-  method: "GET",
-  params: {},
-  autoFetch: true,
-  dependency: [],
-  data: {},
-  baseUrl: "",
-};
-
-const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => {
-  const mergedOptions = { ...defaultOptions, ...options };
-  const [isLoading, setIsLoading] = useState<boolean>(mergedOptions.autoFetch ? true : false);
+const useFetch = <T>(
+  url: string,
+  {
+    method = "GET",
+    params = undefined,
+    autoFetch = true,
+    dependency = undefined,
+    body = undefined,
+    baseUrl = "",
+  }: UseFetchOptions = {},
+) => {
+  const [isLoading, setIsLoading] = useState<boolean>(autoFetch ? true : false);
   const [isError, setIsError] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
   const fetchData = useCallback(async (): Promise<{ data: T | null; error: ErrorData | undefined }> => {
-    const base = mergedOptions.baseUrl ? mergedOptions.baseUrl : BASE_URL;
+    const base = baseUrl ? baseUrl : BASE_URL;
     const fetchUrl = new URL(url, base);
 
-    if (mergedOptions.params) {
-      for (const [name, value] of Object.entries(mergedOptions.params)) {
+    if (params) {
+      for (const [name, value] of Object.entries(params)) {
         fetchUrl.searchParams.append(name, String(value));
       }
     }
 
     try {
       setIsLoading(true);
-      const response = await axios<T>(fetchUrl.toString(), { method: mergedOptions.method, data: mergedOptions.data });
+      const response = await axios<T>(fetchUrl.toString(), { method, data: body });
       setIsError(false);
       setData(response.data);
       return { data: response.data, error: undefined };
@@ -61,13 +61,13 @@ const useFetch = <T>(url: string, options: UseFetchOptions = defaultOptions) => 
     } finally {
       setIsLoading(false);
     }
-  }, [url, mergedOptions.baseUrl, JSON.stringify(mergedOptions)]);
+  }, [url, baseUrl, method, body, params]);
 
   useEffect(() => {
-    if (mergedOptions.autoFetch) {
+    if (autoFetch) {
       fetchData();
     }
-  }, [fetchData, mergedOptions.autoFetch, JSON.stringify(mergedOptions.dependency)]);
+  }, [fetchData, autoFetch, ...(dependency || [])]);
 
   return { isLoading, isError, data, fetchData };
 };
