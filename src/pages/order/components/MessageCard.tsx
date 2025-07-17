@@ -22,7 +22,8 @@ const MessageCard = forwardRef<MessageCardHandle, Props>(
 
     useEffect(() => {
       onMessageChange?.(message);
-    }, [message, onMessageChange]);
+      onCardChange?.(String(mockCardTemplateData[selectedIndex].id));
+    }, []);
 
     const handleSelect = (index: number) => {
       setSelectedIndex(index);
