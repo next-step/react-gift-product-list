@@ -29,8 +29,7 @@ const OrderPage = () => {
   const [product, setProduct] = useState<ProductSummary | null>(null);
   const [isReceiverModalOpen, setReceiverModalOpen] = useState(false);
 
-  const { token, isInitialized, isLoggedIn } = useAuth();
-
+  const { token, isInitialized, isLoggedIn, user } = useAuth(); 
   if (!isInitialized) return null;
 
   if (!isLoggedIn) {
@@ -41,7 +40,7 @@ const OrderPage = () => {
   const methods = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
-      senderName: "",
+      senderName: user?.email.split("@")[0] ?? "", 
       message: "",
       selectedCardId: null,
       receivers: [],
