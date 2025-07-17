@@ -26,7 +26,7 @@ export const OrderContent = () => {
   const navigate = useNavigate()
   // * URL 파라미터로 부터 상품 id 값 가져오기
   const { id } = useParams<{ id: string }>()
-  const { data: productInfo } = useFetch<ProductSummary>(
+  const { data: productInfo, isError } = useFetch<ProductSummary>(
     () => fetchProductSummary(Number(id)),
     [id],
   )
@@ -87,6 +87,12 @@ export const OrderContent = () => {
 
   // * 주문 총액 계산
   const totalPrice = productInfo ? getTotalPrice(productInfo.price) : 0
+
+  // * 4XX 에러 발생 시 홈으로 이동
+  if (isError) {
+    navigate(ROUTE_PATH.HOME)
+    return null
+  }
 
   // * 상품 정보가 없을 경우 NotFound 페이지로 이동하도록 처리
   if (!productInfo) return <NotFound />
