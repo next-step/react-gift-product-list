@@ -1,5 +1,5 @@
 import { FormProvider } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import NavigationBar from '@/common/NavigationBar';
 import GiftCardSelector from '@/components/ProductOrder/GiftCardSelector';
 import SenderInfoSection from '@/components/ProductOrder/SenderInfoSection';
@@ -8,42 +8,67 @@ import ProductInfo from '@/components/giftHome/GiftThemes/ProductInfo';
 import OrderBtn from '@/components/ProductOrder/OrderBtn';
 import styled from '@emotion/styled';
 import { useOrderForm } from '@/hooks/useOrderForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getProductSummary } from '@/api/product';
+import type { ProductSummary } from '@/api/product';
+import toast from 'react-hot-toast';
 
 const ProductOrder = () => {
   const { productId } = useParams();
-  const { imageURL, name, price, brandInfo, methods, handleSubmit, order } =
-    useOrderForm(Number(productId));
+  const navigate = useNavigate();
+  const [product, setProduct] = useState<ProductSummary | null>(null);
+
+  const { methods, handleSubmit, order } = useOrderForm(Number(productId));
 
   const [message, setMessage] = useState('생일 축하해!');
   const [messageCardId, setMessageCardId] = useState('default-card');
+
+  useEffect(() => {
+    if (!productId) return;
+
+    getProductSummary(Number(productId))
+      .then((data) => {
+        setProduct(data);
+      })
+      .catch(() => {
+        toast.error('상품 정보를 불러올 수 없습니다.');
+        navigate('/');
+      });
+  }, [productId, navigate]);
+
+  if (!product) return <div>상품 정보를 불러오는 중입니다...</div>;
 
   return (
     <>
       <NavigationBar />
       <FormProvider {...methods}>
-        <Layout>
-          <Content>
-            <ProductInfo
-              imageURL={imageURL}
-              name={name}
-              price={price}
-              brandInfo={brandInfo}
-            />
-            <GiftCardSelector
-              message={message}
-              setMessage={setMessage}
-              messageCardId={messageCardId}
-              setMessageCardId={setMessageCardId}
-            />
-            <SenderInfoSection />
-            <ReceiverInfoSection />
-          </Content>
-          <OrderBtn
-            price={price.basicPrice}
-            onClick={handleSubmit(() => order({ message, messageCardId }))}
-          />
-        </Layout>
+        <form onSubmit={handleSubmit(() => order({ message, messageCardId }))}>
+          <Layout>
+            <Content>
+              <ProductInfo
+                imageURL={product.imageURL}
+                name={product.name}
+                price={{ basicPrice: product.price }}
+                brandInfo={{ name: product.brandName }}
+              />
+              <GiftCardSelector
+                message={message}
+                setMessage={setMessage}
+                messageCardId={messageCardId}
+                setMessageCardId={setMessageCardId}
+              />
+              <SenderInfoSection />
+              <ReceiverInfoSection />
+            </Content>
+
+            <StickyWrapper>
+              <OrderBtn
+                price={product.price}
+                onClick={handleSubmit(() => order({ message, messageCardId }))}
+              />
+            </StickyWrapper>
+          </Layout>
+        </form>
       </FormProvider>
     </>
   );
@@ -58,7 +83,7 @@ const Layout = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   gap: 24px;
 `;
 
@@ -66,4 +91,14 @@ const Content = styled.div`
   width: 100%;
   max-width: 720px;
   padding: 0 16px;
+`;
+
+const StickyWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 720px;
+  height: 56px;
+  z-index: 100;
+  background: white;
 `;
