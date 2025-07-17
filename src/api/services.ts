@@ -9,8 +9,8 @@ export const getThemes = async () => {
 export const getRanking = async (targetType: GenderFilter, rankType: SortFilter) => {
   const rankTypeMap: Record<SortFilter, string> = {
     WANT: 'MANY_WISH',
-    GIVE: 'MANY_GIVE',
     RECEIVE: 'MANY_RECEIVE',
+    WISH_RECEIVE: 'MANY_WISH_RECEIVE',
   };
 
   const response = await client.get('/api/products/ranking', {

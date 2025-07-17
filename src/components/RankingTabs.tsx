@@ -1,9 +1,8 @@
 import { css } from '@emotion/react';
-import { useState } from 'react';
 import { palette, spacing, typography } from '@/styles/theme';
 
 export type GenderFilter = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
-export type SortFilter   = 'WANT' | 'GIVE' | 'RECEIVE';
+export type SortFilter = 'WANT' | 'RECEIVE' | 'WISH_RECEIVE';
 
 interface Props {
   gender: GenderFilter;
@@ -74,9 +73,9 @@ const genderLabels: Record<GenderFilter, string> = {
 };
 
 const sortLabels: Record<SortFilter, string> = {
-  GIVE: '많이 선물한',
   WANT: '받고 싶어한',
   RECEIVE: '위시로 받은',
+  WISH_RECEIVE: '찜하고 받은',
 };
 
 
