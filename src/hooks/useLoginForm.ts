@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
+import { login } from '@/api/index';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
