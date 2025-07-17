@@ -3,8 +3,6 @@ import SexContainer from '@/pages/SexContainer';
 import CategoryContainer from '@/pages/CategoryContainer';
 import ItemContainer from '@/pages/ItemContainer';
 import { RankingContainer, RankingTitle } from '@/styles/RankingStyle.styles.ts';
-import type { SexType } from '@/types/sex';
-import type { CategoryType } from '@/types/category';
 import useRanking from '@/hooks/useRanking';
 
 function Ranking() {
@@ -14,18 +12,16 @@ function Ranking() {
     selectedSex,
     selectCategory,
     items,
-    setSelectedSex,
-    setSelectCategory,
     handleSelect,
     handleCategoryClick,
     getRank,
   } = useRanking();
 
   useEffect(() => {
-    const sex = localStorage.getItem('selectedSex');
-    setSelectedSex((sex as SexType) || 'ALL');
-    const category = localStorage.getItem('selectedCategory');
-    setSelectCategory((category as CategoryType) || 'MANY_WISH');
+    // const sex = localStorage.getItem('selectedSex');
+    // setSelectedSex((sex as SexType) || 'ALL');
+    // const category = localStorage.getItem('selectedCategory');
+    // setSelectCategory((category as CategoryType) || 'MANY_WISH');
     getRank();
   }, [selectedSex, selectCategory]);
 

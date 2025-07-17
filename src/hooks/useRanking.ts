@@ -12,12 +12,13 @@ function useRanking() {
   const [error, setError] = useState<string>('');
   function getInitialSex(): SexType {
     const saved = localStorage.getItem('selectedSex');
-    if (saved && Object.values(SEX_TYPE).includes(saved as SexType)) return saved as SexType;
-    return SEX_TYPE.ALL;
+    if (saved && Object.values(SEX_TYPE).some((sex) => sex.value === saved))
+      return saved as SexType;
+    return SEX_TYPE[0].value;
   }
   const [selectedSex, setSelectedSex] = useState<SexType>(getInitialSex);
   function handleSelect(sex: SexType) {
-    setSelectedSex(sex);
+    setSelectedSex(sex || 'ALL');
     localStorage.setItem('selectedSex', sex);
   }
 
