@@ -16,21 +16,36 @@ export async function postOrder(
   payload: OrderPayload,
   authToken: string
 ): Promise<void> {
-  const res = await fetch('/api/order', {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (authToken) {
+    headers.Authorization = authToken;
+  }
+
+  const res = await fetch(`${BASE_URL}/api/order`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${authToken}`,
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
   if (res.status === 401) {
+    console.error('인증 오류');
     throw new Error('Unauthorized');
   }
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || '주문에 실패했습니다.');
+    let errorData = null;
+    try {
+      errorData = await res.json();
+      console.error('주문 API 에러 응답:', errorData);
+    } catch {
+      console.error('주문 API 에러 응답 파싱 실패');
+    }
+    throw new Error(
+      errorData?.data?.message || errorData?.message || '주문에 실패했습니다.'
+    );
   }
 }

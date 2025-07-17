@@ -29,20 +29,17 @@ import { cardTemplates } from '../../data/cardTemplates';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserManagement } from '../Login/contexts/UserManagement';
 
+import { fetchProductSummary, type ProductSummary } from '../../apis/products';
+import { postOrder } from '../../apis/orders';
+
 const OrderPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const { user } = UserManagement();
   const authToken = user?.authToken || '';
-  const [product, setProduct] = useState<{
-    id: number;
-    name: string;
-    brandName: string;
-    price: number;
-    imageURL: string;
-  } | null>(null);
 
+  const [product, setProduct] = useState<ProductSummary | null>(null);
   const [selectedCard, setSelectedCard] = useState(cardTemplates[0]);
   const [receivers, setReceivers] = useState<
     { name: string; phone: string; quantity: number }[]
@@ -63,7 +60,6 @@ const OrderPage = () => {
     },
   });
 
-  // 제품 정보 API 호출
   useEffect(() => {
     if (!productId) {
       toast.error('잘못된 접근입니다.');
@@ -71,31 +67,11 @@ const OrderPage = () => {
       return;
     }
 
-    fetch(`/api/products/${productId}/summary`, {
-      headers: {
-        Authorization: authToken ? `Bearer ${authToken}` : '',
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const errData = await res.json().catch(() => null);
-          toast.error(
-            errData?.message || '제품 정보를 불러오는데 실패했습니다.'
-          );
-          navigate('/');
-          throw new Error('4xx error');
-        }
-        return res.json();
-      })
-      .then((json) => {
-        if (json.data) {
-          setProduct(json.data);
-        } else {
-          throw new Error('제품 데이터를 불러오지 못했습니다.');
-        }
-      })
-      .catch((err) => {
-        console.error(err);
+    fetchProductSummary(productId, authToken)
+      .then(setProduct)
+      .catch((error) => {
+        toast.error(error.message);
+        navigate('/');
       });
   }, [productId, authToken, navigate]);
 
@@ -106,51 +82,47 @@ const OrderPage = () => {
 
   const onSubmit = async (data: { senderName: string; message: string }) => {
     if (receivers.length === 0) {
-      alert('받는 사람을 최소 1명 이상 추가해주세요.');
+      toast.error('받는 사람이 없습니다.');
       return;
     }
 
     if (totalQuantity < 1) {
-      alert('수량 합계가 1개 이상이어야 합니다.');
+      toast.error('수량 합계가 1개 이상이어야 합니다.');
       return;
     }
 
-    try {
-      const res = await fetch('/api/order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({
-          productId: Number(productId),
-          message: data.message,
-          messageCardId: selectedCard?.id || '',
-          ordererName: data.senderName,
-          receivers: receivers.map(({ name, phone, quantity }) => ({
-            name,
-            phoneNumber: phone,
-            quantity,
-          })),
-        }),
-      });
+    const orderData = {
+      productId: Number(productId),
+      message: data.message,
+      messageCardId: String(selectedCard?.id),
+      ordererName: data.senderName,
+      receivers: receivers.map(({ name, phone, quantity }) => ({
+        name,
+        phoneNumber: phone,
+        quantity,
+      })),
+    };
 
-      if (res.status === 401) {
+    // console.log('주문 요청 데이터:', orderData);
+
+    try {
+      await postOrder(orderData, authToken);
+      if (!product) {
+        toast.error('상품 정보를 불러오지 못했습니다.');
+        return;
+      }
+      alert(
+        `주문이 완료되었습니다.\n상품명: ${product.name}\n총 구매 수량: ${totalQuantity}\n발신자 이름: ${data.senderName}\n메시지: ${data.message}\n받는 사람 수: ${receivers.length}`
+      );
+      navigate('/');
+    } catch (error: any) {
+      if (error.message === 'Unauthorized') {
+        toast.error('로그인이 필요합니다.');
         navigate('/login');
         return;
       }
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => null);
-        toast.error(errorData?.message || '주문에 실패했습니다.');
-        return;
-      }
-
-      toast.success('주문이 완료되었습니다!');
-      navigate('/');
-    } catch (error) {
-      toast.error('서버와 통신 중 오류가 발생했습니다.');
-      console.error(error);
+      console.error('주문 실패 에러:', error);
+      toast.error(error.message || '주문에 실패했습니다.');
     }
   };
 
@@ -264,11 +236,7 @@ const OrderPage = () => {
           </div>
         </div>
 
-        <button
-          css={orderButtonStyle(theme)}
-          type="submit"
-          disabled={totalQuantity < 1}
-        >
+        <button css={orderButtonStyle(theme)} type="submit">
           {(product.price * totalQuantity).toLocaleString()}원 주문하기
         </button>
       </form>
