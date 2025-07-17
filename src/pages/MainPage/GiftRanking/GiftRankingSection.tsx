@@ -1,4 +1,3 @@
-// import { productList } from '@/data/products';
 import * as S from './GiftRankingSection.styles';
 import ProductItem from './ProductItem';
 import { useEffect, useState, useCallback } from 'react';
