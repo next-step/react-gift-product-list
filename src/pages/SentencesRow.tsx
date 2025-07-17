@@ -4,7 +4,7 @@ import Column from "@/components/Column"
 import Text from "@/components/Text"
 import useQueryState from "@/hooks/useQueryState"
 
-type RankType = "MANY_WISH_RECEIVE" | "MANY_GIFT" | "MANY_WISH"
+type RankType = "MANY_WISH_RECEIVE" | "MANY_RECEIVE" | "MANY_WISH"
 interface SentenceItem {
   id: number
   label: string
@@ -12,9 +12,9 @@ interface SentenceItem {
 }
 
 const sentences: SentenceItem[] = [
-  { id: 5, label: "받고 싶어한", query: "MANY_WISH_RECEIVE" },
-  { id: 6, label: "많이 선물한", query: "MANY_GIFT" },
-  { id: 7, label: "위시로 받은", query: "MANY_WISH" },
+  { id: 5, label: "받고 싶어한", query: "MANY_WISH" },
+  { id: 6, label: "많이 선물한", query: "MANY_RECEIVE" },
+  { id: 7, label: "위시로 받은", query: "MANY_WISH_RECEIVE" },
 ]
 
 const SentencesRow = () => {
@@ -22,13 +22,18 @@ const SentencesRow = () => {
     "rankType",
     "MANY_WISH_RECEIVE"
   )
+  const handleClick = (query: RankType) => {
+    console.log("버튼 클릭:", query)
+    console.log("현재 rankType:", rankType)
+    setRankType(query)
+  }
   return (
     <Row>
       {sentences.map((s) => (
         <Column key={s.id} style={{ flex: 1 }}>
           <SentenceTab
             active={rankType === s.query}
-            onClick={() => setRankType(s.query)}
+            onClick={() => handleClick(s.query)}
           >
             <Text
               variant="label2Regular"
