@@ -5,25 +5,27 @@ import useTheme from '../hooks/useTheme';
 const GiftThemeSection = () => {
   const { themes, loading, error } = useTheme();
 
-  if (loading || error) return <></>;
+  const renderContent = () => {
+    if (error) return null;
+    if (loading) return <Loading />;
+    return (
+      <Container>
+        {themes.map(theme => (
+          <Theme key={theme.themeId}>
+            <Image alt={theme.name} src={theme.image} />
+            <Text>{theme.name}</Text>
+          </Theme>
+        ))}
+      </Container>
+    );
+  };
 
   return (
     <section>
       <TitleContainer>
         <Title>선물 테마</Title>
       </TitleContainer>
-      {loading ? (
-        <Loading />
-      ) : (
-        <Container>
-          {themes.map(theme => (
-            <Theme key={theme.themeId}>
-              <Image alt={theme.name} src={theme.image} />
-              <Text>{theme.name}</Text>
-            </Theme>
-          ))}
-        </Container>
-      )}
+      {renderContent()}
     </section>
   );
 };

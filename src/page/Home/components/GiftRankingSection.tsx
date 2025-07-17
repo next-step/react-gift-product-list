@@ -8,7 +8,6 @@ import { ROUTES } from '@/routes/routes';
 import Loading from '@/components/Loading';
 import useRanking from '../hooks/useRanking';
 
-
 interface ButtonProps {
   isActive: boolean;
 }
@@ -33,6 +32,31 @@ const GiftRankingSection = () => {
     } else {
       navigate(ROUTES.LOGIN);
     }
+  };
+
+  const renderContent = () => {
+    if (loading) return <Loading />;
+    if (rankingDatas.length === 0) {
+      return <NoDataMessage>상품이 없습니다.</NoDataMessage>;
+    }
+    return (
+      <>
+        <RankContainer>
+          {rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
+            <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
+              <RankNumber>{index + 1}</RankNumber>
+              <ItemContainer>
+                <Image src={rank.imageURL} alt={rank.name} />
+                <ItemName>{rank.name}</ItemName>
+                <ItemSubName>{rank.name}</ItemSubName>
+                <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
+              </ItemContainer>
+            </RankItem>
+          ))}
+        </RankContainer>
+        <ToggleButton onClick={toggleCollapse}>{isCollapsed ? '펼치기' : '접기'}</ToggleButton>
+      </>
+    );
   };
 
   return (
@@ -65,30 +89,7 @@ const GiftRankingSection = () => {
           ))}
         </FilterGroup>
       </CatContainer>
-
-      {loading ? (
-        <Loading />
-      ) : (
-        <RankContainer>
-          {rankingDatas.length === 0 ? (
-            <NoDataMessage>상품 목록이 없습니다.</NoDataMessage>
-          ) : (
-            rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
-              <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
-                <RankNumber>{index + 1}</RankNumber>
-                <ItemContainer>
-                  <Image src={rank.imageURL} alt={rank.name} />
-                  <ItemName>{rank.name}</ItemName>
-                  <ItemSubName>{rank.name}</ItemSubName>
-                  <ItemPrice>{rank.price.basicPrice} 원</ItemPrice>
-                </ItemContainer>
-              </RankItem>
-            ))
-          )}
-        </RankContainer>
-      )}
-
-      <ToggleButton onClick={toggleCollapse}>{isCollapsed ? '펼치기' : '접기'}</ToggleButton>
+      {renderContent()}
     </Section>
   );
 };
