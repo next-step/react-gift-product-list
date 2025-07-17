@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const AUTH_KEY = 'login_user';
 
@@ -19,18 +19,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (saved) setUser(saved);
   }, []);
 
-  const logIn = (username: string) => {
+  const logIn = useCallback((username: string) => {
     setUser(username);
     localStorage.setItem(AUTH_KEY, username);
-  };
+  },[])
 
-  const logOut = () => {
+  const logOut = useCallback (() => {
     setUser(null);
     localStorage.removeItem(AUTH_KEY);
-  };
+  },[])
+
+  const value = useMemo(() => ({
+    user,
+    logIn,
+    logOut
+  }),[user,logIn,logOut])
 
   return (
-    <AuthContext.Provider value={{ user, logIn, logOut }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

@@ -23,6 +23,7 @@ import {
 } from './GiftRanking.styled';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import type { ProductItem } from '@/type/product';
 
 const GIFTLENGTH = 6;
 
@@ -79,21 +80,6 @@ const GiftRanking = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  interface ProductItem {
-    id: number;
-    name: string;
-    imageURL: string;
-    price: {
-      basicPrice: number;
-      discountRate: number;
-      sellingPrice: number;
-    };
-    brandInfo: {
-      id: number;
-      name: string;
-      imageURL: string;
-    };
-  }
 
   const handleClickProduct = (item: ProductItem) => {
     if (!user) {
@@ -113,6 +99,7 @@ const GiftRanking = () => {
 
           {peopleFilterOptions.map(({type, icon, label}) => (
             <PeopleFilterButton
+              key ={type}
               active={peopleType === type}
               onClick={() => handlePeopleClick(type)}
             >
@@ -126,6 +113,7 @@ const GiftRanking = () => {
         <WishGroup>
           {WishFilterOption.map(({type, text})=>(
             <WishFilterButton
+            key={type}
             active={wishType === type}
             onClick={() => handleWishClick(type)}
           >

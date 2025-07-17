@@ -1,8 +1,12 @@
 import { useOrder } from '@/context/OrderContext';
+import { useReceiver } from '@/context/ReceiverContext';
 import { DefaultComponentDiv, EmptyDiv8h, OrderButton, Price, ProductBox, ProductImage, ProductInfo, ProductName, SideBlankDiv, SubText, SubTitle } from '@/styles/Common.styled'
+import type { ProductItem } from '@/type/product';
+import { useEffect, useState } from 'react';
 
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+
 
 
 
@@ -10,30 +14,15 @@ const OrderCheck = () => {
   const navigate = useNavigate();
   const {
     senderNameInput,
-    recipientNameInput,
-    recipientPhoneInput,
-    quantityInput,
     cardMessage,
-  } = useOrder()
+  } = useOrder();
 
+  const {
+    receivers
+  } =useReceiver();
 
   const location = useLocation();
 
-  interface ProductItem {
-    id: number;
-    name: string;
-    imageURL: string;
-    price: {
-      basicPrice: number;
-      discountRate: number;
-      sellingPrice: number;
-    };
-    brandInfo: {
-      id: number;
-      name: string;
-      imageURL: string;
-    };
-  }
 
   const handleOrder = () => {
     senderNameInput.validate();
@@ -45,7 +34,7 @@ const OrderCheck = () => {
     if (isValid) {
       alert(`주문이 완료되었습니다. 
         상품명:${item.name} 
-        구매수량: ${quantityInput.value}
+        구매수량: ${productCount}
         발신자 이름: ${senderNameInput.value}
         메세지: ${cardMessage}
         `
@@ -54,21 +43,6 @@ const OrderCheck = () => {
     }
   };
 
-  interface ProductItem {
-    id: number;
-    name: string;
-    imageURL: string;
-    price: {
-      basicPrice: number;
-      discountRate: number;
-      sellingPrice: number;
-    };
-    brandInfo: {
-      id: number;
-      name: string;
-      imageURL: string;
-    };
-  }
 
   const { item } = location.state as { item: ProductItem };
 
@@ -77,17 +51,24 @@ const OrderCheck = () => {
   const imageUrl = item.imageURL
   const Name = item.name
   const brandName = item.brandInfo.name
+
+  const [productCount, setProductCount] = useState(0);
+
+  useEffect(() => {
+    const total  = receivers.reduce((acc,receiver) => acc + receiver.count, 0);
+    setProductCount(total);
+  },[receivers])
   return (
     <DefaultComponentDiv>
       <SideBlankDiv>
         <EmptyDiv8h />
         <SubTitle>상품 정보</SubTitle>
-
         <ProductBox>
           <ProductImage
             src={imageUrl}
             alt={Name}
           />
+          
           <ProductInfo>
             <ProductName>{Name}</ProductName>
             <SubText>{brandName}</SubText>
@@ -99,7 +80,7 @@ const OrderCheck = () => {
 
       </SideBlankDiv>
 
-      <OrderButton onClick={handleOrder}> {Number(quantityInput.value) * price} 원 주문하기</OrderButton>
+      <OrderButton onClick={handleOrder}> {Number(productCount) * price} 원 주문하기</OrderButton>
     </DefaultComponentDiv>
   );
 };

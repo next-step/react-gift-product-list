@@ -11,14 +11,11 @@ import {
   ModalBox,
   ModalDiv,
   ScrollBox,
-  SideBlankDiv,
   SimpleButton,
-  SimpleForm,
   SimpleInput,
   SubText,
   SubTitle,
 } from '@/styles/Common.styled';
-import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 type Props = {
@@ -29,12 +26,22 @@ type Props = {
 const ReceiverModal = ({ isOpen, onClose }: Props) => {
   const { setReceivers } = useReceiver();
 
+  type ReceiverFormValue = {
+    name: string;
+    phone: string;
+    count: number;
+  };
+
+  type FormData = {
+    receiver: ReceiverFormValue[];
+  };
+
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     defaultValues: {
       receiver: [{ name: '', phone: '', count: 1 }],
     },
@@ -45,8 +52,9 @@ const ReceiverModal = ({ isOpen, onClose }: Props) => {
     name: 'receiver',
   });
 
-  const onSubmit = (data: any) => {
-    setReceivers(data.receiver)
+  const onSubmit = (data: FormData) => {
+
+    setReceivers(data.receiver);
     onClose(); // 완료 후 모달 닫기
   };
 
