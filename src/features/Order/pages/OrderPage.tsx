@@ -26,31 +26,29 @@ const OrderPage = () => {
     isInvalidId ? null : idNum
   )
 
+  useEffect(() => {
+    if (!isInvalidId) return
+    toast.error('잘못된 상품 경로입니다.')
+    navigate(ROUTE_PATH.GIFT, { replace: true })
+  }, [isInvalidId, navigate])
+
+  useEffect(() => {
+    if (!error) return
+    toast.error('상품 정보를 불러오는 데 실패했습니다.')
+    navigate(ROUTE_PATH.GIFT, { replace: true })
+  }, [error, navigate])
+
   const [selectedCardId, setSelectedCardId] = useState<number>(904)
   const selectedCard = cards.find((card) => card.id === selectedCardId)!
 
   const { methods, onSubmit, totalPrice, confirmReceivers } = useOrderForm({
-    productId: isInvalidId ? undefined : idNum,
+    productId: idNum,
     defaultMessage: selectedCard.defaultTextMessage,
     productName: product?.name ?? '',
     sellingPrice: product?.price ?? 0,
     selectedCardId,
     selectedCardMessage: selectedCard.defaultTextMessage,
   })
-
-  useEffect(() => {
-    if (isInvalidId) {
-      toast.error('잘못된 상품 경로입니다.')
-      navigate(ROUTE_PATH.GIFT, { replace: true })
-    }
-  }, [isInvalidId, navigate])
-
-  useEffect(() => {
-    if (error) {
-      toast.error('상품 정보를 불러오는 데 실패했습니다.')
-      navigate(ROUTE_PATH.GIFT, { replace: true })
-    }
-  }, [error, navigate])
 
   if (isInvalidId || loading) return <Loading />
   if (!product) return <div>상품 정보를 찾을 수 없습니다.</div>

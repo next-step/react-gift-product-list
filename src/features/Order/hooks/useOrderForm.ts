@@ -8,7 +8,7 @@ import { useUserContext } from '@/contexts/UserContext'
 import { ROUTE_PATH } from '@/routes/Router'
 
 interface UseOrderFormParams {
-  productId?: number
+  productId: number
   defaultMessage: string
   productName: string
   sellingPrice: number
