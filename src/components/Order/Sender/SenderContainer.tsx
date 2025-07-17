@@ -1,7 +1,7 @@
 import {
   StyledSendPersonContainer,
   SyltedOrderInput,
-} from '@src/styles/Order/StyledOrderContainer';
+} from '@src/components/Order/Container/StyledOrderContainer';
 import type { OrderFormValue } from '@src/types/OrderFormValues';
 import { useFormContext } from 'react-hook-form';
 

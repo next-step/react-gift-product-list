@@ -3,7 +3,7 @@ import {
   StyledSelectFriendBtnPlus,
   StyledSelectFriendOuterContainer,
   StyledSelectFriendP,
-} from '@src/styles/Home/StyledSelectFriendContainer';
+} from '@src/components/Home/SelectFriend/StyledSelectFriendContainer';
 
 const SelectFriendContainer = () => {
   const makeSelectFrinedMessage = () => {

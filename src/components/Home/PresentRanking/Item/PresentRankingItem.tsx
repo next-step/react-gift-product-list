@@ -9,7 +9,7 @@ import {
   StyledPresentRankingItemPrasentPrice,
   StyledPresentRankingItemPresentItem,
   StyledPresentRankingNumContainer,
-} from '@src/styles/Home/PresentRanking/StyledPresentRankingItem';
+} from '@src/components/Home/PresentRanking/Item/StyledPresentRankingItem';
 import { ApiClient } from '@src/api/FetchData';
 
 const BASIC_RANKING_COMPONENT_NUMBER = 6;

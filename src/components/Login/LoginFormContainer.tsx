@@ -6,7 +6,7 @@ import {
   StyledLoginButton,
   StyledLoginComponentDiv,
   StyledLoginKakoLogo,
-} from '@src/styles/Login/StyledLoginFormContainer';
+} from '@src/components/Login/StyledLoginFormContainer';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 

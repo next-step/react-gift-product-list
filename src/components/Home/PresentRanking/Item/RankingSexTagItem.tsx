@@ -1,4 +1,4 @@
-import StyledRankingSexTagItemBtn from '@styles/Home/RankingTagItem/StyledRankingSexTagItemBtn';
+import StyledRankingSexTagItemBtn from '@src/components/Home/PresentRanking/Item/StyledRankingSexTagItemBtn';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import StyledRankingAnyTagItem from '@styles/Home/RankingTagItem/StyledRankingAnyTagItem';
+import StyledRankingAnyTagItem from '@src/components/Home/PresentRanking/Item/StyledRankingAnyTagItem';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 

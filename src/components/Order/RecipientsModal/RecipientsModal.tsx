@@ -6,7 +6,7 @@ import RecipientsItem from './RecipientsItem'; // 다음 단계에서 구현할 
 import type { Recipient } from '@src/types/Recipient'; // Recipient 타입 임포트
 import type { RecipientsModalFormData } from '@src/types/RecipientsModalFormData';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { recipientsModalSchema } from '../Schemas/recipientsModalSchema';
+import { recipientsModalSchema } from '../../Schemas/recipientsModalSchema';
 
 // RecipientsModal 내부 폼의 데이터 타입
 
