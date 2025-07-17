@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MessageCard, {
   type MessageCardHandle,
 } from "@/pages/order/components/MessageCard";
@@ -13,32 +13,34 @@ import ProductInfo from "@/pages/order/components/ProductInfo";
 import OrderFooter from "@/pages/order/components/OrderFooter";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { useProductDetail } from "@/hooks/useProductDetail";
 import { validateReceiverCount } from "@/utils/validators";
 import { ERROR_MESSAGES } from "@/constants/messages";
+import { useProductSummary } from "@/hooks/useProductSummary";
+import { useAuth } from "@/hooks/useAuth";
+
+import { toast } from "react-toastify";
 
 export default function OrderPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
 
   const id = Number(productId);
-  const { product, loading, error } = useProductDetail(id);
+  const { product, loading, error } = useProductSummary(id);
+  const { user } = useAuth();
 
   const messageCardRef = useRef<MessageCardHandle>(null);
   const senderInfoRef = useRef<SenderInfoHandle>(null);
 
   const [receivers, setReceivers] = useState<Receiver[]>([]);
   const [message, setMessage] = useState("");
-  const [senderName, setSenderName] = useState("");
+  const [senderName, setSenderName] = useState(user?.name ?? "");
 
   const totalQuantity = receivers.reduce(
     (sum, receiver) => sum + receiver.quantity,
     0,
   );
 
-  const totalPrice = product?.price.sellingPrice
-    ? product.price.sellingPrice * totalQuantity
-    : 0;
+  const totalPrice = product?.price ? product.price * totalQuantity : 0;
 
   const handleOrderClick = () => {
     const isMessageValid = messageCardRef.current?.validate() ?? false;
@@ -48,7 +50,7 @@ export default function OrderPage() {
 
     const receiverError = validateReceiverCount(receivers.length);
     if (receiverError) {
-      alert(receiverError);
+      toast.error(receiverError);
       return;
     }
 
@@ -68,7 +70,13 @@ export default function OrderPage() {
     setReceivers(newReceivers);
   }, []);
 
-  if (error) return null;
+  useEffect(() => {
+    if (error) {
+      toast.error(ERROR_MESSAGES.PRODUCT.FAIL_TO_LOAD);
+      navigate("/");
+    }
+  }, [error, navigate]);
+
   if (loading) {
     return <Placeholder>{ERROR_MESSAGES.PRODUCT.LOAD}</Placeholder>;
   }
@@ -93,8 +101,8 @@ export default function OrderPage() {
       <ProductInfo
         name={product.name}
         imageUrl={product.imageURL}
-        brand={product.brandInfo.name}
-        price={product.price.sellingPrice}
+        brand={product.brandName}
+        price={product.price}
       />
       <OrderFooter totalPrice={totalPrice} onClick={handleOrderClick} />
     </>
