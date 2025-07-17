@@ -55,6 +55,7 @@ const OrderPage = () => {
       message: "",
       sender: userInfo?.name ?? "",
       receivers: [],
+      messageCardId: "",
     },
   });
   const {
@@ -85,7 +86,7 @@ const OrderPage = () => {
         data: {
           productId: product.id,
           message: data.message,
-          messageCardId: "default-card",
+          messageCardId: data.messageCardId,
           ordererName: data.sender,
           receivers: data.receivers,
         },

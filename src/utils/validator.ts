@@ -17,6 +17,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const orderSchema = z.object({
   message: z.string().trim().min(1, "메시지를 입력해주세요."),
+  messageCardId: z.string().trim().min(1, "메시지 카드 ID가 필요해요."),
   sender: z.string().trim().min(1, "보내는 사람 이름이 반드시 필요해요."),
 });
 

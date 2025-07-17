@@ -18,11 +18,13 @@ const MessageCardSection = ({ error }: Props) => {
 
   useEffect(() => {
     setValue("message", MESSAGE_CARD_LIST[0].defaultTextMessage);
+    setValue("messageCardId", String(MESSAGE_CARD_LIST[0].id));
   }, [setValue]);
 
   const handleSelect = (card: MessageCard) => {
     setSelectedCard(card);
     setValue("message", card.defaultTextMessage);
+    setValue("messageCardId", String(card.id));
   };
 
   return (
