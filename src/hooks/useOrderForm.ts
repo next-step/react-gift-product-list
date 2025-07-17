@@ -11,20 +11,22 @@ interface ProductSummary {
   imageURL: string;
 }
 
+const DEFAULT_CARD = messageCards[0];
+
 export const useOrderForm = (product: ProductSummary | undefined) => {
   const { user } = useAuth();
 
   const methods = useForm<OrderFormValues>({
     defaultValues: {
       senderName: user?.name ?? '',
-      textMessage: messageCards[0].defaultTextMessage,
+      textMessage: DEFAULT_CARD.defaultTextMessage,
       receivers: [],
     },
   });
 
   const { setValue, watch, handleSubmit } = methods;
 
-  const [selectedCardId, setSelectedCardId] = useState(messageCards[0].id);
+  const [selectedCardId, setSelectedCardId] = useState(DEFAULT_CARD.id);
 
   const receiverList = watch('receivers');
 
