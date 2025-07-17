@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { useApi } from '@/hooks/useApi';
 import { fetchThemes } from '@/api/themesApi';
 import { FadeLoader } from 'react-spinners';
 import { Grid, Item, ImageStyle } from '@/components/category/GiftCategoryGrid';
@@ -11,45 +11,24 @@ interface Theme {
   image: string;
 }
 
-const LodingWrapper = styled.div`
+const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const GiftCategoryList = () => {
-  const [themes, setThemes] = useState<Theme[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const { data: themes, isLoading, hasError } = useApi<Theme[]>(fetchThemes);
 
-  useEffect(() => {
-    const getThemes = async () => {
-      try {
-        const response = await fetchThemes();
-        setThemes(response.data.data);
-      } catch (error) {
-        console.error('테마 데이터 가져오기 실패:', error);
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getThemes();
-  }, []);
-
-  if (isLoading)
+  if (isLoading) {
     return (
-      <LodingWrapper>
-        <FadeLoader
-          color="#033128"
-          height={15}
-          width={5}
-        />
-      </LodingWrapper>
+      <LoadingWrapper>
+        <FadeLoader color="#033128" height={15} width={5} />
+      </LoadingWrapper>
     );
+  }
 
-  if (hasError || themes.length === 0) return null;
+  if (hasError || !themes || themes.length === 0) return null;
 
   return (
     <Wrapper>
