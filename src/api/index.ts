@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
 );
 
 export async function loginApi(email: string, password: string) {
-  const response = await axios.post('http://localhost:3000/api/login', {
+  const response = await axios.post(`${baseURL}/api/login`, {
     email,
     password,
   });
