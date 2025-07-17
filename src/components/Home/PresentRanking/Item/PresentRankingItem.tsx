@@ -30,7 +30,7 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
 
   if (isLoading) {
     return <div>Loading</div>;
-  } else if (isError) {
+  } else if (isError || goods?.data.length === 0) {
     return <StyledPresentRankingItemDiv>상품 없음</StyledPresentRankingItemDiv>;
   } else {
     return (
