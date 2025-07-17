@@ -5,12 +5,12 @@ export const targetGroup = [
         label: "전체",
     },
     {
-        query: "WOMEN",
+        query: "FEMALE",
         iconText: "👩‍🦰",
         label: "여성이",
     },
     {
-        query: "MEN",
+        query: "MALE",
         iconText: "👨",
         label: "남성이",
     },
