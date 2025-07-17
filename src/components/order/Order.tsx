@@ -222,22 +222,29 @@ const Order: React.FC = () => {
         <div
           onClick={async () => {
             handleSubmit();
-
-            axios.post(
-              orderURL,
-              {
-                productId: Number(productId),
-                message: GiftMessageRef.current?.value,
-                messageCardId: String(selectedId),
-                ordererName: SenderNameRef.current?.value,
-                receivers: renewedReceivers,
-              },
-              {
-                headers: {
-                  Authorization: user?.authToken,
+            try {
+              await axios.post(
+                orderURL,
+                {
+                  productId: Number(productId),
+                  message: GiftMessageRef.current?.value,
+                  messageCardId: String(selectedId),
+                  ordererName: SenderNameRef.current?.value,
+                  receivers: renewedReceivers,
                 },
+                {
+                  headers: {
+                    Authorization: user?.authToken,
+                  },
+                }
+              );
+            } catch (error) {
+              if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                  navigate("/login");
+                }
               }
-            );
+            }
           }}
           css={totalPriceBoxStyle}
         >
