@@ -24,10 +24,9 @@ function useRanking() {
 
   function getInitialCategory(): CategoryType {
     const category = localStorage.getItem('selectedCategory');
-    if (category && Object.values(CATEGORY_TYPE).includes(category as CategoryType)) {
+    if (category && Object.values(CATEGORY_TYPE).some((cat) => cat.value === category))
       return category as CategoryType;
-    }
-    return CATEGORY_TYPE.MANY_WISH;
+    return CATEGORY_TYPE[0].value;
   }
   const [selectCategory, setSelectCategory] = useState<CategoryType>(getInitialCategory);
 

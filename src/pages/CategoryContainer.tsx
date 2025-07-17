@@ -11,24 +11,14 @@ type CategoryContainerProps = {
 function CategoryContainer({ selectedCategory, handleCategoryClick }: CategoryContainerProps) {
   return (
     <CategoryContainerStyle>
-      <Category
-        onClick={() => handleCategoryClick(CATEGORY_TYPE.MANY_WISH)}
-        category={CATEGORY_TYPE.MANY_WISH}
-        categoryName="받고 싶어한"
-        selectedCategory={selectedCategory}
-      />
-      <Category
-        onClick={() => handleCategoryClick(CATEGORY_TYPE.MANY_RECEIVE)}
-        category={CATEGORY_TYPE.MANY_RECEIVE}
-        categoryName="많이 선물한"
-        selectedCategory={selectedCategory}
-      />
-      <Category
-        onClick={() => handleCategoryClick(CATEGORY_TYPE.MANY_WISH_RECEIVE)}
-        category={CATEGORY_TYPE.MANY_WISH_RECEIVE}
-        categoryName="위시로 받은"
-        selectedCategory={selectedCategory}
-      />
+      {CATEGORY_TYPE.map((category_type) => (
+        <Category
+          onClick={() => handleCategoryClick(category_type.value)}
+          category={category_type.value}
+          categoryName={category_type.label}
+          selectedCategory={selectedCategory}
+        />
+      ))}
     </CategoryContainerStyle>
   );
 }
