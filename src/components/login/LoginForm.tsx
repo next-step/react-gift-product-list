@@ -5,6 +5,11 @@ import useFormInput from "@/hooks/useFormInput";
 import { checkEmailError, checkPasswordError } from "@/utils/validation";
 import ErrorMessage from "../common/ErrorMessage";
 import { useUserInfo } from "@/contexts/UserInfoContext";
+import { postLogin } from "@/api/login";
+import useApiRequest from "@/hooks/useApiRequest";
+import type { User } from "@/types/user";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -13,18 +18,40 @@ const LoginForm = () => {
   const passwordInput = useFormInput(checkPasswordError);
   const user = useUserInfo();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const {
+    data: userData,
+    isLoading,
+    isError,
+    error,
+    refetch: postLoginRequest,
+  } = useApiRequest<User, [string, string]>({
+    requestFn: postLogin,
+    immediate: false,
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    user?.setUserInfo({
-      email: emailInput.value,
-      name: emailInput.value.split("@")[0],
-    });
-
-    const redirectPath = new URLSearchParams(location.search).get("redirect");
-
-    navigate(redirectPath || ROUTE_PATH.HOME);
+    postLoginRequest(emailInput.value, passwordInput.value);
   };
+
+  useEffect(() => {
+    if (userData && !isLoading && !isError && !user?.email) {
+      user?.setUserInfo({
+        email: userData.email,
+        name: userData.name,
+        authToken: userData.authToken,
+      });
+
+      const redirectPath = new URLSearchParams(location.search).get("redirect");
+      navigate(redirectPath || ROUTE_PATH.HOME);
+    }
+  }, [userData, isLoading, isError, user, location.search, navigate]);
+
+  useEffect(() => {
+    if (isError && !isLoading) {
+      toast.error(error);
+    }
+  }, [isError, isLoading, error]);
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -49,6 +76,7 @@ const LoginForm = () => {
       <Button
         type="submit"
         disabled={
+          isLoading ||
           !!checkEmailError(emailInput.value) ||
           !!checkPasswordError(passwordInput.value)
         }

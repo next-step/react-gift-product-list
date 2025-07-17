@@ -6,6 +6,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import Router from "@/routes/router";
 import { UserInfoProvider } from "@/contexts/UserInfoContext";
 import { ModalProvider } from "./contexts/ModalContext";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <AppLayout>
             <Router />
           </AppLayout>
+          <ToastContainer position="bottom-center" autoClose={3000} />
         </ModalProvider>
       </UserInfoProvider>
     </ThemeProvider>

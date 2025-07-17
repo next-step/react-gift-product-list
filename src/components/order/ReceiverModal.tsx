@@ -4,7 +4,7 @@ import DescriptionMessage from "../common/DescriptionMessage";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import ReceiverForm from "./ReceiverForm";
 import { useEffect } from "react";
-import type { FormValues } from "@/types/receiver";
+import type { FormValues } from "@/types/order";
 
 const ReceiverModal = () => {
   const { isOpen, closeModal } = useModal();
@@ -39,7 +39,7 @@ const ReceiverModal = () => {
     e.stopPropagation();
 
     if (modalFields.length < 10) {
-      modalAppend({ name: "", phone: "", count: 1 });
+      modalAppend({ name: "", phoneNumber: "", quantity: 1 });
     }
   };
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {

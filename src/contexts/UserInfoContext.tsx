@@ -2,8 +2,9 @@ import useSessionStorage from "@/hooks/useSessionStorage";
 import React, { createContext, useContext } from "react";
 
 type UserInfo = {
-  email: string | null;
-  name: string | null;
+  email: string | undefined;
+  name: string | undefined;
+  authToken: string | undefined;
 };
 
 type UserInfoContextType = UserInfo & {
@@ -19,8 +20,9 @@ export const UserInfoProvider = ({
   children: React.ReactNode;
 }) => {
   const userInfo = useSessionStorage<UserInfo>("kakaotech/userInfo", {
-    email: null,
-    name: null,
+    email: undefined,
+    name: undefined,
+    authToken: undefined,
   });
 
   return (
@@ -28,6 +30,7 @@ export const UserInfoProvider = ({
       value={{
         email: userInfo.value.email,
         name: userInfo.value.name,
+        authToken: userInfo.value.authToken,
         setUserInfo: userInfo.updateValue,
         removeUserInfo: userInfo.removeValue,
       }}

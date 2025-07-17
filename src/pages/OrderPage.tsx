@@ -1,8 +1,7 @@
 import TheHeader from "@/components/layout/TheHeader";
 import { useParams, useLocation, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ROUTE_PATH } from "@/routes/paths";
-import { gifts } from "@/data/gift";
 import { cards } from "@/data/card";
 import type { Card } from "@/types/card";
 import styled from "@emotion/styled";
@@ -13,24 +12,28 @@ import GiftInformationSection from "@/components/order/GiftInformationSection";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { FormProvider, useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import type { OrderFormValue } from "@/types/receiver";
+import type { OrderFormValue } from "@/types/order";
+import { fetchProductsSummary } from "@/api/productSummary";
+import useApiRequest from "@/hooks/useApiRequest";
+import { toast } from "react-toastify";
+import type { OrderRequest } from "@/types/order";
+import { postOrder } from "@/api/order";
 
 const OrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedCard, setSelectedCard] = useState<Card>(cards[0]);
+  const userInfo = useUserInfo();
   const methods = useForm<OrderFormValue>({
     mode: "onChange",
     defaultValues: {
       message: selectedCard.defaultTextMessage,
-      sender: "",
+      sender: userInfo?.name || "",
       receiver: [],
     },
   });
 
   const watchedReceiver = methods.watch("receiver");
-
-  const userInfo = useUserInfo();
 
   useEffect(() => {
     methods.setValue("message", selectedCard.defaultTextMessage);
@@ -45,29 +48,65 @@ const OrderPage = () => {
   }, [location.pathname, navigate, userInfo]);
 
   const { id } = useParams<{ id: string }>();
-  const gift = gifts.find(gift => gift.id.toString() === id);
+  const requestFn = useCallback(() => fetchProductsSummary(Number(id)), [id]);
+  const {
+    data: gift,
+    isLoading,
+    isError,
+    error,
+  } = useApiRequest({
+    requestFn,
+  });
 
-  if (!gift) {
-    navigate(ROUTE_PATH.NOT_FOUND, { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (!gift && !isLoading && isError) {
+      toast.error(error);
+      navigate(ROUTE_PATH.HOME, { replace: true });
+    }
+  }, [gift, isLoading, isError, navigate, error]);
+
+  if (!gift) return null;
 
   const onValid: SubmitHandler<OrderFormValue> = data => {
     const totalCount = data.receiver.reduce(
-      (sum, receiver) => sum + Number(receiver.count),
+      (sum, receiver) => sum + Number(receiver.quantity),
       0,
     );
 
-    alert(
-      [
-        "주문이 완료되었습니다.",
-        `상품명: ${gift.name}`,
-        `구매 수량: ${totalCount}개`,
-        `보낸 사람: ${data.sender}`,
-        `메시지: ${data.message}`,
-      ].join("\n"),
-    );
-    navigate(ROUTE_PATH.HOME, { replace: true });
+    const orderRequestData: OrderRequest = {
+      productId: Number(id),
+      message: data.message,
+      messageCardId: String(selectedCard.id),
+      ordererName: data.sender,
+      receivers: data.receiver.map(receiver => ({
+        name: receiver.name,
+        phoneNumber: receiver.phoneNumber,
+        quantity: Number(receiver.quantity),
+      })),
+    };
+
+    postOrder(orderRequestData, userInfo?.authToken || "")
+      .then(() => {
+        alert(
+          [
+            "주문이 완료되었습니다.",
+            `상품명: ${gift.name}`,
+            `구매 수량: ${totalCount}개`,
+            `보낸 사람: ${data.sender}`,
+            `메시지: ${data.message}`,
+          ].join("\n"),
+        );
+        navigate(ROUTE_PATH.HOME, { replace: true });
+      })
+      .catch(error => {
+        toast.error(
+          error.errorMessage || "주문에 실패했습니다. 다시 시도해주세요.",
+        );
+        if (error.errorStatus === 401) {
+          navigate(ROUTE_PATH.LOGIN, { replace: true });
+          return;
+        }
+      });
   };
 
   return (
@@ -84,9 +123,9 @@ const OrderPage = () => {
             <ReceiverSection />
             <GiftInformationSection selectedGift={gift} />
             <Button type="submit">
-              {gift.price.sellingPrice *
+              {gift.price *
                 watchedReceiver.reduce(
-                  (total, receiver) => total + Number(receiver.count || 0),
+                  (total, receiver) => total + Number(receiver.quantity || 0),
                   0,
                 )}
               원 주문하기

@@ -12,7 +12,7 @@ import type {
 } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
 import Close from "@/components/UI/Close";
-import type { FormValues } from "@/types/receiver";
+import type { FormValues } from "@/types/order";
 
 type ReceiverFormProps = {
   index: number;
@@ -64,19 +64,19 @@ const ReceiverForm = ({
         <InputErrorDiv>
           <Input
             placeholder="전화번호를 입력하세요."
-            error={!!fieldErrors?.phone}
+            error={!!fieldErrors?.phoneNumber}
             type="text"
-            {...register(`modalReceiver.${index}.phone`, {
+            {...register(`modalReceiver.${index}.phoneNumber`, {
               validate: value => {
                 const phones = getValues("modalReceiver").map(
-                  receiver => receiver.phone || "",
+                  receiver => receiver.phoneNumber || "",
                 );
                 return checkPhoneError(value, index, phones);
               },
             })}
           />
-          {fieldErrors?.phone?.message && (
-            <ErrorMessage message={fieldErrors.phone.message} />
+          {fieldErrors?.phoneNumber?.message && (
+            <ErrorMessage message={fieldErrors.phoneNumber.message} />
           )}
         </InputErrorDiv>
       </InputDiv>
@@ -84,14 +84,14 @@ const ReceiverForm = ({
         <InputTitle>수량</InputTitle>
         <InputErrorDiv>
           <Input
-            error={!!fieldErrors?.count}
+            error={!!fieldErrors?.quantity}
             type="number"
-            {...register(`modalReceiver.${index}.count`, {
+            {...register(`modalReceiver.${index}.quantity`, {
               validate: value => checkCountError(String(value)),
             })}
           />
-          {fieldErrors?.count?.message && (
-            <ErrorMessage message={fieldErrors.count.message} />
+          {fieldErrors?.quantity?.message && (
+            <ErrorMessage message={fieldErrors.quantity.message} />
           )}
         </InputErrorDiv>
       </InputDiv>

@@ -2,13 +2,10 @@ import styled from "@emotion/styled";
 import { useModal } from "@/contexts/ModalContext";
 import ReceiverModal from "./ReceiverModal";
 import { useFormContext, useFieldArray } from "react-hook-form";
+import type { Receiver } from "@/types/order";
 
 type FormValues = {
-  receiver: {
-    name: string;
-    phone: string;
-    count: number;
-  }[];
+  receiver: Receiver[];
 };
 
 const ReceiverSection = () => {
@@ -49,8 +46,8 @@ const ReceiverSection = () => {
           {receiverList.map((receiver, index) => (
             <GridReceiver key={index} type="item">
               <ContentP type="item">{receiver.name}</ContentP>
-              <ContentP type="item">{receiver.phone}</ContentP>
-              <ContentP type="item">{receiver.count}개</ContentP>
+              <ContentP type="item">{receiver.phoneNumber}</ContentP>
+              <ContentP type="item">{receiver.quantity}개</ContentP>
             </GridReceiver>
           ))}
         </ReceiverList>
