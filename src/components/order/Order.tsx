@@ -29,6 +29,7 @@ import ReceiverModal from "@/components/order/ReceiverModal";
 import type { Theme } from "@emotion/react";
 import ReceiverInfoTable from "@/components/order/ReceiverInfoTable";
 import axios from "axios";
+import { useUserInfo } from "@/hooks/useUserInfo";
 
 type Product = {
   id: number;
@@ -95,6 +96,8 @@ const Order: React.FC = () => {
     navigate("/");
   };
 
+  const { user } = useUserInfo();
+
   useEffect(() => {
     if (!id) return;
 
@@ -147,6 +150,7 @@ const Order: React.FC = () => {
               type="text"
               ref={SenderNameRef}
               placeholder="이름을 입력하세요."
+              defaultValue={user?.name}
             ></input>
             {senderError && <p css={ErrorMessageStyle}>{senderError}</p>}
           </div>

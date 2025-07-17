@@ -11,8 +11,6 @@ const MyPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  console.log(user);
-
   if (!user) {
     return (
       <div css={spinnerWrapperStyle}>
