@@ -113,8 +113,8 @@ export default function ReceiverInfo({ receivers, setReceivers }: ReceiverInfoPr
       </Content>
       {open && (
         <ReceiverListModal
-          onClose={() => setOpen(false)}
-          onSave={(data: Receiver[]) => {
+          closeModal={() => setOpen(false)}
+          saveReceivers={(data: Receiver[]) => {
             setReceivers(data);
             setOpen(false);
           }}

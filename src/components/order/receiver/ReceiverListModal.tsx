@@ -137,12 +137,16 @@ interface FormValues {
 }
 
 interface Props {
-  onClose: () => void;
-  onSave: (data: Receiver[]) => void;
+  closeModal: () => void;
+  saveReceivers: (data: Receiver[]) => void;
   initialReceivers?: Receiver[];
 }
 
-export default function ReceiverListModal({ onClose, onSave, initialReceivers = [] }: Props) {
+export default function ReceiverListModal({
+  closeModal,
+  saveReceivers,
+  initialReceivers = [],
+}: Props) {
   const methods = useForm<FormValues>({
     defaultValues: {
       receivers: initialReceivers,
@@ -177,17 +181,15 @@ export default function ReceiverListModal({ onClose, onSave, initialReceivers = 
     const values = getValues('receivers');
     const duplicates = getDuplicatePhoneIndexes(values);
 
-    if (duplicates.length > 0) {
-      return;
-    }
+    if (duplicates.length > 0) return;
 
-    onSave(values);
-    onClose();
+    saveReceivers(values);
+    closeModal();
   };
 
   return (
     <FormProvider {...methods}>
-      <Modal onClose={onClose}>
+      <Modal onClose={closeModal}>
         <FormStyle onSubmit={handleSubmit(onSubmit)}>
           <Title>받는 사람</Title>
           <Label>
@@ -274,7 +276,7 @@ export default function ReceiverListModal({ onClose, onSave, initialReceivers = 
           </Content>
 
           <BottomBtn>
-            <CancelBtn type="button" onClick={onClose}>
+            <CancelBtn type="button" onClick={closeModal}>
               취소
             </CancelBtn>
             <SaveBtn type="submit">{fields.length}명 완료</SaveBtn>

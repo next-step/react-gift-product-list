@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const Wrapper = styled.div`
-  margin: 0 ${({ theme }) => theme.spacing.spacing4};
+  margin: 16px ${({ theme }) => theme.spacing.spacing4};
   padding: ${({ theme }) => theme.spacing.spacing4};
   background: ${({ theme }) => theme.colors.semantic.kakaoYellow};
   border-radius: 16px;

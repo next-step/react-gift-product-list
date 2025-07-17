@@ -4,6 +4,7 @@ import MobileLayout from '@/layouts/MobileLayout';
 import NavBar from '@/components/NavBar';
 import logo from '@/assets/logo.svg';
 import KakaoButton from '@/components/common/KakaoButton';
+import { emailRegex, MIN_PASSWORD_LENGTH } from '@/utils/validation';
 import useLoginForm from '@/hooks/useLoginForm';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -64,7 +65,7 @@ const ButtonWrapper = styled.div`
 `;
 
 export default function LoginPage() {
-  const { values, errors, handleChange, handleBlur, isValid } = useLoginForm();
+  const { register, handleSubmit, errors, isValid, values } = useLoginForm();
   const { login, user } = useAuth();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -72,9 +73,7 @@ export default function LoginPage() {
 
   if (user) return <Navigate to="/my" replace />;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
+  const onSubmit = () => {
     login(values.email);
     navigate(from, { replace: true });
   };
@@ -85,28 +84,34 @@ export default function LoginPage() {
         <NavBar />
         <Content>
           <LogoImg src={logo} alt="kakao 로고" />
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Input
-              name="email"
               placeholder="이메일"
               type="email"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
+              {...register('email', {
+                required: 'ID를 입력해주세요.',
+                pattern: {
+                  value: emailRegex,
+                  message: 'ID는 이메일 형식으로 입력해주세요.',
+                },
+              })}
               error={!!errors.email}
             />
-            {errors.email && <ErrorMsg>{errors.email}</ErrorMsg>}
+            {errors.email && <ErrorMsg>{errors.email.message}</ErrorMsg>}
 
             <Input
-              name="password"
               placeholder="비밀번호"
               type="password"
-              value={values.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
+              {...register('password', {
+                required: 'PW를 입력해주세요.',
+                minLength: {
+                  value: 8,
+                  message: `PW는 최소 ${MIN_PASSWORD_LENGTH}글자 이상이어야 합니다.`,
+                },
+              })}
               error={!!errors.password}
             />
-            {errors.password && <ErrorMsg>{errors.password}</ErrorMsg>}
+            {errors.password && <ErrorMsg>{errors.password.message}</ErrorMsg>}
 
             <ButtonWrapper>
               <KakaoButton type="submit" fullWidth disabled={!isValid}>
