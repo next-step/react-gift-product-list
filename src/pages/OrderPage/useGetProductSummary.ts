@@ -26,6 +26,9 @@ const useGetProductSummary = (): UseProductSummaryResult => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     const fetchProductSummary = async () => {
       if (!productId) {
         setError(new Error(PRODUCT_ID_MISSING_MESSAGE));
@@ -35,9 +38,13 @@ const useGetProductSummary = (): UseProductSummaryResult => {
         return;
       }
       try {
-        const response = await axios.get(`/api/products/${productId}/summary`);
+        const response = await axios.get(`/api/products/${productId}/summary`, { signal });
         setProduct(response.data.data);
       } catch (e) {
+        if (axios.isCancel(e)) {
+          console.log('Request cancelled', e.message);
+          return;
+        }
         setError(e as Error);
         toast.error(FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE);
         navigate('/');
@@ -47,6 +54,10 @@ const useGetProductSummary = (): UseProductSummaryResult => {
     };
 
     fetchProductSummary();
+
+    return () => {
+      abortController.abort();
+    };
   }, [productId, navigate]);
 
   return { product, loading, error };
