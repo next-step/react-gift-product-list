@@ -2,15 +2,15 @@ import styled from "@emotion/styled";
 import theme from "@src/styles/kakaoTheme";
 import { type ProductData } from "@src/pages/OrderPage";
 
-function ProductCard({ productData }: { productData: ProductData | null }) {
+function ProductCard({ productData }: { productData: ProductData }) {
   return (
     <ProductCardWrapper>
-      <Image src={productData?.imageURL} alt="image" />
+      <Image src={productData.imageURL} alt="image" />
       <Description>
-        <ProductName>{productData?.name}</ProductName>
-        <BrandName>{productData?.brandName}</BrandName>
+        <ProductName>{productData.name}</ProductName>
+        <BrandName>{productData.brandName}</BrandName>
         <Price>
-          상품가 <strong>{productData?.price}원</strong>
+          상품가 <strong>{productData.price}원</strong>
         </Price>
       </Description>
     </ProductCardWrapper>
