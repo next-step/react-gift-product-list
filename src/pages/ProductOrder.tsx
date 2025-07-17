@@ -1,4 +1,5 @@
 import { FormProvider } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import NavigationBar from '@/common/NavigationBar';
 import GiftCardSelector from '@/components/ProductOrder/GiftCardSelector';
 import SenderInfoSection from '@/components/ProductOrder/SenderInfoSection';
@@ -7,29 +8,44 @@ import ProductInfo from '@/components/giftHome/GiftThemes/ProductInfo';
 import OrderBtn from '@/components/ProductOrder/OrderBtn';
 import styled from '@emotion/styled';
 import { useOrderForm } from '@/hooks/useOrderForm';
+import { useState } from 'react';
 
 const ProductOrder = () => {
-  const { imageURL, name, price, brandInfo, methods, handleSubmit } =
-    useOrderForm();
+  const { productId } = useParams();
+  const { imageURL, name, price, brandInfo, methods, handleSubmit, order } =
+    useOrderForm(Number(productId));
+
+  const [message, setMessage] = useState('생일 축하해!');
+  const [messageCardId, setMessageCardId] = useState('default-card');
 
   return (
-    <FormProvider {...methods}>
-      <Layout>
-        <Content>
-          <NavigationBar />
-          <GiftCardSelector />
-          <SenderInfoSection />
-          <ReceiverInfoSection />
-          <ProductInfo
-            imageURL={imageURL}
-            name={name}
-            price={price}
-            brandInfo={brandInfo}
+    <>
+      <NavigationBar />
+      <FormProvider {...methods}>
+        <Layout>
+          <Content>
+            <ProductInfo
+              imageURL={imageURL}
+              name={name}
+              price={price}
+              brandInfo={brandInfo}
+            />
+            <GiftCardSelector
+              message={message}
+              setMessage={setMessage}
+              messageCardId={messageCardId}
+              setMessageCardId={setMessageCardId}
+            />
+            <SenderInfoSection />
+            <ReceiverInfoSection />
+          </Content>
+          <OrderBtn
+            price={price.basicPrice}
+            onClick={handleSubmit(() => order({ message, messageCardId }))}
           />
-          <OrderBtn price={price.basicPrice} onClick={handleSubmit} />
-        </Content>
-      </Layout>
-    </FormProvider>
+        </Layout>
+      </FormProvider>
+    </>
   );
 };
 
