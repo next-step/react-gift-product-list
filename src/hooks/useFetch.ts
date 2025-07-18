@@ -20,7 +20,7 @@ const useFetch = <TResponse, TBody = unknown>(
     method = "GET",
     params = undefined,
     autoFetch = true,
-    dependency = undefined,
+    dependency = [],
     headers = undefined,
     body = undefined,
     baseUrl = "",
@@ -74,7 +74,7 @@ const useFetch = <TResponse, TBody = unknown>(
     if (autoFetch) {
       fetchData();
     }
-  }, [fetchData, autoFetch, ...(dependency || [])]);
+  }, [fetchData, autoFetch, ...dependency]);
 
   return { isLoading, isError, data, fetchData };
 };
