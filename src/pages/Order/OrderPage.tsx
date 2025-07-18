@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Container from "@/components/common/Container";
 import Divider from "@/components/common/Divider";
-import Order from "@/pages/Order/components/Order";
+import Order, { type RecipientType } from "@/pages/Order/components/Order";
 import { useFormContext } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
 import useFetch from "@/hooks/useFetch";
@@ -18,6 +18,13 @@ interface OrderData {
     success: boolean;
   };
 }
+interface OrderBodyData {
+  productId: number;
+  message: string;
+  messageCardId: string;
+  ordererName: string;
+  receivers: RecipientType[];
+}
 
 const OrderPage = () => {
   return (
@@ -32,8 +39,10 @@ const OrderPageContent = () => {
   const { handleSubmit: createSubmitHandler, getValues } = useFormContext();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
   const [error, setError] = useState<ErrorData | undefined>(undefined);
-  const { data, fetchData } = useFetch<OrderData>("/api/order", { method: "POST", autoFetch: false });
+  const { data, fetchData } = useFetch<OrderData, OrderBodyData>("/api/order", { method: "POST", autoFetch: false });
+
   const navigate = useNavigate();
   const { logout } = useAuth();
   const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
@@ -41,9 +50,10 @@ const OrderPageContent = () => {
     logout();
     navigate(ROUTE_PATH.LOGIN);
   }, [logout, navigate]);
+
   const onSubmit = async (data: any) => {
     const headers = new AxiosHeaders({ Authorization: getCookieValue(AUTH_COOKIE_KEY_TOKEN) ?? "" });
-    const body = {
+    const body: OrderBodyData = {
       productId: data.productId,
       message: data.message,
       messageCardId: `card${data.cardId}`,

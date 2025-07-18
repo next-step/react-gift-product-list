@@ -11,11 +11,15 @@ import { toast } from "react-toastify";
 interface AuthData {
   data: Auth;
 }
+interface LoginBodyData {
+  email: string;
+  password: string;
+}
 
 const LoginPage = () => {
   const { user, onChange, onBlur, errorMsg } = useLoginInput();
   const { login } = useAuth();
-  const loginFetch = useFetch<AuthData>("api/login", {
+  const loginFetch = useFetch<AuthData, LoginBodyData>("api/login", {
     method: "POST",
     body: { email: user.id, password: user.password },
     autoFetch: false,

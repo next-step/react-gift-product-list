@@ -1,20 +1,20 @@
 import type { ErrorData } from "@/types/FetchErrorData";
-import axios, { AxiosHeaders } from "axios";
+import axios, { AxiosHeaders, type Method } from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-interface UseFetchOptions {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+interface UseFetchOptions<TBody> {
+  method?: Method;
   params?: Record<string, string | number>;
   autoFetch?: boolean;
   dependency?: React.DependencyList;
   headers?: AxiosHeaders;
-  body?: Object;
+  body?: TBody;
   baseUrl?: string;
 }
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const useFetch = <T>(
+const useFetch = <TResponse, TBody = unknown>(
   url: string,
   {
     method = "GET",
@@ -24,18 +24,18 @@ const useFetch = <T>(
     headers = undefined,
     body = undefined,
     baseUrl = "",
-  }: UseFetchOptions = {},
+  }: UseFetchOptions<TBody> = {},
 ) => {
   const [isLoading, setIsLoading] = useState<boolean>(autoFetch);
   const [isError, setIsError] = useState<boolean>(false);
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<TResponse | null>(null);
 
   const fetchData = useCallback(
     async (
-      fetchHeaders: AxiosHeaders | undefined = headers,
-      fetchBody: Object | undefined = body,
+      fetchHeaders: typeof headers = headers,
+      fetchBody: typeof body = body,
       fetchParams: typeof params = params,
-    ): Promise<{ data: T | null; error: ErrorData | undefined }> => {
+    ): Promise<{ data: TResponse | null; error: ErrorData | undefined }> => {
       const base = baseUrl ? baseUrl : BASE_URL;
       const fetchUrl = new URL(url, base);
 
@@ -47,7 +47,11 @@ const useFetch = <T>(
 
       try {
         setIsLoading(true);
-        const response = await axios<T>(fetchUrl.toString(), { method, headers: fetchHeaders, data: fetchBody });
+        const response = await axios<TResponse>(fetchUrl.toString(), {
+          method,
+          headers: fetchHeaders,
+          data: fetchBody,
+        });
         setIsError(false);
         setData(response.data);
         return { data: response.data, error: undefined };
