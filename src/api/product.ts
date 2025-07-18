@@ -18,7 +18,7 @@ export interface ProductSummary {
 }
 
 export const getProductSummary = async (
-  productId: number
+  productId: number,
 ): Promise<ProductSummary> => {
   const res = await client.get(`/api/products/${productId}`);
   return res.data.data;
