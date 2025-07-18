@@ -10,6 +10,8 @@ import NotFoundPage from '@/pages/NotFoundPage.tsx';
 import MyPage from '@/pages/MyPage/MyPage';
 import PrivateRoute from '@/PrivateRoute';
 import OrderPage from '@/pages/OrderPage/OrderPage';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,7 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <RouterProvider router={router} />
+        <ToastContainer position="top-center" autoClose={2000} />
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>
