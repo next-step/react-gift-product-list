@@ -12,6 +12,12 @@ import { showErrorToast } from "@/styles/toast";
 import { STORAGE_KEY } from "@/constants/storage";
 import type { Product } from "@/types/product";
 
+function isAxiosError(
+  error: unknown
+): error is { response?: { status?: number } } {
+  return typeof error === "object" && error !== null && "isAxiosError" in error;
+}
+
 export default function OrderPage() {
   const navigate = useNavigate();
   const { itemId } = useParams();
@@ -28,10 +34,16 @@ export default function OrderPage() {
         if (!itemId) return;
         const data = await productSummary(itemId);
         setProduct(data);
-      } catch (error: any) {
-        if (error.response?.status >= 400 && error.response?.status < 500) {
-          showErrorToast("상품 정보를 불러올 수 없습니다.");
-          navigate("/gift", { replace: true });
+      } catch (error: unknown) {
+        if (isAxiosError(error)) {
+          if (
+            error.response?.status &&
+            error.response.status >= 400 &&
+            error.response.status < 500
+          ) {
+            showErrorToast("상품 정보를 불러올 수 없습니다.");
+            navigate("/gift", { replace: true });
+          }
         }
       }
     };
@@ -53,7 +65,7 @@ export default function OrderPage() {
     (sum, receiver) => sum + Number(receiver.quantity),
     0
   );
-  
+
   if (!product) return null;
   const totalPrice = product.data.price * totalQuantity;
 
@@ -110,10 +122,12 @@ export default function OrderPage() {
 메시지: ${message.value}`);
 
       navigate("/");
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        showErrorToast("로그인이 필요합니다.");
-        navigate("/login");
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          showErrorToast("로그인이 필요합니다.");
+          navigate("/login");
+        }
       }
     }
   };
@@ -137,7 +151,7 @@ export default function OrderPage() {
         setReceiverList={setReceiverList}
       />
       <Divider />
-      <GiftInfo product={product.data}/>
+      <GiftInfo product={product.data} />
       <OrderBtn onClick={handleOrder}>
         {totalPrice.toLocaleString()}원 주문하기
       </OrderBtn>
