@@ -26,7 +26,7 @@ const useFetch = <T>(
     baseUrl = "",
   }: UseFetchOptions = {},
 ) => {
-  const [isLoading, setIsLoading] = useState<boolean>(autoFetch ? true : false);
+  const [isLoading, setIsLoading] = useState<boolean>(autoFetch);
   const [isError, setIsError] = useState<boolean>(false);
   const [data, setData] = useState<T | null>(null);
 
