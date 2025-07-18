@@ -250,15 +250,6 @@ function OrderPage() {
 
     console.log('전체 userInfo:', userInfo);
     console.log('authToken 값:', authToken);
-    console.log('receivers 원본:', receivers);
-    console.log(
-      'receivers 변환 후:',
-      receivers.map((receiver) => ({
-        name: receiver.name,
-        phoneNumber: receiver.phone,
-        quantity: receiver.quantity,
-      })),
-    );
 
     // receivers 배열의 필드명을 API 스펙에 맞게 변환
     const orderData = {
