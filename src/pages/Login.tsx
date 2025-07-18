@@ -27,7 +27,7 @@ const LoginPage = () => {
         <LoginForm onLoginSuccess={handleLoginSuccess} /> {/* ✅ 이쪽도 수정됨 */}
         <ToastContainer
           position="bottom-center"
-          autoClose={3000}
+          autoClose={3_000}
           hideProgressBar={false}
           pauseOnHover
           closeOnClick
