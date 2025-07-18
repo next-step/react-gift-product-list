@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
@@ -13,6 +13,7 @@ import ProductInfo from '@/components/order/ProductInfo';
 import OrderButton from '@/components/order/OrderButton';
 
 import { useProductSummary } from '@/hooks/useProductSummary';
+import { useAuth } from '@/hooks/useAuth';
 import { isBlank } from '@/utils/validation';
 import { cardTemplates } from '@/mock/cardTemplates';
 import type { Receiver } from '@/types/order';
@@ -34,6 +35,7 @@ interface FormValues {
 
 export default function OrderPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const { product, loading } = useProductSummary(id);
   const defaultTpl = cardTemplates[0];
@@ -53,6 +55,12 @@ export default function OrderPage() {
       qty: 1,
     },
   });
+
+  useEffect(() => {
+    if (user?.name) {
+      setValue('sender', user.name);
+    }
+  }, [user, setValue]);
 
   if (loading) return <div>로딩 중...</div>;
   if (!product) return <div>상품을 찾을 수 없습니다.</div>;

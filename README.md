@@ -27,7 +27,7 @@
 
 - [x] /products/:productId/summary api 사용하여 제품 정보 가져오기
 - [x] 4XX 에러 발생 시 Toast 통해 에러메시지, 홈으로 연결
-- [] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채우기
+- [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채우기
 - [] /order api 사용하여 주문하기 기능 완성
 - [] 주문하기 API는 Authorization 헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작
 - [] 주문하기 API에서 401에러 발생 시 로그인 페이지로 연결
