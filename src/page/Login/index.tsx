@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 import useInput from './hooks/useInput';
 import InputField from './components/InputField';
-import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
-import { API_BASE_URL } from '@/api/apiBaseUrl';
-import axios from 'axios';
+import useLogin from './utils/postUserInfo';
 
 const Container = styled.div`
   display: flex;
@@ -53,7 +51,7 @@ const Button = styled.button`
 `;
 
 const LoginPage = () => {
-  const { login } = useUserInfo();
+  const { postUserInfo } = useLogin();
   const navigate = useNavigate();
   const username = useInput('email');
   const password = useInput('password');
@@ -62,35 +60,8 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!username.isValid || !password.isValid) return;
-
-    const fetchUserInfo = async () => {
-      const data = {
-        email: `${username.value}`,
-        password: `${password.value}`,
-      };
-      const headers = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      await axios
-        .post(`${API_BASE_URL}/api/login`, data, headers)
-        .then(response => {
-          const name = response.data.data.name;
-          const email = response.data.data.email;
-          const token = response.data.data.authToken;
-          login(name, email, token);
-        })
-        .catch(error => {
-          console.log(error.response.data.data.message);
-          console.log(error.response.data.data.statusCode);
-        });
-    };
-    fetchUserInfo();
-
+    postUserInfo({ username, password });
     navigate(ROUTES.MY, { replace: true });
   };
 
