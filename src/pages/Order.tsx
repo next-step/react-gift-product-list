@@ -1,21 +1,27 @@
-import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { OrderFormProvider, useOrderForm } from '@/contexts/order'
 import { orderCardMock, type CardData } from '@/features/order'
-import { productListMock } from '@/features/product'
 import { ROUTE_PATH } from '@/Router'
 import { OrderCardSection, ReceiverSection, SenderSection } from '@/features/order/components'
 import { theme } from '@/styles/theme'
-import { Button, PageContainer, Typography } from '@/components/ui'
-import { NotFound } from '@/pages/NotFound'
-import type { Product } from '@/api/types/product'
+import { Button, Loading, PageContainer, Typography } from '@/components/ui'
+import type { ProductSummary } from '@/api/types/product'
+import { fetchProductSummary } from '@/api/services/product'
+import { useFetch } from '@/hooks/useFetch'
+import { STORAGES } from '@/api/constants/storages'
+import type { CreateOrderRequest } from '@/api/types/order'
+import { createOrder } from '@/api/services/order'
+import { toast } from 'react-toastify'
 
 // * 주문하기 페이지 (주문하기 폼 Provider 포함)
 export const Order = () => {
+  const storedUser = localStorage.getItem(STORAGES.AUTH)
+  const userInfo = storedUser ? JSON.parse(storedUser) : null
+
   return (
     // * Context API를 통해 전역적으로 관리되는 주문하기 폼 적용
-    <OrderFormProvider>
+    <OrderFormProvider defaultSender={userInfo?.name}>
       <OrderContent />
     </OrderFormProvider>
   )
@@ -26,7 +32,11 @@ export const OrderContent = () => {
   const navigate = useNavigate()
   // * URL 파라미터로 부터 상품 id 값 가져오기
   const { id } = useParams<{ id: string }>()
-  const [productInfo, setProductInfo] = useState<Product>()
+  const {
+    data: productInfo,
+    isError,
+    isLoading,
+  } = useFetch<ProductSummary>(() => fetchProductSummary(Number(id)), [id])
 
   // * 카드 리스트
   const cardList: CardData[] = orderCardMock
@@ -47,52 +57,55 @@ export const OrderContent = () => {
   const watchedData = watch()
   const { selectedCard } = watchedData
 
-  // * 상품 데이터 id 를 통한 필터링
-  useEffect(() => {
-    const newProductInfo = productListMock.find((product) => product.id === Number(id))
-    if (newProductInfo) setProductInfo(newProductInfo)
-  }, [id])
-
   // * 폼 제출 핸들러
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (!productInfo) return
 
     if (data.receivers.length === 0) {
-      alert('받는 사람이 최소 1명 필요합니다.')
+      toast.warning('받는 사람이 최소 1명 필요합니다.')
       return
     }
 
-    // * 받는 사람들 정보를 문자열로 변환
-    const receiverInfo = data.receivers
-      .map(
-        (receiver, index) =>
-          `받는 사람 ${index + 1}: ${receiver.name} (${receiver.phone}) - ${receiver.count}개`,
-      )
-      .join('\n')
+    // * API 요청 데이터 생성
+    const orderRequest: CreateOrderRequest = {
+      productId: productInfo.id,
+      message: data.cardMessage,
+      messageCardId: `card${data.selectedCard.id}`,
+      ordererName: data.sender,
+      receivers: data.receivers.map((r) => ({
+        name: r.name,
+        phoneNumber: r.phone,
+        quantity: r.count,
+      })),
+    }
 
-    // * 총 수량 계산
-    const totalQuantity = data.receivers.reduce((sum, r) => sum + r.count, 0)
+    // * 주문하기 API 요청
+    const result = await createOrder(orderRequest)
 
-    // * 총 가격 계산
-    const totalPrice = getTotalPrice(productInfo.price.sellingPrice)
-
-    alert(
-      `주문이 완료되었습니다!\n\n` +
-        `상품명: ${productInfo.name}\n` +
-        `총 수량: ${totalQuantity}개\n` +
-        `총 가격: ${totalPrice.toLocaleString()}원\n\n` +
-        `보낸 사람: ${data.sender}\n\n` +
-        `${receiverInfo}\n\n` +
-        `메시지: ${data.cardMessage}`,
-    )
-    navigate(ROUTE_PATH.HOME)
+    // * 성공시 홈으로 이동
+    if (result.success) {
+      toast.success('주문이 완료되었습니다!')
+      navigate(ROUTE_PATH.HOME)
+    }
   })
 
   // * 주문 총액 계산
-  const totalPrice = productInfo ? getTotalPrice(productInfo.price.sellingPrice) : 0
+  const totalPrice = productInfo ? getTotalPrice(productInfo.price) : 0
 
-  // * 상품 정보가 없을 경우 NotFound 페이지로 이동하도록 처리
-  if (!productInfo) return <NotFound />
+  // * 로딩 중 화면
+  if (isLoading) {
+    return (
+      <LoadingContainer>
+        <Loading />
+      </LoadingContainer>
+    )
+  }
+
+  if (isError) {
+    // * 에러 발생 시 홈으로 이동
+    navigate(ROUTE_PATH.HOME)
+    return null
+  }
 
   // * 상품 정보가 있을 경우
   return (
@@ -116,11 +129,11 @@ export const OrderContent = () => {
       <ProductInfoSection>
         <SectionTitle variant="title2Bold">상품 정보</SectionTitle>
         <ProductInfo>
-          <ProductImage src={productInfo.imageURL} alt={productInfo.name} />
+          <ProductImage src={productInfo?.imageURL} alt={productInfo?.name} />
           <ProductDetails>
             <ProductNameContainer>
-              <ProductName variant="subtitle2Regular">{productInfo.name}</ProductName>
-              <ProductBrand variant="label2Regular">{productInfo.brandInfo.name}</ProductBrand>
+              <ProductName variant="subtitle2Regular">{productInfo?.name}</ProductName>
+              <ProductBrand variant="label2Regular">{productInfo?.brandName}</ProductBrand>
             </ProductNameContainer>
             <ProductPriceContainer>
               <ProductPriceLabel
@@ -134,19 +147,8 @@ export const OrderContent = () => {
               >
                 상품가
               </ProductPriceLabel>
-              {/* 할인되는 경우만 할인율 & 원래 가격(중간 줄) 추가 표시 */}
-              {productInfo.price.discountRate > 0 && (
-                <>
-                  <ProductDiscountRate variant="title2Bold">
-                    {productInfo.price.discountRate}%
-                  </ProductDiscountRate>
-                  <ProductBasicPrice variant="title2Bold" css={{ textDecoration: 'line-through' }}>
-                    {productInfo.price.basicPrice.toLocaleString()}원
-                  </ProductBasicPrice>
-                </>
-              )}
               <ProductSellingPrice variant="title2Bold">
-                {productInfo.price.sellingPrice.toLocaleString()}원
+                {productInfo?.price.toLocaleString()}원
               </ProductSellingPrice>
             </ProductPriceContainer>
           </ProductDetails>
@@ -242,16 +244,6 @@ const ProductPriceContainer = styled.div`
 // * 상품 가격 라벨
 const ProductPriceLabel = styled(Typography)``
 
-// * 상품 할인율
-const ProductDiscountRate = styled(Typography)`
-  color: ${theme.semanticColors.status.info};
-`
-
-// * 상품 원래 가격
-const ProductBasicPrice = styled(Typography)`
-  color: ${theme.semanticColors.text.sub};
-`
-
 // * 상품 판매가
 const ProductSellingPrice = styled(Typography)`
   color: ${theme.semanticColors.text.default};
@@ -265,6 +257,14 @@ const OrderButtonSection = styled.section`
 // * 주문 버튼
 const OrderButton = styled(Button)`
   font-weight: 700;
+`
+
+// * 로딩 컨테이너
+const LoadingContainer = styled(PageContainer)`
+  flex: 1;
+
+  justify-content: center;
+  background-color: ${theme.semanticColors.background.default};
 `
 
 export default Order

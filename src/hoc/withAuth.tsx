@@ -9,9 +9,9 @@ export function withAuth<P extends object>(ChildrenComponent: ComponentType<P>):
     const { isLogin, isInitialized } = useAuth()
     const location = useLocation()
 
-    // * 초기화가 완료되지 않았으면 로딩 표시 (또는 아무것도 렌더링하지 않음)
+    // * 초기화가 완료되지 않았으면 아무것도 렌더링하지 않음
     if (!isInitialized) {
-      return <div>로딩 중...</div>
+      return <></>
     }
 
     // * 로그인 상태가 아닐 때 로그인 페이지로 이동

@@ -16,6 +16,9 @@ import {
 } from '@/api/types/product'
 import { PRODUCT_UI_CONSTANTS } from '@/features/product/constants'
 
+// * 초기 보여줄 상품 개수
+const INITIAL_SHOW_COUNT = PRODUCT_UI_CONSTANTS.INITIAL_SHOW_COUNT
+
 // * 실시간 급상승 컴포넌트
 export const Trend = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -42,9 +45,6 @@ export const Trend = () => {
     isError,
     data: products,
   } = useFetch<Product[]>(() => fetchProductRankList(targetType, rankType), [targetType, rankType])
-
-  // * 초기 보여줄 상품 개수
-  const INITIAL_SHOW_COUNT = PRODUCT_UI_CONSTANTS.INITIAL_SHOW_COUNT
 
   // * 표시할 상품 리스트 결정
   const displayProducts = showAll ? (products ?? []) : (products ?? []).slice(0, INITIAL_SHOW_COUNT)
