@@ -5,7 +5,7 @@ const Profile = () => {
       width={28}
       height={28}
       viewBox="0 0 24 24"
-      stroke-width={1.8}
+      strokeWidth={1.8}
       fill="none"
       stroke="black"
     >

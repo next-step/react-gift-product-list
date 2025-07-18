@@ -5,14 +5,14 @@ type DividerProps = {
   fill?: boolean;
 };
 const Divider = ({ spacing = "1.875rem", fill = true }: DividerProps) => {
-  return <Style spacing={spacing} fill={fill} />;
+  return <Style $spacing={spacing} $fill={fill} />;
 };
 
-const Style = styled.div<DividerProps>`
+const Style = styled.div<{ $spacing: string; $fill: boolean }>`
   width: 100%;
-  height: ${({ spacing }) => spacing};
-  background-color: ${({ fill, theme }) =>
-    fill ? theme.color.backgroundColor.default : theme.color.backgroundColor.fill};
+  height: ${({ $spacing }) => $spacing};
+  background-color: ${({ $fill, theme }) =>
+    $fill ? theme.color.backgroundColor.default : theme.color.backgroundColor.fill};
 `;
 
 export default Divider;
