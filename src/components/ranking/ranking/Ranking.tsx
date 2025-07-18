@@ -13,10 +13,10 @@ import {
 } from '../types';
 import { ROUTE_PATH } from '@/routes/Router';
 import { useAuth } from '@/contexts/AuthContext';
-import axios from 'axios';
 import type { ProductType } from '@/types/product';
 import { RankingProducts, RankingTitle, RankingWrapper, ShowMoreBtn } from './Ranking.styles';
 import { useFetch } from '@/hooks/useFetch';
+import api from '@/lib/axiosInstance';
 // import api from '@/lib/axiosInstance';
 
 //필터 옵션
@@ -62,7 +62,7 @@ const Ranking = () => {
     }
   };
   const RankingFetcher = useCallback(() => {
-    return axios
+    return api
       .get('http://localhost:3000/api/products/ranking', {
         params: { targetType: personParam, rankType: behaviorParam },
       })

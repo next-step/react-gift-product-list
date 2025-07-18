@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-type Props = {
-  fetcher: () => Promise<any>;
-  initValue: any;
+type Props<T> = {
+  fetcher: () => Promise<T>;
+  initValue: T;
 };
 export const useFetch = <T>({ fetcher, initValue }: Props<T>) => {
   const [data, setData] = useState<T>(initValue);

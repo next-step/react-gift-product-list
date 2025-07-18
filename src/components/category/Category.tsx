@@ -8,13 +8,13 @@ import {
   CategoryImage,
 } from './Category.styles';
 import { useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
 import type { CategoryType } from '@/types/category';
 import { useFetch } from '@/hooks/useFetch';
+import api from '@/lib/axiosInstance';
 
 const Category = () => {
    const fetchCategories = useCallback(() => {
-     return axios
+     return api
        .get('http://localhost:3000/api/themes')
        .then((res) => res.data.data);
    }, []);
