@@ -41,9 +41,13 @@ export function LoginPage() {
       const { email: userEmail, name, authToken } = response.data.data
       login({ email: userEmail, name, authToken })
       navigate(from, { replace: true })
-    } catch (error: any) {
-      const message = error.response?.data.data.message
-      toast.error(typeof message === 'string' ? message : '잘못된 요청입니다.')
+    } catch (error) {
+      if (error instanceof axios.AxiosError) {
+        const message = error.response?.data.data.message
+        toast.error(
+          typeof message === 'string' ? message : '잘못된 요청입니다.'
+        )
+      }
     }
   }
 

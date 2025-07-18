@@ -64,16 +64,18 @@ export function useOrderForm(
       setValue('message', cardMock[0].defaultTextMessage)
       setFinalReceivers([])
       navigate('/')
-    } catch (error: any) {
-      const status = error.reponse?.status
-      const message = error.response?.data.data.message || '주문 실패'
+    } catch (error) {
+      if (error instanceof axios.AxiosError) {
+        const status = error.response?.status
+        const message = error.response?.data.data.message || '주문 실패'
 
-      if (status === 401) {
-        navigate('/login')
-      } else {
-        toast.error(
-          typeof message === 'string' ? message : '잘못된 요청입니다.'
-        )
+        if (status === 401) {
+          navigate('/login')
+        } else {
+          toast.error(
+            typeof message === 'string' ? message : '잘못된 요청입니다.'
+          )
+        }
       }
     }
   }
