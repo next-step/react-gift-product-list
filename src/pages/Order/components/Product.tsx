@@ -4,40 +4,30 @@ import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
 import type { ProductType } from "@/types/RankingProductType";
+import { showFetchErrorToast } from "@/utils/showFetchToast";
 import styled from "@emotion/styled";
 import { useCallback, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 
 const Product = () => {
   const { setValue } = useFormContext<OrderFormType>();
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { data, isError, isLoading } = useFetch<ProductType>(`api/products/${productId}/summary`);
+  const { data, error, isLoading } = useFetch<ProductType>(`api/products/${productId}/summary`);
   const product = useMemo(() => data, [data]);
   const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
   useEffect(() => {
     if (product) {
       setValue("productId", product.id);
+    } else if (error) {
+      showFetchErrorToast(error.statusCode, error.message, goHome);
     }
-    if (isError) {
-      toast.error("현재 없는 상품입니다.", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        onClose: goHome,
-      });
-    }
-  }, [isError, isLoading, setValue, goHome, product]);
+  }, [error, isLoading, setValue, goHome, product]);
   if (isLoading) {
     return <Loading height="170px" />;
   }
-  if (isError) {
+  if (error) {
     return null;
   }
   return (

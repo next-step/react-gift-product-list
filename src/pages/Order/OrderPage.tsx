@@ -8,10 +8,10 @@ import useFetch from "@/hooks/useFetch";
 import { getCookieValue } from "@/utils/cookie";
 import { AUTH_COOKIE_KEY_TOKEN, useAuth } from "@/contexts/authContext";
 import { AxiosHeaders } from "axios";
-import { toast } from "react-toastify";
 import { ROUTE_PATH } from "@/components/routes/routePath";
 import { useNavigate } from "react-router-dom";
 import type { ErrorData } from "@/types/FetchErrorData";
+import { showFetchErrorToast, showFetchSuccessToast } from "@/utils/showFetchToast";
 
 interface OrderData {
   success: boolean;
@@ -63,19 +63,12 @@ const OrderPageContent = () => {
   };
   useEffect(() => {
     if (data?.success) {
-      toast.success("주문에 성공했습니다.", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        onClose: goHome,
-      });
+      showFetchSuccessToast("주문에 성공했습니다.", goHome);
     }
     if (error?.statusCode === 401) {
-      goLogin();
+      showFetchErrorToast(error.statusCode, "유효하지 않은 계정입니다.", goLogin);
+    } else if (error) {
+      showFetchErrorToast(error.statusCode, error.message);
     }
   }, [data, error, goHome, goLogin]);
   return (

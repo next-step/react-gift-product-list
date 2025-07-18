@@ -6,7 +6,7 @@ import type React from "react";
 import useLoginInput from "@/hooks/useLoginInput";
 import { useAuth, type Auth } from "@/contexts/authContext";
 import useFetch from "@/hooks/useFetch";
-import { toast } from "react-toastify";
+import { showFetchErrorToast } from "@/utils/showFetchToast";
 
 interface LoginBodyData {
   email: string;
@@ -27,16 +27,7 @@ const LoginPage = () => {
     if (responseData.data) {
       login(responseData.data);
     } else if (responseData.error) {
-      toast.error(responseData.error.message, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      showFetchErrorToast(responseData.error.statusCode, responseData.error.message);
     }
   };
   const isValidIdAndPassword = user.id.length !== 0 && user.password.length >= 8 && !errorMsg.id && !errorMsg.password;

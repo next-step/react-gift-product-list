@@ -34,7 +34,7 @@ const useFetch = <TResponse, TBody = unknown>(
   }: UseFetchOptions<TBody> = {},
 ) => {
   const [isLoading, setIsLoading] = useState<boolean>(autoFetch);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [error, setError] = useState<ErrorData | undefined>(undefined);
   const [data, setData] = useState<TResponse | null>(null);
 
   const fetchData = useCallback(
@@ -59,14 +59,14 @@ const useFetch = <TResponse, TBody = unknown>(
           headers: fetchHeaders,
           data: fetchBody,
         });
-        setIsError(false);
+        setError(undefined);
         setData(response.data.data);
         return { data: response.data.data, error: undefined };
       } catch (error) {
         console.error("Error fetching themes data:", error);
-        setIsError(true);
-        setData(null);
         if (axios.isAxiosError<UseFetchResponse<ErrorData>>(error)) {
+          setData(null);
+          setError(error.response?.data.data);
           return { data: null, error: error.response?.data.data };
         }
         return { data: null, error: undefined };
@@ -83,7 +83,7 @@ const useFetch = <TResponse, TBody = unknown>(
     }
   }, [fetchData, autoFetch, ...dependency]);
 
-  return { isLoading, isError, data, fetchData };
+  return { isLoading, error, data, fetchData };
 };
 
 export default useFetch;
