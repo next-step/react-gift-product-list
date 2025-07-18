@@ -1,18 +1,13 @@
 import Spacing from "@/components/Spacing";
 import styled from "@emotion/styled";
+import type { Product } from "@/types/product";
 
 type GiftInfoProps = {
-  product: {
-    imageURL: string;
-    name: string;
-    brandName: string;
-    price: number;
-  };
+  product: Product;
 };
 
 export default function GiftInfo({ product } : GiftInfoProps) {
   if (!product) return null;
-
   return (
     <InfoBox>
       <Spacing height="12px" />
@@ -22,7 +17,7 @@ export default function GiftInfo({ product } : GiftInfoProps) {
         <InfoImg src={product.imageURL} alt={product.name} />
         <div>
           <InfoName>{product.name}</InfoName>
-          <InfoBrand>{product.brandName}</InfoBrand>
+          <InfoBrand>{product.description}</InfoBrand>
           <Spacing height="4px" />
           <InfoPriceBox>
             <InfoPrice>상품가 </InfoPrice>

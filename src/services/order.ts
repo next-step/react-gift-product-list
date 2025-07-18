@@ -1,7 +1,10 @@
 import baseHttp from "./baseHttp";
+import type { Product } from "@/types/product";
 
-export const productSummary = async (productId: string) => {
-  const response = await baseHttp.get(`/products/${productId}/summary`);
+export const productSummary = async (
+  productId: string
+): Promise<{ data: Product }> => {
+  const response = await baseHttp.get<{ data: Product }>(`/products/${productId}/summary`);
   return response.data;
 };
 
@@ -19,10 +22,7 @@ type OrderRequest = {
   receivers: OrderReceiver[];
 };
 
-export const orderProduct = async (
-  data: OrderRequest,
-  authToken: string
-) => {
+export const orderProduct = async (data: OrderRequest, authToken: string) => {
   const response = await baseHttp.post("/order", data, {
     headers: {
       Authorization: `${authToken}`,

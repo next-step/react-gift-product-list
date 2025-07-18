@@ -10,6 +10,7 @@ import type { Receiver } from "@/types/order";
 import { orderProduct, productSummary } from "@/services/order";
 import { showErrorToast } from "@/styles/toast";
 import { STORAGE_KEY } from "@/constants/storage";
+import type { Product } from "@/types/product";
 
 export default function OrderPage() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function OrderPage() {
   const sender = useOrderForm();
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
 
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<{ data: Product } | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -52,7 +53,7 @@ export default function OrderPage() {
     (sum, receiver) => sum + Number(receiver.quantity),
     0
   );
-
+  
   if (!product) return null;
   const totalPrice = product.data.price * totalQuantity;
 
@@ -102,7 +103,7 @@ export default function OrderPage() {
       );
 
       alert(`주문이 완료되었습니다.
-상품명: ${product.name}
+상품명: ${product.data.name}
 총 구매 수량: ${totalQuantity}
 받는 사람 수: ${receiverList.length}명
 발신자 이름: ${sender.value}
@@ -136,7 +137,7 @@ export default function OrderPage() {
         setReceiverList={setReceiverList}
       />
       <Divider />
-      <GiftInfo product={product.data} />
+      <GiftInfo product={product.data}/>
       <OrderBtn onClick={handleOrder}>
         {totalPrice.toLocaleString()}원 주문하기
       </OrderBtn>
