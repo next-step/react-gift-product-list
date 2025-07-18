@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Spacing from "./Spacing";
 import { useFetch } from "@/hooks/useFetch";
+import { API } from "@/constants/api";
 
 const genderOptions = [
   { label: "ALL", icon: "ALL", value: "ALL" },
@@ -68,7 +69,7 @@ export default function TimeRanking() {
     }
   };
 
-  const { data, loading } = useFetch<Product[]>("/products/ranking", {
+  const { data, loading } = useFetch<Product[]>(API.PRODUCT_RANKING, {
     targetType: searchTargetType(selectedGender),
     rankType: searchRankType(selectedRankType),
   });
