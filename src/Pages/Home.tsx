@@ -2,16 +2,16 @@ import Header from "@/components/Common/Header";
 import styled from "@emotion/styled";
 import { FiPlus } from "react-icons/fi";
 import RankingSection from "@/components/Home/RankingSection";
-import { parseNickname } from "@/utils/parseNickName";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import ThemeSection from "@/components/Home/ThemeSection";
+import Layout from "@/components/Common/Layout";
 
 const Home = () => {
   const { user } = useAuthContext();
-  const nickname = user ? parseNickname(user.email) : "";
+  const nickname = user?.name;
 
   return (
-    <Wrapper>
+    <Layout>
       <Header title="선물하기" />
       <HomeContainer>
         <SelectFriendSection>
@@ -31,22 +31,12 @@ const Home = () => {
         </CheerBannerSection>
         <RankingSection />
       </HomeContainer>
-    </Wrapper>
+    </Layout>
   );
 };
 
 export default Home;
 
-const Wrapper = styled.div`
-  width: 100%;
-  min-height: 100vh;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-itmes: center;
-  justify-content: flex-start;
-  background-color: ${({ theme }) => theme.colors.backgroundDefault};
-`;
 const HomeContainer = styled.main`
   width: 100%;
   max-width: 720px;

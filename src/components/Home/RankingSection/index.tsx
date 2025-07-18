@@ -2,7 +2,7 @@ import TargetCategory from "./TargetCategory";
 import RankingCategory from "./RankingCategory";
 import RankingItem from "./RankingItem";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   SectionContainer,
   SectionTitle,
@@ -10,20 +10,20 @@ import {
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import { getRanking } from "@/api/products";
-import type { GiftItem } from "@/types/gift";
+import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
+import { useFetchData } from "@/hooks/useFetchData";
 
 const RankingSection = () => {
   const [showAll, setShowAll] = useState(false);
-  const [rankingItems, setRankingItems] = useState<GiftItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const RANK_COUNT = showAll ? 21 : 6;
   const toggleShowAll = () => setShowAll((prev) => !prev);
 
   const navigate = useNavigate();
-  const isLoggedIn = useAuthContext();
+
+  const { user } = useAuthContext();
+  const isLoggedIn = !!user;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -46,29 +46,22 @@ const RankingSection = () => {
     });
   };
 
-  const handleClickItem = (itemId: number) => {
+  const handleClickItem = (productId: number) => {
     if (!isLoggedIn) {
-      navigate("/login", { state: { from: { pathname: `/order/${itemId}` } } });
+      navigate("/login", {
+        state: { from: { pathname: `/order/${productId}` } },
+      });
     } else {
-      navigate(`/order/${itemId}`);
+      navigate(`/order/${productId}`);
     }
   };
 
-  useEffect(() => {
-    const fetchRanking = async () => {
-      try {
-        setLoading(true);
-        const res = await getRanking(targetType, rankType);
-        setRankingItems(res.data.data);
-      } catch (err) {
-        console.error(err);
-        setError("랭킹데이터 에러");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRanking();
-  }, [targetType, rankType]);
+  const fetchFn = useCallback(
+    () => getRanking(targetType, rankType),
+    [targetType, rankType]
+  );
+
+  const { data, loading, error } = useFetchData<BasicGiftProduct[]>(fetchFn);
 
   if (error) {
     return (
@@ -84,22 +77,32 @@ const RankingSection = () => {
       <TargetCategory selected={targetType} onChange={handleGenderChange} />
       <RankingCategory selected={rankType} onChange={handleCategoryChange} />
       {loading ? (
-        <LoadingSpinner color="#ffffff" loading={loading} size={35} />
+        <LoadingSpinner color="#000000" loading={loading} size={35} />
+      ) : data?.length === 0 ? (
+        <ErrorMessage>
+          <>상품이 없습니다.</>
+        </ErrorMessage>
       ) : (
-        <RankingGrid>
-          {rankingItems.slice(0, RANK_COUNT).map((item, index) => (
-            <RankingItem
-              key={item.id}
-              rank={index + 1}
-              {...item}
-              onClick={() => handleClickItem(item.id)}
-            />
-          ))}
-        </RankingGrid>
+        <>
+          <RankingGrid>
+            {data?.slice(0, RANK_COUNT).map((item, index) => (
+              <RankingItem
+                key={item.id}
+                rank={index + 1}
+                id={item.id}
+                name={item.name}
+                imageURL={item.imageURL}
+                price={item.price}
+                brandInfo={item.brandInfo}
+                onClick={() => handleClickItem(item.id)}
+              />
+            ))}
+          </RankingGrid>
+          <MoreButton onClick={toggleShowAll}>
+            {showAll ? "접기" : "더보기"}
+          </MoreButton>
+        </>
       )}
-      <MoreButton onClick={toggleShowAll}>
-        {showAll ? "접기" : "더보기"}
-      </MoreButton>
     </SectionContainer>
   );
 };

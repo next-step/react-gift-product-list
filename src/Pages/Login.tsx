@@ -1,22 +1,38 @@
-import kakaologo from '@/assets/icons/kakaologo.svg';
-import InputBox from '@/components/Common/UnderLineInputBox';
-import Header from '@/components/Common/Header';
-import styled from '@emotion/styled';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useLoginForm } from '@/hooks/useLoginForm';
-import { useAuthContext } from '@/contexts/useAuthContext';
+import kakaologo from "@/assets/icons/kakaologo.svg";
+import InputBox from "@/components/Common/UnderLineInputBox";
+import Header from "@/components/Common/Header";
+import styled from "@emotion/styled";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLoginForm } from "@/hooks/useLoginForm";
+import { useAuthContext } from "@/contexts/useAuthContext";
+import { postLogin } from "@/api/auth";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || "/";
 
   const { email, password, isFormValid } = useLoginForm();
   const { login } = useAuthContext();
 
-  const handleLogin = () => {
-    login({ email: email.value });
-    navigate(from);
+  const handleLogin = async () => {
+    try {
+      const res = await postLogin({
+        email: email.value,
+        password: password.value,
+      });
+      const data = res.data.data;
+      login({ authToken: data.authToken, email: data.email, name: data.name });
+      navigate(from, { replace: true });
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.status == 400) {
+          toast.error(err.response.data?.data?.message || "로그인 실패");
+        }
+      }
+    }
   };
 
   return (
@@ -26,6 +42,7 @@ const Login = () => {
         <LoginSection>
           <Kakaologo src={kakaologo} alt="카카오 로고" />
           <InputBox
+            id="email-input"
             type="email"
             placeholder="이메일"
             value={email.value}
@@ -35,6 +52,7 @@ const Login = () => {
           />
 
           <InputBox
+            id="password-input"
             type="password"
             placeholder="비밀번호"
             value={password.value}

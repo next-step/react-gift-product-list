@@ -1,7 +1,8 @@
-import React from 'react';
-import styled from '@emotion/styled';
+import React from "react";
+import styled from "@emotion/styled";
 
 type InputBoxProps = {
+  id?: string;
   type?: string;
   placeholder?: string;
   value: string;
@@ -11,7 +12,8 @@ type InputBoxProps = {
 };
 
 const InputBox = ({
-  type = 'text',
+  id,
+  type = "text",
   placeholder,
   value,
   onChange,
@@ -21,6 +23,7 @@ const InputBox = ({
   return (
     <Wrapper>
       <StyledInput
+        id={id}
         type={type}
         placeholder={placeholder}
         value={value}
@@ -45,7 +48,8 @@ const Wrapper = styled.div`
 const StyledInput = styled.input<{ hasError: boolean }>`
   border: none;
   border-bottom: 1px solid
-    ${({ theme, hasError }) => (hasError ? theme.colors.critical : theme.colors.gray500)};
+    ${({ theme, hasError }) =>
+      hasError ? theme.colors.critical : theme.colors.gray500};
   padding: ${({ theme }) => theme.spacing.spacing2};
   font-size: ${({ theme }) => theme.font.body1Regular.size};
   background-color: ${({ theme }) => theme.colors.backgroundDefault};
