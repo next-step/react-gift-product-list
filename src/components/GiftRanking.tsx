@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Product } from '@/types/Product';
 import RankingItem from './RankingItem';
-import Spinner from './common/Spinner';
+import { spinner } from './common/Spinner';
+import useGiftRanking from '@/hooks/useGiftRanking';
 
 const Wrapper = styled.section`
   margin-top: ${({ theme }) => theme.spacing.spacing10};
@@ -92,6 +93,16 @@ const MoreBtn = styled.button`
   cursor: pointer;
 `;
 
+const Loading = styled.p`
+  padding: 0 8px;
+  ${({ theme }) => theme.typography.body2Regular};
+  color: ${({ theme }) => theme.colors.gray[600]};
+  height: 509px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const ageGenderFilters = [
   { key: 'all', icon: 'ALL', label: '전체' },
   { key: 'female', icon: '👩🏻', label: '여성이' },
@@ -105,16 +116,6 @@ const rankingTabs = [
   { key: 'wish', label: '위시로 받은' },
 ];
 
-const Loading = styled.p`
-  padding: 0 8px;
-  ${({ theme }) => theme.typography.body2Regular};
-  color: ${({ theme }) => theme.colors.gray[600]};
-  height: 509px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 export default function GiftRanking() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initGender = searchParams.get('gender') ?? 'all';
@@ -124,50 +125,7 @@ export default function GiftRanking() {
   const [tab, setTab] = useState(initType);
   const [collapsed, setCollapsed] = useState(true);
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-
-  const fetchRanking = async (gender: string, type: string) => {
-    const targetMap: Record<string, string> = {
-      all: 'ALL',
-      female: 'FEMALE',
-      male: 'MALE',
-      teen: 'TEEN',
-    };
-
-    const typeMap: Record<string, string> = {
-      want: 'MANY_WISH',
-      give: 'MANY_RECEIVE',
-      wish: 'MANY_WISH_RECEIVE',
-    };
-
-    try {
-      setIsLoading(true);
-      const targetType = targetMap[gender] || 'ALL';
-      const rankType = typeMap[type] || 'MANY_WISH_RECEIVE';
-
-      const res = await fetch(
-        `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`,
-      );
-      const data = await res.json();
-
-      // 테스트용 딜레이
-      await new Promise((r) => setTimeout(r, 300));
-
-      setProducts(data.data || []);
-      setHasError(false);
-    } catch (err) {
-      console.error('랭킹 데이터 불러오기 에러 :', err);
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRanking(filter, tab);
-  }, [filter, tab]);
+  const { products, isLoading, hasError } = useGiftRanking(filter, tab);
 
   const updateParams = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -184,7 +142,7 @@ export default function GiftRanking() {
     updateParams('type', key);
   };
 
-  const visible: Product[] = collapsed ? products.slice(0, 6) : products;
+  const visible: Product[] = collapsed ? (products ?? []).slice(0, 6) : (products ?? []);
 
   return (
     <Wrapper>
@@ -214,12 +172,10 @@ export default function GiftRanking() {
 
       {/* 상품 목록 */}
       {isLoading ? (
-        <Loading>
-          <Spinner />
-        </Loading>
+        <Loading>{spinner}</Loading>
       ) : hasError ? (
         <p>상품 목록을 불러오는 데 실패했습니다.</p>
-      ) : products.length === 0 ? (
+      ) : (products ?? []).length === 0 ? (
         <p>상품 목록이 없습니다.</p>
       ) : (
         <>

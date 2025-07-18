@@ -35,7 +35,7 @@ const LogoutBtn = styled.button`
 
 export default function MyPage() {
   const { user, logout } = useAuth();
-  const nickname = user?.email.split('@')[0];
+  const nickname = user?.email?.includes('@') ? user.email.split('@')[0] : '사용자';
 
   return (
     <MobileLayout>

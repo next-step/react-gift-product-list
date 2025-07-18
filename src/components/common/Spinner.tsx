@@ -15,6 +15,4 @@ const SpinnerWrapper = styled.div`
   }
 `;
 
-export default function Spinner() {
-  return <SpinnerWrapper />;
-}
+export const spinner = <SpinnerWrapper />;

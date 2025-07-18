@@ -1,13 +1,16 @@
 import { createContext, useContext, useState } from 'react';
 import { type ReactNode } from 'react';
+import { loginApi } from '@/api/LoginApi';
 
 interface User {
+  authToken: string;
   email: string;
+  name: string;
 }
 
 interface AuthCtx {
   user: User | null;
-  login: (email: string) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -19,10 +22,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return raw ? JSON.parse(raw) : null;
   });
 
-  const login = (email: string) => {
-    const newUser = { email };
-    setUser(newUser);
-    localStorage.setItem('auth_user', JSON.stringify(newUser));
+  const login = async (email: string, password: string) => {
+    const res = await loginApi({ email, password });
+    const userInfo = {
+      authToken: res.authToken,
+      email: res.email,
+      name: res.name,
+    };
+
+    setUser(userInfo);
+    localStorage.setItem('auth_user', JSON.stringify(userInfo));
   };
 
   const logout = () => {

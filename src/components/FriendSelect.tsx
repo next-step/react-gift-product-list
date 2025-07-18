@@ -48,7 +48,7 @@ const Label = styled.span`
 
 export default function FriendSelect() {
   const { user } = useAuth();
-  const nickname = user ? user.email.split('@')[0] : '';
+  const nickname = user?.email?.includes('@') ? user.email.split('@')[0] : '';
 
   const labelText = user
     ? `${nickname}님! 선물할 친구를 선택해 주세요.`

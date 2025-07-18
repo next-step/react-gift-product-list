@@ -13,3 +13,11 @@ export interface Product {
     imageURL: string;
   };
 }
+
+export interface ProductSummary {
+  id: number;
+  name: string;
+  imageURL: string;
+  brandName: string;
+  price: number;
+}

@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import CategoryItem from './CategoryItem';
-import Spinner from './common/Spinner';
-import type { GiftThemeType } from '@/types/theme';
+import { spinner } from './common/Spinner';
+import useGiftTheme from '@/hooks/useGiftTheme';
 
 const Wrapper = styled.section`
   margin-top: ${({ theme }) => theme.spacing.spacing6};
@@ -31,45 +30,18 @@ const Loading = styled.p`
 `;
 
 export default function GiftTheme() {
-  const [themes, setThemes] = useState<GiftThemeType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const res = await fetch('/api/themes');
-        if (!res.ok) throw new Error('fetch 실패');
-
-        const data = await res.json();
-
-        // 테스트용 딜레이
-        await new Promise((r) => setTimeout(r, 300));
-
-        setThemes(data.data || []);
-      } catch (err) {
-        console.error('테마 불러오기 에러:', err);
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchThemes();
-  }, []);
+  const { themes, isLoading, hasError } = useGiftTheme();
 
   if (isLoading) {
     return (
       <Wrapper>
         <Title>선물 테마</Title>
-        <Loading>
-          <Spinner />
-        </Loading>
+        <Loading>{spinner}</Loading>
       </Wrapper>
     );
   }
 
-  if (hasError || themes.length === 0) {
+  if (hasError || (themes ?? []).length === 0) {
     return null;
   }
 
@@ -77,7 +49,7 @@ export default function GiftTheme() {
     <Wrapper>
       <Title>선물 테마</Title>
       <Grid>
-        {themes.map(({ themeId, name, image }) => (
+        {(themes ?? []).map(({ themeId, name, image }) => (
           <CategoryItem key={themeId} name={name} image={image} />
         ))}
       </Grid>

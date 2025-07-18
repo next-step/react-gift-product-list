@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import type { Product } from '@/types/Product';
+import type { ProductSummary } from '@/types/Product';
 
 const Content = styled.section`
   padding: 0 16px;
@@ -50,7 +50,7 @@ const Info = styled.div`
 `;
 
 interface Props {
-  product: Product;
+  product: ProductSummary;
 }
 
 export default function ProductInfo({ product }: Props) {
@@ -61,10 +61,10 @@ export default function ProductInfo({ product }: Props) {
         <ProductImg src={product.imageURL} alt={product.name} />
         <Info>
           <p className="name">{product.name}</p>
-          <p className="brand">{product.brandInfo.name}</p>
+          <p className="brand">{product.brandName}</p>
           <p className="price">
             <span className="label">상품가</span>
-            <span className="pricenum">{product.price.sellingPrice}원</span>
+            <span className="pricenum">{product.price}원</span>
           </p>
         </Info>
       </Box>
