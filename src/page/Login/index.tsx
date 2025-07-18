@@ -3,7 +3,7 @@ import useInput from './hooks/useInput';
 import InputField from './components/InputField';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
-import useLogin from './utils/postUserInfo';
+import useLogin from './hooks/useLogin';
 
 const Container = styled.div`
   display: flex;
@@ -51,6 +51,10 @@ const Button = styled.button`
 `;
 
 const LoginPage = () => {
+  // TODO: const { login } = useUserInfo(); 이 코드를 LoginPage 에서 관리할지 useLogin.ts 에서 관리할지 고민중
+  // 
+  // const { login } = useUserInfo();
+  // const { postUserInfo, userInfos } = useLogin();
   const { postUserInfo } = useLogin();
   const navigate = useNavigate();
   const username = useInput('email');
@@ -62,6 +66,7 @@ const LoginPage = () => {
     e.preventDefault();
     if (!username.isValid || !password.isValid) return;
     postUserInfo({ username, password });
+    // login(userInfos.name, userInfos.email, userInfos.token);
     navigate(ROUTES.MY, { replace: true });
   };
 
