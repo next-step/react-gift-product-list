@@ -88,7 +88,7 @@ const ProductSummary = () => {
     <S.Wrapper>
       <S.Thumbnail src={product.imageURL} alt={product.name} />
       <S.Info>
-        <S.Name>{product.name}</S.Name>\
+        <S.Name>{product.name}</S.Name>
         {product.brandName && (
           <S.Brand>
             <span>{product.brandName}</span>
