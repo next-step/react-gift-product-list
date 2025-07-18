@@ -18,6 +18,7 @@ import Modal from '@/components/Order/Modal';
 
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import {ToastContainer, toast} from 'react-toastify';
 
 // 주문 버튼 시작
 const OrderBtnWrapper = styled.div`
@@ -126,27 +127,34 @@ function Order() {
   const [imageURL, setImageURL] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
-  
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchRanking = async () => {
-        try {
-            const response = await axios.get(`${baseUrl}/products/${id}/summary`);
-            setBrandName(response.data.data.brandName); 
-            setImageURL(response.data.data.imageURL);
-            setName(response.data.data.name);
-            setPrice(response.data.data.price);
+      try {
+        const response = await axios.get(`${baseUrl}/products/${id}/summary`);
+        setBrandName(response.data.data.brandName);
+        setImageURL(response.data.data.imageURL);
+        setName(response.data.data.name);
+        setPrice(response.data.data.price);
 
-            setIsLoading(false);
-        } catch (error) {
-            console.error('Error fetching ranking data:', error);
-        
+        setIsLoading(false);
+      } catch (error:any) {
+        console.error('Error fetching ranking data:', error);
+        if (error.response && error.response.status >= 400 && error.response.status < 500) {
+          toast.error('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요', {
+            position: 'bottom-center',
+            hideProgressBar: true,
+            closeOnClick: true
+          });
+          navigate('/');
         }
+      }
     };
 
     fetchRanking();
-}, []);
+  }, []);
 
   // 최종 주문 핸들러
   function handleOrderClick() {
@@ -161,27 +169,28 @@ function Order() {
 
     <Layout>
       <NavBar></NavBar>
-      {isLoading ? <Spinner/>: ( 
-      <FormProvider {...methods}>
-        {/* 슬라이딩 카드 */}
-        <SlidingCardSelector />
-        {/* 카드뷰  */}
-        <CardView />
-        {/* 보내는 사람 */}
-        <SenderInputCompo />
-        {/* 받는사람 */}
-        <ReceiverInputCompo setModalToggle={setModalToggle} fields={fields} />
-        {/* 상품 정보 */}
-        <ItemInfoCompo brandName={brandName} imageURL={imageURL} name={name} price={price} />
-        {/* 주문 버튼 */}
-        <OrderBtnWrapper>
-          <OrderButton onClick={handleSubmit(handleOrderClick)}>
-            {watch('allPrice')}원 주문하기
-          </OrderButton>
-        </OrderBtnWrapper>
-        {/* --------------모달-------------- */}
-        <Modal modalToggle={modalToggle} fields={fields} remove={remove} append={append} setModalToggle={setModalToggle} price={price}/>
-      </FormProvider>)}
+      {isLoading ? <Spinner /> : (
+        <FormProvider {...methods}>
+          {/* 슬라이딩 카드 */}
+          <SlidingCardSelector />
+          {/* 카드뷰  */}
+          <CardView />
+          {/* 보내는 사람 */}
+          <SenderInputCompo />
+          {/* 받는사람 */}
+          <ReceiverInputCompo setModalToggle={setModalToggle} fields={fields} />
+          {/* 상품 정보 */}
+          <ItemInfoCompo brandName={brandName} imageURL={imageURL} name={name} price={price} />
+          {/* 주문 버튼 */}
+          <OrderBtnWrapper>
+            <OrderButton onClick={handleSubmit(handleOrderClick)}>
+              {watch('allPrice')}원 주문하기
+            </OrderButton>
+          </OrderBtnWrapper>
+          {/* --------------모달-------------- */}
+          <Modal modalToggle={modalToggle} fields={fields} remove={remove} append={append} setModalToggle={setModalToggle} price={price} />
+        </FormProvider>)}
+        <ToastContainer/>
     </Layout>
   );
 }
