@@ -1,8 +1,3 @@
-export type RankType = {
-    query: string;
-    label: string;
-};
-
 export const rankType = [
     {
         query: "MANY_WISH",
@@ -17,3 +12,5 @@ export const rankType = [
         label: "위시로 받은",
     },
 ] as const;
+
+export type RankTypeQuery = (typeof rankType)[number]["query"];

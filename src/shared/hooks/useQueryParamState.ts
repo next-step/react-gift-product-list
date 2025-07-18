@@ -1,14 +1,14 @@
 import { useSearchParams } from "react-router-dom";
 
-export const useQueryParamState = (
+export const useQueryParamState = <T extends string = string>(
     key: string,
-    defaultValue?: string,
-): [string | null, (newValue: string) => void] => {
+    defaultValue?: T,
+): [T | null, (newValue: T) => void] => {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const currentValue = searchParams.get(key) ?? defaultValue ?? null;
+    const currentValue = (searchParams.get(key) as T) ?? defaultValue ?? null;
 
-    const setValue = (newValue: string) => {
+    const setValue = (newValue: T) => {
         const newParams = new URLSearchParams(searchParams);
         if (newValue === defaultValue) {
             newParams.delete(key);
