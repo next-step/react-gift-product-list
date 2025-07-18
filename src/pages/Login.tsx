@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import type { LoginFormInputs } from '@/hooks/useLoginForm';
 
 const LoginForm = () => {
-  const { login, isLoggedIn } = useAuth();
+  const { login, isLoggedIn, isLoading } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -23,9 +23,13 @@ const LoginForm = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  const onSubmit = (data: LoginFormInputs) => {
+  const onSubmit = async (data: LoginFormInputs) => {
     console.log('로그인 요청:', data);
-    login(data.id);
+    try {
+      await login(data.id, data.password);
+    } catch (error) {
+      console.error('Login submission error:', error);
+    }
   };
 
   return (
@@ -35,38 +39,31 @@ const LoginForm = () => {
       <FormWrapper onSubmit={handleSubmit(onSubmit)}>
         <InputWrapper>
           <Input
-            {...register('id', {
-              required: 'ID를 입력해주세요.',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: '유효한 이메일 형식이 아닙니다.',
-              },
-            })}
-            name="id"
+            {...register('id')}
+            type="email"
             placeholder="이메일"
             hasError={!!errors.id}
+            disabled={isLoading}
           />
           {errors.id && <ErrorText>{errors.id.message}</ErrorText>}
         </InputWrapper>
 
         <InputWrapper>
           <Input
-            {...register('password', {
-              required: 'PW를 입력해주세요.',
-              minLength: {
-                value: 8,
-                message: 'PW는 최소 8글자 이상이어야 합니다.',
-              },
-            })}
-            name="password"
+            {...register('password')}
             type="password"
             placeholder="비밀번호"
             hasError={!!errors.password}
+            disabled={isLoading}
           />
           {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
         </InputWrapper>
 
-        <LoginButton type="submit" disabled={!isValid} />
+        <LoginButton
+          type="submit"
+          disabled={!isValid || isLoading}
+          isLoading={isLoading}
+        />
       </FormWrapper>
     </Layout>
   );

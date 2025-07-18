@@ -1,40 +1,76 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '@/context/AuthContext';
+import toast from 'react-hot-toast';
+import { postOrder } from '@/api/order';
 
 export interface OrderFormInputs {
   senderName: string;
-  receiverName: string;
-  receiverPhone: string;
-  quantity: number;
+  recipients: {
+    name: string;
+    phone: string;
+    quantity: number;
+  }[];
 }
 
-export const useOrderForm = () => {
+export const useOrderForm = (productId: number) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { imageURL, name, price, brandInfo } = location.state || {};
 
   const methods = useForm<OrderFormInputs>({
     defaultValues: {
-      senderName: '',
-      receiverName: '',
-      receiverPhone: '',
-      quantity: 1,
+      senderName: user?.name || '',
+      recipients: [],
     },
   });
 
-  const { setError, handleSubmit } = methods;
+  const order = async ({
+    message,
+    messageCardId,
+  }: {
+    message: string;
+    messageCardId: string;
+  }) => {
+    const values = methods.getValues();
 
-  const validatePhone = (phone: string): boolean => /^010\d{8}$/.test(phone);
-
-  const onSubmit = (data: OrderFormInputs) => {
-    let hasError = false;
-
-    if (!validatePhone(data.receiverPhone)) {
-      setError('receiverPhone', { message: '전화번호를 입력해주세요.' });
-      hasError = true;
+    if (!message || !messageCardId) {
+      toast.error('메시지 또는 카드가 선택되지 않았습니다.');
+      return;
     }
 
-    if (!hasError) {
-      console.log('주문 처리', data);
+    if (values.recipients.length === 0) {
+      toast.error('받는 사람을 한 명 이상 추가해주세요.');
+      return;
+    }
+
+    const receivers = values.recipients.map((r) => ({
+      name: r.name,
+      phoneNumber: r.phone,
+      quantity: r.quantity,
+    }));
+
+    try {
+      await postOrder({
+        productId,
+        ordererName: values.senderName,
+        message,
+        messageCardId,
+        receivers,
+      });
+
+      toast.success('주문이 완료되었습니다!');
+      navigate('/');
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        toast.error(
+          error.response?.data?.message || '주문 중 오류가 발생했습니다.'
+        );
+      }
     }
   };
 
@@ -44,6 +80,7 @@ export const useOrderForm = () => {
     price,
     brandInfo,
     methods,
-    handleSubmit: handleSubmit(onSubmit),
+    handleSubmit: methods.handleSubmit,
+    order,
   };
 };

@@ -1,9 +1,19 @@
 import { useFormContext, Controller } from 'react-hook-form';
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import InputOrder from '@/common/InputOrder';
+import { useAuth } from '@/context/AuthContext';
 
 const SenderInfoSection = () => {
-  const { control } = useFormContext();
+  const { control, setValue, watch } = useFormContext();
+  const { user } = useAuth();
+  const currentSenderName = watch('senderName');
+
+  useEffect(() => {
+    if (user?.name && !currentSenderName) {
+      setValue('senderName', user.name);
+    }
+  }, [user?.name, currentSenderName, setValue]);
 
   return (
     <Section>
@@ -16,7 +26,7 @@ const SenderInfoSection = () => {
         render={({ field, fieldState }) => (
           <InputOrder
             placeholder="이름을 입력하세요."
-            value={field.value}
+            value={field.value || ''}
             onChange={field.onChange}
             error={fieldState.error?.message}
           />

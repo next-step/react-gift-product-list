@@ -14,9 +14,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const goToCard = () => {
     if (isLoggedIn) {
-      navigate(`/order/${id}`, {
-        state: { imageURL, name, price, brandInfo },
-      });
+      navigate(`/order/${id}`);
     } else {
       navigate('/login');
     }
