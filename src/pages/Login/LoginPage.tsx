@@ -6,6 +6,8 @@ import { css, type Theme } from "@emotion/react";
 import { auth } from "@/services/auth";
 import { STORAGE_KEY } from "@/constants/storage";
 import { showErrorToast } from "@/styles/toast";
+import { REGEX } from "@/constants/regex";
+import { ERROR_MESSAGE } from "@/constants/messages";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -27,15 +29,13 @@ export default function LoginPage() {
   const goToLogin = async () => {
     if (!isFormValid) return;
 
-    const isValidEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+[^\s@.]$/;
-
-    if (!isValidEmailFormat.test(email)) {
-      showErrorToast("올바른 이메일 형식이 아닙니다.");
+    if (!REGEX.EMAIL.test(email)) {
+      showErrorToast(ERROR_MESSAGE.INVALID_EMAIL_FORMAT);
       return;
     }
 
     if (!email.endsWith("@kakao.com")) {
-      showErrorToast("@kakao.com 이메일 주소만 가능합니다.");
+      showErrorToast(ERROR_MESSAGE.ONLY_KAKAO_EMAIL);
       return;
     }
 
