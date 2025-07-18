@@ -1,15 +1,16 @@
 /** @jsxImportSource @emotion/react */
-import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { Navigation } from '@/components/header/Navigation';
+import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { Navigation } from "@/components/header/Navigation";
+import { PATH } from "@/constants/path";
 
 const Main = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 120px; // 더 직관적
+  padding-top: 120px;
 `;
 
 const NotFoundImage = styled.img`
@@ -60,7 +61,7 @@ const NotFound = () => {
           />
           <Title>잘못된 접근입니다.</Title>
           <Description>찾으시는 페이지가 존재하지 않습니다.</Description>
-          <HomeButton onClick={() => navigate('/')}>홈으로</HomeButton>
+          <HomeButton onClick={() => navigate(PATH.HOME)}>홈으로</HomeButton>
         </Main>
       </GrayContainer>
     </PageLayout>

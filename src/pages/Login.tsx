@@ -5,14 +5,15 @@ import styled from "@emotion/styled";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
+import { PATH } from "@/constants/path"; 
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
 
-  const redirectPath = location.state?.from?.pathname || "/";
+  const redirectPath = location.state?.from?.pathname || PATH.HOME;
 
   const handleLoginSuccess = (email: string, token: string) => {
     login({ id: email, email }, token);
@@ -24,7 +25,7 @@ const LoginPage = () => {
       <Navigation />
       <Container>
         <Logo src="/assets/kakao_logo.svg" alt="카카오 로고" />
-        <LoginForm onLoginSuccess={handleLoginSuccess} /> {/* ✅ 이쪽도 수정됨 */}
+        <LoginForm onLoginSuccess={handleLoginSuccess} />
         <ToastContainer
           position="bottom-center"
           autoClose={3_000}

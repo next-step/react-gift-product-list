@@ -22,6 +22,7 @@ import { getProductSummary } from "@/api/product";
 import type { ProductSummary } from "@/api/product";
 import { postCreateOrder } from "@/api/orderapi";
 import { useAuth } from "@/contexts/AuthContext";
+import { PATH } from "@/constants/path"; 
 
 const OrderPage = () => {
   const navigate = useNavigate();
@@ -29,18 +30,18 @@ const OrderPage = () => {
   const [product, setProduct] = useState<ProductSummary | null>(null);
   const [isReceiverModalOpen, setReceiverModalOpen] = useState(false);
 
-  const { token, isInitialized, isLoggedIn, user } = useAuth(); 
+  const { token, isInitialized, isLoggedIn, user } = useAuth();
   if (!isInitialized) return null;
 
   if (!isLoggedIn) {
-    navigate("/login", { replace: true });
+    navigate(PATH.LOGIN, { replace: true });
     return null;
   }
 
   const methods = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
-      senderName: user?.email.split("@")[0] ?? "", 
+      senderName: user?.email.split("@")[0] ?? "",
       message: "",
       selectedCardId: null,
       receivers: [],
@@ -63,14 +64,14 @@ const OrderPage = () => {
 
     if (!token) {
       toast.error("로그인이 필요합니다.");
-      navigate("/login");
+      navigate(PATH.LOGIN, { replace: true }); 
       return;
     }
 
     try {
       await postCreateOrder(data, product.id, token);
       toast.success("주문이 성공적으로 완료되었습니다!");
-      navigate("/", { replace: true });
+      navigate(PATH.HOME, { replace: true }); 
     } catch (err: any) {
       const msg =
         err?.response?.data?.data?.message || "주문 요청 중 오류가 발생했습니다.";
@@ -81,7 +82,7 @@ const OrderPage = () => {
   const fetchProduct = useCallback(async () => {
     if (!id || isNaN(Number(id))) {
       toast.error("잘못된 상품 ID입니다.");
-      navigate("/not-found", { replace: true });
+      navigate(PATH.NOT_FOUND, { replace: true });
       return;
     }
 
@@ -92,7 +93,7 @@ const OrderPage = () => {
       const msg =
         err?.response?.data?.data?.message || "상품 정보를 불러오지 못했습니다.";
       toast.error(msg);
-      navigate("/not-found", { replace: true });
+      navigate(PATH.NOT_FOUND, { replace: true }); 
     }
   }, [id, navigate]);
 
