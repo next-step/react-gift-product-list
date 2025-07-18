@@ -29,6 +29,7 @@ export const globalStyles = css`
     height: auto;
   }
 
+
   
   *, *:before, *:after {
     margin: 0;

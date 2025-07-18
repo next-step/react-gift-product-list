@@ -13,6 +13,19 @@ export const DefaultDiv = styled.div`
 
 `;
 
+export const TitleDiv = styled.div`
+    padding: 0px 8px 20px;
+`
+
+export const Title = styled.p`
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.6875rem;
+  color: rgb(42, 48, 56);
+  margin: 0px;
+  width: 100%;
+  text-align: left;
+`;
 
 export const DefaultComponentDiv = styled.div`
   max-width: 720px;
@@ -47,6 +60,12 @@ export const EmptyDiv12h = styled.div`
 export const EmptyDiv16h = styled.div`
   width: 100%;
   height: 16px;
+  background-color: transparent;
+`;
+
+export const EmptyDiv20h = styled.div`
+  width: 100%;
+  height: 20px;
   background-color: transparent;
 `;
 export const EmptyDiv24h = styled.div`
@@ -96,6 +115,15 @@ export const CentorAlignDiv = styled.div`
   justify-content: center;
 
 `;
+export const CentorAlignDiv240 = styled.div`
+    width: 100%;
+    height: 240px;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+`
 export const SideBlankDiv = styled.div`
   width: 100%;
   padding: 0px 1rem;
@@ -203,6 +231,7 @@ export const ProductName = styled.p`
 
 
 export const Price = styled.p`
+  text-align: left;
   font-size: 14px;
   color: #888;
   span {
@@ -259,6 +288,7 @@ export const ModalBox = styled.div`
 `;
 
 export const SimpleButton = styled.button`
+  width: 80px;
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.1875rem;

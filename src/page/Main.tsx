@@ -1,7 +1,7 @@
-import Banner from '@/component/Banner'
-import FriendChoise from '@/component/FriendChoise'
-import GiftRanking from '@/component/GiftRanking'
-import GiftTheme from '@/component/GiftTheme'
+import Banner from '@/component/main/Banner'
+import FriendChoise from '@/component/main/FriendChoise'
+import GiftRanking from '@/component/main/GiftRanking'
+import GiftTheme from '@/component/main/GiftTheme'
 
 import { DefaultDiv } from '../styles/Common.styled'
 

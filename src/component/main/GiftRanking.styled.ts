@@ -6,21 +6,7 @@ export const GiftRanKingSection = styled.div`
   width: 100%;
 `;
 
-export const BlankSpace = styled.div`
-  width: 100%;
-  height: 16px;
-  background-color: transparent;
-`;
 
-export const Title = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.6875rem;
-  color: rgb(42, 48, 56);
-  margin: 0px;
-  width: 100%;
-  text-align: left;
-`;
 
 export const CategoryGroup = styled.div`
   border-radius: 1rem;
@@ -138,6 +124,7 @@ export const LoadMoreButton = styled.button`
   padding: 12px;
   border-radius: 4px;
   border: 1px solid rgb(220, 222, 227);
+  background-color: white;
 `;
 
 export const ProductInfo = styled.p`

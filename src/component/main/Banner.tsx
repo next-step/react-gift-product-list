@@ -1,3 +1,4 @@
+import { EmptyDiv40h } from '@/styles/Common.styled';
 import theme from '@/styles/theme';
 import styled from '@emotion/styled';
 
@@ -37,6 +38,7 @@ const Banner = () => {
         <BannerSub>카카오테크 캠퍼스 3기여러분</BannerSub>
         <BannerMain>프론트엔드 2단계 과제 화이팅! 🎉</BannerMain>
       </BannerTextWrapper>
+      <EmptyDiv40h/>
     </BannerSection>
   );
 };
