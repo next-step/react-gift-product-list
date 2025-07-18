@@ -4,13 +4,14 @@ import Divider from "@/components/common/Divider";
 import Order from "@/pages/Order/components/Order";
 import { useFormContext } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
-import useFetch, { type ErrorData } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import { getCookieValue } from "@/utils/cookie";
 import { AUTH_COOKIE_KEY_TOKEN, useAuth } from "@/contexts/authContext";
 import { AxiosHeaders } from "axios";
 import { toast } from "react-toastify";
 import { ROUTE_PATH } from "@/components/routes/routePath";
 import { useNavigate } from "react-router-dom";
+import type { ErrorData } from "@/types/FetchErrorData";
 
 interface OrderData {
   data: {

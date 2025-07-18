@@ -1,3 +1,4 @@
+import type { ErrorData } from "@/types/FetchErrorData";
 import axios, { AxiosHeaders } from "axios";
 import { useCallback, useEffect, useState } from "react";
 
@@ -9,13 +10,6 @@ interface UseFetchOptions {
   headers?: AxiosHeaders;
   body?: Object;
   baseUrl?: string;
-}
-export interface ErrorData {
-  data: {
-    status: string;
-    statusCode: number;
-    message: string;
-  };
 }
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
