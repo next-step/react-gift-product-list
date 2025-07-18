@@ -236,6 +236,10 @@ hint : 받는 사람 기능 구현할 때 useFieldArray 사용?
 
 # react-gift-product-list
 
+<details>
+<summary>1단계 구현기능 목록 보기</summary>
+<div markdown="1">
+
 ## 📌 1단계 - 구현 기능 목록
 
 - API 서버 : https://github.com/next-step/react-gift-mock-server/tree/main/src
@@ -259,3 +263,25 @@ hint : 받는 사람 기능 구현할 때 useFieldArray 사용?
 - 데이터를 불러오는 동안 로딩 화면 뜨도록 하기
 
 - 보여 줄 상품 목록이 없을경우 상품 목록이 없다는 문구 띄우기
+
+</div>
+</details>
+
+## 📌 2단계 - 구현 기능 목록
+
+### 1. 로그인 기능
+
+- `/login` api 를 사용해서 로그인 기능 완성
+- 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage에 저장하고 활용
+- 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주세요.
+  - react-toastify 라이브러리 사용
+
+### 2. 주문하기 기능
+
+- `/products/:productId/summary` api를 사용하여 제품 정보 가져오기
+- 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지 + 선물하기 홈으로 연결.
+- 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채워놓기
+
+- `/order` api를 사용하여 주문하기 기능을 완성
+- 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작하도록 하기
+- 주문하기 API에서 401 에러가 발생하면 로그인 페이지로 연결
