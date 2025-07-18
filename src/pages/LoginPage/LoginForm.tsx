@@ -20,16 +20,16 @@ const LoginForm = () => {
   } = useLoginForm();
 
   const handleLogin = async () => {
-  try {
-    await login({
-      email,
-      pw: password,
-    });
+    try {
+      await login({
+        email,
+        pw: password,
+      });
 
-    const redirectTo = location.state?.from?.pathname || '/';
-    navigate(redirectTo, { replace: true });
-  } catch (error) {}
-};
+      const redirectTo = location.state?.from?.pathname || '/';
+      navigate(redirectTo, { replace: true });
+    } catch (error) {}
+  };
 
   return (
     <S.Form>

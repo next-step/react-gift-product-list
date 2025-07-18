@@ -34,11 +34,6 @@ export const Brand = styled.div`
   gap: 6px;
   font-size: 14px;
   color: ${({ theme }) => theme.color.text.sub};
-  img {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-  }
 `;
 
 export const Price = styled.div`

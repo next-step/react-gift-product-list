@@ -6,17 +6,9 @@ import * as S from './ProductSummary.styles';
 interface ProductSummaryData {
   id: number;
   name: string;
-  price: {
-    basicPrice: number;
-    sellingPrice: number;
-    discountRate: number;
-  };
+  price: number;
   imageURL: string;
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
+  brandName?: string;
 }
 
 const ProductSummary = () => {
@@ -40,7 +32,7 @@ const ProductSummary = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:3000/api/products/${productId}`);
+        const response = await fetch(`http://localhost:3000/api/products/${productId}/summary`);
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -96,12 +88,13 @@ const ProductSummary = () => {
     <S.Wrapper>
       <S.Thumbnail src={product.imageURL} alt={product.name} />
       <S.Info>
-        <S.Name>{product.name}</S.Name>
-        <S.Brand>
-          <img src={product.brandInfo.imageURL} alt={product.brandInfo.name} />
-          <span>{product.brandInfo.name}</span>
-        </S.Brand>
-        <S.Price>{product.price.sellingPrice.toLocaleString()}원</S.Price>
+        <S.Name>{product.name}</S.Name>\
+        {product.brandName && (
+          <S.Brand>
+            <span>{product.brandName}</span>
+          </S.Brand>
+        )}
+        <S.Price>{product.price.toLocaleString()}원</S.Price>
       </S.Info>
     </S.Wrapper>
   );
