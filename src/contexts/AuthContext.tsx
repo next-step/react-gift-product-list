@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSessionStorage } from "@/hooks/useSessionStorage";
 
 type User = {
   id: string;
@@ -18,34 +19,20 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { user, token, saveAuth, clearAuth } = useSessionStorage();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
-    const storedToken = sessionStorage.getItem("token");
-
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-    }
     setIsInitialized(true);
   }, []);
 
   const login = (userData: User, token: string) => {
-    setUser(userData);
-    setToken(token);
-    sessionStorage.setItem("user", JSON.stringify(userData));
-    sessionStorage.setItem("token", token);
+    saveAuth(userData, token);
   };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("token");
+    clearAuth();
     navigate("/login");
   };
 
