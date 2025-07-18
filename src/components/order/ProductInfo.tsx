@@ -1,7 +1,7 @@
 import { Padding3, PaddingLg, PaddingSm } from '../common/Padding';
 import styled from '@emotion/styled';
 import { PaddingMd } from '@/components/common/Padding';
-import { type ProductCardProps } from '@/types/product';
+import { type ProductCardProps, type ProductSummaryType } from '@/types/product';
 const SidePadding = styled.div`
   width: 100%;
   padding: 0px 1rem;
@@ -61,7 +61,12 @@ const PriceText = styled.span`
   line-height: 1.1875rem;
   color: rgb(134, 139, 148);
 `;
-const ProductInfo = ({ product }: ProductCardProps) => {
+type Props = {
+  product: ProductSummary;
+};
+
+const ProductInfo = ( {product} : Props) => {
+  console.dir(product)
   return (
     <SidePadding>
       <Padding3 />
@@ -71,10 +76,10 @@ const ProductInfo = ({ product }: ProductCardProps) => {
         <ProductImage src={product.imageURL} alt={product.name} />
         <ProductInfoWrapper>
           <Name>{product.name}</Name>
-          <Brand>{product.brandInfo.name}</Brand>
+          <Brand>{product.brandName}</Brand>
           <PaddingSm />
           <Price>
-            <PriceText>상품가</PriceText> {product.price.sellingPrice}원{' '}
+            <PriceText>상품가</PriceText> {product.price}원{' '}
           </Price>
         </ProductInfoWrapper>
       </ProductCard>

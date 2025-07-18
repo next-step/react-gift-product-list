@@ -27,7 +27,7 @@ interface CardMessageFormProps {
   register: UseFormRegister<OrderFormData>;
   error?: string;
 }
-const CardMessage = ({ register, error }: CardMessageFormProps) => {
+const CardMessage = ({  register, error }: CardMessageFormProps) => {
   return (
     <CardMessageWrapper>
       <TextAreaDiv>

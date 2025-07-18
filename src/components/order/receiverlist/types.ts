@@ -1,6 +1,6 @@
 type Recevier = {
   name: string;
-  phone: string;
+  phoneNumber: string;
   quantity: number;
 };
 export type OrderFormData = {

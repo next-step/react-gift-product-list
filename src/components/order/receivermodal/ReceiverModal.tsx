@@ -43,7 +43,7 @@ const ReceiverModal = ({
   //TODO: 10명 초과하면 버튼 비활성화 되도록 만들기
 
   const handleClickAddBtn = () => {
-    if (fields.length < 10) append({ name: '', phone: '', quantity: 1 });
+    if (fields.length < 10) append({ name: '', phoneNumber: '', quantity: 1 });
   };
 
   const handleClose = (key: number) => {

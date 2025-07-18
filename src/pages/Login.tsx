@@ -1,10 +1,12 @@
-import Navbar from "./../components/navbar/Navbar";
-import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
-import useInput from "@/hooks/useInput";
-import { emailValidator, passwordValidator } from "@/utils/validators";
-import { useAuth } from "@/contexts/AuthContext";
+import Navbar from './../components/navbar/Navbar';
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+import useInput from '@/hooks/useInput';
+import { emailValidator, passwordValidator } from '@/utils/validators';
+import { useAuth } from '@/contexts/AuthContext';
 import { PaddingMd, PaddingSm } from '@/components/common/Padding';
+import usePost from '@/hooks/usePost';
+import axios from 'axios';
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -63,18 +65,40 @@ const Login = () => {
   const { setUser } = useAuth();
   const email = useInput({ validator: emailValidator });
   const password = useInput({ validator: passwordValidator });
-  const username = email.value.split("@")[0];
   const isActivatedBtn = email.isValid && password.isValid;
+  const LoginFetcher = (body, token) => {
+    return axios.post('http://localhost:3000/api/login', body).then((res) => res.data);
+  };
+  const {  post } = usePost({
+    fetcher: LoginFetcher,
+  });
 
-  const handleLoginClick = () => {
+  const handleLoginClick = async () => {
     if (isActivatedBtn) {
-      password.reset();
-      const userData = { username: username, isLoggedIn: true };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify({ username: username, isLoggedIn: true }));
-      navigate('/');
+      try {
+        console.log(email.value, password.value);
+        const loginData = await post({
+          email: email.value,
+          password: password.value,
+        });
+        const { authToken, email: useremail, name } = loginData;
+        const userInfo = {
+          token: authToken,
+          email:useremail,
+          name,
+          isLoggedIn: true,
+        };
+        password.reset();
+        setUser(userInfo);
+        localStorage.setItem('user', JSON.stringify(userInfo));
+console.log('모두다 잘 저장했다. !!!!', userInfo, localStorage.getItem('user'));
+        navigate('/');
+      } catch (e) {
+        alert(e.message);
+      }
     }
   };
+
   return (
     <div>
       <Navbar />

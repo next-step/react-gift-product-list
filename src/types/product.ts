@@ -13,6 +13,12 @@ export type ProductType = {
     imageURL: string;
   };
 };
-export type ProductCardProps = {
-  product: ProductType;
-};
+
+
+ export type ProductSummaryType = {
+   id: number;
+   name: string;
+   price: number;
+   imageURL: string;
+   brandName: string;
+ };
