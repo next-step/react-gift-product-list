@@ -5,8 +5,7 @@ import { orderCardMock, type CardData } from '@/features/order'
 import { ROUTE_PATH } from '@/Router'
 import { OrderCardSection, ReceiverSection, SenderSection } from '@/features/order/components'
 import { theme } from '@/styles/theme'
-import { Button, PageContainer, Typography } from '@/components/ui'
-import { NotFound } from '@/pages/NotFound'
+import { Button, Loading, PageContainer, Typography } from '@/components/ui'
 import type { ProductSummary } from '@/api/types/product'
 import { fetchProductSummary } from '@/api/services/product'
 import { useFetch } from '@/hooks/useFetch'
@@ -33,10 +32,11 @@ export const OrderContent = () => {
   const navigate = useNavigate()
   // * URL 파라미터로 부터 상품 id 값 가져오기
   const { id } = useParams<{ id: string }>()
-  const { data: productInfo, isError } = useFetch<ProductSummary>(
-    () => fetchProductSummary(Number(id)),
-    [id],
-  )
+  const {
+    data: productInfo,
+    isError,
+    isLoading,
+  } = useFetch<ProductSummary>(() => fetchProductSummary(Number(id)), [id])
 
   // * 카드 리스트
   const cardList: CardData[] = orderCardMock
@@ -92,14 +92,20 @@ export const OrderContent = () => {
   // * 주문 총액 계산
   const totalPrice = productInfo ? getTotalPrice(productInfo.price) : 0
 
-  // * 에러 발생 시 홈으로 이동
+  // * 로딩 중 화면
+  if (isLoading) {
+    return (
+      <LoadingContainer>
+        <Loading />
+      </LoadingContainer>
+    )
+  }
+
   if (isError) {
+    // * 에러 발생 시 홈으로 이동
     navigate(ROUTE_PATH.HOME)
     return null
   }
-
-  // * 상품 정보가 없을 경우 NotFound 페이지로 이동하도록 처리
-  if (!productInfo) return <NotFound />
 
   // * 상품 정보가 있을 경우
   return (
@@ -123,11 +129,11 @@ export const OrderContent = () => {
       <ProductInfoSection>
         <SectionTitle variant="title2Bold">상품 정보</SectionTitle>
         <ProductInfo>
-          <ProductImage src={productInfo.imageURL} alt={productInfo.name} />
+          <ProductImage src={productInfo?.imageURL} alt={productInfo?.name} />
           <ProductDetails>
             <ProductNameContainer>
-              <ProductName variant="subtitle2Regular">{productInfo.name}</ProductName>
-              <ProductBrand variant="label2Regular">{productInfo.brandName}</ProductBrand>
+              <ProductName variant="subtitle2Regular">{productInfo?.name}</ProductName>
+              <ProductBrand variant="label2Regular">{productInfo?.brandName}</ProductBrand>
             </ProductNameContainer>
             <ProductPriceContainer>
               <ProductPriceLabel
@@ -142,7 +148,7 @@ export const OrderContent = () => {
                 상품가
               </ProductPriceLabel>
               <ProductSellingPrice variant="title2Bold">
-                {productInfo.price.toLocaleString()}원
+                {productInfo?.price.toLocaleString()}원
               </ProductSellingPrice>
             </ProductPriceContainer>
           </ProductDetails>
@@ -251,6 +257,14 @@ const OrderButtonSection = styled.section`
 // * 주문 버튼
 const OrderButton = styled(Button)`
   font-weight: 700;
+`
+
+// * 로딩 컨테이너
+const LoadingContainer = styled(PageContainer)`
+  flex: 1;
+
+  justify-content: center;
+  background-color: ${theme.semanticColors.background.default};
 `
 
 export default Order
