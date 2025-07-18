@@ -3,10 +3,10 @@ import type { ThemeInfo } from "@src/pages/ThemePage";
 
 function HeroPanel({ themeInfo }: { themeInfo: ThemeInfo }) {
   return (
-    <HeroPanelWrapper backgroundColor={themeInfo.data.backgroundColor}>
-      <Name>{themeInfo.data.name}</Name>
-      <Title>{themeInfo.data.title}</Title>
-      <div>{themeInfo.data.description}</div>
+    <HeroPanelWrapper backgroundColor={themeInfo.backgroundColor}>
+      <Name>{themeInfo.name}</Name>
+      <Title>{themeInfo.title}</Title>
+      <div>{themeInfo.description}</div>
     </HeroPanelWrapper>
   );
 }

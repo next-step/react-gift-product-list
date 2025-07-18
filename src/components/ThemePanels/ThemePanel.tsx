@@ -1,8 +1,10 @@
 import { fetchThemeProducts } from "@src/apis/BackEnd/apiList";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Card from "./Card";
 import styled from "@emotion/styled";
+import usePostState from "@src/hooks/usePostState";
+import PendingSpinner from "../shared/PendingSpinner";
 
 export type ThemeProductData = {
   brandInfo: {
@@ -27,54 +29,61 @@ function ThemePanel() {
   const cursorRef = useRef<number>(0);
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const PRODUCTS_PER_PAGE = 12;
-
-  const update = async () => {
-    const response = await fetchThemeProducts(
-      themeId,
-      cursorRef.current,
-      PRODUCTS_PER_PAGE
-    );
-
-    if (!response) {
-      console.error("fetchThemeProducts에 실패하였습니다.");
-      return;
-    }
-
-    const { cursor, hasMoreList, list } = response.data.data;
-    console.log(cursor, list);
-    hasMoreRef.current = hasMoreList;
-    cursorRef.current = cursor;
-    setProductList((prev) => [...prev, ...list]);
-  };
-
-  const getNext = () => {
-    if (hasMoreRef.current) {
-      update();
-    }
-  };
-
-  const observer = new IntersectionObserver(getNext, {
-    root: null,
-    rootMargin: "0px",
-    threshold: 0.5
-  });
+  const productData = usePostState(fetchThemeProducts);
 
   useEffect(() => {
+    if (productData.status === "done") {
+      const { cursor, hasMoreList, list } = productData.result.data;
+      hasMoreRef.current = hasMoreList;
+      cursorRef.current = cursor;
+      setProductList((prev) => [...prev, ...list]);
+    }
+  }, [productData.status]);
+
+  const getNext = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      if (
+        entries[0].isIntersecting &&
+        hasMoreRef.current &&
+        productData.status !== "pending"
+      ) {
+        productData.post(themeId, cursorRef.current, PRODUCTS_PER_PAGE);
+      }
+    },
+    [themeId, productData.status]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(getNext, {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.5
+    });
     if (scrollEndRef.current) observer.observe(scrollEndRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [getNext]);
 
   return (
     <>
+      {productData.status === "done" && productList.length === 0 && (
+        <NoProduct>상품이 없습니다.</NoProduct>
+      )}
       <CardPlaceHolder>
         {productList.map((product: ThemeProductData) => (
           <Card key={product.id} product={product} />
         ))}
       </CardPlaceHolder>
+      {productData.status === "pending" && <PendingSpinner />}
       <ScrollEnd ref={scrollEndRef}></ScrollEnd>
     </>
   );
 }
+
+const NoProduct = styled.div`
+  width: 100%;
+  padding: 50px;
+  text-align: center;
+`;
 
 const ScrollEnd = styled.div`
   height: 100px;

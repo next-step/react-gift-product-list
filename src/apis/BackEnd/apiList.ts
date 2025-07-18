@@ -112,20 +112,17 @@ export async function postOrder(orderInfo: OrderBody, authToken: string) {
   }
 }
 
+export const THEME_INFO_CODE = { NOT_FOUND: 404 };
 export async function fetchThemeInfo(themeId: string) {
   try {
     const response = await instance.get(BE.API.THEME.INFO(themeId));
-    return response;
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response ?? null;
-    } else {
-      console.error(error);
-    }
-    return null;
+    handleError(error);
   }
 }
 
+export const THEME_PRODUCTS_CODE = { NOT_FOUND: 404 };
 export async function fetchThemeProducts(
   themeId: string,
   cursor: number = 0,
@@ -141,13 +138,8 @@ export async function fetchThemeProducts(
     }
     await delay(1000);
 
-    return response;
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.response ?? null;
-    } else {
-      console.error(error);
-    }
-    return null;
+    handleError(error);
   }
 }
