@@ -40,7 +40,7 @@ const OrderFormSchema = z.object({
             code: "custom",
             message: "중복된 전화번호가 있습니다.",
             input: ctx.value,
-            path: [index, "phone"],
+            path: [index, "phoneNumber"],
           });
         }
         phoneNumbers.add(recipient.phoneNumber);
