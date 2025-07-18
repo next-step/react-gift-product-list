@@ -5,6 +5,7 @@ import { UserManagement } from '../contexts/UserManagement';
 import { useEmailInput } from './useEmailInput';
 import { usePasswordInput } from './usePasswordInput';
 import { loginUser } from '../../../apis/auth';
+
 export const useLoginForm = () => {
   const email = useEmailInput();
   const password = usePasswordInput();
@@ -18,11 +19,6 @@ export const useLoginForm = () => {
 
   const goToLogin = async () => {
     if (!isValid || loading) return;
-
-    if (!email.value.endsWith('@kakao.com')) {
-      toast.error('@kakao.com 이메일 주소만 가능합니다.');
-      return;
-    }
 
     setLoading(true);
 
