@@ -72,9 +72,9 @@ export const GenderText = styled.p<{ isSelected: boolean }>`
 export const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: ${({ theme }) => theme.spacing.spacing2};
-  row-gap: ${({ theme }) => theme.spacing.spacing7};
+  gap: ${({ theme }) => theme.spacing.spacing3};
   margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+  width: 100%;
 `;
 
 export const MoreButton = styled.button`
@@ -89,3 +89,12 @@ export const MoreButton = styled.button`
   display: block;
   margin: ${({ theme }) => theme.spacing.spacing10} auto ${({ theme }) => theme.spacing.spacing8};
 `; 
+
+export const EmptyMessage = styled.div`
+  grid-column: 1 / -1; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px; 
+  font-size: 1rem;
+`;
