@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Section } from '@/components/layout';
 import { Button, ErrorMessage } from '@/components/common';
 import { useLoginForm, useAuth } from '@/hooks';
+import { toast } from 'react-toastify';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -108,9 +109,8 @@ const LoginPage = () => {
       // 이전 페이지로 이동하거나 홈으로 이동
       const from = location.state?.from || '/';
       navigate(from, { replace: true });
-    } catch (error) {
-      console.error('로그인 실패:', error);
-      // TODO: 에러 메시지 표시 (나중에 추가)
+    } catch (error: any) {
+      toast.error(error.message || '로그인에 실패했습니다.');
     }
   };
 

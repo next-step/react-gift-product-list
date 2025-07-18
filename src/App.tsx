@@ -16,6 +16,8 @@ import {
   ROUTE_ORDER,
   ROUTE_NOT_FOUND,
 } from '@/constants';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // OrderLayout 컴포넌트 추가
 function OrderLayout() {
@@ -118,6 +120,7 @@ function App() {
         </Route>
         <Route path={ROUTE_NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
+      <ToastContainer />
     </MobileLayout>
   );
 }

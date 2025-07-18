@@ -7,7 +7,7 @@ import MoreButton from './MoreButton';
 import { getValidValue, getValidValues } from '@/utils';
 import { targetOptions, rankOptions, ROUTE_ORDER } from '@/constants';
 import { useRankingProducts } from '@/hooks';
-import type { Product } from '@/api/types';
+import type { Product, TargetType, RankType } from '@/api/types';
 import RankingSkeleton from './RankingSkeleton';
 
 const RankingSection = () => {
@@ -25,12 +25,12 @@ const RankingSection = () => {
   const targetType = getValidValue(
     targetParam,
     targetValidValues,
-    'ALL' as (typeof targetOptions)[number]['value']
+    'ALL' as TargetType
   );
   const rankType = getValidValue(
     rankParam,
     rankValidValues,
-    'MANY_WISH' as (typeof rankOptions)[number]['value']
+    'MANY_WISH' as RankType
   );
 
   // API 호출 - targetType과 rankType을 각각 전달

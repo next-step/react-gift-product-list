@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthContextType } from '@/types/auth';
 import { useLocalStorageState } from '@/hooks';
+import { loginApi } from '@/api';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -18,19 +19,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const isAuthenticated = !!user;
 
-  const login = async (email: string, _password: string): Promise<void> => {
+  const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
-
     try {
-      // 실제 API 호출 대신 간단한 검증
-      // 현재는 이메일과 비밀번호가 유효하면 로그인 성공으로 처리
-      await new Promise((resolve) => setTimeout(resolve, 500)); // 로딩 시뮬레이션
-
+      const {
+        email: userEmail,
+        name,
+        authToken,
+      } = await loginApi(email, password);
       const userData: User = {
-        email,
+        email: userEmail,
+        name,
+        authToken,
       };
-
-      setUser(userData); // useLocalStorageState가 자동으로 localStorage에 저장
+      setUser(userData);
+    } catch (error: any) {
+      // axios 에러 처리
+      if (error.response && error.response.data && error.response.data.data) {
+        const apiError = error.response.data.data;
+        throw new Error(apiError.message || '로그인에 실패했습니다.');
+      }
+      throw new Error('로그인에 실패했습니다.');
     } finally {
       setLoading(false);
     }

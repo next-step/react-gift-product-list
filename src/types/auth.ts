@@ -1,6 +1,8 @@
 export interface User {
   email: string;
-  // 나중에 필요하면 더 추가할 수 있음 (name, id 등)
+  name: string;
+  authToken: string;
+  // 필요시 더 추가 가능 (id 등)
 }
 
 export interface AuthContextType {

@@ -6,8 +6,13 @@ import { Section } from '@/components/layout';
 import Container from '@/components/layout/Container';
 import { RecipientList, RecipientModal } from '@/components/order';
 import { useProduct } from '@/hooks';
+import { useAuth } from '@/hooks';
 import { cardTemplates } from '@/data/cardTemplates';
 import type { Recipient } from '@/types';
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
+import { ROUTE_HOME, ROUTE_LOGIN } from '@/constants';
+import { postOrder } from '@/api';
 
 interface OrderFormData {
   selectedCardId: number;
@@ -188,11 +193,23 @@ const BackButton = styled.button`
 `;
 
 const OrderPage = () => {
+  const { user } = useAuth();
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
 
   // API에서 상품 정보 가져오기
   const { product, isLoading, error } = useProduct(productId ?? '');
+
+  useEffect(() => {
+    if (error) {
+      // axios 에러 객체에서 메시지 추출
+      const message =
+        (error as any)?.response?.data?.data?.message ||
+        '상품 정보를 불러오지 못했습니다.';
+      toast.error(message);
+      navigate(ROUTE_HOME, { replace: true });
+    }
+  }, [error, navigate]);
 
   // 주문 정보만 관리하는 폼
   const {
@@ -205,7 +222,7 @@ const OrderPage = () => {
     defaultValues: {
       selectedCardId: cardTemplates[0].id,
       message: cardTemplates[0].defaultTextMessage || '',
-      sender: '',
+      sender: user?.name || '',
       recipients: [],
     },
     mode: 'onChange',
@@ -255,23 +272,47 @@ const OrderPage = () => {
 
   // 주문 제출 핸들러
   const handleOrderSubmit = handleSubmit(async (data) => {
-    if (!product) return;
+    if (!product || !user) return;
 
-    // 총 수량 계산
-    const totalQuantity = data.recipients.reduce(
-      (sum, recipient) => sum + recipient.quantity,
-      0
-    );
-    const totalPrice = product.price.sellingPrice * totalQuantity;
-
-    // 안내 메시지 구성
-    const recipientList = data.recipients
-      .map((r, i) => `${i + 1}. ${r.name} (${r.phone}) - ${r.quantity}개`)
-      .join('\n');
-
-    const msg = `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
-    alert(msg);
-    navigate('/');
+    try {
+      const orderData = {
+        productId: product.id,
+        message: data.message,
+        messageCardId: String(selectedCardId),
+        ordererName: data.sender,
+        receivers: data.recipients.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone, // phone → phoneNumber
+          quantity: r.quantity,
+        })),
+      };
+      console.log('orderData to send:', orderData);
+      await postOrder(orderData, user.authToken);
+      // 안내 메시지 구성
+      const totalQuantity = data.recipients.reduce(
+        (sum, recipient) => sum + recipient.quantity,
+        0
+      );
+      const totalPrice = product.price * totalQuantity;
+      const recipientList = data.recipients
+        .map((r, i) => `${i + 1}. ${r.name} (${r.phone}) - ${r.quantity}개`)
+        .join('\n');
+      const msg = `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
+      alert(msg);
+      navigate('/');
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const message =
+        error?.response?.data?.data?.message || '주문에 실패했습니다.';
+      if (status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate(ROUTE_LOGIN, { replace: true });
+      } else if (status && status >= 400 && status < 500) {
+        toast.error(message);
+      } else {
+        alert('주문에 실패했습니다.');
+      }
+    }
   });
 
   // 로딩 중
@@ -355,7 +396,6 @@ const OrderPage = () => {
         </FormSection>
 
         <FormSection>
-          <FormLabel>받는 사람</FormLabel>
           <RecipientList
             recipients={recipients}
             onAddRecipient={handleAddRecipient}
@@ -380,11 +420,9 @@ const OrderPage = () => {
         <ProductInfo>
           <ProductImg src={product.imageURL} alt={product.name} />
           <ProductInfoText>
-            <ProductBrand>{product.brandInfo.name}</ProductBrand>
+            <ProductBrand>{product.brandName}</ProductBrand>
             <ProductName>{product.name}</ProductName>
-            <ProductPrice>
-              {product.price.sellingPrice.toLocaleString()}원
-            </ProductPrice>
+            <ProductPrice>{product.price.toLocaleString()}원</ProductPrice>
           </ProductInfoText>
         </ProductInfo>
       </Section>
