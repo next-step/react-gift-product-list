@@ -25,7 +25,7 @@ export const orderProduct = async (
 ) => {
   const response = await baseHttp.post("/order", data, {
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `${authToken}`,
     },
   });
 
