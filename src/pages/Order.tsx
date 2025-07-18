@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, use } from 'react';
 
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 
@@ -15,6 +15,9 @@ import SenderInputCompo from '@/components/Order/SenderInputCompo';
 import ReceiverInputCompo from '@/components/Order/ReceiverInputCompo';
 import ItemInfoCompo from '@/components/Order/ItemInfoCompo';
 import Modal from '@/components/Order/Modal';
+
+import axios from 'axios';
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // 주문 버튼 시작
 const OrderBtnWrapper = styled.div`
@@ -45,7 +48,19 @@ const OrderButton = styled.button`
   
 `;
 
+const Spinner = styled.div`
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #333;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
 
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
 
 function Order() {
   const navigate = useNavigate();
@@ -105,11 +120,33 @@ function Order() {
 
   // 이전 페이지에서 상품정보 받아오는 코드
   const [searchParams] = useSearchParams();
-  const brandInfo = searchParams.get('brandInfo');
-  // const id = searchParams.get('id');
-  const imageURL = searchParams.get('imageURL');
-  const name = searchParams.get('name');
-  const price = parseInt(String(searchParams.get('price')));
+  const id = searchParams.get('id');
+
+  const [brandName, setBrandName] = useState('');
+  const [imageURL, setImageURL] = useState('');
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState(0);
+  
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRanking = async () => {
+        try {
+            const response = await axios.get(`${baseUrl}/products/${id}/summary`);
+            setBrandName(response.data.data.brandName); 
+            setImageURL(response.data.data.imageURL);
+            setName(response.data.data.name);
+            setPrice(response.data.data.price);
+
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Error fetching ranking data:', error);
+        
+        }
+    };
+
+    fetchRanking();
+}, []);
 
   // 최종 주문 핸들러
   function handleOrderClick() {
@@ -120,16 +157,11 @@ function Order() {
     navigate('/');
   }
 
-  
-
-  
-
-  
-
   return (
 
     <Layout>
       <NavBar></NavBar>
+      {isLoading ? <Spinner/>: ( 
       <FormProvider {...methods}>
         {/* 슬라이딩 카드 */}
         <SlidingCardSelector />
@@ -140,7 +172,7 @@ function Order() {
         {/* 받는사람 */}
         <ReceiverInputCompo setModalToggle={setModalToggle} fields={fields} />
         {/* 상품 정보 */}
-        <ItemInfoCompo brandInfo={brandInfo} imageURL={imageURL} name={name} price={price} />
+        <ItemInfoCompo brandName={brandName} imageURL={imageURL} name={name} price={price} />
         {/* 주문 버튼 */}
         <OrderBtnWrapper>
           <OrderButton onClick={handleSubmit(handleOrderClick)}>
@@ -149,7 +181,7 @@ function Order() {
         </OrderBtnWrapper>
         {/* --------------모달-------------- */}
         <Modal modalToggle={modalToggle} fields={fields} remove={remove} append={append} setModalToggle={setModalToggle} price={price}/>
-      </FormProvider>
+      </FormProvider>)}
     </Layout>
   );
 }
