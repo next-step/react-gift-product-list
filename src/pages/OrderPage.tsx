@@ -4,45 +4,132 @@ import SenderForm from "@/components/order/SenderForm";
 import ReceiverForm from "@/components/order/ReceiverForm";
 import GiftInfo from "@/components/order/GiftInfo";
 import { useNavigate, useParams } from "react-router-dom";
-import { ranking } from "@/data/ranking";
 import useOrderForm from "../components/order/useOrderForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Receiver } from "@/types/order";
+import { orderProduct, productSummary } from "@/services/order";
+import { showErrorToast } from "@/styles/toast";
+import { STORAGE_KEY } from "@/constants/storage";
+import type { Product } from "@/types/product";
+
+function isAxiosError(
+  error: unknown,
+): error is { response?: { status?: number } } {
+  return typeof error === "object" && error !== null && "isAxiosError" in error;
+}
 
 export default function OrderPage() {
   const navigate = useNavigate();
   const { itemId } = useParams();
-  
+
   const message = useOrderForm();
   const sender = useOrderForm();
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
 
-  const card = ranking.find((card) => card.id === Number(itemId));
-  if (!card) return null;
+  const [product, setProduct] = useState<{ data: Product } | null>(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        if (!itemId) return;
+        const data = await productSummary(itemId);
+        setProduct(data);
+      } catch (error: unknown) {
+        if (isAxiosError(error)) {
+          if (
+            error.response?.status &&
+            error.response.status >= 400 &&
+            error.response.status < 500
+          ) {
+            showErrorToast("상품 정보를 불러올 수 없습니다.");
+            navigate("/gift", { replace: true });
+          }
+        }
+      }
+    };
+
+    fetchProduct();
+  }, [itemId, navigate]);
+
+  useEffect(() => {
+    const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+    if (!userInfo) return;
+
+    const user = JSON.parse(userInfo);
+    const name = user.name || "";
+    console.log("로그인 유저 이름:", name);
+    sender.setValue(name);
+  }, []);
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
-    0
+    0,
   );
-  const totalPrice = card.price.basicPrice * totalQuantity;
 
-  const handleOrder = () => {
+  if (!product) return null;
+  const totalPrice = product.data.price * totalQuantity;
+
+  const handleOrder = async () => {
     const isMessageValid = message.validate();
     const isSenderValid = sender.validate();
     const isQuantityValid = receiverList.length > 0;
 
-    if (!isMessageValid || !isSenderValid || !isQuantityValid) {
+    if (!isMessageValid || !isSenderValid) {
       return;
     }
 
-    alert(`주문이 완료되었습니다.
-상품명: ${card.name}
+    if (!isQuantityValid) {
+      showErrorToast("받는 사람이 없습니다");
+      return;
+    }
+
+    try {
+      const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+      if (!userInfo) {
+        navigate("/login");
+        return;
+      }
+
+      const user = JSON.parse(userInfo);
+      const authToken = user.authToken;
+
+      if (!authToken) {
+        showErrorToast("로그인이 필요합니다.");
+        navigate("/login");
+        return;
+      }
+
+      await orderProduct(
+        {
+          productId: Number(itemId),
+          message: message.value,
+          messageCardId: "default-card",
+          ordererName: sender.value,
+          receivers: receiverList.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.quantity,
+          })),
+        },
+        authToken,
+      );
+
+      alert(`주문이 완료되었습니다.
+상품명: ${product.data.name}
 총 구매 수량: ${totalQuantity}
 받는 사람 수: ${receiverList.length}명
 발신자 이름: ${sender.value}
 메시지: ${message.value}`);
 
-    navigate("/");
+      navigate("/");
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          showErrorToast("로그인이 필요합니다.");
+          navigate("/login");
+        }
+      }
+    }
   };
 
   return (
@@ -64,7 +151,7 @@ export default function OrderPage() {
         setReceiverList={setReceiverList}
       />
       <Divider />
-      <GiftInfo />
+      <GiftInfo product={product.data} />
       <OrderBtn onClick={handleOrder}>
         {totalPrice.toLocaleString()}원 주문하기
       </OrderBtn>

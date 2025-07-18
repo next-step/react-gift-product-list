@@ -1,4 +1,4 @@
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export interface Params {
   [key: string]:
@@ -8,10 +8,10 @@ export interface Params {
     | number
     | number[]
     | { [key: string]: string[] }
-    | undefined
+    | undefined;
 }
 
 export interface HttpParamsType<T = unknown> {
-  queryParams?: Params
-  body?: T
+  queryParams?: Params;
+  body?: T;
 }

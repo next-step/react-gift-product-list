@@ -3,6 +3,17 @@ import styled from "@emotion/styled";
 import Spacing from "@/components/Spacing";
 import { useLoginForm } from "./useLoginForm";
 import { css, type Theme } from "@emotion/react";
+import { auth } from "@/services/auth";
+import { STORAGE_KEY } from "@/constants/storage";
+import { showErrorToast } from "@/styles/toast";
+import { REGEX } from "@/constants/regex";
+import { ERROR_MESSAGE } from "@/constants/messages";
+
+function isAxiosError(
+  error: unknown,
+): error is { response?: { status?: number } } {
+  return typeof error === "object" && error !== null && "isAxiosError" in error;
+}
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,15 +32,42 @@ export default function LoginPage() {
     isFormValid,
   } = useLoginForm();
 
-  const goToLogin = () => {
+  const goToLogin = async () => {
     if (!isFormValid) return;
-    const userInfo = {
-      email,
-    };
 
-    sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+    if (!REGEX.EMAIL.test(email)) {
+      showErrorToast(ERROR_MESSAGE.INVALID_EMAIL_FORMAT);
+      return;
+    }
 
-    navigate(from, { replace: true });
+    if (!email.endsWith("@kakao.com")) {
+      showErrorToast(ERROR_MESSAGE.ONLY_KAKAO_EMAIL);
+      return;
+    }
+
+    try {
+      const user = await auth({ email, password });
+
+      const userInfo = {
+        email: user.email,
+        name: user.name,
+        authToken: user.authToken,
+      };
+      sessionStorage.setItem(STORAGE_KEY.USER_INFO, JSON.stringify(userInfo));
+
+      navigate(from, { replace: true });
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        if (
+          error.response &&
+          typeof error.response.status === "number" &&
+          error.response.status >= 400 &&
+          error.response.status < 500
+        ) {
+          showErrorToast("올바른 이메일 형식이 아닙니다.");
+        }
+      }
+    }
   };
 
   return (

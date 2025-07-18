@@ -4,7 +4,9 @@ import ErrorMessage from "./ErrorMessage";
 
 type Props = {
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
   error: boolean;
 };
 
@@ -23,8 +25,11 @@ export default function SenderForm({ value, onChange, error }: Props) {
         />
         <Spacing height="4px" />
         <SenderMessage>
-          {error ? <ErrorMessage>보내는 사람 이름을 입력해주세요.</ErrorMessage>
-          : "* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다."}
+          {error ? (
+            <ErrorMessage>보내는 사람 이름을 입력해주세요.</ErrorMessage>
+          ) : (
+            "* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다."
+          )}
         </SenderMessage>
       </SenderInputwrapper>
       <Spacing height="24px" />
@@ -48,7 +53,7 @@ const SenderInputwrapper = styled.div`
   width: 100%;
 `;
 
-const SenderInput = styled.textarea<{ error?: boolean}>`
+const SenderInput = styled.textarea<{ error?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   color: ${({ theme }) => theme.colors.gray[900]};
@@ -59,9 +64,8 @@ const SenderInput = styled.textarea<{ error?: boolean}>`
   padding: 8px 12px;
   border-width: 1px;
   border-radius: 8px;
-  border-color: ${({ theme, error }) => 
-    error? theme.colors.state.critical 
-  : theme.colors.gray[400]};
+  border-color: ${({ theme, error }) =>
+    error ? theme.colors.state.critical : theme.colors.gray[400]};
 
   &:focus {
     outline: none;

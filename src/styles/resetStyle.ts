@@ -1,4 +1,4 @@
-import { css, type CSSObject,  } from "@emotion/react";
+import { css, type CSSObject } from "@emotion/react";
 import reset from "styled-reset";
 
 export const resetStyle = css`

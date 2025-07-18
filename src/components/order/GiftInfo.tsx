@@ -1,27 +1,27 @@
 import Spacing from "@/components/Spacing";
 import styled from "@emotion/styled";
-import { useParams } from "react-router-dom";
-import { ranking } from "@/data/ranking";
+import type { Product } from "@/types/product";
 
-export default function GiftInfo() {
-  const { itemId } = useParams();
-  const card = ranking.find((card) => card.id === Number(itemId));
-  if (!card) return null;
+type GiftInfoProps = {
+  product: Product;
+};
 
+export default function GiftInfo({ product }: GiftInfoProps) {
+  if (!product) return null;
   return (
     <InfoBox>
       <Spacing height="12px" />
       <Info>상품 정보</Info>
       <Spacing height="12px" />
       <InfoCard>
-        <InfoImg src={card.imageURL} alt={card.name} />
+        <InfoImg src={product.imageURL} alt={product.name} />
         <div>
-          <InfoName>{card.name}</InfoName>
-          <InfoBrand>{card.brandInfo.name}</InfoBrand>
+          <InfoName>{product.name}</InfoName>
+          <InfoBrand>{product.description}</InfoBrand>
           <Spacing height="4px" />
           <InfoPriceBox>
             <InfoPrice>상품가 </InfoPrice>
-            {card.price.basicPrice.toLocaleString()}원
+            {product.price.toLocaleString()}원
           </InfoPriceBox>
         </div>
       </InfoCard>
@@ -29,7 +29,6 @@ export default function GiftInfo() {
     </InfoBox>
   );
 }
-
 
 const InfoBox = styled.div`
   width: 100%;

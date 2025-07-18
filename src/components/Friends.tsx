@@ -1,7 +1,14 @@
 import styled from "@emotion/styled";
 import { FiPlus } from "react-icons/fi";
+import { z } from "zod";
 
 const STORAGE_KEY = "userInfo";
+
+const UserInfoSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  authToken: z.string(),
+});
 
 function userIdFromSession(): string | null {
   try {
@@ -9,16 +16,17 @@ function userIdFromSession(): string | null {
     if (!userInfo) return null;
 
     const parsed = JSON.parse(userInfo);
-    if (!parsed.email || typeof parsed.email !== "string") return null;
+    const validated = UserInfoSchema.safeParse(parsed);
 
-    return parsed.email.split("@")[0];
+    if (!validated.success) return null;
+    return validated.data.name;
   } catch {
     return null;
   }
 }
 
 export default function Friends() {
-  const userId = userIdFromSession();
+  const userName = userIdFromSession();
 
   return (
     <Wrapper>
@@ -27,8 +35,8 @@ export default function Friends() {
           <FiPlus size={20} />
         </IconWrapper>
         <Text>
-          {userId
-            ? `${userId}님! 선물할 친구를 선택해 주세요.`
+          {userName
+            ? `${userName}님! 선물할 친구를 선택해 주세요.`
             : "선물할 친구를 선택해 주세요."}
         </Text>
       </Button>

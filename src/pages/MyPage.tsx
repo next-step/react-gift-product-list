@@ -5,7 +5,7 @@ import Spacing from "@/components/Spacing";
 import { STORAGE_KEY } from "@/constants/storage";
 
 export default function MyPage() {
-  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -17,15 +17,15 @@ export default function MyPage() {
     }
 
     const user = JSON.parse(isLogIn);
-    const id = user.email.split("@")[0];
-    setUserId(id);
+
+    setUserName(user.name);
     setEmail(user.email);
   }, [navigate]);
 
   const LogOut = () => {
     sessionStorage.removeItem(STORAGE_KEY.USER_INFO);
     navigate("/login");
-  }
+  };
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function MyPage() {
           <Spacing height="12px" />
           <TopText>마이 페이지</TopText>
           <Spacing height="8px" />
-          <BottomText>{userId}님 안녕하세요!</BottomText>
+          <BottomText>{userName}님 안녕하세요!</BottomText>
           <BottomText>이메일 주소는 {email}입니다.</BottomText>
           <Spacing height="24px" />
           <LogoutBtn onClick={LogOut}>로그아웃</LogoutBtn>
@@ -81,7 +81,9 @@ const LogoutBtn = styled.button`
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  transition: background-color 200ms, opacity 200ms;
+  transition:
+    background-color 200ms,
+    opacity 200ms;
   padding: 0px 12px;
 
   &:hover {
@@ -90,4 +92,4 @@ const LogoutBtn = styled.button`
   &:active {
     background-color: ${({ theme }) => theme.colors.gray[500]};
   }
-`
+`;

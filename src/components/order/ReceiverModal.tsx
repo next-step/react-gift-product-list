@@ -23,11 +23,12 @@ export default function ReceiverModal({
   const [validCount, setValidCount] = useState(0);
   const adderRef = useRef<ReceiverAdderHandle>(null);
   useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
     // 모달이 열릴 때
     document.body.style.overflow = "hidden";
     // 모달이 닫힐 때 원래대로
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = originalOverflow;
     };
   }, []);
 

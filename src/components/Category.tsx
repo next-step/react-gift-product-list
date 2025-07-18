@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { useFetch } from "@/hooks/useFetch";
+import { API } from "@/constants/api";
 
 type Theme = {
   themeId: number;
@@ -8,7 +9,7 @@ type Theme = {
 };
 
 export default function Category() {
-  const { data, loading, error } = useFetch<Theme[]>("/themes");
+  const { data, loading, error } = useFetch<Theme[]>(API.THEMES);
   const categories = data ?? []; // data가 null인 경우 방지
 
   if (loading) return <div>로딩 중...</div>;
