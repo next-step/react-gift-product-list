@@ -13,21 +13,27 @@ const useRankingFilter = () => {
 
   const selectedTarget = useMemo(
     () => (isValidTarget ? targetTypeParams : rankingTargetCategory[0].targetType),
-    [targetTypeParams],
+    [targetTypeParams, isValidTarget],
   );
   const selectedRank = useMemo(
     () => (isValidRank ? rankTypeParams : Object.keys(rankingRankCategoryList)[0]),
-    [rankTypeParams],
+    [rankTypeParams, isValidRank],
   );
 
-  const changeTargetType = useCallback((targetType: string) => {
-    searchParams.set("targetType", targetType);
-    setSearchParams(searchParams, { replace: true });
-  }, []);
-  const changeRankType = useCallback((rankType: string) => {
-    searchParams.set("rankType", rankType);
-    setSearchParams(searchParams, { replace: true });
-  }, []);
+  const changeTargetType = useCallback(
+    (targetType: string) => {
+      searchParams.set("targetType", targetType);
+      setSearchParams(searchParams, { replace: true });
+    },
+    [searchParams, setSearchParams],
+  );
+  const changeRankType = useCallback(
+    (rankType: string) => {
+      searchParams.set("rankType", rankType);
+      setSearchParams(searchParams, { replace: true });
+    },
+    [searchParams, setSearchParams],
+  );
 
   return { selectedTarget, selectedRank, changeTargetType, changeRankType };
 };

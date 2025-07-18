@@ -67,7 +67,7 @@ const useFetch = <TResponse, TBody = unknown>(
         setIsLoading(false);
       }
     },
-    [url, baseUrl, method, body, params],
+    [url, baseUrl, method, body, params, headers],
   );
 
   useEffect(() => {

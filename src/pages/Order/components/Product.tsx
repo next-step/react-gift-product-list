@@ -5,7 +5,7 @@ import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
 import type { ProductData } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,8 +15,8 @@ const Product = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { data, isError, isLoading } = useFetch<ProductData>(`api/products/${productId}/summary`);
-  const product = data?.data;
-  const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), []);
+  const product = useMemo(() => data?.data, [data]);
+  const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
   useEffect(() => {
     if (product) {
       setValue("productId", product.id);
@@ -33,7 +33,7 @@ const Product = () => {
         onClose: goHome,
       });
     }
-  }, [isError, isLoading, setValue, goHome]);
+  }, [isError, isLoading, setValue, goHome, product]);
   if (isLoading) {
     return <Loading height="170px" />;
   }
