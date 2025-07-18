@@ -13,7 +13,7 @@ export const useLogin = () => {
       const res = await loginAPI(payload);
 
       login({
-        id: res.authToken,
+        token: res.authToken,
         name: res.name,
         email: res.email,
       });

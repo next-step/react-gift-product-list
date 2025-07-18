@@ -19,7 +19,7 @@ export const attachInterceptors = (instance: AxiosInstance) => {
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-        const token = parsed.id;
+        const token = parsed.token;
 
         if (token && config.headers) {
           config.headers.Authorization = `${token}`;
