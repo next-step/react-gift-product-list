@@ -22,10 +22,10 @@ import { getProudctSummary } from "@/api/products";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import PageWrapper from "@/components/Common/Wrapper";
 import { postOrder } from "@/api/order";
 import { useFetchData } from "@/hooks/useFetchData";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
+import Layout from "@/components/Common/Layout";
 
 const Order = () => {
   const { selectedCard, selectCard } = useCardSelection();
@@ -139,7 +139,7 @@ const Order = () => {
   };
 
   return (
-    <PageWrapper>
+    <Layout>
       <Header title="선물하기" />
       {loading ? (
         <LoadingSpinner color="#000000" loading={loading} size={35} />
@@ -245,7 +245,7 @@ const Order = () => {
         onAdd={handleModalAddOrEdit}
         initialReceives={receivers}
       />
-    </PageWrapper>
+    </Layout>
   );
 };
 

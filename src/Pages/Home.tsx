@@ -4,14 +4,14 @@ import { FiPlus } from "react-icons/fi";
 import RankingSection from "@/components/Home/RankingSection";
 import { useAuthContext } from "@/contexts/useAuthContext";
 import ThemeSection from "@/components/Home/ThemeSection";
-import PageWrapper from "@/components/Common/Wrapper";
+import Layout from "@/components/Common/Layout";
 
 const Home = () => {
   const { user } = useAuthContext();
   const nickname = user?.name;
 
   return (
-    <PageWrapper>
+    <Layout>
       <Header title="선물하기" />
       <HomeContainer>
         <SelectFriendSection>
@@ -31,7 +31,7 @@ const Home = () => {
         </CheerBannerSection>
         <RankingSection />
       </HomeContainer>
-    </PageWrapper>
+    </Layout>
   );
 };
 

@@ -3,11 +3,11 @@ import type { PropsWithChildren } from "react";
 
 type PageWrapperProps = PropsWithChildren;
 
-const PageWrapper = ({ children }: PageWrapperProps) => {
+const Layout = ({ children }: PageWrapperProps) => {
   return <Wrapper>{children}</Wrapper>;
 };
 
-export default PageWrapper;
+export default Layout;
 
 const Wrapper = styled.div`
   width: 100%;
