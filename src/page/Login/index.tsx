@@ -4,7 +4,8 @@ import InputField from './components/InputField';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
-import { fakeAuthApi } from './utils/fakeAuthApi';
+import { API_BASE_URL } from '@/api/apiBaseUrl';
+import axios from 'axios';
 
 const Container = styled.div`
   display: flex;
@@ -59,15 +60,40 @@ const LoginPage = () => {
 
   const isButtonActive = username.isValid && password.isValid;
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!username.isValid || !password.isValid) return;
-    const token = await fakeAuthApi(username.value, password.value);
-    login(username.value, token);
+
+    const fetchUserInfo = async () => {
+      const data = {
+        email: `${username.value}`,
+        password: `${password.value}`,
+      };
+      const headers = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      await axios
+        .post(`${API_BASE_URL}/api/login`, data, headers)
+        .then(response => {
+          const name = response.data.data.name;
+          const email = response.data.data.email;
+          const token = response.data.data.authToken;
+          login(name, email, token);
+        })
+        .catch(error => {
+          console.log(error.response.data.data.message);
+          console.log(error.response.data.data.statusCode);
+        });
+    };
+    fetchUserInfo();
+
     navigate(ROUTES.MY, { replace: true });
   };
- 
+
   return (
     <Container>
       <Img
