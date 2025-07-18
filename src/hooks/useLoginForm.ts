@@ -70,12 +70,13 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
 
     if (isValidEmail && isValidPassword) {
       try {
-        const data = await loginApi({
+        const res = await loginApi({
           email: form.email,
           password: form.password,
         });
-        console.log('로그인 응답: ');
-        const { email, name, authToken } = data.data;
+        console.log('로그인 응답: ', res);
+        // 실제 데이터는 res.data에 있음!
+        const { email, name, authToken } = res.data;
         login({ email, name, authToken });
         onSuccess();
       } catch (error) {

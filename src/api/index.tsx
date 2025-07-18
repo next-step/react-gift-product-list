@@ -15,3 +15,12 @@ export async function login({
 export async function fetchProductSummary(productId: number) {
   return axios.get(`/api/products/${productId}/summary`);
 }
+
+export async function createOrder(orderData: any, authToken: string) {
+  return axios.post('/api/order', orderData, {
+    headers: {
+      Authorization: authToken,
+      'Content-Type': 'application/json',
+    },
+  });
+}

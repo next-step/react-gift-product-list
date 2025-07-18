@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchProductSummary } from '@/api/index';
 import { toast } from 'react-toastify';
+import { createOrder } from '@/api/index';
 
 const cards = orderCardTemplates;
 
@@ -232,24 +233,63 @@ function OrderPage() {
     return valid;
   };
 
-  const handleOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOrder = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (validate()) {
-      if (!product) return;
 
-      const totalQuantity = receivers.reduce(
-        (sum, receiver) => sum + Number(receiver.quantity),
-        0,
-      );
+    if (!validate()) return;
+    if (!product) return;
 
-      alert(
-        `주문이 완료되었습니다.
-상품명: ${product.name}
-구매 수량: ${totalQuantity}
-발신자 이름: ${sender}
-메시지: ${message}`,
-      );
+    // 받는 사람이 없으면 에러
+    if (receivers.length === 0) {
+      toast.error('받는 사람을 추가해주세요.');
+      return;
+    }
+
+    const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+    const authToken = userInfo.authToken;
+
+    console.log('전체 userInfo:', userInfo);
+    console.log('authToken 값:', authToken);
+    console.log('receivers 원본:', receivers);
+    console.log(
+      'receivers 변환 후:',
+      receivers.map((receiver) => ({
+        name: receiver.name,
+        phoneNumber: receiver.phone,
+        quantity: receiver.quantity,
+      })),
+    );
+
+    // receivers 배열의 필드명을 API 스펙에 맞게 변환
+    const orderData = {
+      productId: product.id,
+      message,
+      messageCardId: cards[selectedIdx].id,
+      ordererName: sender,
+      receivers: receivers.map((receiver) => ({
+        name: receiver.name,
+        phoneNumber: receiver.phone, // phone → phoneNumber로 변환
+        quantity: receiver.quantity,
+      })),
+    };
+
+    console.log('전송할 주문 데이터:', orderData);
+    console.log('authToken:', authToken);
+
+    try {
+      const response = await createOrder(orderData, authToken);
+      console.log('주문 성공:', response);
+      toast.success('주문이 완료되었습니다!');
       navigate('/');
+    } catch (error: any) {
+      console.error('주문 에러 상세:', error.response?.data);
+
+      if (error.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        toast.error(error.response?.data?.message || '주문에 실패했습니다.');
+      }
     }
   };
 
