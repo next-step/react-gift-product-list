@@ -4,6 +4,7 @@ import { ERROR_MESSAGES } from "@/constants/messages";
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorage";
 import { navigate } from "@/lib/navigation";
 import type { User } from "@/contexts/AuthContext";
+import { ROUTES } from "@/constants/routes";
 
 interface ErrorResponseBody {
   data: {
@@ -42,7 +43,7 @@ export const attachInterceptors = (instance: AxiosInstance) => {
       const message = error.response?.data?.data?.message;
 
       if (status === HttpStatusCode.Unauthorized) {
-        navigate("/login");
+        navigate(ROUTES.LOGIN);
       }
 
       return Promise.reject(message || ERROR_MESSAGES.SYSTEM.UNKNOWN);
