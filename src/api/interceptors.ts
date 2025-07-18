@@ -1,5 +1,5 @@
 import { type AxiosInstance, AxiosError } from "axios";
-import { HTTP_STATUS } from "@/constants/httpStatus";
+import { HttpStatusCode } from "axios";
 import { ERROR_MESSAGES } from "@/constants/messages";
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorage";
 
@@ -39,7 +39,7 @@ export const attachInterceptors = (instance: AxiosInstance) => {
       const status = error.response?.status;
       const message = error.response?.data?.data?.message;
 
-      if (status === HTTP_STATUS.UNAUTHORIZED) {
+      if (status === HttpStatusCode.Unauthorized) {
         window.location.href = "/login";
       }
 
