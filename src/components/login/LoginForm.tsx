@@ -7,7 +7,6 @@ import ErrorMessage from "../common/ErrorMessage";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { postLogin } from "@/api/login";
 import useApiRequest from "@/hooks/useApiRequest";
-import type { User } from "@/types/user";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -24,14 +23,17 @@ const LoginForm = () => {
     isError,
     error,
     refetch: postLoginRequest,
-  } = useApiRequest<User, [string, string]>({
+  } = useApiRequest({
     requestFn: postLogin,
     immediate: false,
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    postLoginRequest(emailInput.value, passwordInput.value);
+    postLoginRequest({
+      email: emailInput.value,
+      password: passwordInput.value,
+    });
   };
 
   useEffect(() => {

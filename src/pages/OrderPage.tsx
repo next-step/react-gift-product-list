@@ -48,7 +48,10 @@ const OrderPage = () => {
   }, [location.pathname, navigate, userInfo]);
 
   const { id } = useParams<{ id: string }>();
-  const requestFn = useCallback(() => fetchProductsSummary(Number(id)), [id]);
+  const requestFn = useCallback(
+    () => fetchProductsSummary({ productId: Number(id) }),
+    [id],
+  );
   const {
     data: gift,
     isLoading,
@@ -85,7 +88,7 @@ const OrderPage = () => {
       })),
     };
 
-    postOrder(orderRequestData, userInfo?.authToken || "")
+    postOrder({ orderData: orderRequestData, token: userInfo?.authToken || "" })
       .then(() => {
         alert(
           [

@@ -2,10 +2,15 @@ import { API_PATHS } from "./apiPaths";
 import axiosInstance from "./axiosInstance";
 import type { OrderRequest } from "@/types/order";
 
-export const postOrder = async (orderData: OrderRequest, token: string) => {
-  return await axiosInstance.post(API_PATHS.ORDER, orderData, {
+type PostOrderParams = {
+  orderData: OrderRequest;
+  token: string;
+};
+
+export const postOrder = async (params: PostOrderParams) => {
+  return await axiosInstance.post(API_PATHS.ORDER, params.orderData, {
     headers: {
-      Authorization: token,
+      Authorization: params.token,
     },
   });
 };
