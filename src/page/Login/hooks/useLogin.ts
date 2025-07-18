@@ -1,10 +1,10 @@
-import { API_BASE_URL } from '@/api/apiBaseUrl';
+import fetchUserInfos from '@/api/login/fetchUserInfos';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 // import { useUserInfo } from '@/contexts/UserInfoContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-interface UserInfoProps {
+export interface UserInfoProps {
   username: { value: string };
   password: { value: string };
 }
@@ -15,19 +15,9 @@ const useLogin = () => {
   const { login } = useUserInfo();
 
   const postUserInfo = async ({ username, password }: UserInfoProps): Promise<boolean> => {
-    const data = {
-      email: `${username.value}`,
-      password: `${password.value}`,
-    };
-    const headers = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/login`, data, headers);
-      const { name, email, authToken } = response.data.data;
+      const data = await fetchUserInfos({ username, password });
+      const { name, email, authToken } = data;
       login(name, email, authToken);
       toast(email);
       return true;
