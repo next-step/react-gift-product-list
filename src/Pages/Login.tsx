@@ -28,11 +28,7 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        if (
-          err.response &&
-          err.response.status >= 400 &&
-          err.response.status < 500
-        ) {
+        if (err.response && err.response.status == 400) {
           toast.error(err.response.data?.data?.message || "로그인 실패");
         }
       }
