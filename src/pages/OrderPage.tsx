@@ -13,7 +13,7 @@ import { STORAGE_KEY } from "@/constants/storage";
 import type { Product } from "@/types/product";
 
 function isAxiosError(
-  error: unknown
+  error: unknown,
 ): error is { response?: { status?: number } } {
   return typeof error === "object" && error !== null && "isAxiosError" in error;
 }
@@ -63,7 +63,7 @@ export default function OrderPage() {
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
-    0
+    0,
   );
 
   if (!product) return null;
@@ -111,7 +111,7 @@ export default function OrderPage() {
             quantity: r.quantity,
           })),
         },
-        authToken
+        authToken,
       );
 
       alert(`주문이 완료되었습니다.

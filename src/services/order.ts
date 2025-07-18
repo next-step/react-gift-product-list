@@ -2,9 +2,11 @@ import baseHttp from "./baseHttp";
 import type { Product } from "@/types/product";
 
 export const productSummary = async (
-  productId: string
+  productId: string,
 ): Promise<{ data: Product }> => {
-  const response = await baseHttp.get<{ data: Product }>(`/products/${productId}/summary`);
+  const response = await baseHttp.get<{ data: Product }>(
+    `/products/${productId}/summary`,
+  );
   return response.data;
 };
 

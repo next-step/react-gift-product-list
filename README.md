@@ -21,11 +21,15 @@
 - [x] 보여 줄 상품 목록이 없을경우 상품 목록이 없다는 문구 출력
 
 ## Step2. 로그인, 주문하기 API 구현하기
+
 ### 로그인 기능
-- [x] /login api 를 사용하여 로그인 기능 완성 
+
+- [x] /login api 를 사용하여 로그인 기능 완성
 - [x] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage 저장 및 활용
 - [x] 4XX 에러가 발생하면 Toast를 통해 에러메시지 표시
+
 ### 주문하기 기능
+
 - [x] /products/:productId/summary api를 사용하여 제품 정보 가져오기
 - [x] 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지 표시 후 선물하기 홈으로 연결
 - [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채우기

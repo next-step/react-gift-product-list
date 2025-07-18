@@ -6,7 +6,7 @@ type GiftInfoProps = {
   product: Product;
 };
 
-export default function GiftInfo({ product } : GiftInfoProps) {
+export default function GiftInfo({ product }: GiftInfoProps) {
   if (!product) return null;
   return (
     <InfoBox>

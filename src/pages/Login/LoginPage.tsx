@@ -10,7 +10,7 @@ import { REGEX } from "@/constants/regex";
 import { ERROR_MESSAGE } from "@/constants/messages";
 
 function isAxiosError(
-  error: unknown
+  error: unknown,
 ): error is { response?: { status?: number } } {
   return typeof error === "object" && error !== null && "isAxiosError" in error;
 }
