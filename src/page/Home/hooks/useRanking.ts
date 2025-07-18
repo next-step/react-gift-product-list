@@ -1,4 +1,5 @@
 import fetchRanking from '@/api/products/fetchRanking';
+import type { FilterId, GenerationId } from '@/data/categoryDatas';
 import { useEffect, useState } from 'react';
 
 interface BrandInfo {
@@ -22,8 +23,8 @@ interface GiftRankingItem {
 }
 
 export interface RankingApiProps {
-  activeGenerationButton: string;
-  activeFilterButton: string;
+  activeGenerationButton: GenerationId;
+  activeFilterButton: FilterId;
 }
 
 const useRanking = ({ activeGenerationButton, activeFilterButton }: RankingApiProps) => {
