@@ -7,36 +7,26 @@ export function useFetchData<T>(fetchFn: () => Promise<{ data: { data: T } }>) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
-
     const fetchData = async () => {
       try {
         setLoading(true);
         const response = await fetchFn();
-        if (isMounted) {
-          setData(response.data.data);
-          setError(null);
-        }
+        setData(response.data.data);
+        setError(null);
       } catch (err) {
-        if (isMounted) {
-          if (axios.isAxiosError(err)) {
-            const axiosErr = err as AxiosError<{ data?: { message?: string } }>;
-            const message = axiosErr.response?.data?.data?.message;
-            setError(message ?? "데이터를 가져오지 못했습니다.");
-          } else {
-            setError("에러가 발생했습니다.");
-          }
+        if (axios.isAxiosError(err)) {
+          const axiosErr = err as AxiosError<{ data?: { message?: string } }>;
+          const message = axiosErr.response?.data?.data?.message;
+          setError(message ?? "데이터를 가져오지 못했습니다.");
+        } else {
+          setError("에러가 발생했습니다.");
         }
       } finally {
-        if (isMounted) setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchData();
-
-    return () => {
-      isMounted = false;
-    };
   }, [fetchFn]);
 
   return { data, loading, error };
