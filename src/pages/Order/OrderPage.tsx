@@ -14,9 +14,7 @@ import { useNavigate } from "react-router-dom";
 import type { ErrorData } from "@/types/FetchErrorData";
 
 interface OrderData {
-  data: {
-    success: boolean;
-  };
+  success: boolean;
 }
 interface OrderBodyData {
   productId: number;
@@ -64,7 +62,7 @@ const OrderPageContent = () => {
     if (responseData.error) setError(responseData.error);
   };
   useEffect(() => {
-    if (data?.data.success) {
+    if (data?.success) {
       toast.success("주문에 성공했습니다.", {
         position: "top-center",
         autoClose: 3000,
@@ -76,10 +74,10 @@ const OrderPageContent = () => {
         onClose: goHome,
       });
     }
-    if (error?.data.statusCode === 401) {
+    if (error?.statusCode === 401) {
       goLogin();
     }
-  }, [data?.data, error, goHome, goLogin]);
+  }, [data, error, goHome, goLogin]);
   return (
     <Container>
       <Content onSubmit={createSubmitHandler(onSubmit)}>

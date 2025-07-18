@@ -3,7 +3,7 @@ import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
-import type { ProductData } from "@/types/RankingProductType";
+import type { ProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
 import { useCallback, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
@@ -14,8 +14,8 @@ const Product = () => {
   const { setValue } = useFormContext<OrderFormType>();
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { data, isError, isLoading } = useFetch<ProductData>(`api/products/${productId}/summary`);
-  const product = useMemo(() => data?.data, [data]);
+  const { data, isError, isLoading } = useFetch<ProductType>(`api/products/${productId}/summary`);
+  const product = useMemo(() => data, [data]);
   const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
   useEffect(() => {
     if (product) {

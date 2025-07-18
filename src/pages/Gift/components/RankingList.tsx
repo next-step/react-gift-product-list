@@ -13,9 +13,6 @@ interface RankingListProps {
   targetType: string;
   rankType: string;
 }
-interface RankingData {
-  data: RankingProductType[];
-}
 
 const RANKING_LIST_ITEM_VIEW_COUNT = 6;
 
@@ -37,12 +34,12 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
     }),
     [targetType, rankType],
   );
-  const rankingListData = useFetch<RankingData>("/api/products/ranking", options);
+  const rankingListData = useFetch<RankingProductType[]>("/api/products/ranking", options);
 
   if (rankingListData.isLoading) {
     return <Loading height="625px" />;
   }
-  if (rankingListData.isError || rankingListData.data?.data.length === 0) {
+  if (rankingListData.error || rankingListData.data?.length === 0) {
     return (
       <Empty>
         <Msg>상품이 없습니다.</Msg>
@@ -52,7 +49,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   return (
     <Container>
       <Content>
-        {rankingListData.data?.data.slice(0, viewCount).map((item, index) => (
+        {rankingListData.data?.slice(0, viewCount).map((item, index) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>

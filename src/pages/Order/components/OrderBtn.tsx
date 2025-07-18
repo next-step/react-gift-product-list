@@ -1,15 +1,16 @@
 import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
-import type { ProductData } from "@/types/RankingProductType";
+import type { ProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
+import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import { useParams } from "react-router-dom";
 
 const OrderBtn = () => {
   const { watch } = useFormContext<OrderFormType>();
   const { productId } = useParams();
-  const { data } = useFetch<ProductData>(`api/products/${productId}/summary`);
-  const product = data?.data;
+  const { data } = useFetch<ProductType>(`api/products/${productId}/summary`);
+  const product = useMemo(() => data, [data]);
   const recipients = watch("recipients");
   const totalQuantity = recipients.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.quantity;

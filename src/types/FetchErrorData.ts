@@ -1,7 +1,5 @@
 export interface ErrorData {
-  data: {
-    status: string;
-    statusCode: number;
-    message: string;
-  };
+  status: string;
+  statusCode: number;
+  message: string;
 }

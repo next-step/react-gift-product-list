@@ -8,9 +8,6 @@ import { useAuth, type Auth } from "@/contexts/authContext";
 import useFetch from "@/hooks/useFetch";
 import { toast } from "react-toastify";
 
-interface AuthData {
-  data: Auth;
-}
 interface LoginBodyData {
   email: string;
   password: string;
@@ -19,7 +16,7 @@ interface LoginBodyData {
 const LoginPage = () => {
   const { user, onChange, onBlur, errorMsg } = useLoginInput();
   const { login } = useAuth();
-  const loginFetch = useFetch<AuthData, LoginBodyData>("api/login", {
+  const loginFetch = useFetch<Auth, LoginBodyData>("api/login", {
     method: "POST",
     body: { email: user.id, password: user.password },
     autoFetch: false,
@@ -28,9 +25,9 @@ const LoginPage = () => {
     event.preventDefault();
     const responseData = await loginFetch.fetchData();
     if (responseData.data) {
-      login(responseData.data.data);
+      login(responseData.data);
     } else if (responseData.error) {
-      toast.error(responseData.error.data.message, {
+      toast.error(responseData.error.message, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,

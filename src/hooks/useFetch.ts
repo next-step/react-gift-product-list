@@ -11,6 +11,13 @@ interface UseFetchOptions<TBody> {
   body?: TBody;
   baseUrl?: string;
 }
+interface UseFetchResponse<T> {
+  data: T;
+}
+interface UseFetchResponseData<T> {
+  data: T | null;
+  error: ErrorData | undefined;
+}
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -35,7 +42,7 @@ const useFetch = <TResponse, TBody = unknown>(
       fetchHeaders: typeof headers = headers,
       fetchBody: typeof body = body,
       fetchParams: typeof params = params,
-    ): Promise<{ data: TResponse | null; error: ErrorData | undefined }> => {
+    ): Promise<UseFetchResponseData<TResponse>> => {
       const base = baseUrl ? baseUrl : BASE_URL;
       const fetchUrl = new URL(url, base);
 
@@ -47,20 +54,20 @@ const useFetch = <TResponse, TBody = unknown>(
 
       try {
         setIsLoading(true);
-        const response = await axios<TResponse>(fetchUrl.toString(), {
+        const response = await axios<UseFetchResponse<TResponse>>(fetchUrl.toString(), {
           method,
           headers: fetchHeaders,
           data: fetchBody,
         });
         setIsError(false);
-        setData(response.data);
-        return { data: response.data, error: undefined };
+        setData(response.data.data);
+        return { data: response.data.data, error: undefined };
       } catch (error) {
         console.error("Error fetching themes data:", error);
         setIsError(true);
         setData(null);
-        if (axios.isAxiosError<ErrorData>(error)) {
-          return { data: null, error: error.response?.data };
+        if (axios.isAxiosError<UseFetchResponse<ErrorData>>(error)) {
+          return { data: null, error: error.response?.data.data };
         }
         return { data: null, error: undefined };
       } finally {

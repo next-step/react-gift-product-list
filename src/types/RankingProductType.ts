@@ -14,10 +14,6 @@ export type RankingProductType = {
   };
 };
 
-export interface ProductData {
-  data: ProductType;
-}
-
 export type ProductType = {
   id: number;
   name: string;
