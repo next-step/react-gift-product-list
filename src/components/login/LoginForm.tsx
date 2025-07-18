@@ -7,7 +7,7 @@ import {
   ErrorMessage,
   LoginButton,
 } from "./LoginFormStyles";
-import { login } from "@/api/auth";
+import { postLogin } from "@/api/auth";
 import { userStorage } from "@/utils/userStorage";
 import { toast } from "react-toastify";
 
@@ -69,7 +69,7 @@ export const LoginForm = ({ onLoginSuccess }: Props) => {
     }
 
     try {
-      const data = await login({ email, password });
+      const data = await postLogin({ email, password });
       userStorage.set(data);
       toast.success("로그인 성공!");
 

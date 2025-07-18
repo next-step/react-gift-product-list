@@ -12,7 +12,7 @@ export interface LoginResponse {
   authToken: string;
 }
 
-export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await client.post('/api/login', data);
-  return response.data.data;
+export const postLogin = async (data: LoginRequest): Promise<LoginResponse> => {
+  const res = await client.post("/api/login", data);
+  return res.data.data;
 };

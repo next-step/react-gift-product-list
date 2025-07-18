@@ -1,27 +1,29 @@
 import { client } from "./client";
 import type { OrderFormValues } from "@/validations/orderSchema";
 
-export const createOrder = async (
+export const postCreateOrder = async (
   form: OrderFormValues,
   productId: number,
   token: string
-): Promise<void> => {
-  const payload = {
-    productId,
-    message: form.message,
-    messageCardId: String(form.selectedCardId), 
-    ordererName: form.senderName,
-    receivers: form.receivers.map((r) => ({
-      name: r.name,
-      phoneNumber: r.phone, 
-      quantity: r.quantity,
-    })),
-  };
-
-
-  await client.post("/api/order", payload, {
-    headers: {
-      Authorization: token,
+) => {
+  return client.post(
+    "/api/order",
+    {
+      productId,
+      message: form.message,
+      senderName: form.senderName,
+      selectedCardId: form.selectedCardId,
+      receivers: form.receivers.map((r) => ({
+        name: r.name,
+        phoneNumber: r.phone,
+        quantity: r.quantity,
+      })),
     },
-  });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
+

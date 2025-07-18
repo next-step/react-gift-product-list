@@ -20,7 +20,7 @@ import OrderButton from "@/components/order/OrderButton";
 
 import { getProductSummary } from "@/api/product";
 import type { ProductSummary } from "@/api/product";
-import { createOrder } from "@/api/orderapi";
+import { postCreateOrder } from "@/api/orderapi";
 import { useAuth } from "@/contexts/AuthContext";
 
 const OrderPage = () => {
@@ -68,7 +68,7 @@ const OrderPage = () => {
     }
 
     try {
-      await createOrder(data, product.id, token);
+      await postCreateOrder(data, product.id, token);
       toast.success("주문이 성공적으로 완료되었습니다!");
       navigate("/", { replace: true });
     } catch (err: any) {
