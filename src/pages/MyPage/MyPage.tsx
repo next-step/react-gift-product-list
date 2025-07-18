@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import NavigationBar from '@/components/NavigationBar/NavigationBar';
 
 const MyPage = () => {
-  const { user, logout } = useAuth();
+  const { userInfo, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -19,7 +19,7 @@ const MyPage = () => {
       <S.Container>
         <S.Title>마이페이지</S.Title>
         <S.UserInfo>
-          <strong>로그인한 이메일:</strong> {user?.email}
+          <strong>로그인한 이메일:</strong> {userInfo?.email}
         </S.UserInfo>
         <S.LogoutButton onClick={handleLogout}>로그아웃</S.LogoutButton>
       </S.Container>

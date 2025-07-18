@@ -7,10 +7,10 @@ type PrivateRouteProps = {
 };
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { user } = useAuth();
+  const { userInfo } = useAuth();
   const location = useLocation();
 
-  if (!user) {
+  if (!userInfo) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

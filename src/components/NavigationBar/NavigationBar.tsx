@@ -5,14 +5,14 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { userInfo } = useAuth();
 
   const goToBack = () => {
     navigate(-1);
   };
 
   const goToLogin = () => {
-    if (user) {
+    if (userInfo) {
       navigate('/my'); // 로그인됨
     } else {
       navigate('/login'); // 로그인안됨
