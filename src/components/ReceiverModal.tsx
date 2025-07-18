@@ -118,20 +118,20 @@ const FormLabel = styled.label`
   margin-right: 8px;
 `;
 
-const FormInput = styled.input<{ hasError?: boolean }>`
+const FormInput = styled.input<{ $hasError?: boolean }>`
   width: 100%;
   height: 36px;
   border: ${(props) =>
-    props.hasError ? '2px solid #f44336' : '1px solid #ccc'};
+    props.$hasError ? '2px solid #f44336' : '1px solid #ccc'};
   border-radius: 8px;
   padding: 0 12px;
 `;
 
-const QuantityInput = styled.input<{ hasError?: boolean }>`
+const QuantityInput = styled.input<{ $hasError?: boolean }>`
   width: 100px;
   height: 36px;
   border: ${(props) =>
-    props.hasError ? '2px solid #f44336' : '1px solid #ccc'};
+    props.$hasError ? '2px solid #f44336' : '1px solid #ccc'};
   border-radius: 8px;
   padding: 0 12px;
 `;
@@ -289,7 +289,7 @@ const ReceiverModal = ({
                     {...register(`receivers.${idx}.name`, {
                       required: '이름을 입력해 주세요.',
                     })}
-                    hasError={!!errors.receivers?.[idx]?.name}
+                    $hasError={!!errors.receivers?.[idx]?.name}
                     placeholder="이름을 입력하세요."
                   />
                   {errors.receivers?.[idx]?.name && (
@@ -321,7 +321,7 @@ const ReceiverModal = ({
                         return true;
                       },
                     })}
-                    hasError={!!errors.receivers?.[idx]?.phone}
+                    $hasError={!!errors.receivers?.[idx]?.phone}
                     placeholder="전화번호를 입력하세요."
                     onChange={() => {
                       checkDuplicatePhone(
@@ -351,7 +351,7 @@ const ReceiverModal = ({
                       message: '구매 수량은 1개 이상이어야 해요.',
                     },
                   })}
-                  hasError={!!errors.receivers?.[idx]?.quantity}
+                  $hasError={!!errors.receivers?.[idx]?.quantity}
                 />
                 {errors.receivers?.[idx]?.quantity && (
                   <ErrorMessage>
