@@ -14,9 +14,9 @@ import useUser from './hooks/useUser.ts';
 import type { ReactNode } from 'react';
 
 const ProtectedRoute = ({children}: {children: ReactNode}) => {
-  const { getId } = useUser();
+  const { getEmail } = useUser();
 
-  return getId() === '' ? <Navigate to='/login' replace /> : children;
+  return getEmail() === null ? <Navigate to='/login' replace /> : children;
 };
 
 function App() {

@@ -7,6 +7,11 @@ import NavBar from '../components/NavBar';
 import useInput from '@/hooks/useInput';
 import useUser from '@/hooks/useUser';
 
+import axios from 'axios';
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import {ToastContainer, toast} from 'react-toastify';
+import { useState } from 'react';
+
 const LoginFormWrapper = styled.div`
   width: auto;
   height: 100vh;
@@ -89,20 +94,54 @@ const LoginFormBtn = styled.button`
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const {setId, setPw} = useUser();
   const from = location.state?.from?.pathname || '/'
 
-  const username = useInput('username');
-  const password = useInput('password');
+  // 전역에서 사용할 유저정보 저장하는 훅
+  const {setEmail, setName, setAuthToken} = useUser();
 
-  const isFormValid = username.isValid && password.isValid;
+  // 폼 검증하는 훅
+  const email = useInput('email');
+  const password = useInput('password');
+  const isFormValid = email.isValid && password.isValid;
+
+  const fetchLogin = async () => {
+    try {
+      const response = await axios.post(`${baseUrl}/login`,{
+        'email': email.value,
+        'password': password.value
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      setEmail(response.data.data.email);
+      setName(response.data.data.name);
+      setAuthToken(response.data.data.authToken);
+
+      navigate(from, { replace: true });
+    } catch (error:any) {
+      if(error.response && error.response.status >= 400 && error.response.status < 500) {
+        toast.error('@kakao.com 이메일 주소만 가능합니다',{
+          position: 'bottom-center',
+          hideProgressBar: true,
+          closeOnClick: true
+        });
+      } else {
+        toast.error('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.', {
+          position: 'bottom-center',
+          hideProgressBar: true,
+          closeOnClick: true,
+        });
+      }
+    }
+  };
 
   const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!isFormValid) return;
-    setId(username.value);
-    setPw(password.value);
-    navigate(from, { replace: true });
+    
+    fetchLogin();  
   };
 
   return (
@@ -116,12 +155,12 @@ function Login() {
               <LoginFormInput
                 placeholder="이메일"
                 type="email"
-                value={username.value}
-                onChange={(e) => username.onChange(e.target.value)}
-                onBlur={username.onBlur}
-                isValid={!username.error || !username.touched}
+                value={email.value}
+                onChange={(e) => email.onChange(e.target.value)}
+                onBlur={email.onBlur}
+                isValid={!email.error || !email.touched}
               ></LoginFormInput>
-              {username.error && <LoginFormErrorTxt>{username.error}</LoginFormErrorTxt>}
+              {email.error && <LoginFormErrorTxt>{email.error}</LoginFormErrorTxt>}
 
               {/* 비밀번호 input */}
               <LoginFormInput
@@ -141,6 +180,7 @@ function Login() {
 
             </LoginForm>
           </LoginFormWrapper>
+          <ToastContainer/>
         </Layout>
   );
 }
