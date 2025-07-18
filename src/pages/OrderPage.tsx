@@ -396,7 +396,6 @@ const OrderPage = () => {
         </FormSection>
 
         <FormSection>
-          <FormLabel>받는 사람</FormLabel>
           <RecipientList
             recipients={recipients}
             onAddRecipient={handleAddRecipient}
