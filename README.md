@@ -25,3 +25,20 @@
   - 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 입력
   - /order api를 사용하여 주문하기 기능을 완성 (authToken를 넣어야 함)
   - 주문하기 API에서 401 에러가 발생하면 로그인 페이지로 연결
+
+## step3
+
+- step2 피드백 반영
+  - api의 요청타입과 응답타입을 모두 타입으로 관리
+  - 인증토큰을 인터셉터에서 처리
+  - LoginForm 내부 useApiRequest 훅을 타입 추론으로 동작하도록 수정
+  - LoginForm useEffect 없이 값을 처리하도록 변경
+  - useSessionStorage 키 상수로 관리
+  - 인증 에러 공통 레벨에서 처리
+- 테마 상품 목록 패이지
+  - 선물 테마 섹션의 아이템을 클릭하면 테마 상품 목록 페이지로 이동
+  - `/api/themes/:themeId/info` api를 통해 선물 테마 섹션의 히어로 영역을 구현
+  - 404 에러 발생시 선물하기 홈 페이지로 이동
+  - `/api/themes/:themeId/products` api를 통해 상품 리스트 구현
+  - 무한 스크롤 기능 구현
+  - 상품 리스트가 없으면 빈 페이지를 보여줌
