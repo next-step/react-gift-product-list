@@ -1,15 +1,25 @@
 import styled from "@emotion/styled";
 import { FiPlus } from "react-icons/fi";
+import { z } from "zod";
 
 const STORAGE_KEY = "userInfo";
+
+const UserInfoSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  authToken: z.string(),
+});
 
 function userIdFromSession(): string | null {
   try {
     const userInfo = sessionStorage.getItem(STORAGE_KEY);
     if (!userInfo) return null;
-    const parsed = JSON.parse(userInfo);
 
-    return parsed.name;
+    const parsed = JSON.parse(userInfo);
+    const validated = UserInfoSchema.safeParse(parsed);
+
+    if (!validated.success) return null;
+    return validated.data.name;
   } catch {
     return null;
   }
