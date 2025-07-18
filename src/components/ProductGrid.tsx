@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react"
+import { useState, useMemo, useCallback } from "react"
 import Grid from "@/components/Grid"
 import Card from "@/components/Card"
 import Text from "@/components/Text"
@@ -13,7 +13,6 @@ import getRoute from "@/functions/getRoute"
 import useQueryState from "@/hooks/useQueryState"
 import Loading from "./PresentTheme/Loading"
 import useFetch from "@/hooks/useFetch"
-import { BADFAMILY } from "dns"
 
 const VISIBLE_COUNT = 6
 
@@ -39,7 +38,6 @@ interface ProductsResponse {
 }
 
 const ProductGrid = () => {
-
   const [showAll, setShowAll] = useState(false)
 
   const navigate = useNavigate()
@@ -59,13 +57,13 @@ const ProductGrid = () => {
     [isLoggedIn, navigate]
   )
   const baseUrl = import.meta.env.VITE_BASE_URL
-  const rankingUrlObj = new URL("/api/products/ranking", baseUrl);
-  rankingUrlObj.searchParams.set("targetType", targetType);
-  rankingUrlObj.searchParams.set("rankType",   rankType);
+  const rankingUrlObj = new URL("/api/products/ranking", baseUrl)
+  rankingUrlObj.searchParams.set("targetType", targetType)
+  rankingUrlObj.searchParams.set("rankType", rankType)
 
-const rankingUrl = rankingUrlObj.toString();
+  const rankingUrl = rankingUrlObj.toString()
   const { data: productsData, loading } = useFetch<ProductsResponse>(
- rankingUrl,
+    rankingUrl,
     {
       dependencies: [rankType, targetType],
       onSuccess: (data) => {
