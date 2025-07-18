@@ -62,7 +62,7 @@ export const OrderContent = () => {
     if (!productInfo) return
 
     if (data.receivers.length === 0) {
-      alert('받는 사람이 최소 1명 필요합니다.')
+      toast.warning('받는 사람이 최소 1명 필요합니다.')
       return
     }
 
