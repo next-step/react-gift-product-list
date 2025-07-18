@@ -6,9 +6,8 @@ import PresentCardStyle from "@/components/PresentCardStyle"
 import Layout from "@/components/Layout"
 import Blank from "@/components/Blank"
 import Column from "@/components/Column"
-import Trending from "./Trending"
-import { useState, useEffect } from "react"
-import axios from "axios"
+import Trending from "../components/Trending"
+import useFetch from "@/hooks/useFetch"
 import Loading from "@/components/PresentTheme/Loading"
 import ThemeNotFound from "@/components/PresentTheme/ThemeNotFound"
 
@@ -16,7 +15,6 @@ interface PresentItem {
   themeId: number
   name: string
   image: string
-  data: object
 }
 interface PresentCardProps {
   present: PresentItem
@@ -36,31 +34,21 @@ interface ThemesResponse {
   data: PresentItem[]
 }
 const PresentList = () => {
-  const [presents, setPresents] = useState<PresentItem[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-
-  useEffect(() => {
-    async function fetchData(): Promise<void> {
-      setLoading(true)
-      try {
-        console.log("fetchData start")
-        const response = await axios.get<ThemesResponse>(
-          "http://localhost:3000/api/themes"
-        )
-        console.log(response)
-        console.log(response.data)
-        console.log(response.data.data)
-        setPresents(response.data.data)
-      } catch (e) {
-        console.log(e)
-      }
-      setTimeout(() => {
-        setLoading(false)
-      }, 1500)
+  const baseUrl = import.meta.env.VITE_BASE_URL
+  const url  = new URL("/api/themes", baseUrl).toString();
+  const { data: themesData, loading } = useFetch<ThemesResponse>(
+    url,
+    {
+      onSuccess: (data) => {
+        console.log("Themes fetched:", data)
+      },
+      onError: (error) => {
+        console.log("Error fetching themes:", error)
+      },
     }
-    fetchData()
-  }, [])
+  )
 
+  const presents = themesData?.data || []
   if (loading) {
     return <Loading />
   }

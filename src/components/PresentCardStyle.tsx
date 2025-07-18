@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import theme from "@/styles/theme"
 
 const PresentCardStyle = styled.div`
   flex: 20%;
@@ -8,16 +9,13 @@ const PresentCardStyle = styled.div`
   cursor: pointer;
 
   img {
-    width: 100%;
-    height: 100%;
-    max-width: 3.125rem;
-    max-height: 3.125rem;
-    min-width: 3.125rem;
-    min-height: 3.125rem;
+    width: 3.125rem;
+    height: 3.125rem;
+
     border-radius: 18px;
     object-fit: cover;
     overflow: hidden;
-    background-color: rgb(243, 244, 245);
+    background-color: ${theme.colors.gray200};
   }
 `
 

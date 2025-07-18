@@ -15,7 +15,6 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@types/axios": "^0.9.36",
     "axios": "^1.10.0",
     "lottie-react": "^2.4.1",
     "react": "^19.1.0",

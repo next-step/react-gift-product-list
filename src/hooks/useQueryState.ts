@@ -11,7 +11,6 @@ export default function useQueryState<T extends string>(
     setParams(prev => {
       const next = new URLSearchParams(prev)
       next.set(key, v)
-      next.set(`${key}Reload`, Date.now().toString())
       return next
     }, { replace: true })
   }

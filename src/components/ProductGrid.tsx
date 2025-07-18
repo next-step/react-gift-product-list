@@ -11,8 +11,9 @@ import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants/routes"
 import getRoute from "@/functions/getRoute"
 import useQueryState from "@/hooks/useQueryState"
-import { useSearchParams } from "react-router-dom"
 import Loading from "./PresentTheme/Loading"
+import useFetch from "@/hooks/useFetch"
+import { BADFAMILY } from "dns"
 
 const VISIBLE_COUNT = 6
 
@@ -38,19 +39,15 @@ interface ProductsResponse {
 }
 
 const ProductGrid = () => {
-  const [showAll, setShowAll] = useState(false)
 
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<Error | null>(null)
+  const [showAll, setShowAll] = useState(false)
 
   const navigate = useNavigate()
   const { isLoggedIn } = useAuth()
-  const [params] = useSearchParams()
+
   const [rankType] = useQueryState<string>("rankType", "MANY_WISH_RECEIVE")
   const [targetType] = useQueryState<string>("targetType", "ALL")
-  const reloadKey = params.get("rankTypeReload") ?? "0"
-
+  console.log(rankType, targetType)
   const handleGoOrder = useCallback(
     (id: number) => {
       if (!isLoggedIn) {
@@ -61,40 +58,34 @@ const ProductGrid = () => {
     },
     [isLoggedIn, navigate]
   )
+  const baseUrl = import.meta.env.VITE_BASE_URL
+  const rankingUrlObj = new URL("/api/products/ranking", baseUrl);
+  rankingUrlObj.searchParams.set("targetType", targetType);
+  rankingUrlObj.searchParams.set("rankType",   rankType);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await fetch(
-          `http://localhost:3000/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
-        )
-        console.log(res)
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const json: ProductsResponse = await res.json()
-        setProducts(json.data)
-      } catch (err) {
-        setError(err as Error)
-      } finally {
-        setTimeout(() => {
-          setLoading(false)
-        }, 500)
-      }
+const rankingUrl = rankingUrlObj.toString();
+  const { data: productsData, loading } = useFetch<ProductsResponse>(
+ rankingUrl,
+    {
+      dependencies: [rankType, targetType],
+      onSuccess: (data) => {
+        console.log("Products fetched:", data)
+      },
+      onError: (error) => {
+        console.log("Error fetching products:", error)
+      },
     }
-
-    fetchProducts()
-  }, [rankType, targetType, reloadKey])
-
+  )
+  const products = productsData?.data || []
   const visibleProducts = useMemo(() => {
     const count = showAll ? products.length : VISIBLE_COUNT
     return products.slice(0, count)
   }, [products, showAll])
 
   if (loading) return <Loading />
-  if (error) return <p>Error: {error.message}</p>
+
   if (!products.length)
-    return <p style={{ textAlign: "center" }}>상품이 없습니다.</p>
+    return <p style={{ textAlign: "center" }}>상품 목록이 없습니다.</p>
 
   return (
     <>
