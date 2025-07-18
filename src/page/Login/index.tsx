@@ -52,7 +52,7 @@ const Button = styled.button`
 
 const LoginPage = () => {
   // TODO: const { login } = useUserInfo(); 이 코드를 LoginPage 에서 관리할지 useLogin.ts 에서 관리할지 고민중
-  // 
+  //
   // const { login } = useUserInfo();
   // const { postUserInfo, userInfos } = useLogin();
   const { postUserInfo } = useLogin();
