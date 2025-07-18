@@ -1,17 +1,19 @@
-import StyledTopestDiv from '@styles/StyledTopesDiv';
-import OrderCardTemplateContainer from '@components/Order/OrderCardTemplateContainer';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import StyledTopestDiv from '@src/styles/StyledTopesDiv';
+import OrderCardTemplateContainer from '@src/components/Order/OrderCardTemplate/OrderCardTemplateContainer';
 import { GOODS_DATA, type Goods } from '@assets/goodsData';
-import { Spacer } from '@styles/Spacer';
-import { StyledItemInfoContainer } from '@styles/Order/OrderContainer/StyledItemInfoContainer';
-import { StyledOrderButton } from '@styles/Order/OrderContainer/StyledOrderButton';
+import { Spacer } from '@src/styles/Spacer';
 import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
-import SenderContainer from './SenderContainer';
-import type { OrderFormValue } from '@/types/OrderFormValues';
-import RecipientsModalContainer from './RecipientsModalContainer';
+import SenderContainer from '../Sender/SenderContainer';
+import type { OrderFormValue } from '@src/types/OrderFormValues';
+import RecipientsModalContainer from '../RecipientsModal/RecipientsModalContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { orderSchema } from '../Schemas/orderSchmea';
+import { orderSchema } from '../../Schemas/orderSchmea';
+import {
+  StyledItemInfoContainer,
+  StyledOrderButton,
+} from '@src/components/Order/Container/StyledOrderContainer';
 
 const OrderContainer = () => {
   const [searchParams] = useSearchParams();
@@ -39,7 +41,6 @@ const OrderContainer = () => {
   });
   const {
     handleSubmit,
-    register,
     control,
     watch,
     setValue,

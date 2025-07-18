@@ -2,8 +2,8 @@
 
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
-import type { RecipientsModalFormData } from '@/types/RecipientsModalFormData'; // 타입 임포트 (RecipientsModal에서 정의한 폼 데이터 타입)
-import type { Recipient } from '@/types/Recipient';
+import type { RecipientsModalFormData } from '@src/types/RecipientsModalFormData'; // 타입 임포트 (RecipientsModal에서 정의한 폼 데이터 타입)
+import type { Recipient } from '@src/types/Recipient';
 
 // Props 타입 정의
 interface RecipientsItemProps {

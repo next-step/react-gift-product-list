@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import RankingSexTagItem from './RankingSexTagItem';
-import RankingAnyTagItem from './RankingAnyTagItem';
+import RankingSexTagItem from '../Item/RankingSexTagItem';
+import RankingAnyTagItem from '../Item/RankingAnyTagItem';
 
 const StyledRankingTagContainer = styled.div`
   width: 720px;

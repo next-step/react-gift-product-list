@@ -1,9 +1,9 @@
-import PresentThemeContainer from '@components/Home/PresentTheme/PresentThemeContainer';
-import PresentRankingContainer from '@components/Home/PresentRanking/PresentRankingContainer';
-import SelectFriendContainer from '@components/Home/SelectFriendContainer';
+import PresentThemeContainer from '@src/components/Home/PresentTheme/Container/PresentThemeContainer';
+import PresentRankingContainer from '@src/components/Home/PresentRanking/Cotainer/PresentRankingContainer';
+import SelectFriendContainer from '@src/components/Home/SelectFriend/SelectFriendContainer';
 import NavigationBar from '@components/Common/NavigationBar';
-import StyledTopestDiv from '@styles/StyledTopesDiv';
-import { Spacer } from '@styles/Spacer';
+import StyledTopestDiv from '@src/styles/StyledTopesDiv';
+import { Spacer } from '@src/styles/Spacer';
 
 function Home() {
   return (

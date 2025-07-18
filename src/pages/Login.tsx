@@ -1,9 +1,9 @@
 import LoginFormContainer from '@components/Login/LoginFormContainer';
 import NavigationBar from '@components/Common/NavigationBar';
-import { StyledLoginComponentContainerDiv } from '@styles/Login/StyledLoginComponentContainerDiv';
 import { useNavigate } from 'react-router-dom';
 import { URLS } from '@assets/urls';
-import StyledTopestDiv from '@styles/StyledTopesDiv';
+import StyledTopestDiv from '@src/styles/StyledTopesDiv';
+import { StyledLoginComponentContainerDiv } from '@src/components/Login/StyledLoginFormContainer';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

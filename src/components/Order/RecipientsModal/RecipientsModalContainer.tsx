@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useFieldArray, type Control, type FieldErrors } from 'react-hook-form';
-import type { OrderFormValue } from '@/types/OrderFormValues';
-import type { Recipient } from '@/types/Recipient';
+import type { OrderFormValue } from '@src/types/OrderFormValues';
+import type { Recipient } from '@src/types/Recipient';
 import { useState } from 'react';
 import RecipientsModal from './RecipientsModal';
 
