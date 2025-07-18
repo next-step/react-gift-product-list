@@ -9,6 +9,7 @@ import React, {
 interface User {
   email: string;
   name: string;
+  authToken: string;
 }
 
 interface AuthContextType {

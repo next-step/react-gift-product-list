@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'react-toastify';
+import { login as loginApi } from '@/api/index';
 
-// useLoginForm.ts 파일 상단에 추가
 export const MIN_PASSWORD_LENGTH = 8;
 
 interface UseLoginFormProps {
   onSuccess: () => void;
 }
-// 이메일 유효성 검사
+
 const validateEmail = (value: string) => {
   if (!value) return 'ID를 입력해주세요.';
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(value)) return 'ID는 이메일 형식이어야 해요.';
+  const emailRegex = /^[^\s@]+@kakao\.com$/;
+  if (!emailRegex.test(value)) return '@kakao.com 이메일 주소만 가능합니다.';
   return '';
 };
 
-// 비밀번호 유효성 검사
 const validatePassword = (value: string) => {
   if (!value) return 'PW를 입력해주세요.';
   if (value.length < MIN_PASSWORD_LENGTH)
@@ -65,13 +65,23 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
     setForm((prev) => ({ ...prev, pwError: validatePassword(form.password) }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isValidEmail && isValidPassword) {
-      const name = form.email.split('@')[0];
-      login({ email: form.email, name });
-      onSuccess();
+      try {
+        const res = await loginApi({
+          email: form.email,
+          password: form.password,
+        });
+        console.log('로그인 응답: ', res);
+        // 실제 데이터는 res.data에 있음!
+        const { email, name, authToken } = res.data;
+        login({ email, name, authToken });
+        onSuccess();
+      } catch (error) {
+        toast.error('네트워크 오류가 발생했습니다.');
+      }
     }
   };
 

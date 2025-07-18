@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { orderCardTemplates } from '@/data/ordercardtemplates';
-import { useParams } from 'react-router-dom';
-import { products } from '@/data/products';
-import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import ReceiverModal from '@/components/ReceiverModal';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchProductSummary } from '@/api/index';
+import { toast } from 'react-toastify';
+import { createOrder } from '@/api/index';
 
 const cards = orderCardTemplates;
 
@@ -164,10 +165,15 @@ const InputWrapper = styled.div`
 `;
 
 function OrderPage() {
-  const { productId } = useParams<{ productId: string }>();
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [message, setMessage] = useState('축하해요.');
-  const [sender, setSender] = useState('');
+
+  const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+  const [sender, setSender] = useState(userInfo.name || '');
+
+  const { productId } = useParams(); // URL에서 productId 추출
+  const navigate = useNavigate();
+  const [product, setProduct] = useState<ProductSummary | null>(null);
 
   type Receiver = {
     name: string;
@@ -175,15 +181,37 @@ function OrderPage() {
     quantity: number;
   };
 
+  type ProductSummary = {
+    id: number;
+    name: string;
+    brandName: string;
+    price: number;
+    imageURL: string;
+  };
+
   const [receivers, setReceivers] = useState<Receiver[]>([]);
 
   const [messageError, setMessageError] = useState('');
   const [senderError, setSenderError] = useState('');
 
-  const product = products.find((p) => p.id === Number(productId));
-  const price = product ? product.price.sellingPrice : 0;
+  const price = product ? product.price : 0;
 
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
+
+  useEffect(() => {
+    async function getProduct() {
+      try {
+        const res = await fetchProductSummary(Number(productId));
+        setProduct(res.data.data); // 실제 상품 정보는 res.data.data에 있음!
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message || '상품 정보를 불러올 수 없습니다.',
+        );
+        navigate('/'); // 홈으로 이동
+      }
+    }
+    getProduct();
+  }, [productId, navigate]);
 
   const validate = () => {
     let valid = true;
@@ -205,26 +233,54 @@ function OrderPage() {
     return valid;
   };
 
-  const navigate = useNavigate();
-
-  const handleOrder = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOrder = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (validate()) {
-      if (!product) return;
 
-      const totalQuantity = receivers.reduce(
-        (sum, receiver) => sum + Number(receiver.quantity),
-        0,
-      );
+    if (!validate()) return;
+    if (!product) return;
 
-      alert(
-        `주문이 완료되었습니다.
-상품명: ${product.name}
-구매 수량: ${totalQuantity}
-발신자 이름: ${sender}
-메시지: ${message}`,
-      );
+    // 받는 사람이 없으면 에러
+    if (receivers.length === 0) {
+      toast.error('받는 사람을 추가해주세요.');
+      return;
+    }
+
+    const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+    const authToken = userInfo.authToken;
+
+    console.log('전체 userInfo:', userInfo);
+    console.log('authToken 값:', authToken);
+
+    // receivers 배열의 필드명을 API 스펙에 맞게 변환
+    const orderData = {
+      productId: product.id,
+      message,
+      messageCardId: cards[selectedIdx].id,
+      ordererName: sender,
+      receivers: receivers.map((receiver) => ({
+        name: receiver.name,
+        phoneNumber: receiver.phone, // phone → phoneNumber로 변환
+        quantity: receiver.quantity,
+      })),
+    };
+
+    console.log('전송할 주문 데이터:', orderData);
+    console.log('authToken:', authToken);
+
+    try {
+      const response = await createOrder(orderData, authToken);
+      console.log('주문 성공:', response);
+      toast.success('주문이 완료되었습니다!');
       navigate('/');
+    } catch (error: any) {
+      console.error('주문 에러 상세:', error.response?.data);
+
+      if (error.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        toast.error(error.response?.data?.message || '주문에 실패했습니다.');
+      }
     }
   };
 
@@ -232,6 +288,7 @@ function OrderPage() {
     (sum, r) => sum + Number(r.quantity),
     0,
   );
+
   return (
     <>
       <Header />
@@ -465,10 +522,8 @@ function OrderPage() {
               <ProductImage src={product.imageURL} alt={product.name} />
               <ProductInfo>
                 <ProductName>{product.name}</ProductName>
-                <BrandName>{product.brandInfo.name}</BrandName>
-                <Price>
-                  상품가 {product.price.sellingPrice.toLocaleString()}원
-                </Price>
+                <BrandName>{product.brandName}</BrandName>
+                <Price>상품가 {product.price.toLocaleString()}원</Price>
               </ProductInfo>
             </ProductCard>
           </ProductSection>

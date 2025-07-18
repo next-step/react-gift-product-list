@@ -4,6 +4,8 @@ import { ROUTE_PATH } from '@/constants/routes';
 import useLoginForm from '../hooks/useLoginForm';
 import Input from '@/components/common/Input';
 import Header from '@/components/Header';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PageBackground = styled.div`
   height: 100vh;
@@ -81,6 +83,7 @@ function LoginPage() {
   return (
     <>
       <Header />
+      <ToastContainer position="top-center" autoClose={2000} />
       <PageBackground>
         <Card>
           <Title>kakao</Title>

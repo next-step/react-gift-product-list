@@ -10,7 +10,7 @@ const StyledButton = styled.button<{ active?: boolean }>`
 
   color: ${({ active }) => (active ? '#3182f6' : '#5a5a5a')};
   font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
-  font-size: 15px;
+  font-size: 14px;
 
   margin: auto;
 
@@ -24,7 +24,7 @@ const StyledButton = styled.button<{ active?: boolean }>`
     align-items: center;
     justify-content: center;
     margin-bottom: 4px;
-    font-size: 15px;
+    font-size: 13px;
     margin-left: auto;
     margin-right: auto;
   }
