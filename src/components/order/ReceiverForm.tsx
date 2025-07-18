@@ -36,20 +36,28 @@ export default function ReceiverForm({
         </EmptyWrapper>
       ) : (
         <TableWrapper>
-          <TableHeader>
-            <HeaderText>이름</HeaderText>
-            <HeaderText>전화번호</HeaderText>
-            <HeaderText>수량</HeaderText>
-          </TableHeader>
-          <TableBody>
+          <thead>
+            <tr>
+              <HeaderText>이름</HeaderText>
+              <HeaderText>전화번호</HeaderText>
+              <HeaderText>수량</HeaderText>
+            </tr>
+          </thead>
+          <tbody>
             {receiverList.map((r) => (
-              <React.Fragment key={r.phone}>
-                <BodyText>{r.name}</BodyText>
-                <BodyText>{r.phone}</BodyText>
-                <BodyText>{r.quantity}</BodyText>
-              </React.Fragment>
+              <tr key={r.phone}>
+                <td>
+                  <BodyText>{r.name}</BodyText>
+                </td>
+                <td>
+                  <BodyText>{r.phone}</BodyText>
+                </td>
+                <td>
+                  <BodyText>{r.quantity}</BodyText>
+                </td>
+              </tr>
             ))}
-          </TableBody>
+          </tbody>
         </TableWrapper>
       )}
       {isModalOpen && (
@@ -124,41 +132,26 @@ const EmptyText = styled.p`
   flex-direction: column;
 `;
 
-const TableWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+const TableWrapper = styled.table`
+  width: 100%;
+  border-collapse: collapse;
   border: 1px solid ${({ theme }) => theme.colors.gray[300]};
   border-radius: 8px;
   overflow: hidden;
-  box-sizing: border-box;
 `;
 
-const TableHeader = styled.table`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  padding: 12px;
-  background-color: ${({ theme }) => theme.colors.gray[100]};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray[300]};
-`;
-
-const HeaderText = styled.p`
+const HeaderText = styled.th`
   ${({ theme }) => theme.typography.label1Bold};
   color: ${({ theme }) => theme.colors.gray[900]};
-  margin: 0px;
+  background-color: ${({ theme }) => theme.colors.gray[100]};
+  padding: 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray[300]};
   text-align: left;
 `;
 
-const TableBody = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  padding: 12px;
-`;
-
-const BodyText = styled.p`
+const BodyText = styled.td`
   ${({ theme }) => theme.typography.label1Regular};
   color: ${({ theme }) => theme.colors.gray[900]};
-  margin: 0px;
-  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray[200]};
 `;
