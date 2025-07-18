@@ -8,7 +8,7 @@ import { ROUTE_PATH } from '@/routes/Router'
 const TopNavigationBar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isLoggedIn } = useUserContext()
+  const { user } = useUserContext()
 
   const handleGoBack = () => {
     if (window.history.length > 1) {
@@ -19,7 +19,7 @@ const TopNavigationBar: React.FC = () => {
   }
 
   const handleGoLogin = () => {
-    const targetPath = isLoggedIn ? ROUTE_PATH.MY : ROUTE_PATH.LOGIN
+    const targetPath = !!user ? ROUTE_PATH.MY : ROUTE_PATH.LOGIN
     if (location.pathname !== targetPath) navigate(targetPath)
   }
 

@@ -4,6 +4,7 @@ import Loading from '@/component/Loading/Loading'
 import * as S from './TrendingGiftRanking.styles'
 import { FilterGender, FilterType } from './TrendingGiftRankingFilter'
 import ProductCard from '@/component/ProductCard/ProductCard'
+import { ROUTE_PATH } from '@/routes/Router'
 import {
   useProductsRanking,
   type Gender,
@@ -37,7 +38,7 @@ const TrendingGiftRanking = () => {
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const handleGenderClick = (gender: Gender) => {
+  const handleGenderSelect = (gender: Gender) => {
     const params = new URLSearchParams(searchParams)
     params.set('gender', gender)
     if (selectedType) params.set('type', selectedType)
@@ -53,7 +54,7 @@ const TrendingGiftRanking = () => {
 
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product)
-    navigate(`/order?productId=${product.id}`)
+    navigate(ROUTE_PATH.ORDER.replace(':productId', String(product.id)))
   }
 
   const handleToggleView = () => {
@@ -90,11 +91,10 @@ const TrendingGiftRanking = () => {
             icon={icon}
             label={label}
             isActive={selectedGender === label}
-            onClick={handleGenderClick}
+            onClick={handleGenderSelect}
           />
         ))}
       </S.GenderTab>
-
       <S.TypeTab>
         {typeList.map((label) => (
           <FilterType
@@ -107,7 +107,7 @@ const TrendingGiftRanking = () => {
       </S.TypeTab>
 
       {loading && <Loading />}
-      {error && <S.ErrorText>에러: {error}</S.ErrorText>}
+      {error && <S.ErrorText>{error}</S.ErrorText>}
 
       {!loading && !error && products.length === 0 && (
         <S.NoProduct>상품이 없습니다.</S.NoProduct>
