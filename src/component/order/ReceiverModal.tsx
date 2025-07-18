@@ -16,12 +16,12 @@ import {
 import { useFieldArray, useForm } from 'react-hook-form';
 import { ButtonSpace, CancleButton, Hr1Gray, ReceiverOne, ReceiverTitle, SubmitButton, XButton } from './ReceiverModal.styled';
 
-type Props = {
+type ModalStateProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const ReceiverModal = ({ isOpen, onClose }: Props) => {
+const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
   const { setReceivers } = useReceiver();
 
     type ReceiverFormValue = {
@@ -74,12 +74,12 @@ const ReceiverModal = ({ isOpen, onClose }: Props) => {
               type="button"
               onClick={() => append({ name: '', phone: '', count: 1 })}
             >
-              추가하기
+              <MiniText>추가하기</MiniText>
             </SimpleButton>
           </div>
           <ScrollBox>
-            {fields.map((_, i) => (
-              <div key={i}>
+            {fields.map((field, i) => (
+              <div key={field.id}>
                 {i >= 1 && <Hr1Gray />}
                 <ReceiverOne>
                   <SubTitle>
@@ -119,7 +119,7 @@ const ReceiverModal = ({ isOpen, onClose }: Props) => {
                           message: '올바른 전화번호 형식이 아니에요.',
                         },
                         validate: (value) => {
-                          const phones = getValues('receiver').map((r: any) => r.phone);
+                          const phones = getValues('receiver').map((r) => r.phone);
                           const duplicates = phones.filter((phone: string) => phone === value);
                           if (duplicates.length > 1) {
                             return '중복된 전화번호가 있습니다';
