@@ -1,34 +1,17 @@
-import { getFromUrl } from '@/utils/getFromUrl';
 import { GiftThemeSection, Spinner, SpinnerWrapper, ThemeGrid, ThemeImage, ThemeItem, ThemeLabel } from './GiftTheme.styled';
-import { useEffect, useState } from 'react';
 import { EmptyDiv24h, Title, TitleDiv } from '@/styles/Common.styled';
+import useFetchFromUrl from '@/hook/useFetchFromUrl';
 const themeUrl = 'http://localhost:3000/api/themes'
 
 
 
 const GiftThemeList = () => {
-  const [Themes, setThemes] = useState([]);
-  const [Loding, setLoding] = useState(true);
-  const [Error, setError] = useState(false);
+  const { item, loding, error } = useFetchFromUrl(themeUrl);
 
-  useEffect(() => {
-    const fetchTheme = async () => {
-      const theme = await getFromUrl(themeUrl);
-      if (theme) {
-        setThemes(theme.data);
 
-      } else {
-        setError(true);
-      }
-      setLoding(false);
-    };
+  if (error) return null
 
-    fetchTheme();
-  }, [])
-
-  if (Error) return null
-
-  if (Loding) return (
+  if (loding) return (
     <SpinnerWrapper>
       <Spinner />
     </SpinnerWrapper>
@@ -36,12 +19,12 @@ const GiftThemeList = () => {
 
   return (
     <ThemeGrid>
-      {Themes.map(({ themeId, name, image }) => (
-        
-          <ThemeItem key={themeId} >
-            <ThemeImage src={image} alt={name} />
-            <ThemeLabel>{name}</ThemeLabel>
-          </ThemeItem>
+      {item.map(({ themeId, name, image }) => (
+
+        <ThemeItem key={themeId} >
+          <ThemeImage src={image} alt={name} />
+          <ThemeLabel>{name}</ThemeLabel>
+        </ThemeItem>
       ))}
     </ThemeGrid>
   )
@@ -53,10 +36,10 @@ const GiftTheme = () => {
 
   return (
     <GiftThemeSection>
-      <EmptyDiv24h/>
+      <EmptyDiv24h />
       <TitleDiv><Title>선물 테마</Title></TitleDiv>
       <GiftThemeList />
-      <EmptyDiv24h/>
+      <EmptyDiv24h />
     </GiftThemeSection>
   );
 };

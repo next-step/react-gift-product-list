@@ -111,7 +111,7 @@ export const Price = styled.p`
   font-weight: bold;
 `;
 
-export const LoadMoreButtonDiv = styled.button`
+export const LoadMoreButtonDiv = styled.div`
   width: 100%;
   display: flex;
   -webkit-box-pack: center;

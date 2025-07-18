@@ -5,8 +5,7 @@ export async function getFromUrl(url: string) {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error('Error:', error);
-    return null;
+    throw new Error(`${url} 접근 실패,  ${(error as Error).message}`);
   }
 }
 

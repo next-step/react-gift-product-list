@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     BrandImage,
     LoadMoreButton,
@@ -12,10 +12,10 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import type { ProductItem } from '@/type/product';
-import { getFromUrl } from '@/utils/getFromUrl';
 import { Spinner, SpinnerWrapper } from './GiftTheme.styled';
 import type { RankType, TargetType } from '@/type/giftRanking';
 import { CentorAlignDiv240, EmptyDiv16h } from '@/styles/Common.styled';
+import useFetchFromUrl from '@/hook/useFetchFromUrl';
 
 const baseRankingUrl = 'http://localhost:3000/api/products/ranking'
 
@@ -29,29 +29,14 @@ const GIFTLENGTH = 6;
 
 
 const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
-    const [Ranking, setThemes] = useState<ProductItem[]>([]);
-    const [Loding, setLoding] = useState(true);
-    const [Error, setError] = useState(false);
-
-    useEffect(() => {
-        const fetchTheme = async () => {
-            const rankingUrl = `${baseRankingUrl}?targetType=${targetType}&rankType=${rankType}`
-            const Ranking = await getFromUrl(rankingUrl);
-            if (Ranking) {
-                setThemes(Ranking.data);
-
-            } else {
-                setError(true);
-            }
-            setLoding(false);
-        };
-
-        fetchTheme();
-    }, [targetType, rankType])
-
+    const RankingUrl = `${baseRankingUrl}?targetType=${targetType}&rankType=${rankType}`
+    const [isExpanded, setIsExpanded] = useState(false);
+    const {item ,loding,error} = useFetchFromUrl(RankingUrl);
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    const visibleCount = isExpanded ? item.length : GIFTLENGTH;
+    const shownProducts = (item as ProductItem[]).slice(0, visibleCount);
 
     const handleClickProduct = (item: ProductItem) => {
         if (!user) {
@@ -61,20 +46,15 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
         }
     };
 
-    const [isExpanded, setIsExpanded] = useState(false);
 
-    const visibleCount = isExpanded ? Ranking.length : GIFTLENGTH;
+    if (error) return null
 
-    const shownProducts = Ranking.slice(0, visibleCount);
-
-    if (Error) return null
-
-    if (Loding) return (
+    if (loding) return (
         <SpinnerWrapper>
             <Spinner />
         </SpinnerWrapper>
     )
-    if (Ranking.length === 0) return (
+    if (item.length === 0) return (
         <CentorAlignDiv240>
             <p>상품이 없습니다</p>
         </CentorAlignDiv240>
@@ -99,7 +79,7 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
             </ProductGrid>
             <EmptyDiv16h />
             <LoadMoreButtonDiv>
-                {Ranking.length > GIFTLENGTH && (
+                {item.length > GIFTLENGTH && (
                     <LoadMoreButton onClick={() => setIsExpanded((prev) => !prev)}>
                         <p>
                         {isExpanded ? '접기' : '더보기'}

@@ -74,7 +74,7 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
               type="button"
               onClick={() => append({ name: '', phone: '', count: 1 })}
             >
-              추가하기
+              <MiniText>추가하기</MiniText>
             </SimpleButton>
           </div>
           <ScrollBox>
@@ -119,7 +119,7 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
                           message: '올바른 전화번호 형식이 아니에요.',
                         },
                         validate: (value) => {
-                          const phones = getValues('receiver').map((r: any) => r.phone);
+                          const phones = getValues('receiver').map((r) => r.phone);
                           const duplicates = phones.filter((phone: string) => phone === value);
                           if (duplicates.length > 1) {
                             return '중복된 전화번호가 있습니다';
