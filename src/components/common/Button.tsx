@@ -21,7 +21,7 @@ const Button = ({ variant, size, fullWidth, children, ...props }: ButtonProps) =
 const Style = styled.button<{
   variant?: ButtonVariant;
   size?: ButtonSize;
-  fullWidth?: Boolean;
+  fullWidth?: boolean;
 }>`
   display: flex;
   justify-content: center;
