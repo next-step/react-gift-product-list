@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { toast } from 'react-toastify';
 
 import MobileLayout from '@/layouts/MobileLayout';
 import NavBar from '@/components/NavBar';
@@ -17,6 +18,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { isBlank } from '@/utils/validation';
 import { cardTemplates } from '@/mock/cardTemplates';
 import type { Receiver } from '@/types/order';
+import { createOrder } from '@/api/order';
 
 const Wrapper = styled.div`
   display: flex;
@@ -65,17 +67,50 @@ export default function OrderPage() {
   if (loading) return <div>로딩 중...</div>;
   if (!product) return <div>상품을 찾을 수 없습니다.</div>;
 
-  const onSubmit = (data: FormValues) => {
-    window.alert(
-      [
-        '주문이 완료되었습니다.',
-        `상품명: ${product.name}`,
-        `구매 수량: ${data.qty}`,
-        `발신자 이름: ${data.sender}`,
-        `메시지: ${data.message || '(없음)'}`,
-      ].join('\n'),
-    );
-    navigate('/');
+  const onSubmit = async (data: FormValues) => {
+    if (receivers.length === 0) {
+      toast.error('받는 사람을 한 명 이상 등록해주세요.');
+      return;
+    }
+
+    try {
+      await createOrder(
+        {
+          productId: product.id,
+          message: data.message,
+          messageCardId: defaultTpl.id.toString(),
+          ordererName: data.sender,
+          receivers: receivers.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.qty,
+          })),
+        },
+        user?.authToken ?? '',
+      );
+
+      toast.success(
+        <div>
+          주문이 완료되었습니다.
+          <br />
+          상품명: {product.name}
+          <br />
+          구매 수량: {totalQty}
+          <br />
+          발신자 이름: {data.sender}
+          <br />
+          메시지: {data.message || '(없음)'}
+        </div>,
+      );
+      navigate('/');
+    } catch (err: any) {
+      if (err.message === '401') {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        toast.error(err.message);
+      }
+    }
   };
 
   const totalQty = receivers.reduce((sum, r) => sum + r.qty, 0);
