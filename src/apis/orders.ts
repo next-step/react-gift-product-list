@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 interface Receiver {
   name: string;
   phoneNumber: string;
@@ -18,32 +20,23 @@ export async function postOrder(
 ): Promise<void> {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-  if (authToken) {
-    headers.Authorization = authToken;
-  }
-
-  const res = await fetch(`${BASE_URL}/api/order`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(payload),
-  });
-
-  if (res.status === 401) {
-    console.error('인증 오류');
-    throw new Error('Unauthorized');
-  }
-
-  if (!res.ok) {
-    let errorData = null;
-    try {
-      errorData = await res.json();
-      console.error('주문 API 에러 응답:', errorData);
-    } catch {
-      console.error('주문 API 에러 응답 파싱 실패');
+  try {
+    await axios.post(`${BASE_URL}/api/order`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authToken,
+      },
+    });
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      console.error('인증 오류');
+      throw new Error('Unauthorized');
     }
+
+    const errorData = error.response?.data;
+
+    console.error('주문 API 에러 응답:', errorData);
+
     throw new Error(
       errorData?.data?.message || errorData?.message || '주문에 실패했습니다.'
     );

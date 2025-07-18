@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -12,20 +14,18 @@ export interface LoginResponse {
 }
 
 export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
-  const response = await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const resJson = await response.json();
-
-  if (!response.ok) {
-    const error = new Error('Login failed');
-    (error as any).status = response.status;
-    (error as any).data = resJson;
-    throw error;
+  try {
+    const response = await axios.post<LoginResponse>('/api/login', payload);
+    return response.data;
+  } catch (error: any) {
+    const customError = new Error('Login failed');
+    if (error.response) {
+      (customError as any).status = error.response.status;
+      (customError as any).data = error.response.data;
+    } else {
+      (customError as any).status = 500;
+      (customError as any).data = { message: 'Unknown error' };
+    }
+    throw customError;
   }
-
-  return resJson;
 }
