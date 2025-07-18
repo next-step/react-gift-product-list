@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import HomePage from "@/pages/home";
 import LoginPage from "@/pages/login";
 import NotFoundPage from "@/pages/404";
@@ -7,10 +7,21 @@ import AuthGuard from "@/routes/guards/AuthGuard";
 import MyPage from "@/pages/my";
 import OrderPage from "@/pages/order";
 import { ROUTES } from "@/constants/routes";
+import { useEffect } from "react";
+import { setNavigate } from "@/lib/navigation";
+
+function InitNavigateSetter() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    setNavigate(navigate);
+  }, [navigate]);
+  return null;
+}
 
 export default function Router() {
   return (
     <BrowserRouter>
+      <InitNavigateSetter />
       <NavigationBar />
       <Routes>
         <Route path={ROUTES.HOME} element={<HomePage />} />

@@ -5,10 +5,12 @@ export const ERROR_MESSAGES = {
     PW_EMPTY: "비밀번호를 입력해주세요.",
     PW_TOO_SHORT: (min: number) =>
       `비밀번호는 최소 ${min}자 이상이어야 합니다.`,
+    SUCCESS: "로그인에 성공했습니다.",
   },
 
   SYSTEM: {
     USER_LOAD_ERROR: "유저 정보 로드 중 오류가 발생했습니다.",
+    UNKNOWN: "알 수 없는 오류가 발생했습니다.",
   },
 
   VALIDATE: {

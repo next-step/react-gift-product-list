@@ -38,7 +38,7 @@ export const RankingCard = ({
     <Card onClick={handleClick}>
       <ImageWrapper>
         <ProductImage src={imageURL} alt={name} />
-        {rank <= 3 && <RankBadge>{rank}위</RankBadge>}
+        <RankBadge rank={rank}>{rank}위</RankBadge>
       </ImageWrapper>
 
       <BrandInfo>
@@ -73,11 +73,18 @@ const ProductImage = styled.img`
   object-fit: cover;
 `;
 
-const RankBadge = styled.div`
+interface RankBadgeProps {
+  rank: number;
+}
+
+const RankBadge = styled.div<RankBadgeProps>`
   position: absolute;
   top: 8px;
   left: 8px;
-  background-color: ${({ theme }) => theme.colors.semantic.status.critical};
+  background-color: ${({ rank, theme }) =>
+    rank <= 3
+      ? theme.colors.semantic.status.critical
+      : theme.colors.colorScale.gray.gray700};
   padding: 2px 6px;
   border-radius: 999px;
   font-size: 12px;

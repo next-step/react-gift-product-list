@@ -8,39 +8,42 @@ export type SenderInfoHandle = {
 
 type Props = {
   onChange?: (name: string) => void;
+  initialValue?: string;
 };
 
-const SenderInfo = forwardRef<SenderInfoHandle, Props>(({ onChange }, ref) => {
-  const [sender, setSender] = useState("");
-  const [error, setError] = useState("");
+const SenderInfo = forwardRef<SenderInfoHandle, Props>(
+  ({ onChange, initialValue = "" }, ref) => {
+    const [sender, setSender] = useState(initialValue);
+    const [error, setError] = useState("");
 
-  const handleChange = (value: string) => {
-    setSender(value);
-    setError("");
-    onChange?.(value);
-  };
+    const handleChange = (value: string) => {
+      setSender(value);
+      setError("");
+      onChange?.(value);
+    };
 
-  useImperativeHandle(ref, () => ({
-    validate: () => {
-      const msg = validateSenderName(sender);
-      setError(msg);
-      return msg === "";
-    },
-  }));
+    useImperativeHandle(ref, () => ({
+      validate: () => {
+        const msg = validateSenderName(sender);
+        setError(msg);
+        return msg === "";
+      },
+    }));
 
-  return (
-    <Container>
-      <Title>보내는 사람</Title>
-      <Input
-        placeholder="이름을 입력하세요."
-        value={sender}
-        onChange={(e) => handleChange(e.target.value)}
-      />
-      {error && <ErrorText>{error}</ErrorText>}
-      <Note>* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.</Note>
-    </Container>
-  );
-});
+    return (
+      <Container>
+        <Title>보내는 사람</Title>
+        <Input
+          placeholder="이름을 입력하세요."
+          value={sender}
+          onChange={(e) => handleChange(e.target.value)}
+        />
+        {error && <ErrorText>{error}</ErrorText>}
+        <Note>* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.</Note>
+      </Container>
+    );
+  },
+);
 
 export default SenderInfo;
 
