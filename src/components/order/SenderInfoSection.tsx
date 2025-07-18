@@ -52,7 +52,6 @@ const Notice = styled.div`
   color: ${({ theme }) => theme.colors.gray600};
 `;
 
-
 const Input = styled.input`
   width: 100%;
   height: 40px;
@@ -74,5 +73,3 @@ const ErrorMessage = styled.div`
   text-align: left;
   margin-top: 4px;
 `;
-
-

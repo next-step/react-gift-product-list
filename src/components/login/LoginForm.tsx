@@ -7,8 +7,12 @@ import {
   ErrorMessage,
   LoginButton,
 } from "./LoginFormStyles";
+import { postLogin } from "@/api/auth";
+import { userStorage } from "@/utils/userStorage";
+import { toast } from "react-toastify";
+
 type Props = {
-  onLoginSuccess: (email: string) => void;
+  onLoginSuccess: (email: string, token: string) => void; 
 };
 
 export const LoginForm = ({ onLoginSuccess }: Props) => {
@@ -17,11 +21,15 @@ export const LoginForm = ({ onLoginSuccess }: Props) => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const validateEmail = (email: string) => {
+  const getValidateEmail = (email: string) => {
     if (!email) return "ID를 입력해주세요.";
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regex.test(email)) return "ID는 이메일 형식으로 입력해주세요.";
     return "";
+  };
+
+  const isKakaoEmail = (email: string) => {
+    return email.endsWith("@kakao.com");
   };
 
   const validatePassword = (password: string) => {
@@ -43,18 +51,33 @@ export const LoginForm = ({ onLoginSuccess }: Props) => {
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === "email") setEmailError(validateEmail(value));
+    if (name === "email") setEmailError(getValidateEmail(value));
     if (name === "password") setPasswordError(validatePassword(value));
   };
 
-  const handleSubmit = () => {
-    const emailErr = validateEmail(email);
+  const handleSubmit = async () => {
+    const emailErr = getValidateEmail(email);
     const pwErr = validatePassword(password);
     setEmailError(emailErr);
     setPasswordError(pwErr);
 
-    if (!emailErr && !pwErr) {
-      onLoginSuccess(email); 
+    if (emailErr || pwErr) return;
+
+    if (!isKakaoEmail(email)) {
+      toast.error("@kakao.com 이메일 주소만 가능합니다.");
+      return;
+    }
+
+    try {
+      const data = await postLogin({ email, password });
+      userStorage.set(data);
+      toast.success("로그인 성공!");
+
+      onLoginSuccess(data.email, data.authToken);
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.data?.message || "로그인에 실패했습니다.";
+      toast.error(message);
     }
   };
 

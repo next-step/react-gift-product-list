@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import * as S from "@/styles/OrderPageStyles";
-import { useEffect, useState } from "react";
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 
 import { orderFormSchema } from "@/validations/orderSchema";
 import type { OrderFormValues } from "@/validations/orderSchema";
-
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Navigation } from "@/components/header/Navigation";
@@ -18,19 +18,30 @@ import ReceiverTable from "@/components/order/ReceiverTable";
 import OrderSummary from "@/components/order/OrderSummary";
 import OrderButton from "@/components/order/OrderButton";
 
-import { rankingList } from "@/mock/rankingList";
+import { getProductSummary } from "@/api/product";
+import type { ProductSummary } from "@/api/product";
+import { postCreateOrder } from "@/api/orderapi";
+import { useAuth } from "@/contexts/AuthContext";
+import { PATH } from "@/constants/path"; 
 
 const OrderPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const product = rankingList.find((item) => item.id === Number(id));
+  const [product, setProduct] = useState<ProductSummary | null>(null);
+  const [isReceiverModalOpen, setReceiverModalOpen] = useState(false);
 
-  if (!product) return <Navigate to="/not-found" replace />;
+  const { token, isInitialized, isLoggedIn, user } = useAuth();
+  if (!isInitialized) return null;
+
+  if (!isLoggedIn) {
+    navigate(PATH.LOGIN, { replace: true });
+    return null;
+  }
 
   const methods = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
-      senderName: "",
+      senderName: user?.email.split("@")[0] ?? "",
       message: "",
       selectedCardId: null,
       receivers: [],
@@ -39,32 +50,56 @@ const OrderPage = () => {
   });
 
   const { handleSubmit, watch, setValue } = methods;
-
   const receivers = watch("receivers") ?? [];
 
-  const [isReceiverModalOpen, setReceiverModalOpen] = useState(false);
-
-  const totalQuantity = receivers.reduce((sum, r) => sum + r.quantity, 0);
-
-  const totalAmount = product.price.sellingPrice * totalQuantity;
+  const totalQuantity = receivers.reduce((sum, r) => sum + (r.quantity ?? 0), 0);
+  const totalAmount = (product?.price.sellingPrice ?? 0) * totalQuantity;
 
   const onReceiverComplete = (data: OrderFormValues["receivers"]) => {
     setValue("receivers", data);
   };
 
-  const onValid = (data: OrderFormValues) => {
-    const qty = data.receivers.reduce((sum, r) => sum + r.quantity, 0);
-    alert(
-      `주문 완료!\n상품명: ${product?.name}\n수량: ${qty}개\n보낸 사람: ${data.senderName}\n메시지: ${data.message}`
-    );
-    navigate("/", { replace: true });
+  const onValid = async (data: OrderFormValues) => {
+    if (!product) return;
+
+    if (!token) {
+      toast.error("로그인이 필요합니다.");
+      navigate(PATH.LOGIN, { replace: true }); 
+      return;
+    }
+
+    try {
+      await postCreateOrder(data, product.id, token);
+      toast.success("주문이 성공적으로 완료되었습니다!");
+      navigate(PATH.HOME, { replace: true }); 
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.data?.message || "주문 요청 중 오류가 발생했습니다.";
+      toast.error(msg);
+    }
   };
 
-  useEffect(() => {
-    if (!product) {
-      navigate("/not-found", { replace: true });
+  const fetchProduct = useCallback(async () => {
+    if (!id || isNaN(Number(id))) {
+      toast.error("잘못된 상품 ID입니다.");
+      navigate(PATH.NOT_FOUND, { replace: true });
+      return;
     }
-  }, [product, navigate]);
+
+    try {
+      const data = await getProductSummary(Number(id));
+      setProduct(data);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.data?.message || "상품 정보를 불러오지 못했습니다.";
+      toast.error(msg);
+      navigate(PATH.NOT_FOUND, { replace: true }); 
+    }
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   if (!product) return null;
 
@@ -91,11 +126,11 @@ const OrderPage = () => {
                     type="button"
                     onClick={() => setReceiverModalOpen(true)}
                   >
-                    {watch("receivers").length > 0 ? "수정" : "추가"}
+                    {receivers.length > 0 ? "수정" : "추가"}
                   </S.AddReceiverButton>
                 </S.SectionHeader>
 
-                {watch("receivers").length === 0 ? (
+                {receivers.length === 0 ? (
                   <S.EmptyBox>
                     <S.EmptyText>
                       받는 사람이 없습니다.
@@ -132,4 +167,3 @@ const OrderPage = () => {
 };
 
 export default OrderPage;
-
