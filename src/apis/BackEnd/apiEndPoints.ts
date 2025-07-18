@@ -19,9 +19,9 @@ const THEME_ENTRIES = (() => {
   const BASE = `${PROTOCOL}://${ENDPOINT}/${API_SECTIONS.THEME}`;
   return {
     BASE,
-    DETAIL: (themeId: number) => `${BASE}/${themeId}`,
-    INFO: (themeId: number) => `${BASE}/${themeId}/info`,
-    PRODUCTS: (themeId: number) => `${BASE}/${themeId}/products`
+    DETAIL: (themeId: string) => `${BASE}/${themeId}`,
+    INFO: (themeId: string) => `${BASE}/${themeId}/info`,
+    PRODUCTS: (themeId: string) => `${BASE}/${themeId}/products`
   };
 })();
 
@@ -30,13 +30,13 @@ const PRODUCT_ENTRIES = (() => {
   return {
     BASE,
     INFO: {
-      GENERAL: (productId: number) => `${BASE}/${productId}`,
-      DETAIL: (productId: number) => `${BASE}/${productId}/detail`
+      GENERAL: (productId: string) => `${BASE}/${productId}`,
+      DETAIL: (productId: string) => `${BASE}/${productId}/detail`
     },
-    WISH: (productId: number) => `${BASE}/${productId}/wish`,
-    HIGHLIGHT_REVIEW: (productId: number) =>
+    WISH: (productId: string) => `${BASE}/${productId}/wish`,
+    HIGHLIGHT_REVIEW: (productId: string) =>
       `${BASE}/${productId}/highlight-review`,
-    SUMMARY: (productId: number) => `${BASE}/${productId}/summary`,
+    SUMMARY: (productId: string) => `${BASE}/${productId}/summary`,
     RANKING: `${BASE}/ranking`
   };
 })();

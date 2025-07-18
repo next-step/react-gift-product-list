@@ -1,16 +1,16 @@
 import styled from "@emotion/styled";
-import { productMockData } from "@src/mock/productMockData";
 import theme from "@src/styles/kakaoTheme";
+import { type ProductData } from "@src/pages/OrderPage";
 
-function ProductCard() {
+function ProductCard({ productData }: { productData: ProductData }) {
   return (
     <ProductCardWrapper>
-      <Image src={productMockData.imageURL} alt="image" />
+      <Image src={productData.imageURL} alt="image" />
       <Description>
-        <ProductName>{productMockData.name}</ProductName>
-        <BrandName>{productMockData.brandInfo.name}</BrandName>
+        <ProductName>{productData.name}</ProductName>
+        <BrandName>{productData.brandName}</BrandName>
         <Price>
-          상품가 <strong>{productMockData.price.sellingPrice}원</strong>
+          상품가 <strong>{productData.price}원</strong>
         </Price>
       </Description>
     </ProductCardWrapper>

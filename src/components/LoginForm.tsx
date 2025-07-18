@@ -1,9 +1,12 @@
 import styled from "@emotion/styled";
+import { LOGIN_CODE, postLogin } from "@src/apis/BackEnd/apiList";
 import UserContext from "@src/contexts/UserContext";
+import usePostState from "@src/hooks/usePostState";
 import theme from "@src/styles/kakaoTheme";
 import { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 type LoginFormData = {
   email: string;
@@ -34,22 +37,44 @@ function LoginForm() {
   const emailValue = watch("email");
   const passwordValue = watch("password");
 
+  const { status, result, error, post } = usePostState(postLogin);
+
   const nagivateToRedirectionTarget = () => {
     navigate(redirectPath ? decodeURIComponent(redirectPath) : "/");
   };
 
-  const handleLogin = (data: LoginFormData) => {
-    userContext?.valid.setValue(true);
-    userContext?.email.setValue(data.email);
-    userContext?.user.setValue(data.email.split("@")[0]);
-    nagivateToRedirectionTarget();
+  const handleLogin = async (data: LoginFormData) => {
+    post(data.email, data.password);
   };
 
   useEffect(() => {
-    if (userContext?.valid.value) {
+    if (status === "pending") return;
+
+    if (status === "error") {
+      if (error?.status === LOGIN_CODE.WRONG_FORMAT) {
+        toast(error.message, {
+          type: "error",
+          hideProgressBar: true,
+          position: "bottom-center"
+        });
+      }
+      return;
+    }
+
+    if (status === "done") {
+      const authData = result;
+      userContext?.authToken.setValue(authData!.data.authToken);
+      userContext?.email.setValue(authData!.data.email);
+      userContext?.user.setValue(authData!.data.name);
       nagivateToRedirectionTarget();
     }
-  }, [userContext?.valid.value]);
+  }, [status]);
+
+  useEffect(() => {
+    if (userContext?.authToken.value) {
+      nagivateToRedirectionTarget();
+    }
+  }, [userContext?.authToken.value]);
 
   return (
     <InputForm onSubmit={handleSubmit(handleLogin)}>
@@ -97,6 +122,7 @@ function LoginForm() {
       >
         로그인
       </LoginButton>
+      <ToastContainer />
     </InputForm>
   );
 }

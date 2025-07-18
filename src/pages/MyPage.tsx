@@ -14,13 +14,13 @@ function MyPage() {
   };
 
   useEffect(() => {
-    if (!userContext?.valid.value) {
+    if (!userContext?.authToken.value) {
       redirectLogin(PATH.MY);
     }
-  }, [userContext?.valid.value]);
+  }, [userContext?.authToken.value]);
 
   const handleLogout = () => {
-    userContext?.valid.setValue(false);
+    userContext?.authToken.setValue(null);
     userContext?.email.setValue(null);
     userContext?.user.setValue(null);
   };
