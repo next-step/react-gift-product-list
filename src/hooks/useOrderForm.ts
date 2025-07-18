@@ -33,6 +33,22 @@ export function useOrderForm(
   const { user } = useAuth()
   const navigate = useNavigate()
 
+  const orderSuccessMessage = (data: FormValues) => {
+    alert(`주문이 완료되었습니다.
+      상품명: ${product.name}
+      구매 수량: ${totalQuantity}
+      발신자 이름: ${data.sender}
+      메시지: ${data.message}`)
+  }
+
+  const orderSuccess = () => {
+    reset()
+    setSelectedCard(cardMock[0])
+    setValue('message', cardMock[0].defaultTextMessage)
+    setFinalReceivers([])
+    navigate('/')
+  }
+
   const onSubmit = async (data: FormValues) => {
     try {
       await axios.post(
@@ -54,16 +70,8 @@ export function useOrderForm(
           },
         }
       )
-      alert(`주문이 완료되었습니다.
-        상품명: ${product.name}
-        구매 수량: ${totalQuantity}
-        발신자 이름: ${data.sender}
-        메시지: ${data.message}`)
-      reset()
-      setSelectedCard(cardMock[0])
-      setValue('message', cardMock[0].defaultTextMessage)
-      setFinalReceivers([])
-      navigate('/')
+      orderSuccessMessage(data)
+      orderSuccess()
     } catch (error) {
       if (error instanceof axios.AxiosError) {
         const status = error.response?.status
