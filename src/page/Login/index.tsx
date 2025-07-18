@@ -65,9 +65,11 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!username.isValid || !password.isValid) return;
-    postUserInfo({ username, password });
+    const isSuccess = await postUserInfo({ username, password });
     // login(userInfos.name, userInfos.email, userInfos.token);
-    navigate(ROUTES.MY, { replace: true });
+    if (isSuccess) {
+      navigate(ROUTES.MY, { replace: true });
+    }
   };
 
   return (
