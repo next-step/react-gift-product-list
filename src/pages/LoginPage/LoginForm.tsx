@@ -19,15 +19,17 @@ const LoginForm = () => {
     isValid,
   } = useLoginForm();
 
-  const handleLogin = () => {
-    login({
+  const handleLogin = async () => {
+  try {
+    await login({
       email,
       pw: password,
     });
 
     const redirectTo = location.state?.from?.pathname || '/';
     navigate(redirectTo, { replace: true });
-  };
+  } catch (error) {}
+};
 
   return (
     <S.Form>
