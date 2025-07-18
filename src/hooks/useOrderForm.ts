@@ -69,7 +69,7 @@ export function useOrderForm(
         const status = error.response?.status
         const message = error.response?.data.data.message || '주문 실패'
 
-        if (status === 401) {
+        if (status === axios.HttpStatusCode.Unauthorized) {
           navigate('/login')
         } else {
           toast.error(
