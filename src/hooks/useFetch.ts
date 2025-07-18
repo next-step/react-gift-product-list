@@ -1,6 +1,6 @@
 import type { ErrorData } from "@/types/FetchErrorData";
 import axios, { AxiosHeaders, type Method } from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface UseFetchOptions<TBody> {
   method?: Method;
@@ -33,17 +33,36 @@ const useFetch = <TResponse, TBody = unknown>(
     baseUrl = "",
   }: UseFetchOptions<TBody> = {},
 ) => {
+  const options = useMemo(
+    () => ({
+      method,
+      params,
+      headers,
+      body,
+      baseUrl,
+      dependency,
+    }),
+    [
+      method,
+      JSON.stringify(params),
+      JSON.stringify(headers),
+      JSON.stringify(body),
+      baseUrl,
+      JSON.stringify(dependency),
+    ],
+  );
+
   const [isLoading, setIsLoading] = useState<boolean>(autoFetch);
   const [error, setError] = useState<ErrorData | undefined>(undefined);
   const [data, setData] = useState<TResponse | null>(null);
 
   const fetchData = useCallback(
     async (
-      fetchHeaders: typeof headers = headers,
-      fetchBody: typeof body = body,
-      fetchParams: typeof params = params,
+      fetchHeaders: typeof headers = options.headers,
+      fetchBody: typeof body = options.body,
+      fetchParams: typeof params = options.params,
     ): Promise<UseFetchResponseData<TResponse>> => {
-      const base = baseUrl ? baseUrl : BASE_URL;
+      const base = options.baseUrl ? options.baseUrl : BASE_URL;
       const fetchUrl = new URL(url, base);
 
       if (fetchParams) {
@@ -55,7 +74,7 @@ const useFetch = <TResponse, TBody = unknown>(
       try {
         setIsLoading(true);
         const response = await axios<UseFetchResponse<TResponse>>(fetchUrl.toString(), {
-          method,
+          method: options.method,
           headers: fetchHeaders,
           data: fetchBody,
         });
@@ -74,14 +93,14 @@ const useFetch = <TResponse, TBody = unknown>(
         setIsLoading(false);
       }
     },
-    [url, baseUrl, method, body, params, headers],
+    [url, options],
   );
 
   useEffect(() => {
     if (autoFetch) {
       fetchData();
     }
-  }, [fetchData, autoFetch, ...dependency]);
+  }, [fetchData, autoFetch, ...options.dependency]);
 
   return { isLoading, error, data, fetchData };
 };

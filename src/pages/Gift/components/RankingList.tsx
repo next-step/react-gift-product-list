@@ -1,7 +1,7 @@
 import { rankingItemMock } from "@/assets/rankingItemMock";
 import styled from "@emotion/styled";
 import Divider from "@/components/common/Divider";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Button from "@/components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
@@ -27,14 +27,10 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   const goOrderPage = (itemId: number) => {
     navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
   };
-  const options = useMemo(
-    () => ({
-      params: { targetType, rankType },
-      dependency: [targetType, rankType],
-    }),
-    [targetType, rankType],
-  );
-  const rankingListData = useFetch<RankingProductType[]>("/api/products/ranking", options);
+  const rankingListData = useFetch<RankingProductType[]>("/api/products/ranking", {
+    params: { targetType, rankType },
+    dependency: [targetType, rankType],
+  });
 
   if (rankingListData.isLoading) {
     return <Loading height="625px" />;
