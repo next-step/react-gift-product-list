@@ -78,25 +78,31 @@ const RankingSection = () => {
       <RankingCategory selected={rankType} onChange={handleCategoryChange} />
       {loading ? (
         <LoadingSpinner color="#000000" loading={loading} size={35} />
+      ) : data?.length === 0 ? (
+        <ErrorMessage>
+          <>상품이 없습니다.</>
+        </ErrorMessage>
       ) : (
-        <RankingGrid>
-          {(data ?? []).slice(0, RANK_COUNT).map((item, index) => (
-            <RankingItem
-              key={item.id}
-              rank={index + 1}
-              id={item.id}
-              name={item.name}
-              imageURL={item.imageURL}
-              price={item.price}
-              brandInfo={item.brandInfo}
-              onClick={() => handleClickItem(item.id)}
-            />
-          ))}
-        </RankingGrid>
+        <>
+          <RankingGrid>
+            {data?.slice(0, RANK_COUNT).map((item, index) => (
+              <RankingItem
+                key={item.id}
+                rank={index + 1}
+                id={item.id}
+                name={item.name}
+                imageURL={item.imageURL}
+                price={item.price}
+                brandInfo={item.brandInfo}
+                onClick={() => handleClickItem(item.id)}
+              />
+            ))}
+          </RankingGrid>
+          <MoreButton onClick={toggleShowAll}>
+            {showAll ? "접기" : "더보기"}
+          </MoreButton>
+        </>
       )}
-      <MoreButton onClick={toggleShowAll}>
-        {showAll ? "접기" : "더보기"}
-      </MoreButton>
     </SectionContainer>
   );
 };
