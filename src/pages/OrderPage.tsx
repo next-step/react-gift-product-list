@@ -7,6 +7,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchProductSummary } from '@/api/index';
 import { toast } from 'react-toastify';
 import { createOrder } from '@/api/index';
+import type { ReceiverForOrder, OrderData } from '@/types/order';
+
+// OrderPage에서만 사용하는 타입이므로 src/types/order.ts에는 추가하지 않고, 파일 상단에 선언
+export type Receiver = {
+  name: string;
+  phone: string;
+  quantity: number;
+};
+
+export type ProductSummary = {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+};
 
 const cards = orderCardTemplates;
 
@@ -175,20 +191,6 @@ function OrderPage() {
   const navigate = useNavigate();
   const [product, setProduct] = useState<ProductSummary | null>(null);
 
-  type Receiver = {
-    name: string;
-    phone: string;
-    quantity: number;
-  };
-
-  type ProductSummary = {
-    id: number;
-    name: string;
-    brandName: string;
-    price: number;
-    imageURL: string;
-  };
-
   const [receivers, setReceivers] = useState<Receiver[]>([]);
 
   const [messageError, setMessageError] = useState('');
@@ -202,7 +204,7 @@ function OrderPage() {
     async function getProduct() {
       try {
         const res = await fetchProductSummary(Number(productId));
-        setProduct(res.data.data); // 실제 상품 정보는 res.data.data에 있음!
+        setProduct(res.data.data as ProductSummary); // 타입 단언 추가
       } catch (error: any) {
         toast.error(
           error.response?.data?.message || '상품 정보를 불러올 수 없습니다.',
@@ -252,11 +254,11 @@ function OrderPage() {
     console.log('authToken 값:', authToken);
 
     // receivers 배열의 필드명을 API 스펙에 맞게 변환
-    const orderData = {
+    const orderData: OrderData = {
       productId: product.id,
       message,
-      messageCardId: cards[selectedIdx].id,
-      ordererName: sender,
+      messageCardId: cards[selectedIdx].id, // number 타입 유지
+      ordererName: sender as string, // string으로 명확히 지정
       receivers: receivers.map((receiver) => ({
         name: receiver.name,
         phoneNumber: receiver.phone, // phone → phoneNumber로 변환
