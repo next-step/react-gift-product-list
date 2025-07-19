@@ -19,6 +19,7 @@ import Modal from '@/components/Order/Modal';
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 import {ToastContainer, toast} from 'react-toastify';
+import useUser from '@/hooks/useUser';
 
 // 주문 버튼 시작
 const OrderBtnWrapper = styled.div`
@@ -64,6 +65,9 @@ const Spinner = styled.div`
 `;
 
 function Order() {
+  const {getName} = useUser();// 운동하고와서 여기서 이름꺼네서 폼에넣자
+  const userName = getName();
+  
   const navigate = useNavigate();
   const [modalToggle, setModalToggle] = useState(false); // 모달의 상태를 나타내는 state
 
@@ -96,7 +100,7 @@ function Order() {
     defaultValues: {
       selectedId: DEFAULT_CARD_ID,
       message: defaultMessage,
-      senderName: '',
+      senderName: `${userName}`,
       receivers: [],
       allPrice: 0,
     },
@@ -125,18 +129,19 @@ function Order() {
 
   const [brandName, setBrandName] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const [name, setName] = useState('');
+  const [name, setItemName] = useState('');
   const [price, setPrice] = useState(0);
 
   const [isLoading, setIsLoading] = useState(true);
 
+  
   useEffect(() => {
     const fetchRanking = async () => {
       try {
         const response = await axios.get(`${baseUrl}/products/${id}/summary`);
         setBrandName(response.data.data.brandName);
         setImageURL(response.data.data.imageURL);
-        setName(response.data.data.name);
+        setItemName(response.data.data.name);
         setPrice(response.data.data.price);
 
         setIsLoading(false);

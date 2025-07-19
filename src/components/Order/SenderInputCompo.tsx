@@ -54,7 +54,7 @@ const SenderInputErrorTxt = styled.p`
   width: 95%;
 `;
 
-function SenderInputCompo() {
+function SenderInputCompo({userName}:any) {
     type OrderFormValues = {
         selectedId: number;
         message: string;
@@ -68,9 +68,9 @@ function SenderInputCompo() {
         phone: string;
         count: number;
     };
+    console.log(userName);
 
     const { register, formState} = useFormContext<OrderFormValues>();
-
     return (
         <SenderInputWrapper>
             <SenderInputTitle>보내는 사람</SenderInputTitle>
