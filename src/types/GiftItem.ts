@@ -4,4 +4,5 @@ export interface GiftItem {
   brandName: string;
   price: number;
   imageURL: string;
+
 }

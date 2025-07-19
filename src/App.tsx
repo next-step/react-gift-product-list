@@ -12,6 +12,7 @@ import Order from './pages/Order';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const containerStyle = css`
   max-width: 720px;
   margin: 0 auto;
@@ -19,6 +20,8 @@ const containerStyle = css`
   justify-content: center;
   align-items: center;
 `;
+
+const queryClient = new QueryClient();
 
 const App = () => {
   return (
@@ -38,6 +41,7 @@ const App = () => {
           </BrowserRouter>
         </AuthProvider>
       </div>
+
     </ThemeProvider>
   );
 };
