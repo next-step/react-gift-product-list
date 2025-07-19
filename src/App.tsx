@@ -15,8 +15,8 @@ function App() {
       <ThemeProvider theme={theme}>
         <Layout>
           <UserInfoProvider>
-            <Outlet />
             <NavigationBar />
+            <Outlet />
           </UserInfoProvider>
         </Layout>
       </ThemeProvider>
