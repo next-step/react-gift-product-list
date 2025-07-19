@@ -33,7 +33,7 @@ const RecipientFieldArray = () => {
           {fields.map((item) => (
             <Items key={item.id}>
               <Item>{item.name}</Item>
-              <Item>{item.phone}</Item>
+              <Item>{item.phoneNumber}</Item>
               <Item>{item.quantity}</Item>
             </Items>
           ))}

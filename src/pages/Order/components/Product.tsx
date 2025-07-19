@@ -1,23 +1,34 @@
-import { rankingItemMock } from "@/assets/rankingItemMock";
 import Divider from "@/components/common/Divider";
+import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
+import type { ProductType } from "@/types/RankingProductType";
+import { showFetchErrorToast } from "@/utils/showFetchToast";
 import styled from "@emotion/styled";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { Navigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Product = () => {
   const { setValue } = useFormContext<OrderFormType>();
   const { productId } = useParams();
-  const product = rankingItemMock.find((item) => item.id === Number(productId));
+  const navigate = useNavigate();
+  const { data, error, isLoading } = useFetch<ProductType>(`api/products/${productId}/summary`);
+  const product = useMemo(() => data, [data]);
+  const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
   useEffect(() => {
     if (product) {
       setValue("productId", product.id);
+    } else if (error) {
+      showFetchErrorToast(error.statusCode, error.message, goHome);
     }
-  }, [productId]);
-  if (!product) {
-    return <Navigate to={ROUTE_PATH.HOME} />;
+  }, [error, isLoading, setValue, goHome, product]);
+  if (isLoading) {
+    return <Loading height="170px" />;
+  }
+  if (error) {
+    return null;
   }
   return (
     <Content>
@@ -25,13 +36,13 @@ const Product = () => {
       <Title>상품 정보</Title>
       <Divider spacing="1rem" />
       <ProductWrapper>
-        <ProductImg alt="product" src={product.imageURL} />
+        <ProductImg alt="product" src={product?.imageURL} />
         <div>
-          <ProductTitle>{product.name}</ProductTitle>
-          <ProductBrand>{product.brandInfo.name}</ProductBrand>
+          <ProductTitle>{product?.name}</ProductTitle>
+          <ProductBrand>{product?.brandName}</ProductBrand>
           <ProductPrice>
             <ProductPriceInfo>상품가 </ProductPriceInfo>
-            {product.price.sellingPrice}원
+            {product?.price}원
           </ProductPrice>
         </div>
       </ProductWrapper>

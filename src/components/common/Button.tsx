@@ -21,7 +21,7 @@ const Button = ({ variant, size, fullWidth, children, ...props }: ButtonProps) =
 const Style = styled.button<{
   variant?: ButtonVariant;
   size?: ButtonSize;
-  fullWidth?: Boolean;
+  fullWidth?: boolean;
 }>`
   display: flex;
   justify-content: center;
@@ -34,19 +34,19 @@ const Style = styled.button<{
     switch (size) {
       case "small":
         return `
-            min-hight: 1.875rem;
+            min-height: 1.875rem;
             font: ${theme.typography.body2Regular};
             padding: ${theme.spacing.spacing2};
         `;
       case "medium":
         return `
-            min-hight: 2.75rem;
+            min-height: 2.75rem;
             font: ${theme.typography.body1Regular};
             padding: ${theme.spacing.spacing3};
         `;
       case "large":
         return `
-            min-hight: 3.625rem;
+            min-height: 3.625rem;
             font: ${theme.typography.title2Regular};
             padding: ${theme.spacing.spacing4};
         `;
@@ -60,7 +60,7 @@ const Style = styled.button<{
                 min-height: 2.75rem;
                 width: 25rem;
                 background-color: ${theme.color.kakaoYellow};
-                color: ${theme.color.gray800}
+                color: ${theme.color.gray800};
                 font: ${theme.typography.body1Regular};
                 border-radius: 4px;
 
@@ -76,7 +76,7 @@ const Style = styled.button<{
                 min-height: 2.75rem;
                 width: 25rem;
                 background-color: ${theme.color.backgroundColor.default};
-                color: ${theme.color.gray800}
+                color: ${theme.color.gray800};
                 font: ${theme.typography.body1Regular};
                 border: 1px solid ${theme.color.gray400};
                 border-radius: 4px;

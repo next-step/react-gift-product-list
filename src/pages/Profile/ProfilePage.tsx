@@ -13,13 +13,13 @@ const ProfilePage = () => {
     logout();
     navigate(ROUTE_PATH.LOGIN);
   };
-  const userName = auth.userEmail?.split("@")[0];
+  const userName = auth?.name;
   return (
     <Container>
       <Content>
         <Title>마이 페이지</Title>
         <UserInfo>{userName} 님 안녕하세요</UserInfo>
-        <UserInfo>이메일 주소는 {auth.userEmail}입니다.</UserInfo>
+        <UserInfo>이메일 주소는 {auth?.email}입니다.</UserInfo>
         <Divider />
         <Button variant="secondary" size="small" onClick={onLogout}>
           로그아웃

@@ -10,6 +10,8 @@ import { orderCardMock } from "@/assets/orderCardMock";
 import { rankingItemMock } from "@/assets/rankingItemMock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import { getCookieValue } from "@/utils/cookie";
+import { AUTH_COOKIE_KEY_NAME } from "@/contexts/authContext";
 
 interface OrderProps {
   children: React.ReactNode;
@@ -17,7 +19,7 @@ interface OrderProps {
 
 const RecipientSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요."),
-  phone: z
+  phoneNumber: z
     .string()
     .min(1, "전화번호를 입력해주세요.")
     .regex(/^010\d{8}$/, "올바른 전화번호 형식이 아닙니다. 유효한 전화번호 형식(010xxxxxxxx)으로 입력해주세요."),
@@ -33,15 +35,15 @@ const OrderFormSchema = z.object({
     .check((ctx) => {
       const phoneNumbers = new Set<string>();
       ctx.value.forEach((recipient, index) => {
-        if (phoneNumbers.has(recipient.phone)) {
+        if (phoneNumbers.has(recipient.phoneNumber)) {
           ctx.issues.push({
             code: "custom",
             message: "중복된 전화번호가 있습니다.",
             input: ctx.value,
-            path: [index, "phone"],
+            path: [index, "phoneNumber"],
           });
         }
-        phoneNumbers.add(recipient.phone);
+        phoneNumbers.add(recipient.phoneNumber);
       });
     }),
   productId: z.number(),
@@ -53,7 +55,7 @@ export type RecipientType = z.infer<typeof RecipientSchema>;
 const defaultValues: OrderFormType = {
   cardId: orderCardMock[0].id,
   message: orderCardMock[0].defaultTextMessage,
-  sender: "",
+  sender: getCookieValue(AUTH_COOKIE_KEY_NAME) || "",
   recipients: [],
   productId: rankingItemMock[0].id,
 };

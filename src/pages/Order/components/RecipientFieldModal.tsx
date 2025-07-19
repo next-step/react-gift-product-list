@@ -53,7 +53,11 @@ const RecipientFieldModal = ({ closeModal, initialRecipients: initialRecipientsP
           <HelpMsg>* 받는 사람의 전화번호를 중복으로 입력할 수 없어요.</HelpMsg>
           {errors.recipients && <ErrorMsg>{errors.recipients.message}</ErrorMsg>}
           <Divider spacing="0.5rem" />
-          <AddBtn type="button" onClick={() => append({ name: "", phone: "", quantity: 1 })} disabled={!isValidAddBtn}>
+          <AddBtn
+            type="button"
+            onClick={() => append({ name: "", phoneNumber: "", quantity: 1 })}
+            disabled={!isValidAddBtn}
+          >
             추가하기
           </AddBtn>
         </div>

@@ -4,15 +4,31 @@ import Divider from "@/components/common/Divider";
 import styled from "@emotion/styled";
 import type React from "react";
 import useLoginInput from "@/hooks/useLoginInput";
-import { useAuth } from "@/contexts/authContext";
+import { useAuth, type Auth } from "@/contexts/authContext";
+import useFetch from "@/hooks/useFetch";
+import { showFetchErrorToast } from "@/utils/showFetchToast";
+
+interface LoginBodyData {
+  email: string;
+  password: string;
+}
 
 const LoginPage = () => {
   const { user, onChange, onBlur, errorMsg } = useLoginInput();
   const { login } = useAuth();
-
-  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const loginFetch = useFetch<Auth, LoginBodyData>("api/login", {
+    method: "POST",
+    body: { email: user.id, password: user.password },
+    autoFetch: false,
+  });
+  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    login(user.id);
+    const responseData = await loginFetch.fetchData();
+    if (responseData.data) {
+      login(responseData.data);
+    } else if (responseData.error) {
+      showFetchErrorToast(responseData.error.statusCode, responseData.error.message);
+    }
   };
   const isValidIdAndPassword = user.id.length !== 0 && user.password.length >= 8 && !errorMsg.id && !errorMsg.password;
   return (

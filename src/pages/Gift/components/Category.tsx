@@ -3,12 +3,8 @@ import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
 import type { CategoryType } from "@/types/CategoryType";
 
-interface ThemesData {
-  data: CategoryType[];
-}
-
 const Category = () => {
-  const themes = useFetch<ThemesData>("/api/themes");
+  const themes = useFetch<CategoryType[]>("/api/themes");
 
   if (themes.isLoading) {
     return (
@@ -19,7 +15,7 @@ const Category = () => {
     );
   }
 
-  if (themes.isError || themes.data?.data.length === 0) {
+  if (themes.error || themes.data?.length === 0) {
     return null;
   }
 
@@ -27,7 +23,7 @@ const Category = () => {
     <Container>
       <Title>선물 테마</Title>
       <List>
-        {themes.data?.data.map((category) => (
+        {themes.data?.map((category) => (
           <Item key={category.themeId}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>

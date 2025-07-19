@@ -9,8 +9,7 @@ import { ROUTE_PATH } from "../routes/routePath";
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { auth } = useAuth();
-  const isLoggedIn = !!auth.userEmail;
+  const { isValidAuth } = useAuth();
   const goBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -22,7 +21,7 @@ const Navigation = () => {
     navigate(ROUTE_PATH.HOME);
   };
   const goLogin = () => {
-    if (isLoggedIn) navigate(ROUTE_PATH.PROFILE);
+    if (isValidAuth) navigate(ROUTE_PATH.PROFILE);
     else {
       const loginPath = ROUTE_PATH.LOGIN + `?redirect=${location.pathname}`;
       navigate(loginPath);

@@ -7,14 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import Loading from "@/components/common/Loading";
-import type { RankingItemType } from "@/types/RankingItemType";
+import type { RankingProductType } from "@/types/RankingProductType";
 
 interface RankingListProps {
   targetType: string;
   rankType: string;
-}
-interface RankingData {
-  data: RankingItemType[];
 }
 
 const RANKING_LIST_ITEM_VIEW_COUNT = 6;
@@ -30,8 +27,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   const goOrderPage = (itemId: number) => {
     navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
   };
-
-  const rankingListData = useFetch<RankingData>("/api/products/ranking", {
+  const rankingListData = useFetch<RankingProductType[]>("/api/products/ranking", {
     params: { targetType, rankType },
     dependency: [targetType, rankType],
   });
@@ -39,7 +35,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   if (rankingListData.isLoading) {
     return <Loading height="625px" />;
   }
-  if (rankingListData.isError || rankingListData.data?.data.length === 0) {
+  if (rankingListData.error || rankingListData.data?.length === 0) {
     return (
       <Empty>
         <Msg>상품이 없습니다.</Msg>
@@ -49,7 +45,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
   return (
     <Container>
       <Content>
-        {rankingListData.data?.data.slice(0, viewCount).map((item, index) => (
+        {rankingListData.data?.slice(0, viewCount).map((item, index) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>

@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/authContext";
 
 const Friend = () => {
   const { auth } = useAuth();
-  const userName = auth.userEmail?.split("@")[0];
+  const userName = auth?.name;
   return (
     <Container>
       <Content>
