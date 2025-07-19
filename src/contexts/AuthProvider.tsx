@@ -4,6 +4,7 @@ import { AuthContext } from './AuthContext';
 import type { UserInfo } from './AuthContext';
 import { login as loginApi } from '@/lib/api/login';
 import type { AxiosErrorResponse } from '@/types/api';
+import { STORAGE_KEYS } from '@/data/storageKeys';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -11,12 +12,12 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(() => {
-    const savedUserInfo = sessionStorage.getItem('kakaotech/userInfo');
+    const savedUserInfo = sessionStorage.getItem(STORAGE_KEYS.USER_INFO);
     if (savedUserInfo) {
       try {
         return JSON.parse(savedUserInfo);
       } catch {
-        sessionStorage.removeItem('kakaotech/userInfo');
+        sessionStorage.removeItem(STORAGE_KEYS.USER_INFO);
         return null;
       }
     }
@@ -27,14 +28,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const response = await loginApi({ email, password });
       
-      const newUserInfo: UserInfo = {
-        email: response.email,
-        name: response.name,
-        authToken: response.authToken,
-      };
+      const newUserInfo: UserInfo = response;
       
       setUserInfo(newUserInfo);
-      sessionStorage.setItem('kakaotech/userInfo', JSON.stringify(newUserInfo));
+      sessionStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(newUserInfo));
       onSuccess?.();
 
     } catch (error: unknown) {
@@ -60,7 +57,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = useCallback(() => {
     setUserInfo(null);
-    sessionStorage.removeItem('kakaotech/userInfo');
+    sessionStorage.removeItem(STORAGE_KEYS.USER_INFO);
   }, []);
 
   const isLoggedIn = !!userInfo;
