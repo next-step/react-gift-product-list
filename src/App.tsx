@@ -17,6 +17,7 @@ import OrderPage from './pages/Order/OrderPage';
 import ScrollToTop from './pages/Home/ScrollToTop';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ThemeProductPage from './pages/ThemeProductPage';
 
 const Home = () => (
   <main>
@@ -62,6 +63,7 @@ function App() {
             }
           />
           <Route path="/order/:productId" element={<OrderPage />} />
+          <Route path="/themes/:themeId" element={<ThemeProductPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <ToastContainer
