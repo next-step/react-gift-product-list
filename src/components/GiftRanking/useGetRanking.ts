@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import useApi from '@/apis/useApi';
 import type { CategoryValue, SortValue } from './constants';
 
 type Product = {
@@ -23,29 +22,12 @@ type ApiResponse = {
 };
 
 const useGetRanking = (targetType: CategoryValue, rankType: SortValue) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { data, isLoading, error } = useApi<ApiResponse>(
+    'get',
+    `/products/ranking?targetType=${targetType}&rankType=${rankType}`,
+  );
 
-  useEffect(() => {
-    const fetchRanking = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get<ApiResponse>(
-          `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
-        );
-        setProducts(response.data.data);
-      } catch (error) {
-        setError(error as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRanking();
-  }, [targetType, rankType]);
-
-  return { products, isLoading, error };
+  return { products: data?.data || [], isLoading, error };
 };
 
 export default useGetRanking;
