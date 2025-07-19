@@ -7,9 +7,10 @@ import ReceiverModal, {
   type Receiver,
 } from '../components/ReceiverModal';
 import { useReceiverForm } from '../hooks/useReceiverForm';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGiftProductById } from '../hooks/useGiftProductById';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
@@ -198,6 +199,8 @@ const QuantityCell = styled(TableCell)`
 const Order = () => {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
+  const navigate = useNavigate();
+  const authToken = localStorage.getItem('authToken');
 
   const {
     data: product,
@@ -227,15 +230,44 @@ const Order = () => {
 
   const { userInfo } = useAuth();
 
-  useState(() => {
+  useEffect(() => {
     if (userInfo?.name) sendorNameInput.setValue(userInfo.name);
   });
-  const handleOrder = () => {
-    if (!sendorNameInput.isValid || !product) return;
 
-    alert(
-      `주문이 완료되었습니다.\n 상품명: ${product.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
-    );
+  const BASE_URL = 'http://localhost:3000';
+
+  const handleOrder = async () => {
+    const orderData = {
+      productId: productId,
+      message,
+      messageCardId: String(selectedCard?.id),
+      ordererName: sendorNameInput.value,
+      receivers: receiverList.map(r => ({
+        name: r.name,
+        phoneNumber: r.phoneNumber,
+        quantity: Number(r.quantity),
+      })),
+    };
+
+    try {
+      await axios.post(`${BASE_URL}/api/order`, orderData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      alert(
+        `주문이 완료되었습니다.\n 상품명: ${product?.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
+      );
+    } catch (err: any) {
+      console.log('authToken from localStorage:', authToken);
+      if (err.response?.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        alert('주문에 실패했습니다.');
+        console.error(err.message);
+      }
+    }
   };
 
   if (loading)
@@ -325,7 +357,7 @@ const Order = () => {
                   {receiverList.map((r, i) => (
                     <TableRow key={r.id}>
                       <TableCell>{r.name}</TableCell>
-                      <TableCell>{r.phone}</TableCell>
+                      <TableCell>{r.phoneNumber}</TableCell>
                       <QuantityCell>{r.quantity}</QuantityCell>
                     </TableRow>
                   ))}

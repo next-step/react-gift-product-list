@@ -135,6 +135,8 @@ const Login = () => {
         }
       );
 
+      console.log('로그인 응답:', response.data);
+
       const { authToken, email, name } = response.data.data;
 
       login({ email, name, authToken });
