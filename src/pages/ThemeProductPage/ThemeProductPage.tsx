@@ -11,6 +11,7 @@ import {
   HeroTitle,
 } from "./HeroSection";
 import { ROUTES } from "@/constants/routes";
+import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 
 function ThemeProductPage() {
   const params = useParams();
@@ -26,7 +27,7 @@ function ThemeProductPage() {
   const { data: themeProducts, isLoading: isThemeProductsLoading } = useFetch({
     fetchFn: () => getThemeProducts(Number(params.themeId)),
     errorHandler: () => {
-      console.error("테마 상품 로딩 실패");
+      console.error(THEME_PRODUCTS_API_MESSAGE.FETCH_ERROR);
     },
   });
 
