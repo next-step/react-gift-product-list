@@ -39,7 +39,7 @@ const useApi = <T, P = void>(
         const error = err as Error;
         setError(error);
         if (isAxiosError(err) && err.response?.status === 401) {
-          toast.error(LOGIN_REQUIRED_MESSAGE);
+          toast(LOGIN_REQUIRED_MESSAGE);
           navigate(PATH.LOGIN);
         }
         if (options?.onError) {
