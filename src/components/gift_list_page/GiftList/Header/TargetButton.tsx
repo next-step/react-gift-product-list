@@ -38,7 +38,7 @@ const Text = styled.div<{ isClicked: boolean }>`
 export const TargetButton = ({
   targetType,
   isClicked,
-  setCurrentTarget,
+  setTargetType,
   ...props
 }: TargetButtonType) => {
   let icon = '?';
@@ -46,16 +46,16 @@ export const TargetButton = ({
   const icons = ['ALL', '👩🏻', '👨🏻', '👦🏻'];
   const texts = ['전체', '여성이', '남성이', '청소년이'];
 
-  if (targetType === 'All') {
+  if (targetType === 'ALL') {
     icon = icons[0];
     text = texts[0];
-  } else if (targetType === 'Female') {
+  } else if (targetType === 'FEMALE') {
     icon = icons[1];
     text = texts[1];
-  } else if (targetType === 'Male') {
+  } else if (targetType === 'MALE') {
     icon = icons[2];
     text = texts[2];
-  } else if (targetType === 'Youth') {
+  } else if (targetType === 'TEEN') {
     icon = icons[3];
     text = texts[3];
   }
@@ -63,7 +63,7 @@ export const TargetButton = ({
   return (
     <Button
       onClick={() => {
-        setCurrentTarget(targetType);
+        setTargetType(targetType);
       }}
       {...props}
     >
@@ -72,4 +72,3 @@ export const TargetButton = ({
     </Button>
   );
 };
-

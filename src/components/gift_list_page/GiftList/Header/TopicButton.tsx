@@ -19,26 +19,21 @@ const Text = styled.div<{ isClicked: boolean }>`
   transition: color 0.3s;
 `;
 
-export const TopicButton = ({
-  topicType,
-  isClicked,
-  setCurrentTopic,
-  ...props
-}: TopicButtonType) => {
+export const TopicButton = ({ topicType, isClicked, setRankType, ...props }: TopicButtonType) => {
   let text = '?';
   const texts = ['받고 싶어한', '많이 선물한', '위시로 받은'];
 
-  if (topicType === 'Wanted') {
+  if (topicType === 'MANY_WISH') {
     text = texts[0];
-  } else if (topicType === 'MostGifted') {
+  } else if (topicType === 'MANY_RECEIVE') {
     text = texts[1];
-  } else if (topicType === 'Wishlisted') {
+  } else if (topicType === 'MANY_WISH_RECEIVE') {
     text = texts[2];
   }
   return (
     <Button
       onClick={() => {
-        setCurrentTopic(topicType);
+        setRankType(topicType);
       }}
       {...props}
     >
@@ -46,4 +41,3 @@ export const TopicButton = ({
     </Button>
   );
 };
-

@@ -52,14 +52,12 @@ const ErrorText = styled.div`
 
 export const GiftList = () => {
   const [loading, setLoading] = useState(true);
-  const [isDataReady, setIsDataReady] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [giftItemList, getGiftItemList] = useState<GiftItemDataType[]>([]);
-  const isEmpty = giftItemList.length === 0;
+  const [giftItemList, getGiftItemList] = useState<GiftItemDataType[] | null>(null);
   const [giftItems, setGiftItems] = useState<GiftItemDataType[]>([]);
   const [isViewMore, setIsViewMore] = useState(false);
-  const [targetType, setTargetType] = useState('ALL');
-  const [rankType, setRankType] = useState('MANY_WISH');
+  const [targetType, setTargetType] = useState(localStorage.getItem('currentTarget') || 'ALL');
+  const [rankType, setRankType] = useState(localStorage.getItem('currentTopic') || 'MANY_WISH');
 
   useEffect(() => {
     const getData = async () => {
@@ -69,7 +67,6 @@ export const GiftList = () => {
         );
         console.log(response.data.data);
         getGiftItemList(response.data.data);
-        setIsDataReady(true);
         setIsError(false);
       } catch (error) {
         setIsError(true);
@@ -83,32 +80,35 @@ export const GiftList = () => {
   }, [targetType, rankType]);
 
   useEffect(() => {
-    if (!isDataReady) return;
+    if (giftItemList === null) return;
 
     setLoading(false);
-  }, [isDataReady]);
+  }, [giftItemList]);
 
   useEffect(() => {
+    if (giftItemList === null) return;
+
     if (isViewMore) {
-      setGiftItems(giftItemList);
+      setGiftItems(giftItemList!);
     } else {
-      setGiftItems(giftItemList.slice(0, 6));
+      setGiftItems(giftItemList!.slice(0, 6));
     }
   }, [giftItemList, isViewMore]);
 
   return (
     <>
       <Header
+        getGiftItemList={getGiftItemList}
         setIsError={setIsError}
+        targetType={targetType}
         setTargetType={setTargetType}
+        rankType={rankType}
         setRankType={setRankType}
         setLoading={setLoading}
-        setIsDataReady={setIsDataReady}
       />
       <Container>
-        {loading ? (
-          <Spinner />
-        ) : (
+        {loading && <Spinner />}
+        {!loading && (
           <List>
             {giftItems.map((item, i) => {
               return (
@@ -127,9 +127,9 @@ export const GiftList = () => {
         {isError && (
           <ErrorText>⚠️ 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</ErrorText>
         )}
-        {!loading && isEmpty && <ErrorText>상품이 없습니다.</ErrorText>}
+        {!loading && giftItemList?.length === 0 && <ErrorText>상품이 없습니다.</ErrorText>}
       </Container>
-      {!loading && !isError && !isEmpty && (
+      {!loading && !isError && !(giftItemList?.length === 0) && (
         <MoreButton isViewMore={isViewMore} setIsViewMore={setIsViewMore} />
       )}
     </>
