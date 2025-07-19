@@ -1,20 +1,31 @@
 import styled from '@emotion/styled';
-import { giftDatas } from '@/data/giftDatas';
+import Loading from '@/components/Loading';
+import useTheme from '../hooks/useTheme';
 
 const GiftThemeSection = () => {
-  return (
-    <section>
-      <TitleContainer>
-        <Title>선물 테마</Title>
-      </TitleContainer>
+  const { themes, loading, error } = useTheme();
+
+  const renderContent = () => {
+    if (error) return null;
+    if (loading) return <Loading />;
+    return (
       <Container>
-        {giftDatas.map(theme => (
+        {themes.map(theme => (
           <Theme key={theme.themeId}>
             <Image alt={theme.name} src={theme.image} />
             <Text>{theme.name}</Text>
           </Theme>
         ))}
       </Container>
+    );
+  };
+
+  return (
+    <section>
+      <TitleContainer>
+        <Title>선물 테마</Title>
+      </TitleContainer>
+      {renderContent()}
     </section>
   );
 };

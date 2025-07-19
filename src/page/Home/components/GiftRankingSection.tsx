@@ -2,10 +2,12 @@ import styled from '@emotion/styled';
 import { filters, generations } from '@/data/categoryDatas';
 import useSearchParamState from '../hooks/useSearchParamState';
 import useToggleCollapse from '../hooks/useToggleCollapse';
-import { rankingDatas } from '@/data/rankingDatas.ts';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
+import Loading from '@/components/Loading';
+import useRanking from '../hooks/useRanking';
+import toLocaleString from '@/utils/toLocaleString';
 
 interface ButtonProps {
   isActive: boolean;
@@ -19,6 +21,8 @@ const GiftRankingSection = () => {
     activeFilterButton,
   } = useSearchParamState();
 
+  const { rankingDatas, loading } = useRanking({ activeGenerationButton, activeFilterButton });
+
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
   const { isLoggedIn } = useUserInfo();
 
@@ -29,6 +33,31 @@ const GiftRankingSection = () => {
     } else {
       navigate(ROUTES.LOGIN);
     }
+  };
+
+  const renderContent = () => {
+    if (loading) return <Loading />;
+    if (rankingDatas.length === 0) {
+      return <NoDataMessage>상품이 없습니다.</NoDataMessage>;
+    }
+    return (
+      <>
+        <RankContainer>
+          {rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
+            <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
+              <RankNumber>{index + 1}</RankNumber>
+              <ItemContainer>
+                <Image src={rank.imageURL} alt={rank.name} />
+                <ItemBrandName>{rank.brandInfo.name}</ItemBrandName>
+                <ItemName>{rank.name}</ItemName>
+                <ItemPrice>{toLocaleString(rank.price.basicPrice)} 원</ItemPrice>
+              </ItemContainer>
+            </RankItem>
+          ))}
+        </RankContainer>
+        <ToggleButton onClick={toggleCollapse}>{isCollapsed ? '펼치기' : '접기'}</ToggleButton>
+      </>
+    );
   };
 
   return (
@@ -61,28 +90,20 @@ const GiftRankingSection = () => {
           ))}
         </FilterGroup>
       </CatContainer>
-
-      <RankContainer>
-        {rankingDatas.slice(0, visibleItemsCount).map(rank => (
-          <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
-            <RankNumber>{rank.id}</RankNumber>
-
-            <ItemContainer>
-              <Image src={rank.image} alt={rank.name} />
-              <ItemName>{rank.name}</ItemName>
-              <ItemSubName>{rank.subName}</ItemSubName>
-              <ItemPrice>{rank.price} 원</ItemPrice>
-            </ItemContainer>
-          </RankItem>
-        ))}
-      </RankContainer>
-
-      <ToggleButton onClick={toggleCollapse}>{isCollapsed ? '펼치기' : '접기'}</ToggleButton>
+      {renderContent()}
     </Section>
   );
 };
 
 export default GiftRankingSection;
+
+const NoDataMessage = styled.div`
+  grid-column: 1 / -1;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.semantic.text.sub};
+  padding: 2rem 0;
+  font-size: 1.1rem;
+`;
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
@@ -180,7 +201,7 @@ const ItemContainer = styled.div`
   box-sizing: border-box;
 `;
 
-const ItemName = styled.p`
+const ItemBrandName = styled.p`
   font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
   font-weight: ${({ theme }) => theme.typography.body2Regular.fontWeight};
   line-height: ${({ theme }) => theme.typography.body2Regular.lineHeight};
@@ -189,7 +210,7 @@ const ItemName = styled.p`
   text-align: left;
 `;
 
-const ItemSubName = styled.h6`
+const ItemName = styled.h6`
   font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
   font-weight: ${({ theme }) => theme.typography.body2Regular.fontWeight};
   line-height: ${({ theme }) => theme.typography.body2Regular.lineHeight};
