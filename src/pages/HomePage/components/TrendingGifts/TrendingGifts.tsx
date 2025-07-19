@@ -1,5 +1,5 @@
 import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
-import ProductGrid from "./ProductGrid/ProductGrid";
+import ProductsGrid from "../ProductsGrid/ProductsGrid";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import {
   TrendingGiftsSection,
@@ -56,7 +56,7 @@ function TrendingGiftsContent() {
       );
     }
 
-    return <ProductGrid products={data || []} type={"trendingGifts"} />;
+    return <ProductsGrid products={data || []} type={"trendingGifts"} />;
   };
 
   return (

@@ -13,7 +13,7 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
-import ProductGrid from "../HomePage/components/TrendingGifts/ProductGrid/ProductGrid";
+import ProductsGrid from "../HomePage/components/ProductsGrid/ProductsGrid";
 
 const ProductListContainer = styled.div`
   width: 100%;
@@ -60,7 +60,7 @@ function ThemeProductPage() {
             </LoadingContainer>
           ) : (
             <ProductListContainer>
-              <ProductGrid
+              <ProductsGrid
                 products={themeProducts?.list || []}
                 type={"themeProducts"}
               />

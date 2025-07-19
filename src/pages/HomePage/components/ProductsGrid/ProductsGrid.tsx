@@ -1,11 +1,14 @@
 import styled from "@emotion/styled";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
-import ProductCard from "../ProductCard/ProductCard";
-import { MoreInfo, MoreInfoWrapper } from "../TrendingGifts.styles";
 import {
   TRENDING_GIFTS_EMPTY_MESSAGES,
   TRENDING_GIFTS_LABELS,
-} from "../constants/labels";
+} from "../TrendingGifts/constants/labels";
+import ProductCard from "./ProductCard";
+import {
+  MoreInfo,
+  MoreInfoWrapper,
+} from "../TrendingGifts/TrendingGifts.styles";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -31,12 +34,12 @@ const EmptyProductText = styled.p`
     theme.typography.label.label1Regular.fontWeight};
 `;
 
-interface ProductGridPropsType {
+interface ProductsGridPropsType {
   products: TrendingGiftsType[];
   type: "trendingGifts" | "themeProducts";
 }
 
-function ProductGrid({ products, type }: ProductGridPropsType) {
+function ProductsGrid({ products, type }: ProductsGridPropsType) {
   if (products.length === 0)
     return (
       <EmptyProductContainer>
@@ -69,4 +72,4 @@ function ProductGrid({ products, type }: ProductGridPropsType) {
   );
 }
 
-export default ProductGrid;
+export default ProductsGrid;
