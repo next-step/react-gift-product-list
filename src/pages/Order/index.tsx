@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { orders } from '@/data/orders';
-import { getProductSummary } from '@/lib/api';
+import { getProductSummary } from '@/lib/api/rankingProducts';
 import { type ProductSummary, type AxiosErrorResponse } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
 import { useOrderForm } from '@/hooks/useOrderForm';

@@ -1,5 +1,5 @@
 import { api } from "./core";
-import type { RankType, TargetType, RankingProduct } from "../../types/api";
+import type { RankType, TargetType, RankingProduct, ProductSummary } from "../../types/api";
 
 export const getRankingProducts = async (targetType: TargetType = 'ALL', rankType: RankType = 'MANY_WISH'): Promise<RankingProduct[]> => {
     try {
@@ -15,9 +15,9 @@ export const getRankingProducts = async (targetType: TargetType = 'ALL', rankTyp
     }
 }
 
-export const getProductById = async (productId: number): Promise<RankingProduct> => {
+export const getProductSummary = async (productId: number): Promise<ProductSummary> => {
     try {
-        const response = await api.get<{data: RankingProduct}>(`/products/${productId}`);
+        const response = await api.get<{data: ProductSummary}>(`/products/${productId}/summary`);
         return response.data.data;
     } catch (error) {
         throw error;

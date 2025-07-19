@@ -5,7 +5,7 @@ import { useReceiver } from '@/contexts/ReceiverContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { z, string } from 'zod';
 import { orders } from '@/data/orders';
-import { createOrder } from '@/lib/api';
+import { createOrder } from '@/lib/api/order';
 import { type OrderRequest, type AxiosErrorResponse } from '@/types/api';
 
 import { type ProductSummary } from '@/types/api';

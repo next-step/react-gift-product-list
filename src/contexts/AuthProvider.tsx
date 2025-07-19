@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { AuthContext } from './AuthContext';
 import type { UserInfo } from './AuthContext';
-import { login as loginApi } from '@/lib/api';
+import { login as loginApi } from '@/lib/api/login';
 import type { AxiosErrorResponse } from '@/types/api';
 
 interface AuthProviderProps {
