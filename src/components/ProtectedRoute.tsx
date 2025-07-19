@@ -1,14 +1,14 @@
 import { STORAGE_KEYS } from "@/constants/storageKyes";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = () => {
   const userInfo = sessionStorage.getItem(STORAGE_KEYS.USER_INFO);
 
   if (!userInfo) {
     return <Navigate to="/login" replace />;
+  } else {
+    return <Outlet />;
   }
-
-  return children;
 };
 
 export default ProtectedRoute;

@@ -20,20 +20,11 @@ const router = createBrowserRouter([
         element: <Main />,
       },
       {
-        path: ORDER,
-        element: (
-          <ProtectedRoute>
-            <Order />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: MYPAGE,
-        element: (
-          <ProtectedRoute>
-            <MyPage />
-          </ProtectedRoute>
-        ),
+        element: <ProtectedRoute />,
+        children: [
+          { path: MYPAGE, element: <MyPage /> },
+          { path: ORDER, element: <Order /> },
+        ],
       },
       {
         path: LOGIN,
