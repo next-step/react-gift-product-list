@@ -114,13 +114,18 @@ const ThemeProductList = () => {
     <>
       <div css={gridStyle}>
         {products.map((item) => (
-          <ProductCard
+          <div
             key={item.id}
-            imageUrl={item.imageUrl}
-            brand={item.brand}
-            name={item.name}
-            price={item.price}
-          />
+            onClick={() => navigate(`/order/${item.id}`)}
+            css={{ cursor: 'pointer' }}
+          >
+            <ProductCard
+              imageUrl={item.imageUrl}
+              brand={item.brand}
+              name={item.name}
+              price={item.price}
+            />
+          </div>
         ))}
       </div>
       <div
@@ -150,6 +155,7 @@ const loadingStyle = css`
 
 const emptyStyle = css`
   padding: ${theme.spacing[8]};
+  margin-top: ${theme.spacing[12]};
   text-align: center;
   color: ${theme.color.gray.gray700};
 `;
