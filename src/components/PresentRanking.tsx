@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { css, ThemeProvider } from '@emotion/react';
 import { theme } from '@/theme/theme';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { getProductRanking, type ProductRankingItem } from '@/services/product';
+import LoadingSpinner from './common/LoadingSpinner';
 
 const Wrapper = styled.section`
   padding: 0px 16px;
@@ -224,6 +225,36 @@ const MoreButtonFont = styled.p`
   text-align: center;
 `;
 
+const LoadingContainer = styled(PresentDisplay)`
+  width: 100%;
+  height: 240px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+`;
+
+const NoDataText = styled.p(({ theme }) => ({
+  fontSize: '0.875rem',
+  fontWeight: 400,
+  lineHeight: '1.1875rem',
+  color: theme.semanticColors.text.default,
+  margin: '0px',
+  width: '100%',
+  textAlign: 'center',
+}));
+
+const NoDataContainer = styled.div`
+  width: 100%;
+  height: 240px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+`;
+
 const PresentRanking: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
   const [selectedType, setSelectedType] = useState<'all' | 'female' | 'male' | 'teen'>('all');
@@ -231,9 +262,7 @@ const PresentRanking: React.FC = () => {
   const [products, setProducts] = useState<ProductRankingItem[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const defaultTargetType = 'ALL';
-  const defaultRankType = 'MANY_WISH';
+  const scrollPosRef = useRef<number>(0);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -260,12 +289,35 @@ const PresentRanking: React.FC = () => {
     if (savedPresentType !== null) setSelectedPresentType(Number(savedPresentType));
   }, []);
 
+  // useEffect(() => {
+  //   const fetchRanking = async () => {
+  //     setIsLoadingProducts(true);
+  //     setErrorMsg(null);
+
+  //     try {
+  //       const targetType = apiTargetTypeMap[selectedType];
+  //       const rankType = apiRankTypeMap[selectedPresentType];
+
+  //       const response = await getProductRanking(targetType, rankType);
+  //       setProducts(response.data.data);
+  //     } catch (error) {
+  //       console.error('랭킹 조회 실패', error);
+  //       setErrorMsg('실시간 랭킹을 불러오지 못했습니다.');
+  //     } finally {
+  //       setIsLoadingProducts(false);
+  //     }
+  //   };
+  //   fetchRanking();
+  // }, [selectedType, selectedPresentType]);
   useEffect(() => {
     const fetchRanking = async () => {
       setIsLoadingProducts(true);
       setErrorMsg(null);
 
       try {
+        // 2초 지연
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         const targetType = apiTargetTypeMap[selectedType];
         const rankType = apiRankTypeMap[selectedPresentType];
 
@@ -278,27 +330,39 @@ const PresentRanking: React.FC = () => {
         setIsLoadingProducts(false);
       }
     };
+
     fetchRanking();
   }, [selectedType, selectedPresentType]);
 
+  useEffect(() => {
+    const y = scrollPosRef.current;
+    if (y) {
+      window.requestAnimationFrame(() => {
+        window.scrollTo(0, y);
+      });
+    }
+  }, [products]);
+
   const handleTypeSelect = (type: typeof selectedType) => {
+    scrollPosRef.current = window.scrollY;
     setSelectedType(type);
     localStorage.setItem('selectedType', type);
   };
 
   const handlePresentTypeSelect = (index: number) => {
+    const savedType = localStorage.getItem('selectedType') as
+      | 'all'
+      | 'female'
+      | 'male'
+      | 'teen'
+      | null;
+    const savedPresentType = localStorage.getItem('selectedPresentType');
+
+    if (savedType) setSelectedType(savedType);
+    if (savedPresentType) setSelectedPresentType(Number(savedPresentType));
     setSelectedPresentType(index);
     localStorage.setItem('selectedPresentType', index.toString());
   };
-  if (isLoadingProducts) {
-    return <p>로딩중..</p>;
-  }
-  if (errorMsg) {
-    return null;
-  }
-  if (products.length === 0) {
-    return <p>상품 목록이 없습니다.</p>;
-  }
 
   const productsToShow = showAll ? 21 : 6;
 
@@ -354,48 +418,58 @@ const PresentRanking: React.FC = () => {
         </PresentType>
         <MarginBox2 />
         <PresentDisplayContainer>
-          <PresentDisplay>
-            {products.map((p, index) => (
-              <ProductBox key={p.id} onClick={() => handleProductClick(p.id)}>
-                <NumberLogo
-                  css={css`
-                    background-color: ${index <= 2 ? 'rgb(252, 106, 102)' : 'rgb(176, 179, 186)'};
-                  `}
-                >
-                  {index + 1}
-                </NumberLogo>
-                <ProductInfo>
-                  <ProductImage src={p.imageURL} alt={p.name}></ProductImage>
-                  <div
+          {isLoadingProducts ? (
+            <LoadingContainer>
+              <LoadingSpinner />
+            </LoadingContainer>
+          ) : errorMsg ? null : products.length === 0 ? (
+            <NoDataContainer>
+              <NoDataText>상품이 없습니다.</NoDataText>
+            </NoDataContainer>
+          ) : (
+            <PresentDisplay>
+              {products.map((p, index) => (
+                <ProductBox key={p.id} onClick={() => handleProductClick(p.id)}>
+                  <NumberLogo
                     css={css`
-                      width: 100%;
-                      height: 12px;
-                      background-color: transparent;
+                      background-color: ${index <= 2 ? 'rgb(252, 106, 102)' : 'rgb(176, 179, 186)'};
                     `}
-                  ></div>
-                  <SubProductName>{p.brandInfo.name}</SubProductName>
-                  <ProdudctName>{p.brandInfo.name}</ProdudctName>
-                  <div
-                    css={css`
-                      width: 100%;
-                      height: 4px;
-                      background-color: transparent;
-                    `}
-                  ></div>
-                  <ProductPrice>
-                    {p.price.sellingPrice}
-                    <span
+                  >
+                    {index + 1}
+                  </NumberLogo>
+                  <ProductInfo>
+                    <ProductImage src={p.imageURL} alt={p.name}></ProductImage>
+                    <div
                       css={css`
-                        font-weight: 400;
+                        width: 100%;
+                        height: 12px;
+                        background-color: transparent;
                       `}
-                    >
-                      원
-                    </span>
-                  </ProductPrice>
-                </ProductInfo>
-              </ProductBox>
-            ))}
-          </PresentDisplay>
+                    ></div>
+                    <SubProductName>{p.brandInfo.name}</SubProductName>
+                    <ProdudctName>{p.brandInfo.name}</ProdudctName>
+                    <div
+                      css={css`
+                        width: 100%;
+                        height: 4px;
+                        background-color: transparent;
+                      `}
+                    ></div>
+                    <ProductPrice>
+                      {p.price.sellingPrice}
+                      <span
+                        css={css`
+                          font-weight: 400;
+                        `}
+                      >
+                        원
+                      </span>
+                    </ProductPrice>
+                  </ProductInfo>
+                </ProductBox>
+              ))}
+            </PresentDisplay>
+          )}
         </PresentDisplayContainer>
         <div
           css={css`
