@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-export const LoadingSpinner = styled.div`
+const LoadingSpinner = styled.div`
   width: ${({ theme }) => theme.spacing[7]};
   height: ${({ theme }) => theme.spacing[7]};
   border-top: ${({ theme }) => theme.spacing[1]} solid
@@ -23,3 +23,19 @@ export const LoadingSpinner = styled.div`
     }
   }
 `;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 124px;
+  margin-bottom: 124px;
+`;
+
+export function Loading() {
+  return (
+    <LoadingContainer>
+      <LoadingSpinner />
+    </LoadingContainer>
+  );
+}

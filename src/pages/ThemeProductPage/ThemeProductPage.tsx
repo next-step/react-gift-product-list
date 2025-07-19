@@ -2,8 +2,7 @@ import { getThemeInfo, getThemeProducts } from "@/data/api";
 import { useFetch } from "@/hooks/useFetch";
 import Layout from "@/layout";
 import { useNavigate, useParams } from "react-router-dom";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
+import { Loading } from "@/components/Loading/Loading";
 import {
   HeroDescription,
   HeroName,
@@ -45,9 +44,7 @@ function ThemeProductPage() {
   return (
     <Layout>
       {isThemeInfoLoading ? (
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
+        <Loading />
       ) : (
         <>
           <HeroSection backgroundColor={themeInfo?.backgroundColor || ""}>
@@ -56,9 +53,7 @@ function ThemeProductPage() {
             <HeroDescription>{themeInfo?.description}</HeroDescription>
           </HeroSection>
           {isThemeProductsLoading ? (
-            <LoadingContainer>
-              <LoadingSpinner />
-            </LoadingContainer>
+            <Loading />
           ) : (
             <ProductListContainer>
               <ProductsGrid

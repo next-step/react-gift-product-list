@@ -10,13 +10,12 @@ import {
   MainTabButton,
   TabIconContainer,
   TabLabel,
-  LoadingContainer,
   ErrorContainer,
   ErrorMessage,
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Loading } from "@/components/Loading/Loading";
 import { RANK_TYPE, TARGET_TYPE, TRENDING_GIFTS_TABS } from "./constants/tabs";
 import {
   TRENDING_GIFTS_ERROR_MESSAGES,
@@ -50,11 +49,7 @@ function TrendingGiftsContent() {
     }
 
     if (isLoading) {
-      return (
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
-      );
+      return <Loading />;
     }
 
     return (

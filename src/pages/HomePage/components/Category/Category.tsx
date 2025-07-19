@@ -4,12 +4,11 @@ import {
   ErrorContainer,
   ErrorMessage,
   GiftThemeSection,
-  LoadingContainer,
   SectionHeader,
   SectionTitle,
   ThemeGrid,
 } from "./Category.styles";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Loading } from "@/components/Loading/Loading";
 import { getThemes } from "@/data/api";
 import { useFetch } from "@/hooks/useFetch";
 import type { GiftThemeType } from "@/types/GiftThemeType";
@@ -32,11 +31,7 @@ function CategoryContent() {
   }
 
   if (isLoading) {
-    return (
-      <LoadingContainer>
-        <LoadingSpinner />
-      </LoadingContainer>
-    );
+    return <Loading />;
   }
 
   return (
