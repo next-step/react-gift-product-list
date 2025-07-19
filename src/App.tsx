@@ -12,6 +12,7 @@ import { ROUTES } from "./constants/routes";
 import OrderPage from "./pages/OrderPage/OrderPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ThemeProductPage from "./pages/ThemeProductPage/ThemeProductPage";
 
 const globalStyles = css`
   body {
@@ -30,6 +31,10 @@ function App() {
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.MY} element={<MyPage />} />
             <Route path={ROUTES.ORDER} element={<OrderPage />} />
+            <Route
+              path={ROUTES.THEME_PRODUCTS}
+              element={<ThemeProductPage />}
+            />
             <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
           </Routes>
         </ViewportContainer>

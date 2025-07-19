@@ -42,7 +42,12 @@ function CategoryContent() {
   return (
     <ThemeGrid>
       {data?.map((theme) => (
-        <ThemeCard key={theme.themeId} name={theme.name} image={theme.image} />
+        <ThemeCard
+          key={theme.themeId}
+          themeId={theme.themeId}
+          name={theme.name}
+          image={theme.image}
+        />
       ))}
     </ThemeGrid>
   );
