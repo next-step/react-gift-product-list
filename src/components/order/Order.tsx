@@ -170,7 +170,7 @@ const Order: React.FC = () => {
               ref={SenderNameRef}
               placeholder="이름을 입력하세요."
               defaultValue={user?.name}
-            ></input>
+            />
             {senderError && <p css={ErrorMessageStyle}>{senderError}</p>}
           </div>
         </div>
