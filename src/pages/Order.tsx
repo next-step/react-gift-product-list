@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '../components/common/Header';
 import MessageCard from '../components/MessageCard';
 import styled from '@emotion/styled';
@@ -223,11 +223,10 @@ const Order = () => {
     0
   );
 
-  const priceSum = product
-    ? product.price.sellingPrice * totalQuantity
-    : 0;
+  const priceSum = product?.price ? product.price * totalQuantity : 0;
 
   const { userInfo } = useAuth();
+
   useState(() => {
     if (userInfo?.name) sendorNameInput.setValue(userInfo.name);
   });
@@ -349,13 +348,14 @@ const Order = () => {
             />
             <div>
               <div style={{ fontWeight: 'bold' }}>{product.name}</div>
-              <div style={{ color: '#888' }}>
-                {product.brandInfo.name}
-              </div>
+              <div style={{ color: '#888' }}>{product.brandName}</div>
               <div>
                 상품가{' '}
                 <strong>
-                  {product.price.sellingPrice.toLocaleString()}원
+                  {product?.price !== undefined
+                    ? product.price.toLocaleString()
+                    : '0'}
+                  원
                 </strong>
               </div>
             </div>
@@ -366,7 +366,7 @@ const Order = () => {
         disabled={!sendorNameInput.isValid}
         onClick={handleOrder}
       >
-        {priceSum.toLocaleString()}원 주문하기
+        {(priceSum ?? 0).toLocaleString()}원 주문하기
       </BottomOrderButton>
     </>
   );
