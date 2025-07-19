@@ -12,6 +12,20 @@ import {
 } from "./HeroSection";
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
+import styled from "@emotion/styled";
+
+const EmptyProductContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px;
+`;
+
+const EmptyProductText = styled.p`
+  font-size: ${({ theme }) => theme.typography.body.body2Regular.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.body2Regular.fontWeight};
+  color: ${({ theme }) => theme.colors.gray[800]};
+`;
 
 function ThemeProductPage() {
   const params = useParams();
@@ -57,7 +71,9 @@ function ThemeProductPage() {
                   ))}
                 </div>
               ) : (
-                <div>상품이 없습니다.</div>
+                <EmptyProductContainer>
+                  <EmptyProductText>상품이 없습니다.</EmptyProductText>
+                </EmptyProductContainer>
               )}
             </>
           )}
