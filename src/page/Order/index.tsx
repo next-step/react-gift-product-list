@@ -2,11 +2,13 @@ import styled from '@emotion/styled';
 import MessageCardSection from './components/MessageCardSection';
 import MessageInput from './components/MessageInput';
 import SenderInfo from './components/SenderInfo';
-import ProductInfo from './components/ProductInfo';
 import ReceiverField from './components/ReceiverField';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ROUTES } from '@/routes/routes';
+import toLocaleString from '@/utils/toLocaleString';
+import useRanking from './hooks/useRnaking';
+import ProductInfo from './components/ProductInfo';
 
 const Section = styled.section`
   width: 100%;
@@ -40,17 +42,16 @@ export interface OrderInfoValues {
 
 const OrderPage = () => {
   const { id } = useParams<{ id: string }>();
-  const index = Number(id);
   const navigate = useNavigate();
+  const { productSummaryData } = useRanking(id as string);
+  const orderForm = useForm<OrderInfoValues>({
+    defaultValues: { message: '축하해요.', name: '', receiverInfos: [] },
+  });
 
   const onSubmit = () => {
     alert('주문 성공!');
     navigate(ROUTES.HOME);
   };
-
-  const orderForm = useForm<OrderInfoValues>({
-    defaultValues: { message: '축하해요.', name: '', receiverInfos: [] },
-  });
 
   return (
     <>
@@ -61,8 +62,8 @@ const OrderPage = () => {
             <MessageInput />
             <SenderInfo />
             <ReceiverField />
-            <ProductInfo index={index} />
-            <OrderButton type="submit">{29000}원 주문하기</OrderButton>
+            {productSummaryData && <ProductInfo productSummaryData={productSummaryData} />}
+            <OrderButton type="submit">{toLocaleString(29000)}원 주문하기</OrderButton>
           </form>
         </FormProvider>
       </Section>
