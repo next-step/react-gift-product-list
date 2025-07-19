@@ -5,6 +5,7 @@ import categoryData from '@/data/categoryData';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { api } from '@/Api/api';
+import LoadingSpinner from './common/LoadingSpinner';
 
 const Container = styled.section`
   padding: 8px;
@@ -60,6 +61,13 @@ const PresentName = styled.p`
   text-align: left;
 `;
 
+const LoadingContainer = styled(CategoryContainer)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px;
+`;
+
 interface ThemeItem {
   themeId: number;
   name: string;
@@ -72,12 +80,17 @@ interface ThemeResponse {
 
 const PresentTheme = () => {
   const [themeList, setThemeList] = useState<ThemeItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchThemes = async () => {
       try {
         const res = await api.get<ThemeResponse>('/api/themes');
-        setThemeList(res.data.data);
+
+        setTimeout(() => {
+          setThemeList(res.data.data);
+          setIsLoading(false);
+        }, 2000);
       } catch (error) {
         console.error('테마 불러오기 실패', error);
       }
@@ -92,20 +105,20 @@ const PresentTheme = () => {
         <TitleContainer>
           <Title>선물 테마</Title>
         </TitleContainer>
-        <CategoryContainer>
-          {/* {categoryData.map((category) => (
-            <Category key={category.themeId}>
-              <PresentImage src={category.image} alt={category.name} />
-              <PresentName>{category.name}</PresentName>
-            </Category>
-          ))} */}
-          {themeList.map((t) => (
-            <Category key={t.themeId}>
-              <PresentImage src={t.image} alt={t.name} />
-              <PresentName>{t.name}</PresentName>
-            </Category>
-          ))}
-        </CategoryContainer>
+        {isLoading ? (
+          <LoadingContainer>
+            <LoadingSpinner />
+          </LoadingContainer>
+        ) : (
+          <CategoryContainer>
+            {themeList.map((t) => (
+              <Category key={t.themeId}>
+                <PresentImage src={t.image} alt={t.name} />
+                <PresentName>{t.name}</PresentName>
+              </Category>
+            ))}
+          </CategoryContainer>
+        )}
       </Container>
     </ThemeProvider>
   );
