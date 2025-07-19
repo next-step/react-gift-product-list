@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { css, ThemeProvider } from '@emotion/react';
 import { theme } from '@/theme/theme';
-import productData from '../data/productData';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -232,7 +231,6 @@ const PresentRanking: React.FC = () => {
   const [products, setProducts] = useState<ProductRankingItem[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<ProductRankingItem | null>(null);
 
   const defaultTargetType = 'ALL';
   const defaultRankType = 'MANY_WISH';
@@ -288,13 +286,6 @@ const PresentRanking: React.FC = () => {
     return <p>상품 목록이 없습니다.</p>;
   }
 
-  const {
-    name,
-    imageURL,
-    price: { sellingPrice },
-    brandInfo,
-  } = productData;
-
   const productsToShow = showAll ? 21 : 6;
 
   const typeOptions = [
@@ -306,8 +297,8 @@ const PresentRanking: React.FC = () => {
 
   const presentTypes = ['받고 싶어한', '많이 선물한', '위시로 받은'];
 
-  const goOrder = () => {
-    const to = `/Order?productId=${productData.id}`;
+  const goOrder = (productId: number) => {
+    const to = `/Order?productId=${productId}`;
 
     if (user) {
       navigate(to);
@@ -316,9 +307,8 @@ const PresentRanking: React.FC = () => {
     }
   };
 
-  const handleProductClick = (product: ProductRankingItem) => {
-    setSelectedProduct(product);
-    goOrder();
+  const handleProductClick = (productId: number) => {
+    goOrder(productId);
   };
 
   return (
@@ -352,7 +342,7 @@ const PresentRanking: React.FC = () => {
         <PresentDisplayContainer>
           <PresentDisplay>
             {products.map((p, index) => (
-              <ProductBox key={p.id} onClick={() => handleProductClick(p)}>
+              <ProductBox key={p.id} onClick={() => handleProductClick(p.id)}>
                 <NumberLogo
                   css={css`
                     background-color: ${index <= 2 ? 'rgb(252, 106, 102)' : 'rgb(176, 179, 186)'};
