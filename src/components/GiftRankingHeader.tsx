@@ -29,7 +29,6 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
     const initRank = (searchParams.get("rankType") as RANK_TYPE) || "MANY_WISH";
     setTarget(initTarget);
     setRankType(initRank);
-    setRankType(initRank);
     const params = new URLSearchParams(location.search);
     params.set("target", initTarget);
     params.set("rankType", initRank);
@@ -45,7 +44,6 @@ const GiftRankingHeader: React.FC<GiftRankingHeaderProps> = ({
   };
 
   const handleRankClick = (newRank: string) => {
-    setRankType(newRank);
     setRankType(newRank);
     const params = new URLSearchParams(location.search);
     params.set("target", target);
