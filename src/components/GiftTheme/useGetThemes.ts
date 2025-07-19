@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import useApi from '@/apis/useApi';
 
 export interface Theme {
   themeId: number;
@@ -12,24 +11,7 @@ interface ApiResponse {
 }
 
 export const useGetThemes = () => {
-  const [themes, setThemes] = useState<Theme[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { data: themesResponse, isLoading, error } = useApi<ApiResponse>('get', '/themes');
 
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const response = await axios.get<ApiResponse>(`/api/themes`);
-        setThemes(response.data.data);
-      } catch (error) {
-        setError(error as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchThemes();
-  }, []);
-
-  return { themes, loading, error };
+  return { themes: themesResponse?.data || [], loading: isLoading, error };
 };
