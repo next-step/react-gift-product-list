@@ -31,6 +31,7 @@ import ReceiverInfoTable from "@/components/order/ReceiverInfoTable";
 import axios from "axios";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useRequestHandler } from "@/hooks/useRequestHandler";
+import { ROUTE_PATHS } from "@/constants/routePath";
 
 type Product = {
   id: number;
@@ -53,6 +54,7 @@ const Order: React.FC = () => {
   const [receivers, setReceivers] = useState<FormData["order"]>([]);
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
+  const { MAIN } = ROUTE_PATHS;
 
   const totalQuantity =
     receivers.length === 0
@@ -95,7 +97,7 @@ const Order: React.FC = () => {
         `받는 사람 수: ${receivers.length}명\n` +
         `총 수량: ${totalQuantity}개`
     );
-    navigate("/");
+    navigate(MAIN);
   };
 
   const { user } = useUserInfo();
