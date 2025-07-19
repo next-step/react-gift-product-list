@@ -34,7 +34,7 @@ export const UserInfoProvider = ({ children }: PropsWithChildren) => {
 
   const login = (name: string, email: string, token: string) => {
     setUserInfo({ name, email, token });
-    sessionStorage.setItem('name', email);
+    sessionStorage.setItem('name', name);
     sessionStorage.setItem('email', email);
     sessionStorage.setItem('token', token);
   };
