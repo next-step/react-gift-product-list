@@ -14,6 +14,7 @@ import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
 import ProductsGrid from "../HomePage/components/ProductsGrid/ProductsGrid";
 import { PRODUCT_GRID_TYPES } from "../HomePage/components/ProductsGrid/types/productGridTypes";
+import type { ThemeInfo } from "@/types/ThemeInfo";
 
 const ProductListContainer = styled.div`
   width: 100%;
@@ -22,6 +23,35 @@ const ProductListContainer = styled.div`
   align-items: center;
   flex-direction: column;
 `;
+
+function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
+  const { data: themeProducts, isLoading: isThemeProductsLoading } = useFetch({
+    fetchFn: () => getThemeProducts(Number(themeInfo.themeId)),
+    errorHandler: () => {
+      console.error(THEME_PRODUCTS_API_MESSAGE.FETCH_ERROR);
+    },
+  });
+
+  return (
+    <>
+      <HeroSection backgroundColor={themeInfo?.backgroundColor || ""}>
+        <HeroName>{themeInfo?.name}</HeroName>
+        <HeroTitle>{themeInfo?.title}</HeroTitle>
+        <HeroDescription>{themeInfo?.description}</HeroDescription>
+      </HeroSection>
+      {isThemeProductsLoading ? (
+        <Loading />
+      ) : (
+        <ProductListContainer>
+          <ProductsGrid
+            products={themeProducts?.list || []}
+            type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
+          />
+        </ProductListContainer>
+      )}
+    </>
+  );
+}
 
 function ThemeProductPage() {
   const params = useParams();
@@ -34,35 +64,12 @@ function ThemeProductPage() {
     },
   });
 
-  const { data: themeProducts, isLoading: isThemeProductsLoading } = useFetch({
-    fetchFn: () => getThemeProducts(Number(params.themeId)),
-    errorHandler: () => {
-      console.error(THEME_PRODUCTS_API_MESSAGE.FETCH_ERROR);
-    },
-  });
-
   return (
     <Layout>
       {isThemeInfoLoading ? (
         <Loading />
       ) : (
-        <>
-          <HeroSection backgroundColor={themeInfo?.backgroundColor || ""}>
-            <HeroName>{themeInfo?.name}</HeroName>
-            <HeroTitle>{themeInfo?.title}</HeroTitle>
-            <HeroDescription>{themeInfo?.description}</HeroDescription>
-          </HeroSection>
-          {isThemeProductsLoading ? (
-            <Loading />
-          ) : (
-            <ProductListContainer>
-              <ProductsGrid
-                products={themeProducts?.list || []}
-                type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
-              />
-            </ProductListContainer>
-          )}
-        </>
+        themeInfo && <ThemeProductsContent themeInfo={themeInfo} />
       )}
     </Layout>
   );
