@@ -56,7 +56,7 @@ function TrendingGiftsContent() {
       );
     }
 
-    return <ProductGrid products={data || []} />;
+    return <ProductGrid products={data || []} type={"trendingGifts"} />;
   };
 
   return (

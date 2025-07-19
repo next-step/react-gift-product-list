@@ -13,19 +13,14 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
-import { THEME_PRODUCTS_LABELS } from "./constants/labels";
+import ProductGrid from "../HomePage/components/TrendingGifts/ProductGrid/ProductGrid";
 
-const EmptyProductContainer = styled.div`
+const ProductListContainer = styled.div`
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 100px;
-`;
-
-const EmptyProductText = styled.p`
-  font-size: ${({ theme }) => theme.typography.body.body2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.body2Regular.fontWeight};
-  color: ${({ theme }) => theme.colors.gray[900]};
+  flex-direction: column;
 `;
 
 function ThemeProductPage() {
@@ -46,9 +41,6 @@ function ThemeProductPage() {
     },
   });
 
-  const isNotEmptyProduct =
-    themeProducts?.list.length && themeProducts.list.length > 0;
-
   return (
     <Layout>
       {isThemeInfoLoading ? (
@@ -67,21 +59,12 @@ function ThemeProductPage() {
               <LoadingSpinner />
             </LoadingContainer>
           ) : (
-            <>
-              {isNotEmptyProduct ? (
-                <div>
-                  {themeProducts.list.map((product) => (
-                    <div key={product.id}>{product.name}</div>
-                  ))}
-                </div>
-              ) : (
-                <EmptyProductContainer>
-                  <EmptyProductText>
-                    {THEME_PRODUCTS_LABELS.EMPTY_PRODUCT}
-                  </EmptyProductText>
-                </EmptyProductContainer>
-              )}
-            </>
+            <ProductListContainer>
+              <ProductGrid
+                products={themeProducts?.list || []}
+                type={"themeProducts"}
+              />
+            </ProductListContainer>
           )}
         </>
       )}

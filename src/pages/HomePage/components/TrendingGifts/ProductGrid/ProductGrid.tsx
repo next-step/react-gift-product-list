@@ -33,9 +33,10 @@ const EmptyProductText = styled.p`
 
 interface ProductGridPropsType {
   products: TrendingGiftsType[];
+  type: "trendingGifts" | "themeProducts";
 }
 
-function ProductGrid({ products }: ProductGridPropsType) {
+function ProductGrid({ products, type }: ProductGridPropsType) {
   if (products.length === 0)
     return (
       <EmptyProductContainer>
@@ -57,6 +58,7 @@ function ProductGrid({ products }: ProductGridPropsType) {
             brandName={product.brandInfo.name}
             sellingPrice={product.price.sellingPrice}
             index={idx}
+            type={type}
           />
         ))}
       </ProductGridContainer>
