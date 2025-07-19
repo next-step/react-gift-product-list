@@ -15,6 +15,7 @@ import { ROUTES } from '@/routes/routes';
 import toLocaleString from '@/utils/toLocaleString';
 import useRanking from './hooks/useRnaking';
 import ProductInfo from './components/ProductInfo';
+import { useUserInfo } from '@/contexts/UserInfoContext';
 
 export interface OrderInfoValues {
   message: string;
