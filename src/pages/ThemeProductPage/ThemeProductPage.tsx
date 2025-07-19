@@ -46,6 +46,9 @@ function ThemeProductPage() {
     },
   });
 
+  const isNotEmptyProduct =
+    themeProducts?.list.length && themeProducts.list.length > 0;
+
   return (
     <Layout>
       {isThemeInfoLoading ? (
@@ -65,7 +68,7 @@ function ThemeProductPage() {
             </LoadingContainer>
           ) : (
             <>
-              {themeProducts?.list.length && themeProducts.list.length > 0 ? (
+              {isNotEmptyProduct ? (
                 <div>
                   {themeProducts.list.map((product) => (
                     <div key={product.id}>{product.name}</div>
