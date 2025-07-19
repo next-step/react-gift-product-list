@@ -5,6 +5,7 @@ import productData from '../data/productData';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { getProductRanking, type ProductRankingItem } from '@/services/product';
 
 const Wrapper = styled.section`
   padding: 0px 16px;
@@ -228,6 +229,16 @@ const PresentRanking: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
   const [selectedType, setSelectedType] = useState<'all' | 'female' | 'male' | 'teen'>('all');
   const [selectedPresentType, setSelectedPresentType] = useState<number>(0);
+  const [products, setProducts] = useState<ProductRankingItem[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductRankingItem | null>(null);
+
+  const defaultTargetType = 'ALL';
+  const defaultRankType = 'MANY_WISH';
+
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const savedType = localStorage.getItem('selectedType') as
@@ -240,6 +251,22 @@ const PresentRanking: React.FC = () => {
 
     if (savedType) setSelectedType(savedType);
     if (savedPresentType) setSelectedPresentType(Number(savedPresentType));
+    const fetchRanking = async () => {
+      setIsLoadingProducts(true);
+      setErrorMsg(null);
+
+      try {
+        const response = await getProductRanking(defaultTargetType, defaultRankType);
+
+        setProducts(response.data.data);
+      } catch (error) {
+        console.error('랭킹 조회 실패', error);
+        setErrorMsg('실시간 랭킹을 불러오지 못했습니다.');
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    };
+    fetchRanking();
   }, []);
 
   const handleTypeSelect = (type: typeof selectedType) => {
@@ -251,6 +278,15 @@ const PresentRanking: React.FC = () => {
     setSelectedPresentType(index);
     localStorage.setItem('selectedPresentType', index.toString());
   };
+  if (isLoadingProducts) {
+    return <p>로딩중..</p>;
+  }
+  if (errorMsg) {
+    return null;
+  }
+  if (products.length === 0) {
+    return <p>상품 목록이 없습니다.</p>;
+  }
 
   const {
     name,
@@ -270,9 +306,6 @@ const PresentRanking: React.FC = () => {
 
   const presentTypes = ['받고 싶어한', '많이 선물한', '위시로 받은'];
 
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
   const goOrder = () => {
     const to = `/Order?productId=${productData.id}`;
 
@@ -283,10 +316,8 @@ const PresentRanking: React.FC = () => {
     }
   };
 
-  const [selectedProduct, setSelectedProduct] = useState<typeof productData | null>(null);
-
-  const handleProductClick = () => {
-    setSelectedProduct(productData);
+  const handleProductClick = (product: ProductRankingItem) => {
+    setSelectedProduct(product);
     goOrder();
   };
 
@@ -320,8 +351,8 @@ const PresentRanking: React.FC = () => {
         <MarginBox2 />
         <PresentDisplayContainer>
           <PresentDisplay>
-            {Array.from({ length: productsToShow }, (_, index) => (
-              <ProductBox key={index} onClick={handleProductClick}>
+            {products.map((p, index) => (
+              <ProductBox key={p.id} onClick={() => handleProductClick(p)}>
                 <NumberLogo
                   css={css`
                     background-color: ${index <= 2 ? 'rgb(252, 106, 102)' : 'rgb(176, 179, 186)'};
@@ -330,7 +361,7 @@ const PresentRanking: React.FC = () => {
                   {index + 1}
                 </NumberLogo>
                 <ProductInfo>
-                  <ProductImage src={imageURL} alt={name}></ProductImage>
+                  <ProductImage src={p.imageURL} alt={p.name}></ProductImage>
                   <div
                     css={css`
                       width: 100%;
@@ -338,8 +369,8 @@ const PresentRanking: React.FC = () => {
                       background-color: transparent;
                     `}
                   ></div>
-                  <SubProductName>{brandInfo.name}</SubProductName>
-                  <ProdudctName>{brandInfo.name}</ProdudctName>
+                  <SubProductName>{p.brandInfo.name}</SubProductName>
+                  <ProdudctName>{p.brandInfo.name}</ProdudctName>
                   <div
                     css={css`
                       width: 100%;
@@ -348,7 +379,7 @@ const PresentRanking: React.FC = () => {
                     `}
                   ></div>
                   <ProductPrice>
-                    {sellingPrice}
+                    {p.price.sellingPrice}
                     <span
                       css={css`
                         font-weight: 400;
