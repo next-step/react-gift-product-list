@@ -9,6 +9,7 @@ import { ROUTES } from '@/routes/routes';
 import toLocaleString from '@/utils/toLocaleString';
 import useRanking from './hooks/useRnaking';
 import ProductInfo from './components/ProductInfo';
+import { useUserInfo } from '@/contexts/UserInfoContext';
 
 const Section = styled.section`
   width: 100%;
@@ -44,8 +45,9 @@ const OrderPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { productSummaryData } = useRanking(id as string);
+  const { userInfo } = useUserInfo();
   const orderForm = useForm<OrderInfoValues>({
-    defaultValues: { message: '축하해요.', name: '', receiverInfos: [] },
+    defaultValues: { message: '축하해요.', name: userInfo.name, receiverInfos: [] },
   });
 
   const onSubmit = () => {
