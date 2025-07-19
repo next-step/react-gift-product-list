@@ -7,6 +7,7 @@ import { useUserInfo } from "@/hooks/useUserInfo";
 import { useValidate } from "@/components/login/useValidate";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { STORAGE_KEYS } from "@/constants/storageKyes";
 
 const loginURL = import.meta.env.VITE_API_BASE_URL_LOGIN;
 
@@ -75,7 +76,10 @@ const Login = () => {
 
               setUser(logUserInfo);
 
-              sessionStorage.setItem("userInfo", JSON.stringify(logUserInfo));
+              sessionStorage.setItem(
+                STORAGE_KEYS.USER_INFO,
+                JSON.stringify(logUserInfo)
+              );
 
               navigate("/my");
             } catch (error) {

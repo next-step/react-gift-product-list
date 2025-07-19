@@ -4,6 +4,7 @@ import type { Theme } from "@emotion/react";
 import { useTheme } from "@emotion/react";
 import { css } from "@emotion/react";
 import { ClipLoader } from "react-spinners";
+import { STORAGE_KEYS } from "@/constants/storageKyes";
 
 const MyPage: React.FC = () => {
   const { user } = useUserInfo();
@@ -28,7 +29,7 @@ const MyPage: React.FC = () => {
       </div>
       <button
         onClick={() => {
-          sessionStorage.removeItem("userInfo");
+          sessionStorage.removeItem(STORAGE_KEYS.USER_INFO);
           navigate("/login");
         }}
         css={buttonStyle(theme)}
