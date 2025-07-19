@@ -6,8 +6,8 @@ import Input from "@/components/login/Input";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useValidate } from "@/components/login/useValidate";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { STORAGE_KEYS } from "@/constants/storageKyes";
+import { useRequestHandler } from "@/hooks/useRequestHandler";
 
 const loginURL = import.meta.env.VITE_API_BASE_URL_LOGIN;
 
@@ -28,6 +28,7 @@ const Login = () => {
   const email = useValidate(validateEmail, "이메일 형식을 지켜주세요.");
   const password = useValidate(validatePassword, "비밀번호는 8자 이상입니다.");
   const isFormValid = email.isValid && password.isValid;
+  const { fetchData } = useRequestHandler();
 
   return (
     <div css={containerStyle()}>
@@ -54,47 +55,36 @@ const Login = () => {
       <button
         onClick={async () => {
           if (isFormValid) {
-            try {
-              const response = await axios.post(
-                loginURL,
-                {
-                  email: email.string,
-                  password: password.string,
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json",
+            fetchData({
+              fetcher: () =>
+                axios.post(
+                  loginURL,
+                  {
+                    email: email.string,
+                    password: password.string,
                   },
-                }
-              );
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                ),
+              onSuccess: (response: any) => {
+                const logUserInfo = {
+                  email: response.data.data.email,
+                  name: response.data.data.name,
+                  authToken: response.data.data.authToken,
+                };
 
-              const logUserInfo = {
-                email: response.data.data.email,
-                name: response.data.data.name,
-                authToken: response.data.data.authToken,
-              };
+                setUser(logUserInfo);
+                sessionStorage.setItem(
+                  STORAGE_KEYS.USER_INFO,
+                  JSON.stringify(logUserInfo)
+                );
 
-              setUser(logUserInfo);
-
-              sessionStorage.setItem(
-                STORAGE_KEYS.USER_INFO,
-                JSON.stringify(logUserInfo)
-              );
-
-              navigate("/my");
-            } catch (error) {
-              if (axios.isAxiosError(error)) {
-                const status = error.response?.status;
-                if (status && status >= 400 && status < 500) {
-                  const message =
-                    error.response?.data?.message || "요청이 잘못되었습니다.";
-                  toast.error(`${message}`, {
-                    position: "top-right",
-                    autoClose: 3000,
-                  });
-                }
-              }
-            }
+                navigate("/my");
+              },
+            });
           }
         }}
         css={buttonStyle(theme, isFormValid)}
