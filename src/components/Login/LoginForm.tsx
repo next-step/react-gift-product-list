@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
 import LogoImg from '@/Assets/icons/logo.png';
 import LoginButton from '@/components/login/LoginButton';
+
+import axios from 'axios';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { login } from '@/api/loginApi';
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
   width: 100%;
@@ -53,21 +56,33 @@ const LoginForm = () => {
     handlePasswordBlur,
   } = useLoginForm();
 
-  const { login } = useAuth();
-
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
 
-    const userData = { email };
-    login(userData);
+    try {
+      const res = await login({ email, password });
+      const { authToken, email: userEmail, name } = res.data;
 
-    navigate(from, { replace: true });
-  };
+      localStorage.setItem(
+        'userInfo',
+        JSON.stringify({ authToken, email: userEmail, name })
+      );
+
+      navigate(from, { replace: true });
+    } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message || '로그인에 실패했습니다.이메일 형식이 kakao.com 으로 끝나는지 확인해주세요.';
+      toast.error(message);
+    } else {
+      toast.error('알 수 없는 오류가 발생했습니다.');
+    }
+  }
+};
 
   return (
     <Container>
