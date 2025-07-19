@@ -29,8 +29,6 @@ const useGetProductSummary = (): UseProductSummaryResult => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
 
     const fetchProductSummary = async () => {
       if (!productId) {
@@ -41,9 +39,7 @@ const useGetProductSummary = (): UseProductSummaryResult => {
         return;
       }
       try {
-        const response = await axios.get(`/api/products/${productId}/summary`, {
-          signal,
-        });
+        const response = await axios.get(`/api/products/${productId}/summary`);
         setProduct(response.data.data);
       } catch (e) {
         if (axios.isCancel(e)) {
@@ -60,9 +56,6 @@ const useGetProductSummary = (): UseProductSummaryResult => {
 
     fetchProductSummary();
 
-    return () => {
-      abortController.abort();
-    };
   }, [productId, navigate]);
 
   return { product, loading, error };
