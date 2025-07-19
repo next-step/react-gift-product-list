@@ -13,6 +13,7 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
+import { THEME_PRODUCTS_LABELS } from "./constants/labels";
 
 const EmptyProductContainer = styled.div`
   display: flex;
@@ -24,7 +25,7 @@ const EmptyProductContainer = styled.div`
 const EmptyProductText = styled.p`
   font-size: ${({ theme }) => theme.typography.body.body2Regular.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.body2Regular.fontWeight};
-  color: ${({ theme }) => theme.colors.gray[800]};
+  color: ${({ theme }) => theme.colors.gray[900]};
 `;
 
 function ThemeProductPage() {
@@ -72,7 +73,9 @@ function ThemeProductPage() {
                 </div>
               ) : (
                 <EmptyProductContainer>
-                  <EmptyProductText>상품이 없습니다.</EmptyProductText>
+                  <EmptyProductText>
+                    {THEME_PRODUCTS_LABELS.EMPTY_PRODUCT}
+                  </EmptyProductText>
                 </EmptyProductContainer>
               )}
             </>
