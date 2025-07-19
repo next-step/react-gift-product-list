@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ThemeHero from './ThemeHero';
+import ThemeProductList from './ThemeProductList';
 
 type ThemeInfo = {
   themeId: number;
@@ -56,7 +57,7 @@ const ThemeProductPage = () => {
         description={themeInfo.description}
         backgroundColor={themeInfo.backgroundColor}
       />
-      {/* 다음 단계에서 상품 리스트 컴포넌트 추가 예정 */}
+      <ThemeProductList />
     </main>
   );
 };
