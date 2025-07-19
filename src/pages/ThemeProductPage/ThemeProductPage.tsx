@@ -2,6 +2,9 @@ import { getThemeInfo } from "@/data/api";
 import { useFetch } from "@/hooks/useFetch";
 import Layout from "@/layout";
 import { useParams } from "react-router-dom";
+import { THEME_INFO_API_MESSAGE } from "./constants/apiMessage";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
 
 function ThemeProductPage() {
   const params = useParams();
@@ -9,12 +12,16 @@ function ThemeProductPage() {
   const { data, isLoading } = useFetch({
     fetchFn: () => getThemeInfo(Number(params.themeId)),
     errorHandler: () => {
-      console.error("테마 정보 로딩 실패");
+      console.error(THEME_INFO_API_MESSAGE.FETCH_ERROR);
     },
   });
 
   if (isLoading) {
-    return <div>로딩중...</div>;
+    return (
+      <LoadingContainer>
+        <LoadingSpinner />
+      </LoadingContainer>
+    );
   }
 
   return (
