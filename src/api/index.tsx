@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { OrderData } from '@/types/order';
 
 export async function login({
   email,
@@ -16,7 +17,7 @@ export async function fetchProductSummary(productId: number) {
   return axios.get(`/api/products/${productId}/summary`);
 }
 
-export async function createOrder(orderData: any, authToken: string) {
+export async function createOrder(orderData: OrderData, authToken: string) {
   return axios.post('/api/order', orderData, {
     headers: {
       Authorization: authToken,
