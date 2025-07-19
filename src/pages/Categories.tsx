@@ -3,12 +3,13 @@ import PresentLayout from "@/components/PresentLayout"
 import Text from "@/components/Text"
 import PlusNewPerson from "./PlusNewPerson"
 import PresentCardStyle from "@/components/PresentCardStyle"
-import { useContext } from "react"
-import { PresentThemeContext } from "@/context/PresentThemeContext"
 import Layout from "@/components/Layout"
 import Blank from "@/components/Blank"
 import Column from "@/components/Column"
-import Trending from "./Trending"
+import Trending from "../components/Trending"
+import useFetch from "@/hooks/useFetch"
+import Loading from "@/components/PresentTheme/Loading"
+import ThemeNotFound from "@/components/PresentTheme/ThemeNotFound"
 
 interface PresentItem {
   themeId: number
@@ -23,15 +24,39 @@ const PresentCard = ({ present }: PresentCardProps) => {
   return (
     <PresentCardStyle>
       <img src={present.image} alt="" />
-      <Text variant="label2Regular" margin="spacing2" padding="spacing2">
+      <Text variant="label2Regular" margin="spacing0" padding="spacing0">
         {present.name}
       </Text>
     </PresentCardStyle>
   )
 }
-
+interface ThemesResponse {
+  data: PresentItem[]
+}
 const PresentList = () => {
-  const presents = useContext(PresentThemeContext)
+  const baseUrl = import.meta.env.VITE_BASE_URL
+  const url  = new URL("/api/themes", baseUrl).toString();
+  const { data: themesData, loading } = useFetch<ThemesResponse>(
+    url,
+    {
+      onSuccess: (data) => {
+        console.log("Themes fetched:", data)
+      },
+      onError: (error) => {
+        console.log("Error fetching themes:", error)
+      },
+    }
+  )
+
+  const presents = themesData?.data || []
+  if (loading) {
+    return <Loading />
+  }
+
+  if (!presents.length) {
+    return <ThemeNotFound />
+  }
+
   return (
     <PresentLayout>
       {presents.map(function (Present) {

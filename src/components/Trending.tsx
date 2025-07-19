@@ -3,11 +3,10 @@ import Text from "@/components/Text"
 import Blank from "@/components/Blank"
 import PresentWho from "@/components/PresentWho"
 import SentencesRow from "./SentencesRow"
-import ButtonsRow from "./ButtonsRow"
+import ButtonsRow from "../pages/ButtonsRow"
 import ProductGrid from "@/components/ProductGrid"
 
 const Trending = () => {
-
   return (
     <Layout paddingLeft="spacing4" paddingRight="spacing4">
       <Text variant="title1Bold" margin="spacing0" padding="spacing0">
