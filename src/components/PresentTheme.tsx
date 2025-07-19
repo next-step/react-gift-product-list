@@ -80,23 +80,26 @@ interface ThemeResponse {
 const PresentTheme = () => {
   const [themeList, setThemeList] = useState<ThemeItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchThemes = async () => {
       try {
         const res = await api.get<ThemeResponse>('/api/themes');
-
-        setTimeout(() => {
-          setThemeList(res.data.data);
-          setIsLoading(false);
-        }, 2000);
+        setThemeList(res.data.data);
       } catch (error) {
         console.error('테마 불러오기 실패', error);
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
       }
     };
-
     fetchThemes();
   }, []);
+
+  if (!isLoading && (hasError || themeList.length === 0)) {
+    return null;
+  }
 
   return (
     <ThemeProvider theme={theme}>
