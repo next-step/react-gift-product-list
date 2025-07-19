@@ -12,6 +12,7 @@ function App() {
         <ToastContainer
           position="bottom-center"
           closeOnClick
+          closeButton={true}
           hideProgressBar={true}
         />
       </ReceiverProvider>
