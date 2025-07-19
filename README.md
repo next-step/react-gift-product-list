@@ -15,9 +15,9 @@
 ## 2단계 과제 진행 요구사항
 
 - 로그인 기능
-  - [ ] /login api를 사용하여 로그인 기능 완성
-  - [ ] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage에 저장하고 활용
-  - [ ] 4XX 에러가 발생하면 Toast를 통해 에러메시지 보여주기(react-toastify 사용)
+  - [x] /login api를 사용하여 로그인 기능 완성
+  - [x] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage에 저장하고 활용
+  - [x] 4XX 에러가 발생하면 Toast를 통해 에러메시지 보여주기(react-toastify 사용)
 - 주문하기 기능
   - [ ] /products/:productId/summary api를 사용하여 제품 정보 가져오기
   - [ ] 제품 정보 API에서 4XX에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결
