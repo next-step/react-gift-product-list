@@ -18,7 +18,7 @@ import Modal from '@/components/Order/Modal';
 
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
-import {ToastContainer, toast} from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import useUser from '@/hooks/useUser';
 
 // 주문 버튼 시작
@@ -65,9 +65,9 @@ const Spinner = styled.div`
 `;
 
 function Order() {
-  const {getName} = useUser();// 운동하고와서 여기서 이름꺼네서 폼에넣자
+  const { getName, getAuthToken } = useUser();// 운동하고와서 여기서 이름꺼네서 폼에넣자
   const userName = getName();
-  
+
   const navigate = useNavigate();
   const [modalToggle, setModalToggle] = useState(false); // 모달의 상태를 나타내는 state
 
@@ -134,7 +134,7 @@ function Order() {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  
+
   useEffect(() => {
     const fetchRanking = async () => {
       try {
@@ -145,7 +145,7 @@ function Order() {
         setPrice(response.data.data.price);
 
         setIsLoading(false);
-      } catch (error:any) {
+      } catch (error: any) {
         console.error('Error fetching ranking data:', error);
         if (error.response && error.response.status >= 400 && error.response.status < 500) {
           toast.error('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요', {
@@ -161,13 +161,47 @@ function Order() {
     fetchRanking();
   }, []);
 
+  // getAuthToken
   // 최종 주문 핸들러
   function handleOrderClick() {
     const receivers = watch('receivers');
     const totalCount = receivers.reduce((sum, receivers) => sum + Number(receivers.count || 0), 0);
-    alert(`주문이 완료되었습니다.\n상품명: ${name}\n구매 수량: ${totalCount}\n발신자 이름: ${watch('senderName')}\n메시지: ${watch('message')}
-      `);
-    navigate('/');
+
+    const fetchSubmit = async () => {
+      try {
+        const receivers = watch('receivers').map((receiver) => ({
+          name: receiver.name,
+          phoneNumber: receiver.phone,
+          quantity: Number(receiver.count),
+        }));
+
+        const response = await axios.post(`${baseUrl}/order`, {
+          'productId': Number(id),
+          'message': watch('message'),
+          'messageCardId': String(watch('selectedId')),
+          'ordererName': watch('senderName'),
+          'receivers': receivers,
+        },{
+          headers: {
+            Authorization: getAuthToken(),
+          }
+        });
+        alert(`주문이 완료되었습니다.\n상품명: ${name}\n구매 수량: ${totalCount}\n발신자 이름: ${watch('senderName')}\n메시지: ${watch('message')}`);
+        navigate('/');
+      } catch (error: any) {
+        if (error.response && error.response.status >= 400 && error.response.status < 500) {
+          toast.error('입력값을 다시 확인해주세요', {
+            position: 'bottom-center',
+            hideProgressBar: true,
+            closeOnClick: true
+          });
+        } else if(error.response.status === 401) {
+          navigate('/login');
+        }
+      }
+    };
+
+    fetchSubmit();
   }
 
   return (
@@ -195,7 +229,7 @@ function Order() {
           {/* --------------모달-------------- */}
           <Modal modalToggle={modalToggle} fields={fields} remove={remove} append={append} setModalToggle={setModalToggle} price={price} />
         </FormProvider>)}
-        <ToastContainer/>
+      <ToastContainer />
     </Layout>
   );
 }
