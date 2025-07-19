@@ -44,6 +44,8 @@ const Order = () => {
         } else {
           setError();
         }
+      } finally {
+        setLoading(false);
       }
     };
 

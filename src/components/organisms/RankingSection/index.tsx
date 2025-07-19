@@ -24,6 +24,8 @@ const RankingSection = () => {
         setSuccess(data);
       } catch {
         setError();
+      } finally {
+        setLoading(false);
       }
     };
     

@@ -17,6 +17,8 @@ const CategoryField = () => {
         setSuccess(data);
       } catch {
         setError();
+      } finally {
+        setLoading(false);
       }
     };
     
