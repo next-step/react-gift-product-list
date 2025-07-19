@@ -1,5 +1,3 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Container,
   Title,
@@ -22,20 +20,15 @@ import {
   ORDER_INFO_TITLE,
   PRODUCT_PRICE_LABEL,
   CURRENCY_UNIT,
+  PRODUCT_NOT_FOUND_MESSAGE,
 } from './constants';
+import { useLogin } from '@/contexts/LoginContext';
 import { useOrderForm } from './useOrderForm';
+import useGetProductSummary from './useGetProductSummary';
 
 function OrderPage() {
-  const { productId } = useParams<{ productId: string }>();
-  // TODO: 다음과제에서 api로 바꾸기. 현재 mocakdata파일 삭제로 발생한 오류 방지용.
-  const product = {
-    id: parseInt(productId || '1'),
-    name: '임시 상품명',
-    imageURL: 'https://via.placeholder.com/100',
-    brand: '임시 브랜드',
-    price: 10000,
-  };
-
+  const { userInfo } = useLogin();
+  const { product, loading, error } = useGetProductSummary();
   const {
     register,
     handleSubmit,
@@ -45,7 +38,15 @@ function OrderPage() {
     receivers,
     handleReceiverModalComplete,
     totalQuantity,
-  } = useOrderForm(product);
+  } = useOrderForm(product, userInfo?.name);
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
+
+  if (!product) {
+    return <div>{PRODUCT_NOT_FOUND_MESSAGE}</div>;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -60,17 +61,18 @@ function OrderPage() {
         initialReceivers={receivers}
         Trigger={<ReceiverSelectBox recipients={receivers} />}
       />
+      {loading && <Container></Container>}
       <Container>
         <Title>{ORDER_INFO_TITLE}</Title>
         <Box>
           <Image src={product.imageURL} alt={product.name} width="100" />
           <Label>
             <ProductName>{product.name}</ProductName>
-            <ProductBrand>{product.brand}</ProductBrand>
+            <ProductBrand>{product.brandName}</ProductBrand>
             <Price>
               <PriceName>{PRODUCT_PRICE_LABEL}</PriceName>
               <ProductPrice>
-                {product.price.toLocaleString()}
+                {product.price?.toLocaleString()}
                 {CURRENCY_UNIT}
               </ProductPrice>
             </Price>

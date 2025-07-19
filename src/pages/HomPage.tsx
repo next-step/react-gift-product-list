@@ -5,10 +5,10 @@ import FriendSelectBox from '@/components/FriendSelectBox';
 import { useLogin } from '@/contexts/LoginContext';
 
 const HomePage = () => {
-  const { isLoggedIn, userId } = useLogin();
+  const { isLoggedIn, userInfo } = useLogin();
   return (
     <>
-      <FriendSelectBox isLoggedIn={isLoggedIn} userId={userId} />
+      <FriendSelectBox isLoggedIn={isLoggedIn} userId={userInfo?.email} />
       <GiftThemeSection />
       <Banner />
       <GiftRankingSection />

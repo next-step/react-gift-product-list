@@ -6,7 +6,6 @@ const Frame = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDisabled};
   padding: ${({ theme }) => theme.spacing.spacing4}
-    ${({ theme }) => theme.spacing.spacing3};
 `;
 
 const Box = styled.div`
@@ -33,12 +32,12 @@ const IconWrap = styled.div`
 
 const Text = styled.p`
   font: ${({ theme }) => theme.typography.subtitle1Bold};
-  color: ${({ theme }) => theme.colors.semantic.textDeafult};
+  color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
 interface FriendSelectBoxProps {
   isLoggedIn: boolean;
-  userId: string | null;
+  userId: string | undefined;
 }
 
 const FriendSelectBox: React.FC<FriendSelectBoxProps> = ({

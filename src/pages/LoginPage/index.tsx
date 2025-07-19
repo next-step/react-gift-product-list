@@ -11,6 +11,11 @@ import LogoIcon from '@/assets/logo.svg';
 import { useLoginForm } from './useLoginForm';
 import { PATH } from '@/constants/paths';
 import { useLogin } from '@/contexts/LoginContext';
+import { toast } from 'react-toastify';
+import { EMAIL_POSSIBLE, ERROR_OCCURRED_MESSAGE } from './constants';
+import useApi from '@/apis/useApi';
+import { type LoginResponse } from './types';
+import { isAxiosError } from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -27,10 +32,33 @@ const LoginPage = () => {
     handlePwChange,
   } = useLoginForm();
 
+  const { execute: loginApi } = useApi<LoginResponse, { email: string; password: string }>(
+    'post',
+    '/login',
+    {
+      onSuccess: (data) => {
+        const { email: userEmail, name, authToken } = data.data;
+        login({ email: userEmail, name, authToken });
+        navigate(PATH.HOME, { replace: true });
+      },
+
+      onError: (error: Error) => {
+        if (isAxiosError(error) && error.response) {
+          if (error.response.status >= 400 && error.response.status < 500) {
+            toast.error(error.response.data.message || EMAIL_POSSIBLE);
+          } else {
+            toast.error(ERROR_OCCURRED_MESSAGE);
+          }
+        } else {
+          toast.error(ERROR_OCCURRED_MESSAGE);
+        }
+      },
+    },
+  );
+
   const handleLogin = () => {
     if (isValid) {
-      login(email);
-      navigate(PATH.HOME, { replace: true });
+      loginApi({ email, password: pw });
     }
   };
 
