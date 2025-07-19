@@ -18,6 +18,8 @@ import ScrollToTop from './pages/Home/ScrollToTop';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProductPage from './pages/ThemeProductPage';
+import theme from './styles/theme';
+import { css } from '@emotion/react';
 
 const Home = () => (
   <main>
@@ -44,28 +46,37 @@ function App() {
       <UserManagementProvider>
         <ScrollToTop />
         <NavBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/login"
-            element={
-              <RedirectIfLoggedIn>
-                <LoginPage />
-              </RedirectIfLoggedIn>
-            }
-          />
-          <Route
-            path="/my"
-            element={
-              <ProtectedRoute>
-                <MyPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/order/:productId" element={<OrderPage />} />
-          <Route path="/themes/:themeId" element={<ThemeProductPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <div
+          css={css`
+            padding-top: ${theme.spacing[12]};
+            max-width: 720px;
+            margin: 0 auto;
+            min-height: calc(100vh - ${theme.spacing[12]});
+          `}
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/login"
+              element={
+                <RedirectIfLoggedIn>
+                  <LoginPage />
+                </RedirectIfLoggedIn>
+              }
+            />
+            <Route
+              path="/my"
+              element={
+                <ProtectedRoute>
+                  <MyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/order/:productId" element={<OrderPage />} />
+            <Route path="/themes/:themeId" element={<ThemeProductPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </div>
         <ToastContainer
           position="bottom-center"
           autoClose={3000}
