@@ -24,6 +24,10 @@ const OrderPage = () => {
   const { id } = useParams();
   const productId = Number(id);
   const { userInfo } = useAuth();
+  if (!userInfo?.authToken) {
+    navigate("/login");
+    return null;
+  }
 
   const handleApiError = useApiErrorHandler({
     fallbackMessage: "주문 중 오류가 발생했습니다.",
@@ -39,7 +43,7 @@ const OrderPage = () => {
     method: "post",
     manual: true,
     headers: {
-      Authorization: userInfo?.authToken || "",
+      Authorization: userInfo.authToken,
     },
   });
 
