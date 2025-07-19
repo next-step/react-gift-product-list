@@ -30,7 +30,7 @@ import type { Theme } from "@emotion/react";
 import ReceiverInfoTable from "@/components/order/ReceiverInfoTable";
 import axios from "axios";
 import { useUserInfo } from "@/hooks/useUserInfo";
-import { toast } from "react-toastify";
+import { useRequestHandler } from "@/hooks/useRequestHandler";
 
 type Product = {
   id: number;
@@ -97,38 +97,29 @@ const Order: React.FC = () => {
     );
     navigate("/");
   };
+
   const { user } = useUserInfo();
   const orderURL = import.meta.env.VITE_API_BASE_URL_ORDER;
 
+  const { fetchData } = useRequestHandler();
+
   useEffect(() => {
     if (!productId) return;
-
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(
+    fetchData({
+      fetcher: () =>
+        axios.get(
           `${import.meta.env.VITE_API_BASE_URL_PRODUCT}/${productId}/summary`
-        );
-        setProduct(response.data.data);
-      } catch (error) {
+        ),
+      onSuccess: (data) => {
+        setProduct(data.data.data);
+      },
+      onError: (error) => {
         if (axios.isAxiosError(error)) {
-          const status = error.response?.status;
-          if (status && status >= 400 && status < 500) {
-            const message =
-              error.response?.data?.message || "요청이 잘못되었습니다.";
-            toast.error(`${message}`, {
-              position: "top-right",
-              autoClose: 3000,
-            });
-            navigate("/");
-          }
+          navigate("/login");
         }
-
-        console.error("상품 정보 로딩 실패:", error);
-      }
-    };
-
-    fetchProduct();
-  }, [productId, navigate]);
+      },
+    });
+  }, [productId]);
 
   const renewedReceivers = receivers.map((receiver) => ({
     name: receiver.receiverName,
