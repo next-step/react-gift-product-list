@@ -29,7 +29,7 @@ export const senderSchema = z.object({
 
 export const receiverItemSchema = z.object({
   name: z.string().nonempty(RECEIVER_SECTION_CONSTANTS.NAME_ERROR),
-  phone: z
+  phoneNumber: z
     .string()
     .nonempty(RECEIVER_SECTION_CONSTANTS.PHONE_ERROR)
     .refine(
@@ -44,17 +44,17 @@ export const receiversSchema = z.object({
     const phoneNumberSet = new Set<string>();
 
     receivers.forEach((receiver, index) => {
-      if (receiver.phone && phoneNumberSet.has(receiver.phone)) {
+      if (receiver.phoneNumber && phoneNumberSet.has(receiver.phoneNumber)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: VALIDATE_LABELS.PHONE_DUPLICATE,
-          path: [index, "phone"],
+          path: [index, "phoneNumber"],
         });
 
         return;
       }
 
-      phoneNumberSet.add(receiver.phone);
+      phoneNumberSet.add(receiver.phoneNumber);
     });
   }),
 });

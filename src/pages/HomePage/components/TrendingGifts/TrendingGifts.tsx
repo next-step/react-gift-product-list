@@ -28,10 +28,12 @@ function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
   const [subTabIdx, setSubTabIdx] = useSubTab();
 
-  const { data, isLoading, isError } = useFetch<TrendingGiftsType>({
+  const { data, isLoading, isError } = useFetch<TrendingGiftsType[]>({
     fetchFn: () =>
       getTrendingGifts(TARGET_TYPE[mainTabIdx], RANK_TYPE[subTabIdx]),
-    errorMessage: TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR,
+    errorHandler: () => {
+      console.error(TRENDING_GIFTS_ERROR_MESSAGES.FETCH_ERROR);
+    },
     deps: [mainTabIdx, subTabIdx],
   });
 

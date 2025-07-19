@@ -23,7 +23,7 @@ import Input from "@/components/common/Input/Input";
 interface FormData {
   receivers: {
     name: string;
-    phone: string;
+    phoneNumber: string;
     quantity: string;
   }[];
 }
@@ -98,11 +98,11 @@ function ReceiverForm({
         />
         <LabeledInputField
           fieldLabel={RECEIVER_SECTION_CONSTANTS.PHONE_LABEL}
-          name={`receivers.${index}.phone`}
+          name={`receivers.${index}.phoneNumber`}
           control={control}
           type="tel"
           placeholder={RECEIVER_SECTION_CONSTANTS.PHONE_PLACEHOLDER}
-          errorMessage={errors.receivers?.[index]?.phone?.message}
+          errorMessage={errors.receivers?.[index]?.phoneNumber?.message}
         />
         <LabeledInputField
           fieldLabel={RECEIVER_SECTION_CONSTANTS.QUANTITY_LABEL}

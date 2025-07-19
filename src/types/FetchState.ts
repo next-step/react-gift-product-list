@@ -1,5 +1,5 @@
 export interface FetchState<T> {
-  data: T[] | null;
+  data: T | null;
   isLoading: boolean;
   isError: boolean;
 }

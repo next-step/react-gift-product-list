@@ -1,4 +1,4 @@
-import type { Receiver } from "../../../hooks/useOrderForm";
+import type { Receiver } from "@/types/Receiver";
 import { TABLE_CELL_CONSTANTS } from "../../../constants/table";
 import {
   ReceiverTableContainer,
@@ -21,9 +21,9 @@ function ReceiverTable({ receivers }: ReceiverTableProps) {
         <TableHeaderCell>{TABLE_CELL_CONSTANTS.QUANTITY}</TableHeaderCell>
       </TableHeader>
       {receivers.map((receiver) => (
-        <TableRow key={receiver.phone}>
+        <TableRow key={receiver.phoneNumber}>
           <TableCell>{receiver.name}</TableCell>
-          <TableCell>{receiver.phone}</TableCell>
+          <TableCell>{receiver.phoneNumber}</TableCell>
           <TableCell>{receiver.quantity}</TableCell>
         </TableRow>
       ))}

@@ -31,7 +31,7 @@ export const MAX_RECEIVERS: number = 10;
 
 export const DEFAULT_RECEIVER = {
   name: "",
-  phone: "",
+  phoneNumber: "",
   quantity: "",
 } as const;
 

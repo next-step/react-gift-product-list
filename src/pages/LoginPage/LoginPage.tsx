@@ -21,8 +21,6 @@ export interface LoginFormProps {
 }
 
 function LoginPage() {
-  const { handleSubmit } = useLoginSubmit();
-
   const { email, handleEmailValueChange, validateEmail, emailErrorMessage } =
     useEmailValidation();
 
@@ -33,6 +31,8 @@ function LoginPage() {
     passwordErrorMessage,
   } = usePasswordValidation();
 
+  const { handleSubmit } = useLoginSubmit({ email, password });
+
   const isValidEmail = !emailErrorMessage && email.trim() !== "";
   const isValidPassword = !passwordErrorMessage && password.trim() !== "";
 
@@ -42,7 +42,7 @@ function LoginPage() {
     <Layout>
       <LoginContainer>
         <KakaoLogo>kakao</KakaoLogo>
-        <LoginForm onSubmit={(e) => handleSubmit(e, email)}>
+        <LoginForm onSubmit={(e) => handleSubmit(e)}>
           <InputFieldGroup>
             <IDField
               value={email}

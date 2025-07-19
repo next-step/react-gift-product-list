@@ -6,11 +6,11 @@ import SenderSectionComponent from "./components/SenderSection/SenderSection";
 import ReceiverSectionComponent from "./components/ReceiverSection/ReceiverSection";
 import ProductInfo from "./components/ProductInfo/ProductInfo";
 import { useProductInfo } from "./hooks/useProductInfo";
-import { ROUTES } from "@/constants/routes";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useOrderForm } from "./hooks/useOrderForm";
-import { ORDER_MESSAGES } from "./constants/alert";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
+import { useOrderSubmit } from "./hooks/useOrderSubmit";
 
 const OrderPageContainer = styled.div`
   display: flex;
@@ -20,9 +20,8 @@ const OrderPageContainer = styled.div`
 `;
 
 function OrderPage() {
-  const navigate = useNavigate();
   const [isSubmittedOnce, setIsSubmittedOnce] = useState(false);
-  const product = useProductInfo();
+  const { product, loading } = useProductInfo();
 
   const {
     messageCard,
@@ -40,34 +39,27 @@ function OrderPage() {
     getFormValues,
   } = useOrderForm({ isSubmittedOnce });
 
-  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const { onSubmitHandler } = useOrderSubmit({
+    validateAllForms,
+    setIsSubmittedOnce,
+    getFormValues,
+    receivers,
+    messageCard,
+    product,
+  });
 
-    const isValid = await validateAllForms();
+  if (loading) {
+    return (
+      <Layout>
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
+      </Layout>
+    );
+  }
 
-    if (!isValid) {
-      setIsSubmittedOnce(true);
-    }
-
-    if (isValid) {
-      const formValues = getFormValues();
-      alert(
-        ORDER_MESSAGES.ORDER_COMPLETE_TEMPLATE({
-          productName: product?.name || "",
-          totalQuantity: formValues.totalQuantity,
-          senderName: formValues.senderName,
-          cardMessage: formValues.cardMessage,
-        })
-      );
-
-      navigate(ROUTES.HOME);
-      return;
-    }
-  };
-
-  if (!product) {
-    navigate(ROUTES.NOT_FOUND);
-    return;
+  if (loading || !product) {
+    return null;
   }
 
   const totalQuantity = receivers.reduce(

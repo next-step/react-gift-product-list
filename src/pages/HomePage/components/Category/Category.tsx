@@ -15,9 +15,11 @@ import { useFetch } from "@/hooks/useFetch";
 import type { GiftThemeType } from "@/types/GiftThemeType";
 
 function CategoryContent() {
-  const { data, isLoading, isError } = useFetch<GiftThemeType>({
+  const { data, isLoading, isError } = useFetch<GiftThemeType[]>({
     fetchFn: getThemes,
-    errorMessage: CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR,
+    errorHandler: () => {
+      console.error(CATEGORY_ERROR_MESSAGE.DATA_LOADING_ERROR);
+    },
     validateData: [(data) => data.length > 0],
   });
 

@@ -13,7 +13,7 @@ import { useState } from "react";
 import ReceiverModal from "./ReceiverModal/ReceiverModal";
 import ReceiverTable from "./ReceiverTable/ReceiverTable";
 import NoReceiver from "./NoReceiver/NoReceiver";
-import type { Receiver } from "../../hooks/useOrderForm";
+import type { Receiver } from "@/types/Receiver";
 
 interface ReceiverSectionComponentProps {
   receivers: Receiver[];
@@ -38,7 +38,7 @@ function ReceiverSectionComponent({
     <ReceiverSection>
       <ReceiverSectionHeader>
         <SectionTitle>{RECEIVER_SECTION_CONSTANTS.TITLE}</SectionTitle>
-        <ShowModalButton onClick={handleOpenModal}>
+        <ShowModalButton type="button" onClick={handleOpenModal}>
           {RECEIVER_MODIFIY_BUTTON}
         </ShowModalButton>
       </ReceiverSectionHeader>

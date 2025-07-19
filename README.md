@@ -110,3 +110,18 @@
   - [x] 필터 선택 시 해당 필터에 맞는 API 를 재요청
   - [x] 데이터를 불러오는 동안 로딩 화면 구현
   - [x] 보여 줄 상품 목록이 없을경우 상품목록이 없다는 문구
+
+## 2 단계 - 로그인, 주문하기 API 구현하기
+
+- [x] 로그인 기능
+  - [x] `/api/login` api 를 사용하여 로그인 기능을 완성
+  - [x] 로그인 성공 시 내려오는 authToken 과 email, name 을 userInfo storage 에 저장
+  - [x] 4XX 에러가 발생하면 Toast 를 통해 에러 메시지를 띄움
+    - [react-toastify](https://www.npmjs.com/package/react-toastify) 라이브러리 사용
+- [x] 주문하기 기능
+  - [x] `/api/products/:productsId/summary` api 를 사용하여 제품 정보를 가져오기
+  - [x] 4XX 에러가 발생하면 Toast 를 통해 에러 메시지를 보여주고, 선물하기 홈으로 연결
+  - [x] 보내는 사람 Input Field 에 userInfo 의 name 을 defaultValue 로 채우기
+  - [x] `/api/order` api 를 사용하여 주문하기 기능을 완성
+    - [x] 주문하기 api 의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken 을 넣어야 함
+    - [x] 주문하기 api 에서 401 에러가 발생하면 로그인 페이지로 연결

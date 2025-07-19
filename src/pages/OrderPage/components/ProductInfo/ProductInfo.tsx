@@ -1,3 +1,4 @@
+import type { ProductInfoSummary } from "@/types/ProductInfoSummary";
 import { PRODUCT_INFO_CONSTANTS } from "../../constants/productInfo";
 import {
   ProductSection,
@@ -13,15 +14,14 @@ import {
   OrderButtonContainer,
   OrderButton,
 } from "./ProductInfo.styles";
-import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 
 interface ProductInfoProps {
-  product: TrendingGiftsType;
+  product: ProductInfoSummary;
   quantity: string;
 }
 
 function ProductInfo({ product, quantity }: ProductInfoProps) {
-  const totalPrice = product.price.sellingPrice * parseInt(quantity, 10);
+  const totalPrice = product.price * parseInt(quantity, 10);
 
   return (
     <>
@@ -31,11 +31,11 @@ function ProductInfo({ product, quantity }: ProductInfoProps) {
           <ProductImage src={product.imageURL} alt={product.name} />
           <ProductDetails>
             <ProductName>{product.name}</ProductName>
-            <BrandName>{product.brandInfo.name}</BrandName>
+            <BrandName>{product.brandName}</BrandName>
             <PriceContainer>
               <PriceLabel>{PRODUCT_INFO_CONSTANTS.PRICE_LABEL}</PriceLabel>
               <Price>
-                {product.price.sellingPrice.toLocaleString()}
+                {product.price.toLocaleString()}
                 {PRODUCT_INFO_CONSTANTS.WON}
               </Price>
             </PriceContainer>
