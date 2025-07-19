@@ -14,6 +14,7 @@ import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
 import ProductsGrid from "../HomePage/components/ProductsGrid/ProductsGrid";
+import { PRODUCT_GRID_TYPES } from "../HomePage/components/ProductsGrid/types/productGridTypes";
 
 const ProductListContainer = styled.div`
   width: 100%;
@@ -62,7 +63,7 @@ function ThemeProductPage() {
             <ProductListContainer>
               <ProductsGrid
                 products={themeProducts?.list || []}
-                type={"themeProducts"}
+                type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
               />
             </ProductListContainer>
           )}

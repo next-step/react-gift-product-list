@@ -1,6 +1,7 @@
 import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
 import ProductsGrid from "../ProductsGrid/ProductsGrid";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
+import { PRODUCT_GRID_TYPES } from "../ProductsGrid/types/productGridTypes";
 import {
   TrendingGiftsSection,
   TitleWarpper,
@@ -56,7 +57,12 @@ function TrendingGiftsContent() {
       );
     }
 
-    return <ProductsGrid products={data || []} type={"trendingGifts"} />;
+    return (
+      <ProductsGrid
+        products={data || []}
+        type={PRODUCT_GRID_TYPES.TRENDING_GIFTS}
+      />
+    );
   };
 
   return (

@@ -9,6 +9,7 @@ import {
   MoreInfo,
   MoreInfoWrapper,
 } from "../TrendingGifts/TrendingGifts.styles";
+import type { ProductGridType } from "./types/productGridTypes";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -36,7 +37,7 @@ const EmptyProductText = styled.p`
 
 interface ProductsGridPropsType {
   products: TrendingGiftsType[];
-  type: "trendingGifts" | "themeProducts";
+  type: ProductGridType;
 }
 
 function ProductsGrid({ products, type }: ProductsGridPropsType) {
