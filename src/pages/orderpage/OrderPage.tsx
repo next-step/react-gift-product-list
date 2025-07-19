@@ -17,17 +17,22 @@ import { useApiRequest } from "@/hooks/useApiRequest";
 import type { ProductSummary } from "@/types/api_types";
 import { useAuth } from "@/contexts/AuthContext";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
+import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 
 const OrderPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const productId = Number(id);
+  const { userInfo } = useAuth();
+
+  const handleApiError = useApiErrorHandler({
+    fallbackMessage: "주문 중 오류가 발생했습니다.",
+  });
+
   const { data: product, status } = useApiRequest<ProductSummary>({
     url: API_ENDPOINTS.PRODUCT_SUMMARY(productId),
     method: "get",
   });
-
-  const { userInfo } = useAuth();
 
   const createOrderRequest = useApiRequest<{ success: boolean }>({
     url: API_ENDPOINTS.ORDER,
@@ -103,12 +108,7 @@ const OrderPage = () => {
         navigate("/", { replace: true });
       }
     } catch (error: any) {
-      if (error?.response?.status === 401) {
-        toast.error("인증에 실패했습니다.");
-        navigate("/login", { replace: true });
-      } else {
-        toast.error("주문에 실패했습니다.");
-      }
+      handleApiError(error);
     }
   };
 

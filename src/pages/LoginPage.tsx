@@ -3,12 +3,12 @@ import styled from "@emotion/styled";
 import LoginButton from "@/components/common/BaseButton";
 import KakaoLogo from "@/components/common/KakaoLogo";
 import { useAuth } from "@/contexts/AuthContext";
+import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/utils/validator";
 import type { LoginFormValues } from "@/utils/validator";
 import { useApiRequest } from "@/hooks/useApiRequest";
-import { toast } from "react-toastify";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 
 const LoginPage = () => {
@@ -25,6 +25,19 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
     reValidateMode: "onChange",
+  });
+
+  const handleApiError = useApiErrorHandler({
+    fallbackMessage: "로그인에 실패했습니다. 다시 시도해주세요.",
+    customHandler: (statusCode, message) => {
+      if (statusCode === 400) {
+        if (message?.includes("@kakao.com")) {
+          return "@kakao.com 이메일 주소만 가능합니다.";
+        }
+        return message ?? false;
+      }
+      return false;
+    },
   });
 
   const { refetch } = useApiRequest<{
@@ -50,16 +63,7 @@ const LoginPage = () => {
         }
       }
     } catch (err: any) {
-      const statusCode = err?.response?.status;
-      const errorMessage = err?.response?.data?.data?.message;
-
-      if (statusCode >= 400 && statusCode < 500) {
-        if (errorMessage?.includes("@kakao.com")) {
-          toast.error("@kakao.com 이메일 주소만 가능합니다.");
-        } else if (errorMessage) {
-          toast.error(errorMessage);
-        }
-      }
+      handleApiError(err);
     }
   };
 
