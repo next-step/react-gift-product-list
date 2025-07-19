@@ -1,11 +1,14 @@
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import ReceiverInfo from '@/components/order/ReceiverInfo';
-import { GiftList } from '@/mock-data/GiftList';
+import { fetchProductSummary } from '@/api/productApi';
 
 import type { Receiver } from '@/types/receiver';
+import type { ProductSummary } from '@/types/product';
+
 import {
   Wrapper,
   Section,
@@ -34,10 +37,9 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const giftId = location.state?.id;
-  const selectedGift = GiftList.find((gift) => gift.id === giftId);
 
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
-
+  const [productInfo, setProductInfo] = useState<ProductSummary | null>(null);
   const {
     register,
     handleSubmit,
@@ -53,6 +55,21 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
   useEffect(() => {
     setValue('message', templateMessage);
   }, [templateMessage, setValue]);
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!giftId) return;
+      try {
+        const res = await fetchProductSummary(giftId);
+        setProductInfo(res.data.data);
+      } catch (err) {
+        console.error('상품 정보 가져오기 실패:', err);
+        toast.error('존재하지 않는 상품입니다.');
+        navigate('/');
+      }
+    };
+    loadProduct();
+  }, [giftId, navigate]);
 
   const validateReceivers = () => {
     if (receiverList.length === 0) {
@@ -95,16 +112,15 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
 
     alert(
       `주문이 완료되었습니다.
-      상품명: ${selectedGift?.name}
-      받는 사람 수: ${receiverList.length}
-      발신자 이름: ${data.sender}
-      메시지: ${data.message}`
+상품명: ${productInfo?.name}
+받는 사람 수: ${receiverList.length}
+발신자 이름: ${data.sender}
+메시지: ${data.message}`
     );
-
     navigate('/');
   };
 
-  if (!selectedGift) return <div>선택한 상품이 없습니다.</div>;
+  if (!productInfo) return <div>상품 정보를 불러오는 중입니다...</div>;
 
   return (
     <Wrapper>
@@ -147,17 +163,17 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
         <Section>
           <Label>상품 정보</Label>
           <ProductInfo>
-            <ProductImage src={selectedGift.imageURL} alt={selectedGift.name} />
+            <ProductImage src={productInfo.imageURL} alt={productInfo.name} />
             <ProductDetails>
-              <strong>{selectedGift.name}</strong>
-              <span>{selectedGift.brandInfo.name}</span>
-              <b>상품가 {selectedGift.price.sellingPrice.toLocaleString()}원</b>
+              <strong>{productInfo.name}</strong>
+              <span>{productInfo.brandInfo.name}</span>
+              <b>상품가 {productInfo.price.sellingPrice.toLocaleString()}원</b>
             </ProductDetails>
           </ProductInfo>
         </Section>
 
         <OrderButton type="submit">
-          {selectedGift.price.sellingPrice.toLocaleString()}원 주문하기
+          {productInfo.price.sellingPrice.toLocaleString()}원 주문하기
         </OrderButton>
       </form>
     </Wrapper>
