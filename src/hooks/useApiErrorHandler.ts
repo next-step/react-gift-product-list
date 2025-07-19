@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { HTTP_STATUS } from "@/utils/HTTP_STATUS";
 
 type HandleApiErrorOptions = {
   fallbackMessage?: string;
@@ -30,12 +31,15 @@ export const useApiErrorHandler = ({
       return;
     }
 
-    if (statusCode === 401 && redirectOnUnauthorized) {
+    if (statusCode === HTTP_STATUS.UNAUTHORIZED && redirectOnUnauthorized) {
       navigate("/login");
       return;
     }
 
-    if (statusCode >= 400 && statusCode < 500) {
+    if (
+      HTTP_STATUS.BAD_REQUEST &&
+      statusCode < HTTP_STATUS.INTERNAL_SERVER_ERROR
+    ) {
       if (errorMessage) {
         toast.error(errorMessage);
       } else {

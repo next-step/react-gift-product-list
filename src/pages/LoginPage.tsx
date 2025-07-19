@@ -10,6 +10,7 @@ import { loginSchema } from "@/utils/validator";
 import type { LoginFormValues } from "@/utils/validator";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
+import { HTTP_STATUS } from "@/utils/HTTP_STATUS";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const LoginPage = () => {
   const handleApiError = useApiErrorHandler({
     fallbackMessage: "로그인에 실패했습니다. 다시 시도해주세요.",
     customHandler: (statusCode, message) => {
-      if (statusCode === 400) {
+      if (statusCode === HTTP_STATUS.BAD_REQUEST) {
         if (message?.includes("@kakao.com")) {
           return "@kakao.com 이메일 주소만 가능합니다.";
         }
