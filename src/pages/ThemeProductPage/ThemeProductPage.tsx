@@ -5,6 +5,12 @@ import { useParams } from "react-router-dom";
 import { THEME_INFO_API_MESSAGE } from "./constants/apiMessage";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
+import {
+  HeroDescription,
+  HeroName,
+  HeroSection,
+  HeroTitle,
+} from "./HeroSection";
 
 function ThemeProductPage() {
   const params = useParams();
@@ -26,10 +32,11 @@ function ThemeProductPage() {
 
   return (
     <Layout>
-      <div>{data?.name}</div>
-      <div>{data?.title}</div>
-      <div>{data?.description}</div>
-      <div>{params.themeId}</div>
+      <HeroSection backgroundColor={data?.backgroundColor || ""}>
+        <HeroName>{data?.name}</HeroName>
+        <HeroTitle>{data?.title}</HeroTitle>
+        <HeroDescription>{data?.description}</HeroDescription>
+      </HeroSection>
     </Layout>
   );
 }
