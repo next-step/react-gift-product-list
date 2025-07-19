@@ -72,7 +72,7 @@ function OrderPage() {
             <Price>
               <PriceName>{PRODUCT_PRICE_LABEL}</PriceName>
               <ProductPrice>
-                {product.price.toLocaleString()}
+                {product.price?.toLocaleString()}
                 {CURRENCY_UNIT}
               </ProductPrice>
             </Price>

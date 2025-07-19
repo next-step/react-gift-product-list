@@ -54,10 +54,10 @@ const useApi = <T, P = void>(
   );
 
   useEffect(() => {
-    if (method === 'get') {
+    if (method === 'get' && url) {
       (execute as () => void)();
     }
-  }, [execute, method]);
+  }, [execute, method, url]);
 
   return { data, isLoading, error, execute };
 };

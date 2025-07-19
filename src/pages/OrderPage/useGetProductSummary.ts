@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import useApi from '../../apis/useApi';
 import {
   FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE,
   PRODUCT_ID_MISSING_MESSAGE,
@@ -24,38 +24,32 @@ interface UseProductSummaryResult {
 const useGetProductSummary = (): UseProductSummaryResult => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<ProductSummary | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+
+  const {
+    data: apiResponse,
+    isLoading: loading,
+    error,
+  } = useApi<{
+    data: ProductSummary;
+  }>(
+    'get',
+    productId ? `/products/${productId}/summary` : '',
+  );
+
+  const product = apiResponse?.data || null;
 
   useEffect(() => {
+    if (error) {
+      toast.error(FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE);
+      navigate('/');
+    }
+  }, [error, navigate]);
 
-    const fetchProductSummary = async () => {
-      if (!productId) {
-        setError(new Error(PRODUCT_ID_MISSING_MESSAGE));
-        toast.error(PRODUCT_ID_MISSING_MESSAGE);
-        setLoading(false);
-        navigate('/');
-        return;
-      }
-      try {
-        const response = await axios.get(`/api/products/${productId}/summary`);
-        setProduct(response.data.data);
-      } catch (e) {
-        if (axios.isCancel(e)) {
-          console.log('Request cancelled', e.message);
-          return;
-        }
-        setError(e as Error);
-        toast.error(FAILED_TO_LOAD_PRODUCT_INFO_MESSAGE);
-        navigate('/');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProductSummary();
-
+  useEffect(() => {
+    if (!productId) {
+      toast.error(PRODUCT_ID_MISSING_MESSAGE);
+      navigate('/');
+    }
   }, [productId, navigate]);
 
   return { product, loading, error };
