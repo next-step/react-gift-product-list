@@ -23,7 +23,6 @@ export default function RisingList() {
   });
 
   const handleItemClick = (item: Product & { id: number }) => {
-    console.log("클릭된 상품 ID:", item.id);
     navigate(`/order/${item.id}`);
   };
 
