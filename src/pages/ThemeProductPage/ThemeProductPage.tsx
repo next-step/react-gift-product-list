@@ -1,7 +1,7 @@
-import { getThemeInfo } from "@/data/api";
+import { getThemeInfo, getThemeProducts } from "@/data/api";
 import { useFetch } from "@/hooks/useFetch";
 import Layout from "@/layout";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { THEME_INFO_API_MESSAGE } from "./constants/apiMessage";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
@@ -15,14 +15,25 @@ import {
 function ThemeProductPage() {
   const params = useParams();
 
-  const { data, isLoading } = useFetch({
+  const { data: themeInfo, isLoading: isThemeInfoLoading } = useFetch({
     fetchFn: () => getThemeInfo(Number(params.themeId)),
     errorHandler: () => {
       console.error(THEME_INFO_API_MESSAGE.FETCH_ERROR);
     },
   });
 
-  if (isLoading) {
+  const {
+    data: themeProducts,
+    isLoading: isThemeProductsLoading,
+    isError: isThemeProductsError,
+  } = useFetch({
+    fetchFn: () => getThemeProducts(Number(params.themeId)),
+    errorHandler: () => {
+      console.error("테마 상품 로딩 실패");
+    },
+  });
+
+  if (isThemeInfoLoading || isThemeProductsLoading) {
     return (
       <LoadingContainer>
         <LoadingSpinner />
@@ -32,11 +43,14 @@ function ThemeProductPage() {
 
   return (
     <Layout>
-      <HeroSection backgroundColor={data?.backgroundColor || ""}>
-        <HeroName>{data?.name}</HeroName>
-        <HeroTitle>{data?.title}</HeroTitle>
-        <HeroDescription>{data?.description}</HeroDescription>
+      <HeroSection backgroundColor={themeInfo?.backgroundColor || ""}>
+        <HeroName>{themeInfo?.name}</HeroName>
+        <HeroTitle>{themeInfo?.title}</HeroTitle>
+        <HeroDescription>{themeInfo?.description}</HeroDescription>
       </HeroSection>
+      {themeProducts?.list.map((product) => (
+        <div key={product.id}>{product.name}</div>
+      ))}
     </Layout>
   );
 }
