@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css, type Theme as ThemeType } from '@emotion/react';
+import { Link } from 'react-router-dom';
 import theme from '../../../../styles/theme';
 
 type CategoryItemProps = {
@@ -15,10 +16,11 @@ const itemStyle = css`
   flex-shrink: 0;
 
   display: flex;
-  flex-direction: column; 
-  align-items: center; 
+  flex-direction: column;
+  align-items: center;
 
   cursor: pointer;
+  text-decoration: none;
 `;
 
 const imageStyle = css`
@@ -40,12 +42,17 @@ const nameStyle = (theme: ThemeType) => css`
 
 const CategoryItem = ({ themeId, name, image, theme }: CategoryItemProps) => {
   return (
-    <div key={themeId} css={itemStyle}>
+    <Link
+      to={`/themes/${themeId}`}
+      css={itemStyle}
+      key={themeId}
+      data-testid={`category-item-${themeId}`}
+    >
       <img src={image} alt={name} width={100} height={100} css={imageStyle} />
       <span css={nameStyle(theme)} title={name}>
         {name}
       </span>
-    </div>
+    </Link>
   );
 };
 
