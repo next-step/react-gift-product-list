@@ -262,7 +262,6 @@ const PresentRanking: React.FC = () => {
   const [products, setProducts] = useState<ProductRankingItem[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const scrollPosRef = useRef<number>(0);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -289,35 +288,12 @@ const PresentRanking: React.FC = () => {
     if (savedPresentType !== null) setSelectedPresentType(Number(savedPresentType));
   }, []);
 
-  // useEffect(() => {
-  //   const fetchRanking = async () => {
-  //     setIsLoadingProducts(true);
-  //     setErrorMsg(null);
-
-  //     try {
-  //       const targetType = apiTargetTypeMap[selectedType];
-  //       const rankType = apiRankTypeMap[selectedPresentType];
-
-  //       const response = await getProductRanking(targetType, rankType);
-  //       setProducts(response.data.data);
-  //     } catch (error) {
-  //       console.error('랭킹 조회 실패', error);
-  //       setErrorMsg('실시간 랭킹을 불러오지 못했습니다.');
-  //     } finally {
-  //       setIsLoadingProducts(false);
-  //     }
-  //   };
-  //   fetchRanking();
-  // }, [selectedType, selectedPresentType]);
   useEffect(() => {
     const fetchRanking = async () => {
       setIsLoadingProducts(true);
       setErrorMsg(null);
 
       try {
-        // 2초 지연
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
         const targetType = apiTargetTypeMap[selectedType];
         const rankType = apiRankTypeMap[selectedPresentType];
 
@@ -334,22 +310,14 @@ const PresentRanking: React.FC = () => {
     fetchRanking();
   }, [selectedType, selectedPresentType]);
 
-  useEffect(() => {
-    const y = scrollPosRef.current;
-    if (y) {
-      window.requestAnimationFrame(() => {
-        window.scrollTo(0, y);
-      });
-    }
-  }, [products]);
-
   const handleTypeSelect = (type: typeof selectedType) => {
-    scrollPosRef.current = window.scrollY;
+    setShowAll(false);
     setSelectedType(type);
     localStorage.setItem('selectedType', type);
   };
 
   const handlePresentTypeSelect = (index: number) => {
+    setShowAll(false);
     const savedType = localStorage.getItem('selectedType') as
       | 'all'
       | 'female'
@@ -428,7 +396,7 @@ const PresentRanking: React.FC = () => {
             </NoDataContainer>
           ) : (
             <PresentDisplay>
-              {products.map((p, index) => (
+              {products.slice(0, productsToShow).map((p, index) => (
                 <ProductBox key={p.id} onClick={() => handleProductClick(p.id)}>
                   <NumberLogo
                     css={css`
@@ -478,11 +446,13 @@ const PresentRanking: React.FC = () => {
             background-color: transparent;
           `}
         ></div>
-        <MoreButtonContainer>
-          <MoreButton onClick={() => setShowAll(!showAll)}>
-            <MoreButtonFont>{showAll ? '접기' : '더보기'}</MoreButtonFont>
-          </MoreButton>
-        </MoreButtonContainer>
+        {products.length > 6 && (
+          <MoreButtonContainer>
+            <MoreButton onClick={() => setShowAll(!showAll)}>
+              <MoreButtonFont>{showAll ? '접기' : '더보기'}</MoreButtonFont>
+            </MoreButton>
+          </MoreButtonContainer>
+        )}
       </Wrapper>
     </ThemeProvider>
   );
