@@ -68,12 +68,20 @@ const LoginForm = () => {
 
     try {
       const res = await login({ email, password });
-      const { authToken, email: userEmail, name } = res.data;
+      const { authToken, email: userEmail } = res.data;
 
-      const userInfo = { email: userEmail };
+      const extractedName = userEmail.split('@')[0];
+
+      const userInfo = {
+        email: userEmail,
+        name: extractedName,
+      };
 
       setUser(userInfo);
-      localStorage.setItem('userInfo', JSON.stringify({ authToken, email: userEmail, name }));
+      localStorage.setItem(
+        'userInfo',
+        JSON.stringify({ authToken, email: userEmail, name: extractedName })
+      );
 
       navigate(from, { replace: true });
     } catch (error: unknown) {

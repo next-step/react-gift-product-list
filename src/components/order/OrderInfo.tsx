@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useAuth } from '@/context/AuthContext';
 
 import ReceiverInfo from '@/components/order/ReceiverInfo';
 import { fetchProductSummary } from '@/api/productApi';
@@ -34,12 +35,15 @@ interface GiftSenderProps {
 }
 
 const GiftForm = ({ templateMessage }: GiftSenderProps) => {
+
   const navigate = useNavigate();
   const location = useLocation();
   const giftId = location.state?.id;
 
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
   const [productInfo, setProductInfo] = useState<ProductSummary | null>(null);
+  const { user } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -47,14 +51,17 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
     formState: { errors },
   } = useForm<GiftFormValues>({
     defaultValues: {
-      sender: '',
+      sender: user?.name || '', 
       message: templateMessage ?? '',
     },
   });
 
   useEffect(() => {
     setValue('message', templateMessage);
-  }, [templateMessage, setValue]);
+    if (user?.name) {
+      setValue('sender', user.name); 
+    }
+  }, [templateMessage, user?.name, setValue]);
 
   useEffect(() => {
     const loadProduct = async () => {
