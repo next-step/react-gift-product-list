@@ -64,21 +64,19 @@ const Spinner = styled.div`
 
 export const Category = () => {
   const [loading, setLoading] = useState(true);
-  const [isDataReady, setIsDataReady] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [categories, setCategories] = useState<CategoryDataType[]>([]);
+  const [categories, setCategories] = useState<CategoryDataType[] | null>(null);
 
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await apiClient.get('/api/themes');
         setCategories(response.data.data);
-        setIsDataReady(true);
         setIsError(false);
       } catch (error) {
         setIsError(true);
         setLoading(false);
-        console.log('⚠️ 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. ', error);
+        console.log('⚠️ 요청 처리 중 오류가 발생했습니다.', error);
       }
     };
     setTimeout(() => {
@@ -87,22 +85,25 @@ export const Category = () => {
   }, []);
 
   useEffect(() => {
-    if (!isDataReady) return;
+    if (categories === null) return;
 
     setLoading(false);
-  }, [isDataReady]);
+  }, [categories]);
 
   return (
     <Container>
       <Title>선물 테마</Title>
       <Body>
-        {loading ? (
-          <Spinner />
-        ) : (
+        {loading && <Spinner />}
+        {!loading && (
           <CategoryList>
-            {categories.map((item) => {
-              return <CategoryCard key={item.themeId} name={item.name} image={item.image} />;
-            })}
+            {categories?.length === 0 ? (
+              <ErrorText>표시할 데이터가 없습니다.</ErrorText>
+            ) : (
+              categories?.map((item) => {
+                return <CategoryCard key={item.themeId} name={item.name} image={item.image} />;
+              })
+            )}
           </CategoryList>
         )}
         {isError && (
