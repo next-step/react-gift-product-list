@@ -2,24 +2,24 @@ import { useState, useCallback, useEffect } from "react";
 
 export type UseHttpOptions<Req, Res> = {
     apiFunction: (requestBody?: Req) => Promise<Res>;
-    sendOnMount?: boolean;
+    requestOnMount?: boolean;
 };
 
 export const useHTTP = <Req = unknown, Res = unknown>({
     apiFunction,
-    sendOnMount = false,
+    requestOnMount = false,
 }: UseHttpOptions<Req, Res>) => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [data, setData] = useState<Res | null>(null);
     const [error, setError] = useState<unknown>(null);
 
-    const send = useCallback(
+    const request = useCallback(
         async (requestBody?: Req) => {
             setIsPending(true);
             setError(null);
 
             try {
-                const result = await apiFunction.call(null, requestBody!);
+                const result = await apiFunction.call(null, requestBody);
                 setData(result);
                 return result;
             } catch (err) {
@@ -33,10 +33,10 @@ export const useHTTP = <Req = unknown, Res = unknown>({
     );
 
     useEffect(() => {
-        if (sendOnMount) {
-            send();
+        if (requestOnMount) {
+            request();
         }
-    }, [sendOnMount, send]);
+    }, [requestOnMount, request]);
 
-    return { isPending, data, error, send };
+    return { isPending, data, error, request };
 };

@@ -16,6 +16,6 @@ export async function getGiftThemes() {
 export const useGiftThemes = () => {
     return useHTTP<void, GetThemesResponseBody>({
         apiFunction: getGiftThemes,
-        sendOnMount: true,
+        requestOnMount: true,
     });
 };

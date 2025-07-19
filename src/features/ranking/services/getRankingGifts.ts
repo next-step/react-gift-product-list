@@ -43,13 +43,13 @@ export const useRankingGifts = () => {
         return getRankingGifts(targetType, rankType);
     }, [targetType, rankType]);
 
-    const { isPending, data, error, send } = useHTTP<void, GetRankingGiftsResponseBody>({
+    const { isPending, data, error, request } = useHTTP<void, GetRankingGiftsResponseBody>({
         apiFunction,
     });
 
     useEffect(() => {
-        if (targetType && rankType) send();
-    }, [targetType, rankType, send]);
+        if (targetType && rankType) request();
+    }, [targetType, rankType, request]);
 
-    return { isPending, data, error, send };
+    return { isPending, data, error, request };
 };
