@@ -16,6 +16,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+  const MYPAGE = "/my";
+  const ORDER = "/order/:productId";
+  const LOGIN = "/login";
+  const MAIN = "/";
+  const NOT_FOUND = "*";
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -23,10 +29,10 @@ function App() {
           <NavigationBar />
           <UserInfoProvider>
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Main />} />
+              <Route path={LOGIN} element={<Login />} />
+              <Route path={MAIN} element={<Main />} />
               <Route
-                path="/my"
+                path={MYPAGE}
                 element={
                   <ProtectedRoute>
                     <MyPage />
@@ -34,7 +40,7 @@ function App() {
                 }
               />
               <Route
-                path="/order/:productId"
+                path={ORDER}
                 element={
                   <ProtectedRoute>
                     <Order />
@@ -42,7 +48,7 @@ function App() {
                 }
               />
 
-              <Route path="*" element={<NotFound />} />
+              <Route path={NOT_FOUND} element={<NotFound />} />
             </Routes>
           </UserInfoProvider>
         </Layout>
