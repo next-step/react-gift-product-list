@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 
 import ReceiverInfo from '@/components/order/ReceiverInfo';
 import { fetchProductSummary } from '@/api/productApi';
+import { submitOrder } from '@/api/orderApi';
 
 import type { Receiver } from '@/types/receiver';
 import type { ProductSummary } from '@/types/product';
@@ -35,7 +36,6 @@ interface GiftSenderProps {
 }
 
 const GiftForm = ({ templateMessage }: GiftSenderProps) => {
-
   const navigate = useNavigate();
   const location = useLocation();
   const giftId = location.state?.id;
@@ -51,7 +51,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
     formState: { errors },
   } = useForm<GiftFormValues>({
     defaultValues: {
-      sender: user?.name || '', 
+      sender: user?.name || '',
       message: templateMessage ?? '',
     },
   });
@@ -59,7 +59,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
   useEffect(() => {
     setValue('message', templateMessage);
     if (user?.name) {
-      setValue('sender', user.name); 
+      setValue('sender', user.name);
     }
   }, [templateMessage, user?.name, setValue]);
 
@@ -69,8 +69,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
       try {
         const res = await fetchProductSummary(giftId);
         setProductInfo(res.data.data);
-      } catch (err) {
-        console.error('상품 정보 가져오기 실패:', err);
+      } catch{
         toast.error('존재하지 않는 상품입니다.');
         navigate('/');
       }
@@ -80,7 +79,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
 
   const validateReceivers = () => {
     if (receiverList.length === 0) {
-      alert('최소 1명의 받는 사람을 등록해주세요.');
+      toast.error('최소 1명의 받는 사람을 등록해주세요.');
       return false;
     }
 
@@ -89,24 +88,24 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
       const r = receiverList[i];
 
       if (!r.name.trim()) {
-        alert(`${i + 1}번 받는 사람 이름을 입력해주세요.`);
+        toast.error(`${i + 1}번 받는 사람 이름을 입력해주세요.`);
         return false;
       }
 
       if (!/^010\d{8}$/.test(r.phone)) {
-        alert(`${i + 1}번 전화번호는 01012345678 형식이어야 합니다.`);
+        toast.error(`${i + 1}번 전화번호는 01012345678 형식이어야 합니다.`);
         return false;
       }
 
       if (phoneSet.has(r.phone)) {
-        alert(`${i + 1}번 전화번호가 중복됩니다.`);
+        toast.error(`${i + 1}번 전화번호가 중복됩니다.`);
         return false;
       }
 
       phoneSet.add(r.phone);
 
       if (r.quantity < 1) {
-        alert(`${i + 1}번 수량은 1 이상이어야 합니다.`);
+        toast.error(`${i + 1}번 수량은 1 이상이어야 합니다.`);
         return false;
       }
     }
@@ -114,17 +113,44 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
     return true;
   };
 
-  const onSubmit = (data: GiftFormValues) => {
-    if (!validateReceivers()) return;
+  const onSubmit = async (data: GiftFormValues) => {
+    if (!validateReceivers() || !productInfo) return;
 
-    alert(
-      `주문이 완료되었습니다.
-상품명: ${productInfo?.name}
-받는 사람 수: ${receiverList.length}
-발신자 이름: ${data.sender}
-메시지: ${data.message}`
-    );
-    navigate('/');
+    try {
+      const tokenData = localStorage.getItem('userInfo');
+      const token = tokenData ? JSON.parse(tokenData).authToken : null;
+
+      if (!token) {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
+      await submitOrder(
+        {
+          productId: productInfo.id,
+          message: data.message,
+          messageCardId: 'card123', 
+          ordererName: data.sender,
+          receivers: receiverList.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.quantity,
+          })),
+        },
+        token
+      );
+
+      toast.success('주문이 완료되었습니다!');
+      navigate('/');
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        toast.error('로그인이 만료되었습니다.');
+        navigate('/login');
+      } else {
+        toast.error('주문에 실패했습니다.');
+      }
+    }
   };
 
   if (!productInfo) return <div>상품 정보를 불러오는 중입니다...</div>;
@@ -137,9 +163,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
           <InputBox>
             <StyledTextarea
               placeholder="메시지를 입력하세요"
-              {...register('message', {
-                required: '메시지는 반드시 입력 되어야 해요.',
-              })}
+              {...register('message', { required: '메시지는 반드시 입력되어야 해요.' })}
               error={!!errors.message}
             />
             {errors.message && <ErrorMsg>{errors.message.message}</ErrorMsg>}
@@ -152,9 +176,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
             <StyledInput
               type="text"
               placeholder="이름을 입력하세요."
-              {...register('sender', {
-                required: '보내는 사람 이름이 반드시 입력 되어야 해요.',
-              })}
+              {...register('sender', { required: '보내는 사람 이름이 반드시 입력되어야 해요.' })}
               error={!!errors.sender}
             />
             {errors.sender && <ErrorMsg>{errors.sender.message}</ErrorMsg>}
