@@ -14,14 +14,10 @@ import Order from "@/components/order/Order";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ROUTE_PATHS } from "./constants/routePath";
 
 function App() {
-  const MYPAGE = "/my";
-  const ORDER = "/order/:productId";
-  const LOGIN = "/login";
-  const MAIN = "/";
-  const NOT_FOUND = "*";
-
+  const { MAIN, LOGIN, MYPAGE, ORDER, NOT_FOUND } = ROUTE_PATHS;
   return (
     <>
       <ThemeProvider theme={theme}>
