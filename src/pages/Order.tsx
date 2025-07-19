@@ -9,6 +9,7 @@ import ReceiverModal, {
 import { useReceiverForm } from '../hooks/useReceiverForm';
 import { useParams } from 'react-router-dom';
 import { useGiftProductById } from '../hooks/useGiftProductById';
+import { useAuth } from '../contexts/AuthContext';
 
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
@@ -226,6 +227,10 @@ const Order = () => {
     ? product.price.sellingPrice * totalQuantity
     : 0;
 
+  const { userInfo } = useAuth();
+  useState(() => {
+    if (userInfo?.name) sendorNameInput.setValue(userInfo.name);
+  });
   const handleOrder = () => {
     if (!sendorNameInput.isValid || !product) return;
 
@@ -277,6 +282,7 @@ const Order = () => {
             placeholder="이름을 입력하세요."
             onChange={e => sendorNameInput.setValue(e.target.value)}
             onBlur={sendorNameInput.handleBlur}
+            defaultValue={sendorNameInput.value}
           />
           {!sendorNameInput.isValid && (
             <ErrorText>{sendorNameInput.error}</ErrorText>

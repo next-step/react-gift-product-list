@@ -21,7 +21,7 @@
 - 주문하기 기능
   - [ ] /products/:productId/summary api를 사용하여 제품 정보 가져오기
   - [ ] 제품 정보 API에서 4XX에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결
-  - [ ] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채워놓기
+  - [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채워놓기
   - [ ] /order api를 사용하여 주문하기 기능을 완성
   - [ ] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작
   - [ ] 주문하기 API에서 401에러가 발생하면 로그인 페이지로 연결
