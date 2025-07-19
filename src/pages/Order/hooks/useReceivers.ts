@@ -18,7 +18,11 @@ export const useReceivers = (initialReceivers: Receiver[]) => {
     setReceivers((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const updateReceiver = (index: number, field: keyof Receiver, value: string) => {
+  const updateReceiver = (
+    index: number,
+    field: keyof Receiver,
+    value: string
+  ) => {
     const updated = [...receivers];
     const current = updated[index];
 

@@ -15,7 +15,7 @@ const NavBar = () => {
 
   const goToLoginOrMyPage = () => {
     if (user) {
-      navigate('/my');  
+      navigate('/my');
     } else {
       navigate('/login');
     }

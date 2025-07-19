@@ -1,46 +1,40 @@
 /** @jsxImportSource @emotion/react */
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './pages/Home/components/NavBar';
-import CategorySection from './pages/Home/components/CategorySection';
-import { categories } from './data/categories';
 import FriendSelector from './pages/Home/components/FriendSelector';
+import CategorySection from './pages/Home/components/CategorySection';
 import Banner from './pages/Home/components/Banner';
 import RankingSection from './pages/Home/components/RankingSection/RankingSection';
 import LoginPage from './pages/Login/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import MyPage from './pages/MyPage';
-import { UserManagementProvider, UserManagement } from './pages/Login/contexts/UserManagement';
+import {
+  UserManagementProvider,
+  UserManagement,
+} from './pages/Login/contexts/UserManagement';
 import React from 'react';
 import OrderPage from './pages/Order/OrderPage';
 import ScrollToTop from './pages/Home/ScrollToTop';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => (
   <main>
     <FriendSelector />
-    <CategorySection categories={categories} />
+    <CategorySection />
     <Banner />
     <RankingSection />
   </main>
 );
 
-// 로그인 안 한 상태면 마이 페이지 접근 불가(login페이지로 넘어감)
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = UserManagement();
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return <>{children}</>;
+  return user ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
-// 로그인한 상태면 로그인 페이지 접근 불가(my페이지로 넘어감)
 const RedirectIfLoggedIn = ({ children }: { children: React.ReactNode }) => {
   const { user } = UserManagement();
-
-  if (user) {
-    return <Navigate to="/my" replace />;
-  }
-  return <>{children}</>;
+  return user ? <Navigate to="/my" replace /> : <>{children}</>;
 };
 
 function App() {
@@ -51,7 +45,6 @@ function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
-
           <Route
             path="/login"
             element={
@@ -60,7 +53,6 @@ function App() {
               </RedirectIfLoggedIn>
             }
           />
-
           <Route
             path="/my"
             element={
@@ -69,10 +61,17 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/order" element={<OrderPage />} />
+          <Route path="/order/:productId" element={<OrderPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar={true}
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </UserManagementProvider>
     </BrowserRouter>
   );
