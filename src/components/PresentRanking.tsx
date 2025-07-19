@@ -238,6 +238,15 @@ const PresentRanking: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const apiTargetTypeMap: Record<typeof selectedType, string> = {
+    all: 'ALL',
+    female: 'FEMALE',
+    male: 'MALE',
+    teen: 'TEEN',
+  };
+
+  const apiRankTypeMap = ['MANY_WISH', 'MANY_RECEIVE', 'MANY_WISH_RECEIVE'] as const;
+
   useEffect(() => {
     const savedType = localStorage.getItem('selectedType') as
       | 'all'
@@ -248,14 +257,19 @@ const PresentRanking: React.FC = () => {
     const savedPresentType = localStorage.getItem('selectedPresentType');
 
     if (savedType) setSelectedType(savedType);
-    if (savedPresentType) setSelectedPresentType(Number(savedPresentType));
+    if (savedPresentType !== null) setSelectedPresentType(Number(savedPresentType));
+  }, []);
+
+  useEffect(() => {
     const fetchRanking = async () => {
       setIsLoadingProducts(true);
       setErrorMsg(null);
 
       try {
-        const response = await getProductRanking(defaultTargetType, defaultRankType);
+        const targetType = apiTargetTypeMap[selectedType];
+        const rankType = apiRankTypeMap[selectedPresentType];
 
+        const response = await getProductRanking(targetType, rankType);
         setProducts(response.data.data);
       } catch (error) {
         console.error('랭킹 조회 실패', error);
@@ -265,7 +279,7 @@ const PresentRanking: React.FC = () => {
       }
     };
     fetchRanking();
-  }, []);
+  }, [selectedType, selectedPresentType]);
 
   const handleTypeSelect = (type: typeof selectedType) => {
     setSelectedType(type);
