@@ -31,29 +31,37 @@ function ThemeProductPage() {
     },
   });
 
-  if (isThemeInfoLoading || isThemeProductsLoading) {
-    return (
-      <LoadingContainer>
-        <LoadingSpinner />
-      </LoadingContainer>
-    );
-  }
-
   return (
     <Layout>
-      <HeroSection backgroundColor={themeInfo?.backgroundColor || ""}>
-        <HeroName>{themeInfo?.name}</HeroName>
-        <HeroTitle>{themeInfo?.title}</HeroTitle>
-        <HeroDescription>{themeInfo?.description}</HeroDescription>
-      </HeroSection>
-      {themeProducts?.list.length && themeProducts.list.length > 0 ? (
-        <div>
-          {themeProducts.list.map((product) => (
-            <div key={product.id}>{product.name}</div>
-          ))}
-        </div>
+      {isThemeInfoLoading ? (
+        <LoadingContainer>
+          <LoadingSpinner />
+        </LoadingContainer>
       ) : (
-        <div>상품이 없습니다.</div>
+        <>
+          <HeroSection backgroundColor={themeInfo?.backgroundColor || ""}>
+            <HeroName>{themeInfo?.name}</HeroName>
+            <HeroTitle>{themeInfo?.title}</HeroTitle>
+            <HeroDescription>{themeInfo?.description}</HeroDescription>
+          </HeroSection>
+          {isThemeProductsLoading ? (
+            <LoadingContainer>
+              <LoadingSpinner />
+            </LoadingContainer>
+          ) : (
+            <>
+              {themeProducts?.list.length && themeProducts.list.length > 0 ? (
+                <div>
+                  {themeProducts.list.map((product) => (
+                    <div key={product.id}>{product.name}</div>
+                  ))}
+                </div>
+              ) : (
+                <div>상품이 없습니다.</div>
+              )}
+            </>
+          )}
+        </>
       )}
     </Layout>
   );
