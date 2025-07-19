@@ -17,14 +17,17 @@ const RankingSection = () => {
   const selectedAction = searchParams.get('action') || 'MANY_WISH';
 
   useEffect(() => {
-    setLoading(true);
-    getRankingProducts(selectedGender as TargetType, selectedAction as RankType)
-      .then((data) => {
+    const fetchRankingProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await getRankingProducts(selectedGender as TargetType, selectedAction as RankType);
         setSuccess(data);
-      })
-      .catch(() => {
+      } catch {
         setError();
-      });
+      }
+    };
+    
+    fetchRankingProducts();
   }, [selectedGender, selectedAction]);
 
   const handleGenderChange = (gender: string) => {
