@@ -3,16 +3,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { orders } from '@/data/orders';
 import { getProductSummary } from '@/lib/api/rankingProducts';
-import { type ProductSummary, type AxiosErrorResponse } from '@/types/api';
+import { type ProductSummary } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { Loading, ErrorMessage } from '@/components';
+import { useErrorHandler } from '@/utils/errorHandler';
 import OrderTemplate from './template';
 
 const Order = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const { fetchState, setLoading, setSuccess, setError } = useFetchState<ProductSummary | undefined>(undefined, true);
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     if (!productId) {
@@ -26,31 +28,22 @@ const Order = () => {
         const productData = await getProductSummary(parseInt(productId));
         setSuccess(productData);
       } catch (error: unknown) {
-        const axiosError = error as AxiosErrorResponse;
-        
-        if (axiosError?.response) {
-          const status = axiosError.response.status;
-          const message = axiosError.response.data?.data?.message;
-
-          switch (status) {
-            case 400:
-              toast.error(message || '현재 없는 상품입니다');
-              navigate('/');
-              return;
-            default:
-              setError();
-              return;
+        const customHandlers = {
+          400: (message?: string) => {
+            toast.error(message || '현재 없는 상품입니다');
+            navigate('/');
           }
-        } else {
-          setError();
-        }
+        };
+
+        handleError(error, customHandlers);
+        setError();
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [productId, navigate]);
+  }, [productId, navigate, setLoading, setSuccess, setError, handleError]);
 
   const {
     cardState,

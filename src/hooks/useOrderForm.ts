@@ -6,7 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { z, string } from 'zod';
 import { orders } from '@/data/orders';
 import { createOrder } from '@/lib/api/order';
-import { type OrderRequest, type AxiosErrorResponse } from '@/types/api';
+import { type OrderRequest} from '@/types/api';
+import { handleApiError } from '@/utils/errorHandler';
 
 import { type ProductSummary } from '@/types/api';
 import { type TextAreaChangeHandler, type InputChangeHandler } from '@/components';
@@ -159,27 +160,12 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
       alert(orderInfo);
       navigate('/');
     } catch (error: unknown) {
-      const axiosError = error as AxiosErrorResponse;
-      
-      if (axiosError?.response) {
-        const status = axiosError.response.status;
-        const message = axiosError.response.data?.data?.message;
-        
-        switch (status) {
-          case 401:
-            toast.error(message || '로그인이 필요합니다.');
-            navigate('/login');
-            return;
-          case 400:
-            toast.error(message || '유효성 검사에 실패했습니다.');
-            return;
-          default:
-            toast.error('주문에 실패했습니다. 다시 시도해주세요.');
-            return;
+      const customHandlers = {
+        400: (message?: string) => {
+          toast.error(message || '유효성 검사에 실패했습니다.');
         }
-      } else {
-        toast.error('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.');
-      }
+      }; 
+      handleApiError(error, navigate, customHandlers);
     }
   };
 

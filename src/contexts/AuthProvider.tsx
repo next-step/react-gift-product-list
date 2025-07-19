@@ -3,8 +3,8 @@ import { toast } from 'react-toastify';
 import { AuthContext } from './AuthContext';
 import type { UserInfo } from './AuthContext';
 import { login as loginApi } from '@/lib/api/login';
-import type { AxiosErrorResponse } from '@/types/api';
 import { STORAGE_KEYS } from '@/data/storageKeys';
+import { handleApiError } from '@/utils/errorHandler';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -33,25 +33,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUserInfo(newUserInfo);
       sessionStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(newUserInfo));
       onSuccess?.();
-
     } catch (error: unknown) {
-      const axiosError = error as AxiosErrorResponse;
-      
-      if (axiosError?.response) {
-        const status = axiosError.response.status;
-        const message = axiosError.response.data?.data?.message;
-
-        switch (status) {
-          case 400:
-            toast.error(message || '로그인에 실패했습니다.');
-            return;
-          default:
-            toast.error('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
-            return;
+      const customHandlers = {
+        400: (message?: string) => {
+          toast.error(message || '로그인에 실패했습니다.');
         }
-      } else {
-        toast.error('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.');
-      }
+      };
+      
+      handleApiError(error, undefined, customHandlers);
     }
   }, []);
 
