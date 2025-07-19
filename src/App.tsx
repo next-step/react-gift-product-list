@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import MyPage from "./pages/MyPage";
 import OrderPage from "@/pages/OrderPage";
-
+import ThemeProduct from "./pages/ThemeProduct";
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -30,6 +30,7 @@ const App = () => {
             />
             <Route path="*" element={<NotFound />} />
             <Route path="/order/:id" element={<RequireAuth><OrderPage /></RequireAuth>} />
+            <Route path="/theme/:id" element={<ThemeProduct />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
