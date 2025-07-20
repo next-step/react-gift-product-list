@@ -1,5 +1,6 @@
 import { SESSION_USER_INFO_KEY } from "@/constants/storageKeys";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API_URL,
@@ -28,10 +29,10 @@ axiosInstance.interceptors.response.use(
     return response.data?.data ?? response.data;
   },
   error => {
+    toast.error(error.response?.data?.data?.message || "다시 시도해주세요.");
     return Promise.reject({
       ...error,
       errorStatus: error.response?.status,
-      errorMessage: error.response?.data?.data?.message,
     });
   },
 );

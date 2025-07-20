@@ -15,7 +15,6 @@ import type { SubmitHandler } from "react-hook-form";
 import type { OrderFormValue } from "@/types/order";
 import { fetchProductsSummary } from "@/api/productSummary";
 import useApiRequest from "@/hooks/useApiRequest";
-import { toast } from "react-toastify";
 import type { OrderRequest } from "@/types/order";
 import { postOrder } from "@/api/order";
 
@@ -56,17 +55,15 @@ const OrderPage = () => {
     data: gift,
     isLoading,
     isError,
-    error,
   } = useApiRequest({
     requestFn,
   });
 
   useEffect(() => {
     if (!gift && !isLoading && isError) {
-      toast.error(error);
       navigate(ROUTE_PATH.HOME, { replace: true });
     }
-  }, [gift, isLoading, isError, navigate, error]);
+  }, [gift, isLoading, isError, navigate]);
 
   if (!gift) return null;
 
@@ -102,9 +99,6 @@ const OrderPage = () => {
         navigate(ROUTE_PATH.HOME, { replace: true });
       })
       .catch(error => {
-        toast.error(
-          error.errorMessage || "주문에 실패했습니다. 다시 시도해주세요.",
-        );
         if (error.errorStatus === 401) {
           navigate(ROUTE_PATH.LOGIN, { replace: true });
           return;

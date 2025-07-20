@@ -12,7 +12,6 @@ const useApiRequest = <TData = unknown, TArgs extends unknown[] = []>({
   const [data, setData] = useState<TData | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(immediate);
   const [isError, setIsError] = useState(false);
-  const [error, setError] = useState("");
 
   const fetchData = useCallback(
     (...args: TArgs) => {
@@ -22,9 +21,8 @@ const useApiRequest = <TData = unknown, TArgs extends unknown[] = []>({
         .then(response => {
           setData(response);
         })
-        .catch(err => {
+        .catch(() => {
           setIsError(true);
-          setError(err.errorMessage);
         })
         .finally(() => {
           setIsLoading(false);
@@ -43,7 +41,6 @@ const useApiRequest = <TData = unknown, TArgs extends unknown[] = []>({
     data,
     isLoading,
     isError,
-    error,
     refetch: fetchData,
   };
 };
