@@ -36,7 +36,6 @@ export const useOrderForm = () => {
     const fetchAndSetProduct = async () => {
       try {
         const fetchData = await getOrderFetchData(productId);
-        console.log(fetchData);
         if (fetchData && fetchData.statusCode < 500) {
           toast(fetchData.message);
           navigate(URLS.home);
