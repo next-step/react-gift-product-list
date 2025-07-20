@@ -2,6 +2,29 @@ import styled from '@emotion/styled';
 import { messageCardDatas, type MessageCard } from '@/data/messageCardDatas';
 import { useState } from 'react';
 
+const MessageCardSection = () => {
+  const [selected, setSelected] = useState<MessageCard>(messageCardDatas[0][0]);
+
+  return (
+    <MessageCardContainer>
+      <MessageCardList>
+        {messageCardDatas[0].map(card => (
+          <MessageCardItem key={card.id} onClick={() => setSelected(card)}>
+            <Img src={card.thumbUrl} alt={card.defaultTextMessage} />
+          </MessageCardItem>
+        ))}
+      </MessageCardList>
+      <SelectedCardContainer>
+        <SelectedCardItem>
+          <Img src={selected.thumbUrl} alt={selected.defaultTextMessage} />
+        </SelectedCardItem>
+      </SelectedCardContainer>
+    </MessageCardContainer>
+  );
+};
+
+export default MessageCardSection;
+
 const MessageCardContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.semantic.background.default};
   padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
@@ -43,26 +66,3 @@ const Img = styled.img`
   height: 100%;
   object-fit: cover;
 `;
-
-const MessageCardSection = () => {
-  const [selected, setSelected] = useState<MessageCard>(messageCardDatas[0][0]);
-
-  return (
-    <MessageCardContainer>
-      <MessageCardList>
-        {messageCardDatas[0].map(card => (
-          <MessageCardItem key={card.id} onClick={() => setSelected(card)}>
-            <Img src={card.thumbUrl} alt={card.defaultTextMessage} />
-          </MessageCardItem>
-        ))}
-      </MessageCardList>
-      <SelectedCardContainer>
-        <SelectedCardItem>
-          <Img src={selected.thumbUrl} alt={selected.defaultTextMessage} />
-        </SelectedCardItem>
-      </SelectedCardContainer>
-    </MessageCardContainer>
-  );
-};
-
-export default MessageCardSection;

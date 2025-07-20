@@ -1,6 +1,29 @@
 import styled from '@emotion/styled';
 import type { ProductSummaryData } from '../hooks/useRnaking';
 
+const ProductInfo = ({ productSummaryData }: { productSummaryData: ProductSummaryData }) => {
+  const { name, brandName, price, imageURL } = productSummaryData;
+  return (
+    <ProductInfoContainer>
+      <Title>상품 정보</Title>
+
+      <ItemContainer>
+        <img alt={name} src={imageURL} />
+        <div>
+          <p>{name}</p>
+          <p>{brandName}</p>
+          <p>
+            <span>상품가 </span>
+            {price}
+          </p>
+        </div>
+      </ItemContainer>
+    </ProductInfoContainer>
+  );
+};
+
+export default ProductInfo;
+
 const ProductInfoContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.semantic.background.default};
   padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
@@ -64,26 +87,3 @@ const Title = styled.h3`
   color: ${({ theme }) => theme.colors.semantic.text.default};
   margin-bottom: ${({ theme }) => theme.spacing.spacing3};
 `;
-
-const ProductInfo = ({ productSummaryData }: { productSummaryData: ProductSummaryData }) => {
-  const { name, brandName, price, imageURL } = productSummaryData;
-  return (
-    <ProductInfoContainer>
-      <Title>상품 정보</Title>
-
-      <ItemContainer>
-        <img alt={name} src={imageURL} />
-        <div>
-          <p>{name}</p>
-          <p>{brandName}</p>
-          <p>
-            <span>상품가 </span>
-            {price}
-          </p>
-        </div>
-      </ItemContainer>
-    </ProductInfoContainer>
-  );
-};
-
-export default ProductInfo;

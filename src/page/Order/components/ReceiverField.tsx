@@ -6,6 +6,53 @@ import { useState } from 'react';
 import ReceiverInfoArray from './ReceiverInfoArray';
 import type { OrderInfoValues } from '..';
 
+const ReceiverField = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { watch, setValue } = useFormContext<OrderInfoValues>();
+
+  const receiverInfos = watch('receiverInfos');
+  const isEmpty = receiverInfos.length ? false : true;
+
+  const handleChange = (value: OrderInfoValues['receiverInfos']) => {
+    setValue('receiverInfos', value);
+  };
+
+  return (
+    <>
+      <Container>
+        <ButtonArea>
+          <P>받는사람</P>
+          <Button type="button" onClick={() => setIsModalOpen(true)}>
+            {!isEmpty ? '수정' : '추가'}
+          </Button>
+        </ButtonArea>
+        <MainArea>
+          {!isEmpty ? (
+            <ReceiverInfoArray receiverInfos={receiverInfos} />
+          ) : (
+            <p>
+              받는 사람이 없습니다.
+              <br />
+              받을 사람을 추가해주세요.
+            </p>
+          )}
+        </MainArea>
+      </Container>
+      {isModalOpen &&
+        createPortal(
+          <ReceiverModal
+            onClose={() => setIsModalOpen(false)}
+            handleChange={handleChange}
+            receiverInfos={receiverInfos}
+          />,
+          document.body
+        )}
+    </>
+  );
+};
+export default ReceiverField;
+
 const Container = styled.div`
   width: 100%;
   padding: 0px 1rem;
@@ -56,50 +103,3 @@ const MainArea = styled.div`
     margin: 0px;
   }
 `;
-
-const ReceiverField = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { watch, setValue } = useFormContext<OrderInfoValues>();
-
-  const receiverInfos = watch('receiverInfos');
-  const isEmpty = receiverInfos.length ? false : true;
-
-  const handleChange = (value: OrderInfoValues['receiverInfos']) => {
-    setValue('receiverInfos', value);
-  };
-
-  return (
-    <>
-      <Container>
-        <ButtonArea>
-          <P>받는사람</P>
-          <Button type="button" onClick={() => setIsModalOpen(true)}>
-            {!isEmpty ? '수정' : '추가'}
-          </Button>
-        </ButtonArea>
-        <MainArea>
-          {!isEmpty ? (
-            <ReceiverInfoArray receiverInfos={receiverInfos} />
-          ) : (
-            <p>
-              받는 사람이 없습니다.
-              <br />
-              받을 사람을 추가해주세요.
-            </p>
-          )}
-        </MainArea>
-      </Container>
-      {isModalOpen &&
-        createPortal(
-          <ReceiverModal
-            onClose={() => setIsModalOpen(false)}
-            handleChange={handleChange}
-            receiverInfos={receiverInfos}
-          />,
-          document.body
-        )}
-    </>
-  );
-};
-export default ReceiverField;
