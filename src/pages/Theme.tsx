@@ -8,6 +8,7 @@ import ProductCard from '@/common/ProductCard';
 import Text from '@/common/Text';
 
 import styled from '@emotion/styled';
+import { useRef, useCallback } from 'react';
 
 const Theme = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -16,11 +17,30 @@ const Theme = () => {
     products,
     loading: productsLoading,
     error,
+    hasMore,
+    loadMore,
   } = useThemeProducts(Number(themeId));
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  if (infoLoading || productsLoading) return <div>로딩 중...</div>;
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastProductRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (productsLoading) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMore();
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [productsLoading, hasMore, loadMore]
+  );
+
+  if (infoLoading) return <div>로딩 중...</div>;
   if (!themeInfo) return null;
   if (error) return <div>{error}</div>;
 
@@ -48,7 +68,7 @@ const Theme = () => {
           <EmptyMessage>상품이 없습니다.</EmptyMessage>
         ) : (
           <ProductList>
-            {products.map((product) => {
+            {products.map((product, index) => {
               const goToCard = () => {
                 if (isLoggedIn) {
                   navigate(`/order/${product.id}`);
@@ -57,18 +77,33 @@ const Theme = () => {
                 }
               };
 
-              return (
-                <ProductCard
-                  key={product.id}
-                  onClick={goToCard}
-                  src={product.imageURL}
-                  brandName={product.brandInfo.name}
-                  price={product.price.basicPrice.toLocaleString()}
-                />
-              );
+              if (index === products.length - 1) {
+                // 마지막 아이템에 ref 부여해서 관찰
+                return (
+                  <div key={product.id} ref={lastProductRef}>
+                    <ProductCard
+                      onClick={goToCard}
+                      src={product.imageURL}
+                      brandName={product.brandInfo.name}
+                      price={product.price.basicPrice.toLocaleString()}
+                    />
+                  </div>
+                );
+              } else {
+                return (
+                  <ProductCard
+                    key={product.id}
+                    onClick={goToCard}
+                    src={product.imageURL}
+                    brandName={product.brandInfo.name}
+                    price={product.price.basicPrice.toLocaleString()}
+                  />
+                );
+              }
             })}
           </ProductList>
         )}
+        {productsLoading && <Spinner />}
       </Content>
     </Layout>
   );
@@ -116,4 +151,20 @@ const EmptyMessage = styled.div`
   justify-content: center;
   font-size: 1rem;
   color: ${({ theme }) => theme.colors.textSub};
+`;
+
+const Spinner = styled.div`
+  margin: 20px auto;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: ${({ theme }) => theme.colors.gray800};
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `;
