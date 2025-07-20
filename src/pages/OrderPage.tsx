@@ -4,12 +4,15 @@ import styled from '@emotion/styled'
 import Layout from '@/Layout'
 import { cardTemplates, type CardTemplate } from '@/data/cardTemplates'
 import { fetchProductSummary, type ProductSummary } from '@/api/product'
-import useOrderForm from '@/hooks/useOrderForm'
+import { postOrder } from '@/api/order'
+import useOrderForm, { type OrderFormValues } from '@/hooks/useOrderForm'
 import RecipientModal from '@/components/RecipientModal'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
 import { toast } from 'react-toastify'
+import { useAuth } from '@/contexts/AuthContext'
+
 
 const Container = styled.div`
   display: flex;
@@ -184,6 +187,7 @@ export default function OrderPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [product, setProduct] = useState<ProductSummary | null>(null)
+  const { userInfo } = useAuth()
 
   const [selected, setSelected] = useState<CardTemplate>(cardTemplates[0])
   const [modalOpen, setModalOpen] = useState(false)
@@ -220,6 +224,13 @@ export default function OrderPage() {
     load()
   }, [id, navigate])
 
+  useEffect(() => {
+    if (userInfo) {
+      setValue('sender', userInfo.name)
+    }
+  }, [userInfo, setValue])
+
+
   const recipients = watch('recipients')
   const totalQty = recipients.reduce(
     (sum: number, r: { qty: number }) => sum + (r.qty ?? 0),
@@ -227,15 +238,37 @@ export default function OrderPage() {
   )
   const orderPrice = product ? product.price * totalQty : 0
 
-  const onSubmit = (data: any) => {
-    const totalQty = data.recipients.reduce(
-      (sum: number, r: { qty: number }) => sum + r.qty,
-      0,
-    )
-    const totalPrice = product ? product.price * totalQty : 0
-    alert(
-      `주문 완료:\n카드: ${selected.id}\n메시지: ${data.message}\n보낸 사람: ${data.sender}\n총 수량: ${totalQty}\n결제금액: ${totalPrice.toLocaleString()}원`,)
-    navigate('/')
+  const onSubmit = async (data: OrderFormValues) => {
+    if (!id || !userInfo) return
+
+    try {
+      await postOrder(
+        {
+          productId: Number(id),
+          message: data.message,
+          messageCardId: String(selected.id),
+          ordererName: data.sender,
+          receivers: data.recipients.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: r.qty,
+          })),
+        },
+        userInfo.authToken,
+      )
+      alert('주문이 완료되었습니다.')
+      navigate('/')
+    } catch (err: any) {
+      const code = err?.statusCode ?? 0
+      if (code === 401) {
+        toast.error('로그인이 필요합니다.')
+        navigate('/login')
+      } else if (code >= 400 && code < 500) {
+        toast.error(err.message)
+      } else {
+        toast.error('주문에 실패했습니다.')
+      }
+    }
   }
   const handleCardSelect = (card: CardTemplate) => {
     setSelected(card)
