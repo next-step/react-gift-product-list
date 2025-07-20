@@ -1,4 +1,5 @@
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider } from 'react-hook-form';
+import { useParams, useNavigate } from 'react-router-dom';
 import NavigationBar from '@/common/NavigationBar';
 import GiftCardSelector from '@/components/ProductOrder/GiftCardSelector';
 import SenderInfoSection from '@/components/ProductOrder/SenderInfoSection';
@@ -6,63 +7,70 @@ import ReceiverInfoSection from '@/components/ProductOrder/ReceiverInfo/Receiver
 import ProductInfo from '@/components/giftHome/GiftThemes/ProductInfo';
 import OrderBtn from '@/components/ProductOrder/OrderBtn';
 import styled from '@emotion/styled';
-import { useLocation } from 'react-router-dom';
-
-interface OrderFormInputs {
-  senderName: string;
-  receiverName: string;
-  receiverPhone: string;
-  quantity: number;
-}
+import { useOrderForm } from '@/hooks/useOrderForm';
+import { useEffect, useState } from 'react';
+import { getProductSummary } from '@/api/product';
+import type { ProductSummary } from '@/api/product';
+import toast from 'react-hot-toast';
 
 const ProductOrder = () => {
-  const location = useLocation();
-  const { imageURL, name, price, brandInfo } = location.state || {};
+  const { productId } = useParams();
+  const navigate = useNavigate();
+  const [product, setProduct] = useState<ProductSummary | null>(null);
 
-  const methods = useForm<OrderFormInputs>({
-    defaultValues: {
-      senderName: '',
-      receiverName: '',
-      receiverPhone: '',
-      quantity: 1,
-    },
-  });
+  const { methods, handleSubmit, order } = useOrderForm(Number(productId));
 
-  const { handleSubmit, setError } = methods;
+  const [message, setMessage] = useState('생일 축하해!');
+  const [messageCardId, setMessageCardId] = useState('default-card');
 
-  const validatePhone = (phone: string): boolean => /^010\d{8}$/.test(phone);
+  useEffect(() => {
+    if (!productId) return;
 
-  const onSubmit = (data: OrderFormInputs) => {
-    let hasError = false;
+    getProductSummary(Number(productId))
+      .then((data) => {
+        setProduct(data);
+      })
+      .catch(() => {
+        toast.error('상품 정보를 불러올 수 없습니다.');
+        navigate('/');
+      });
+  }, [productId, navigate]);
 
-    if (!validatePhone(data.receiverPhone)) {
-      setError('receiverPhone', { message: '전화번호를 입력해주세요.' });
-      hasError = true;
-    }
-
-    if (!hasError) {
-      console.log('주문 처리', data);
-    }
-  };
+  if (!product) return <div>상품 정보를 불러오는 중입니다...</div>;
 
   return (
-    <FormProvider {...methods}>
-      <Layout>
-        <Content>
-          <NavigationBar />
-          <GiftCardSelector />
-          <SenderInfoSection />
-          <ReceiverInfoSection />
-          <ProductInfo
-            imageURL={imageURL}
-            name={name}
-            price={price}
-            brandInfo={brandInfo}
-          />
-          <OrderBtn price={price.basicPrice} onClick={handleSubmit(onSubmit)} />
-        </Content>
-      </Layout>
-    </FormProvider>
+    <>
+      <NavigationBar />
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(() => order({ message, messageCardId }))}>
+          <Layout>
+            <Content>
+              <ProductInfo
+                imageURL={product.imageURL}
+                name={product.name}
+                price={{ basicPrice: product.price }}
+                brandInfo={{ name: product.brandName }}
+              />
+              <GiftCardSelector
+                message={message}
+                setMessage={setMessage}
+                messageCardId={messageCardId}
+                setMessageCardId={setMessageCardId}
+              />
+              <SenderInfoSection />
+              <ReceiverInfoSection />
+            </Content>
+
+            <StickyWrapper>
+              <OrderBtn
+                price={product.price}
+                onClick={handleSubmit(() => order({ message, messageCardId }))}
+              />
+            </StickyWrapper>
+          </Layout>
+        </form>
+      </FormProvider>
+    </>
   );
 };
 
@@ -75,7 +83,7 @@ const Layout = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   gap: 24px;
 `;
 
@@ -83,4 +91,14 @@ const Content = styled.div`
   width: 100%;
   max-width: 720px;
   padding: 0 16px;
+`;
+
+const StickyWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 720px;
+  height: 56px;
+  z-index: 100;
+  background: white;
 `;

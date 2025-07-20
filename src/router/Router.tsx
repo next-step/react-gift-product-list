@@ -13,8 +13,8 @@ export const Router = () => {
       <Route path="/login" element={<Login />} />
       <Route element={<PrivateRoute />}>
         <Route path="/my" element={<MyPage />} />
+        <Route path="/order/:productId" element={<ProductOrder />} />
       </Route>
-      <Route path="/order/:id" element={<ProductOrder />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

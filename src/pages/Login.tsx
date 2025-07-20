@@ -1,85 +1,69 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import { useLoginForm } from '@/hooks/useLoginForm';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavigationBar from '@/common/NavigationBar';
 import Input from '@/common/Input';
 import LoginButton from '@/components/login/LoginButton';
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const validators: Record<'id' | 'password', (value: string) => string | null> =
-  {
-    id: (value: string) => {
-      if (value.trim() === '') return 'ID를 입력해주세요.';
-      if (!emailRegex.test(value)) return '유효한 이메일 형식이 아닙니다.';
-      return null;
-    },
-    password: (value: string) => {
-      if (value.trim() === '') return 'PW를 입력해주세요.';
-      if (value.length < 8) return 'PW는 최소 8글자 이상이어야 합니다.';
-      return null;
-    },
-  };
-
-type FormErrors = {
-  id: string | null;
-  password: string | null;
-};
+import { useLoginForm } from '@/hooks/useLoginForm';
+import { useAuth } from '@/context/AuthContext';
+import type { LoginFormInputs } from '@/hooks/useLoginForm';
 
 const LoginForm = () => {
-  const { form, handleChange, handleSubmit } = useLoginForm();
+  const { login, isLoggedIn, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useLoginForm();
 
-  const [errors, setErrors] = useState<FormErrors>({
-    id: null,
-    password: null,
-  });
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const fieldName = name as keyof FormErrors;
-    const validator = validators[fieldName];
-    if (!validator) return;
-    const errorMessage = validator(value);
-    setErrors((prev) => ({ ...prev, [fieldName]: errorMessage }));
+  const onSubmit = async (data: LoginFormInputs) => {
+    console.log('로그인 요청:', data);
+    try {
+      await login(data.id, data.password);
+    } catch (error) {
+      console.error('Login submission error:', error);
+    }
   };
-
-  const isFormValid =
-    form.id.trim() !== '' &&
-    form.password.trim() !== '' &&
-    errors.id === null &&
-    errors.password === null;
 
   return (
     <Layout>
       <NavigationBar />
       <Logo>kakao</Logo>
-      <FormWrapper onSubmit={handleSubmit}>
+      <FormWrapper onSubmit={handleSubmit(onSubmit)}>
         <InputWrapper>
           <Input
-            name="id"
+            {...register('id')}
+            type="email"
             placeholder="이메일"
-            value={form.id}
-            onChange={handleChange}
-            onBlur={handleBlur}
             hasError={!!errors.id}
+            disabled={isLoading}
           />
-          {errors.id && <ErrorText>{errors.id}</ErrorText>}
+          {errors.id && <ErrorText>{errors.id.message}</ErrorText>}
         </InputWrapper>
 
         <InputWrapper>
           <Input
-            name="password"
+            {...register('password')}
             type="password"
             placeholder="비밀번호"
-            value={form.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
             hasError={!!errors.password}
+            disabled={isLoading}
           />
-          {errors.password && <ErrorText>{errors.password}</ErrorText>}
+          {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
         </InputWrapper>
 
-        <LoginButton type="submit" disabled={!isFormValid} />
+        <LoginButton
+          type="submit"
+          disabled={!isValid || isLoading}
+          isLoading={isLoading}
+        />
       </FormWrapper>
     </Layout>
   );
