@@ -8,6 +8,12 @@ export const getThemesDetail = (themeId: number) => {
   return instance.get(`/themes/${themeId}/info`);
 };
 
-export const getThemesList = (themeId: number) => {
-  return instance.get(`/themes/${themeId}/products`);
+export const getThemesList = (
+  themeId: number,
+  cursor: number,
+  limit: number
+) => {
+  return instance.get(`/themes/${themeId}/products`, {
+    params: { cursor, limit },
+  });
 };

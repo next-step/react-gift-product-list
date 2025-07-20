@@ -3,25 +3,80 @@ import Layout from "@/components/Common/Layout";
 import { SectionContainer } from "@/components/Common/SectionLayout";
 import styled from "@emotion/styled";
 import { useParams } from "react-router-dom";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { getThemesList } from "@/api/themes";
 import { useFetchData } from "@/hooks/useFetchData";
 import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 import RankingItem from "@/components/Common/ProductItem";
 
+type ThemeProductsResponse = {
+  list: BasicGiftProduct[];
+  cursor: number;
+  hasMoreList: boolean;
+};
+
 const ThemeProductList = () => {
   const { themeId } = useParams<{ themeId: string }>();
+
+  const [products, setProducts] = useState<BasicGiftProduct[]>([]);
+  const [cursor, setCursor] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
   const fetchFn = useCallback(async () => {
-    const res = await getThemesList(Number(themeId));
-    return { data: { data: res.data.data.list } };
+    const res = await getThemesList(Number(themeId), 0, 10);
+    return { data: { data: res.data.data } };
   }, [themeId]);
 
   const {
-    data: products,
+    data: initialData,
     loading,
     error,
-  } = useFetchData<BasicGiftProduct[]>(fetchFn);
+  } = useFetchData<ThemeProductsResponse>(fetchFn);
+
+  useEffect(() => {
+    if (initialData) {
+      setProducts(initialData.list);
+      setCursor(initialData.cursor);
+      setHasMore(initialData.hasMoreList);
+    }
+  }, [initialData]);
+
+  const loadMore = useCallback(async () => {
+    setLoadingMore(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const res = await getThemesList(Number(themeId), cursor, 10);
+      const data = res.data.data;
+      setProducts((prev) => [...prev, ...data.list]);
+      setCursor(data.cursor);
+      setHasMore(data.hasMoreList);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [themeId, cursor]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) observer.observe(currentLoader);
+
+    return () => {
+      if (currentLoader) observer.unobserve(currentLoader);
+    };
+  }, [hasMore, loadingMore, loadMore]);
 
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
 
@@ -49,6 +104,15 @@ const ThemeProductList = () => {
                 />
               ))}
             </ProudctList>
+            {loadingMore && (
+              <LoadingSpinner
+                color="#000000"
+                loading={loadingMore}
+                size={35}
+                marginSize={0}
+              />
+            )}
+            <div ref={loaderRef} style={{ height: "20px" }} />
           </SectionContainer>
         </ListContainer>
       )}
@@ -80,7 +144,7 @@ const ThemeTitle = styled.p`
   ${({ theme }) => theme.font.title1Bold}
 `;
 
-const ProudctList = styled.p`
+const ProudctList = styled.div`
   display: grid;
   width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
