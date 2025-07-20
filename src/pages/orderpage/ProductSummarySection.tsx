@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import type { Product } from "@/mocks/types";
+import type { ProductSummary } from "@/types/api_types";
 
 interface ProductSummarySectionProps {
-  product: Product;
+  product: ProductSummary;
 }
 
 export default function ProductSummarySection({
@@ -15,10 +15,9 @@ export default function ProductSummarySection({
         <ProductImage src={product.imageURL} alt={product.name} />
         <Content>
           <ProductName>{product.name}</ProductName>
-          <BrandName>{product.brandInfo.name}</BrandName>
+          <BrandName>{product.brandName}</BrandName>
           <PriceText>
-            상품가{" "}
-            <strong>{product.price.sellingPrice.toLocaleString()}원</strong>
+            상품가 <strong>{product.price.toLocaleString()}원</strong>
           </PriceText>
         </Content>
       </Card>

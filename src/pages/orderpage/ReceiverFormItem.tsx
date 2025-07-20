@@ -57,13 +57,13 @@ const ReceiverFormItem = ({ field, index, onRemove }: Props) => {
       <FormRow>
         <Label>전화번호</Label>
         <Input
-          defaultValue={field.phone}
-          {...register(`receivers.${index}.phone`)}
+          defaultValue={field.phoneNumber}
+          {...register(`receivers.${index}.phoneNumber`)}
           placeholder="전화번호를 입력하세요."
         />
       </FormRow>
-      {errors.receivers?.[index]?.phone?.message && (
-        <ErrorText>{errors.receivers[index]?.phone?.message}</ErrorText>
+      {errors.receivers?.[index]?.phoneNumber?.message && (
+        <ErrorText>{errors.receivers[index]?.phoneNumber?.message}</ErrorText>
       )}
 
       <FormRow>

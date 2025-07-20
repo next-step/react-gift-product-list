@@ -3,10 +3,14 @@ import styled from "@emotion/styled";
 import LoginButton from "@/components/common/BaseButton";
 import KakaoLogo from "@/components/common/KakaoLogo";
 import { useAuth } from "@/contexts/AuthContext";
+import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/utils/validator";
 import type { LoginFormValues } from "@/utils/validator";
+import { useApiRequest } from "@/hooks/useApiRequest";
+import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
+import { HTTP_STATUS } from "@/utils/HTTP_STATUS";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,20 +22,51 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
-    watch,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
     reValidateMode: "onChange",
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    login(data.email);
-    navigate(redirectTo);
-  };
+  const handleApiError = useApiErrorHandler({
+    fallbackMessage: "로그인에 실패했습니다. 다시 시도해주세요.",
+    customHandler: (statusCode, message) => {
+      if (statusCode === HTTP_STATUS.BAD_REQUEST) {
+        if (message?.includes("@kakao.com")) {
+          return "@kakao.com 이메일 주소만 가능합니다.";
+        }
+        return message ?? false;
+      }
+      return false;
+    },
+  });
 
-  const email = watch("email");
-  const password = watch("password");
+  const { refetch } = useApiRequest<{
+    email: string;
+    name: string;
+    authToken: string;
+  }>({
+    url: API_ENDPOINTS.LOGIN,
+    method: "post",
+    manual: true,
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const result = await refetch({ data });
+
+      if (result?.data) {
+        const { email, name, authToken } = result.data;
+
+        if (email && name && authToken) {
+          login({ email, name, authToken });
+          navigate(redirectTo);
+        }
+      }
+    } catch (err: any) {
+      handleApiError(err);
+    }
+  };
 
   return (
     <Wrapper>

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import type { Product } from "@/mocks/types";
+import type { Product } from "@/types/api_types";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";

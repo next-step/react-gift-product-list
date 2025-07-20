@@ -58,20 +58,26 @@ export function useApiRequest<T>({
     manual,
   ]);
 
-  const refetch = async () => {
+  const refetch = async (overrideConfig?: {
+    data?: any;
+    params?: any;
+  }): Promise<{ data: T }> => {
     setStatus("loading");
     try {
       const res = await axios.request<{ data: T }>({
         url: import.meta.env.VITE_API_BASE_URL + url,
         method,
-        data,
+        data: overrideConfig?.data ?? data,
+        params: overrideConfig?.params ?? config.params,
         ...config,
       });
       setResponse(res.data.data);
       setStatus("success");
+      return res.data;
     } catch (err: any) {
       setError(err.message ?? "에러 발생");
       setStatus("error");
+      throw err;
     }
   };
 

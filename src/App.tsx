@@ -14,6 +14,8 @@ import MyPage from "@/pages/MyPage";
 import OrderPage from "@/pages/orderpage/OrderPage";
 import PrivateRoute from "@/routes/PrivateRoute";
 import ThemeProductsPage from "@/pages/themeproductspage/ThemeProductsPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
       <GlobalStyle />
       <Layout>
         <NavigationBar />
+        <ToastContainer position="top-center" />
         <Routes>
           <Route
             path="/"
