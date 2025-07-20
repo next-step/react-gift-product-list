@@ -5,11 +5,14 @@ import Text from '@/common/Text';
 import { fetchThemes } from '@/api/themes';
 import type { Category } from '@/api/themes';
 import LoadingSpinner from '@/common/LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
 
 const GiftCategoryList = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadThemes = async () => {
@@ -40,6 +43,7 @@ const GiftCategoryList = () => {
             key={category.themeId}
             name={category.name}
             image={category.image}
+            onClick={() => navigate(`/themes/${category.themeId}`)}
           />
         ))}
       </CategoryItem>
