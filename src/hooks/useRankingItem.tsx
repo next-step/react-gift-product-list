@@ -19,7 +19,7 @@ export const useRankingItem = () => {
 
     const fetchProductRanking = async () => {
       try {
-        const data = await apiClient('GET', BASIC_ENDPOINT.ranking, null, typeUrls, null);
+        const data = await apiClient('GET', BASIC_ENDPOINT.ranking, {}, typeUrls, null);
         setGoods(data);
         setError(false);
       } catch (error) {

@@ -69,15 +69,13 @@ export const useOrderForm = () => {
     formState: { errors },
   } = methods;
   const onSubmit: SubmitHandler<OrderFormValue> = (data) => {
-    alert(`Name: ${data.sendName}, Message: ${data.msg}`);
-
     const postOrder = async () => {
       const authToken = sessionStorage.getItem(SESSION_KEY_NAME.token) as string;
       const orderBody = {
         productId: selectedProduct?.id,
         message: data.msg,
         messageCardId: data.msgId,
-        orderName: String(data.sendName),
+        ordererName: String(data.sendName),
         receivers: data.recipients.map((recipient: Recipient) => {
           return {
             name: recipient.receiveName,
@@ -86,13 +84,10 @@ export const useOrderForm = () => {
           };
         }),
       };
-      console.log(orderBody);
       try {
         const fetchOrder = await apiClient('POST', BASIC_ENDPOINT.order, orderBody, '', {
           Authorization: authToken,
         });
-        console.log(orderBody.orderName);
-        console.log(fetchOrder);
         if (fetchOrder.statusCode === 401) {
           navigate(URLS.login);
         } else if (fetchOrder.success === true) {

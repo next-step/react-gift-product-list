@@ -19,7 +19,7 @@ export const usePresentTheme = () => {
   useEffect(() => {
     const fetchProductRanking = async () => {
       try {
-        const data = await apiClient('GET', BASIC_ENDPOINT.theme, null, '', null);
+        const data = await apiClient('GET', BASIC_ENDPOINT.theme, {}, '', null);
         setThemes(data);
         setError(false);
       } catch (error) {

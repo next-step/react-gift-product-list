@@ -87,9 +87,7 @@ const RecipientsModalContainer = ({
 
   // AddRecipientsModal에서 새로운 Recipient[]를 받아와서 append
   const handleAddRecipients = (finalRecipients: Recipient[]) => {
-    console.log('추가할 recipients', finalRecipients);
     replace(finalRecipients);
-    console.log('추가 후 recipients', finalRecipients);
   };
 
   return (

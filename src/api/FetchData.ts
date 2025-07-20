@@ -13,7 +13,6 @@ const postFetch = async <T extends object>(
   headers: { Authorization: string } | null
 ) => {
   try {
-    console.log(body);
     const res =
       headers === null
         ? await axios.post(import.meta.env.VITE_API_BASE_URL + requestName, body)
