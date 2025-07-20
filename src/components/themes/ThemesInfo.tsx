@@ -1,6 +1,7 @@
 import { fetchThemesInfo } from "@/api/themesInfo";
 import useApiRequest from "@/hooks/useApiRequest";
-import { useCallback, useEffect } from "react";
+import styled from "@emotion/styled";
+import { useCallback } from "react";
 
 type ThemesInfoProps = {
   id: string | undefined;
@@ -19,23 +20,54 @@ const ThemesInfo = ({ id }: ThemesInfoProps) => {
     requestFn,
   });
 
-  useEffect(() => {
-    if (!themeInfoData && !isLoading && isError) {
-      console.error("Failed to fetch theme information");
-    }
-  }, [themeInfoData, isError, isLoading]);
+  if (!themeInfoData && !isLoading && isError) {
+    return null;
+  }
 
   return (
-    <div>
+    <InfoSection backgroundColor={themeInfoData?.backgroundColor}>
       {themeInfoData && (
-        <div>
-          <h1>{themeInfoData.name}</h1>
-          <h2>{themeInfoData.title}</h2>
-          <p>{themeInfoData.description}</p>
-        </div>
+        <>
+          <NameP>{themeInfoData.name}</NameP>
+          <TitleH5>{themeInfoData.title}</TitleH5>
+          <DescriptionP>{themeInfoData.description}</DescriptionP>
+        </>
       )}
-    </div>
+    </InfoSection>
   );
 };
 
 export default ThemesInfo;
+
+const InfoSection = styled.section<{ backgroundColor?: string }>`
+  margin: 0px;
+  padding: ${({ theme }) =>
+    `${theme.spacing.spacing7} ${theme.spacing.spacing4} ${theme.spacing.spacing6}`};
+  background-color: ${({ theme, backgroundColor }) =>
+    backgroundColor || theme.colors.semantic.background.default};
+`;
+
+const NameP = styled.p`
+  font-size: ${({ theme }) => theme.typography.label1Bold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.label1Bold.fontWeight};
+  line-height: ${({ theme }) => theme.typography.label1Bold.lineHeight};
+  color: ${({ theme }) => theme.colors.gray.gray100};
+`;
+
+const TitleH5 = styled.h5`
+  margin: ${({ theme }) =>
+    `${theme.spacing.spacing2} 0 ${theme.spacing.spacing1}`};
+  font-size: ${({ theme }) => theme.typography.title1Bold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.title1Bold.fontWeight};
+  line-height: ${({ theme }) => theme.typography.title1Bold.lineHeight};
+  color: ${({ theme }) => theme.colors.gray.gray00};
+`;
+
+const DescriptionP = styled.p`
+  margin: 0px;
+  padding: 0px;
+  font-size: ${({ theme }) => theme.typography.subtitle1Regular.fontSize};
+  font-weight: ${({ theme }) => theme.typography.subtitle1Regular.fontWeight};
+  line-height: ${({ theme }) => theme.typography.subtitle1Regular.lineHeight};
+  color: ${({ theme }) => theme.colors.gray.gray200};
+`;
