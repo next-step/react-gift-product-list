@@ -29,7 +29,7 @@ export default function CategorySection() {
         {themes && themes.length > 0 && (
           <Grid>
             {themes.map(({ themeId, name, image }) => (
-              <CategoryCard key={themeId} name={name} image={image} />
+              <CategoryCard key={themeId} themeId={themeId} name={name} image={image} />
             ))}
           </Grid>
         )}
