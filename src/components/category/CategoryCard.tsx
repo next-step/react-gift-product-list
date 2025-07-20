@@ -1,10 +1,30 @@
 /** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled';
+import { useNavigate } from "react-router-dom";
 
 type Props={
     name: string;
     image: string;
+    themeId: number;
 };
+
+
+export const CategoryCard = ({ themeId, name, image }: Props) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/theme/${themeId}`);
+  };
+
+  return (
+    <Card onClick={handleClick}>
+      <Image src={image} alt={name} />
+      <Label>{name}</Label>
+    </Card>
+  );
+};
+
+
 const Card = styled.div`
     display: flex;
     flex-direction: column;
@@ -24,12 +44,3 @@ const Label = styled.p`
   color: ${({ theme }) => theme.colors.textDefault};
   text-align: center;
 `;
-
-export const CategoryCard = ({ name, image }: Props)=>{
-    return (
-    <Card>
-      <Image src={image} alt={name} />
-      <Label>{name}</Label>
-    </Card>
-  );
-}

@@ -136,19 +136,19 @@ const HeroSection = styled.section<{ bgColor: string }>`
 
 const ThemeLabel = styled.p`
   ${({ theme }) => theme.typography.label1Regular};
-  color: ${({ theme }) => theme.colors.textDefault};
+  color: ${({ theme }) => theme.colors.gray00};
   margin-bottom: 8px;
 `;
 
 const ThemeTitle = styled.h2`
   ${({ theme }) => theme.typography.title1Bold};
-  color: ${({ theme }) => theme.colors.textDefault};
+  color: ${({ theme }) => theme.colors.gray00};
   margin: 0 0 5px;
 `;
 
 const ThemeDescription = styled.p`
   ${({ theme }) => theme.typography.body1Regular};
-  color: ${({ theme }) => theme.colors.textDefault};
+  color: ${({ theme }) => theme.colors.gray00};
   margin: 0;
 `;
 
@@ -159,7 +159,7 @@ const Section = styled.section`
 const EmptyBox = styled.div`
   text-align: center;
   padding: 40px 0;
-  color: ${({ theme }) => theme.colors.textSub};
+  color: ${({ theme }) => theme.colors.gray800};
   ${({ theme }) => theme.typography.body1Regular};
 `;
 

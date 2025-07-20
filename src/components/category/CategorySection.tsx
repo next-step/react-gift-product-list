@@ -30,9 +30,8 @@ export const CategorySection = () => {
   }, [fetchThemesData]);
 
   if (loading) {
-  return <Spinner size={48} withWrapper />;
-}
-
+    return <Spinner size={48} withWrapper />;
+  }
 
   if (error || themes.length === 0) {
     return <ErrorBanner>해당 ID에 일치하는 데이터가 없습니다.</ErrorBanner>;
@@ -41,12 +40,16 @@ export const CategorySection = () => {
   return (
     <CategoryGrid>
       {themes.map(({ themeId, name, image }) => (
-        <CategoryCard key={themeId} name={name} image={image} />
+        <CategoryCard
+          key={themeId}
+          themeId={themeId}
+          name={name}
+          image={image}
+        />
       ))}
     </CategoryGrid>
   );
 };
-
 
 const CategoryGrid = styled.section`
   width: 100%;
