@@ -3,13 +3,10 @@ import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import {
   TRENDING_GIFTS_EMPTY_MESSAGES,
   TRENDING_GIFTS_LABELS,
-} from "../TrendingGifts/constants/labels";
-import ProductCard from "./ProductCard";
-import {
-  MoreInfo,
-  MoreInfoWrapper,
-} from "../TrendingGifts/TrendingGifts.styles";
-import { PRODUCT_GRID_TYPES } from "./types/productGridTypes";
+} from "./constants/labels";
+import ProductCard from "../../../../components/ProductCard/ProductCard";
+import { MoreInfo, MoreInfoWrapper } from "./TrendingGifts.styles";
+import { PRODUCT_GRID_TYPES } from "../../../../components/ProductCard/types/productGridTypes";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -39,7 +36,7 @@ interface ProductsGridPropsType {
   products: TrendingGiftsType[];
 }
 
-function ProductsGrid({ products }: ProductsGridPropsType) {
+function TrendingGiftsProductsGrid({ products }: ProductsGridPropsType) {
   if (products.length === 0)
     return (
       <EmptyProductContainer>
@@ -72,4 +69,4 @@ function ProductsGrid({ products }: ProductsGridPropsType) {
   );
 }
 
-export default ProductsGrid;
+export default TrendingGiftsProductsGrid;

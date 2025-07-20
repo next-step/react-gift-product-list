@@ -1,7 +1,4 @@
-import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
-import ProductsGrid from "../ProductsGrid/ProductsGrid";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
-import { PRODUCT_GRID_TYPES } from "../ProductsGrid/types/productGridTypes";
 import {
   TrendingGiftsSection,
   TitleWarpper,
@@ -23,6 +20,8 @@ import {
 } from "./constants/labels";
 import { getTrendingGifts } from "@/data/api";
 import { useFetch } from "@/hooks/useFetch";
+import TrendingGiftsProductsGrid from "./TrendingGiftsProductsGrid";
+import TabContentWrapper from "./TabContentWrapper";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
@@ -52,12 +51,7 @@ function TrendingGiftsContent() {
       return <Loading />;
     }
 
-    return (
-      <ProductsGrid
-        products={data || []}
-        type={PRODUCT_GRID_TYPES.TRENDING_GIFTS}
-      />
-    );
+    return <TrendingGiftsProductsGrid products={data || []} />;
   };
 
   return (

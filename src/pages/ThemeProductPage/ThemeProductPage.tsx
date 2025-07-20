@@ -12,16 +12,16 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
-import { PRODUCT_GRID_TYPES } from "../HomePage/components/ProductsGrid/types/productGridTypes";
+import { PRODUCT_GRID_TYPES } from "../../components/ProductCard/types/productGridTypes";
 import type { ThemeInfo } from "@/types/ThemeInfo";
 import { useEffect, useRef, useState } from "react";
 import type { ThemeProduct } from "@/types/ThemeProducts";
-import ProductCard from "../HomePage/components/ProductsGrid/ProductCard";
+import ProductCard from "../../components/ProductCard/ProductCard";
 import { TRENDING_GIFTS_EMPTY_MESSAGES } from "../HomePage/components/TrendingGifts/constants/labels";
 import {
   EmptyProductContainer,
   EmptyProductText,
-} from "../HomePage/components/ProductsGrid/ProductsGrid";
+} from "../HomePage/components/TrendingGifts/TrendingGiftsProductsGrid";
 
 const Loader = styled.div`
   width: 100%;
