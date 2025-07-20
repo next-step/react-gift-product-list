@@ -87,7 +87,6 @@ function GiftCategorySelectorItemBox() {
         const response = await axios.get(`${baseUrl}/themes`);
         setThemes(response.data.data);
       } catch (error) {
-        console.error('Error fetching weather data:', error); // 디버깅 코드 나중에 제거하자
         setIsError(true);
       } finally {
         setIsLoading(false);

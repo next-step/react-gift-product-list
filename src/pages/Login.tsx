@@ -12,6 +12,8 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 import {ToastContainer, toast} from 'react-toastify';
 import { useState } from 'react';
 
+import { api, IsErrorStatus} from '../utils/api'
+
 const LoginFormWrapper = styled.div`
   width: auto;
   height: 100vh;
@@ -121,19 +123,7 @@ function Login() {
 
       navigate(from, { replace: true });
     } catch (error:any) {
-      if(error.response && error.response.status >= 400 && error.response.status < 500) {
-        toast.error('@kakao.com 이메일 주소만 가능합니다',{
-          position: 'bottom-center',
-          hideProgressBar: true,
-          closeOnClick: true
-        });
-      } else {
-        toast.error('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.', {
-          position: 'bottom-center',
-          hideProgressBar: true,
-          closeOnClick: true,
-        });
-      }
+      IsErrorStatus(error,'@kakao.com 이메일 주소만 가능합니다',navigate);
     }
   };
 

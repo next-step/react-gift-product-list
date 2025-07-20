@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 
-import { useState, useMemo, useEffect, use } from 'react';
+import { useState, useMemo, useEffect} from 'react';
 
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 
@@ -21,6 +21,7 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 import { ToastContainer, toast } from 'react-toastify';
 import useUser from '@/hooks/useUser';
 
+import { api, IsErrorStatus} from '../utils/api'
 // 주문 버튼 시작
 const OrderBtnWrapper = styled.div`
   width: 100%;
@@ -146,15 +147,7 @@ function Order() {
 
         setIsLoading(false);
       } catch (error: any) {
-        console.error('Error fetching ranking data:', error);
-        if (error.response && error.response.status >= 400 && error.response.status < 500) {
-          toast.error('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요', {
-            position: 'bottom-center',
-            hideProgressBar: true,
-            closeOnClick: true
-          });
-          navigate('/');
-        }
+        IsErrorStatus(error,'서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요',navigate) && navigate('/');
       }
     };
 
@@ -189,15 +182,7 @@ function Order() {
         alert(`주문이 완료되었습니다.\n상품명: ${name}\n구매 수량: ${totalCount}\n발신자 이름: ${watch('senderName')}\n메시지: ${watch('message')}`);
         navigate('/');
       } catch (error: any) {
-        if (error.response && error.response.status >= 400 && error.response.status < 500) {
-          toast.error('입력값을 다시 확인해주세요', {
-            position: 'bottom-center',
-            hideProgressBar: true,
-            closeOnClick: true
-          });
-        } else if(error.response.status === 401) {
-          navigate('/login');
-        }
+        IsErrorStatus(error,'입력값을 다시 확인해주세요',navigate);
       }
     };
 
