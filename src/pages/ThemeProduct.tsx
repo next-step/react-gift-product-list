@@ -67,10 +67,10 @@ const ThemeProduct = () => {
   }, [loadProducts]);
 
   const observerRef = useIntersect<HTMLDivElement>(() => {
-  if (!isLoadingMore && hasMore) {
-    loadProducts();
-  }
-}, hasMore);
+    if (!isLoadingMore && hasMore) {
+      loadProducts();
+    }
+  }, hasMore);
 
   if (loading) return <Spinner size={48} withWrapper />;
 
@@ -120,6 +120,7 @@ const ThemeProduct = () => {
               })}
             </ProductList>
           )}
+          {hasMore && isLoadingMore && <Spinner size={32} withWrapper />}
         </Section>
       </PageContainer>
     </PageLayout>
