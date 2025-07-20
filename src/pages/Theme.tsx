@@ -44,27 +44,31 @@ const Theme = () => {
           </Text>
         </ThemeHeroContent>
 
-        <ProductList>
-          {products.map((product) => {
-            const goToCard = () => {
-              if (isLoggedIn) {
-                navigate(`/order/${product.id}`);
-              } else {
-                navigate('/login');
-              }
-            };
+        {products.length === 0 ? (
+          <EmptyMessage>상품이 없습니다.</EmptyMessage>
+        ) : (
+          <ProductList>
+            {products.map((product) => {
+              const goToCard = () => {
+                if (isLoggedIn) {
+                  navigate(`/order/${product.id}`);
+                } else {
+                  navigate('/login');
+                }
+              };
 
-            return (
-              <ProductCard
-                key={product.id}
-                onClick={goToCard}
-                src={product.imageURL}
-                brandName={product.brandInfo.name}
-                price={product.price.basicPrice.toLocaleString()}
-              />
-            );
-          })}
-        </ProductList>
+              return (
+                <ProductCard
+                  key={product.id}
+                  onClick={goToCard}
+                  src={product.imageURL}
+                  brandName={product.brandInfo.name}
+                  price={product.price.basicPrice.toLocaleString()}
+                />
+              );
+            })}
+          </ProductList>
+        )}
       </Content>
     </Layout>
   );
@@ -102,4 +106,14 @@ const ProductList = styled.div`
   flex-wrap: wrap;
   gap: 12px;
   padding: 20px;
+`;
+
+const EmptyMessage = styled.div`
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: ${({ theme }) => theme.colors.textSub};
 `;
