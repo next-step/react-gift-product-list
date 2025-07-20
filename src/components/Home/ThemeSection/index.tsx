@@ -6,11 +6,17 @@ import styled from "@emotion/styled";
 import ThemeItem from "./ThemeItem";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 import { useFetchData } from "@/hooks/useFetchData";
+import { useNavigate } from "react-router-dom";
 
 const ThemeSection = () => {
   const fetchFn = useCallback(() => getThemes(), []);
 
   const { data, loading, error } = useFetchData<ThemeType[]>(fetchFn);
+  const navigate = useNavigate();
+
+  const handleClickTheme = (themeId: number) => {
+    navigate(`/themes/${themeId}`);
+  };
 
   if (error) {
     return <></>;
@@ -24,7 +30,12 @@ const ThemeSection = () => {
       ) : (
         <ThemeGrid>
           {(data ?? []).map((t) => (
-            <ThemeItem key={t.themeId} name={t.name} image={t.image} />
+            <ThemeItem
+              key={t.themeId}
+              name={t.name}
+              image={t.image}
+              onClick={() => handleClickTheme(t.themeId)}
+            />
           ))}
         </ThemeGrid>
       )}

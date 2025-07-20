@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import type { BasicGiftProduct } from "@/types/gift";
 
 type RankingItemProps = BasicGiftProduct & {
-  rank: number;
+  rank?: number;
   highlightCondition?: (rank: number) => boolean;
   onClick?: () => void;
 };
@@ -20,7 +20,9 @@ const RankingItem = ({
     <ItemWrapper onClick={onClick}>
       <ImageWrapper>
         <ProductImage src={imageURL} alt={name} />
-        <RankBadge isTop={highlightCondition(rank)}>{rank}</RankBadge>
+        {rank !== undefined && (
+          <RankBadge isTop={highlightCondition(rank)}>{rank}</RankBadge>
+        )}
       </ImageWrapper>
       <ItemBrand>{brandInfo.name}</ItemBrand>
       <ItemName>{name}</ItemName>
