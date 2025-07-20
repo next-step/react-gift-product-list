@@ -57,7 +57,7 @@ export const SelectedCardView = () => {
     <SelectedCardContainer>
       <SelectedCardImage
         id={String(cardTemplate?.id)}
-        src={cardTemplate?.imageUrl || undefined}
+        src={cardTemplate?.imageUrl}
         alt="선택된 카드 이미지"
       />
       <MessageInput
