@@ -4,8 +4,11 @@ import { fetchTheme } from "@/api/theme";
 import type { Theme } from "@/types/theme";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import useApiRequest from "@/hooks/useApiRequest";
+import { useNavigate } from "react-router";
+import { ROUTE_PATH } from "@/routes/paths";
 
 const PresentCategory = () => {
+  const navigate = useNavigate();
   const {
     data: presentThemes,
     isLoading,
@@ -16,13 +19,23 @@ const PresentCategory = () => {
     return <></>;
   }
 
+  const handleThemeClick = (themeId: number) => {
+    navigate(`${ROUTE_PATH.THEMES.replace(":id", themeId.toString())}`);
+  };
+
   return (
     <Background>
       <CategoryTitle>선물 테마</CategoryTitle>
       {presentThemes && !isLoading ? (
         <ThemeGrid>
           {presentThemes.map(theme => (
-            <PresentTheme key={theme.themeId} theme={theme} />
+            <button
+              type="button"
+              key={theme.themeId}
+              onClick={() => handleThemeClick(theme.themeId)}
+            >
+              <PresentTheme theme={theme} />
+            </button>
           ))}
         </ThemeGrid>
       ) : (
