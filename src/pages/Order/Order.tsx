@@ -13,6 +13,8 @@ import { getSummary } from '@/apis/product';
 import type { ProductSummary } from '@/types/DTO/productDTO';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { LoginInfoContext } from '@/contexts/LoginInfoContext';
+import { useContext } from 'react';
 
 export type RecieverType = {
   name: string;
@@ -35,6 +37,7 @@ function Order() {
   const parsedItemId = Number(orderId);
   const [item, setItem] = useState<ProductSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const { userInfo } = useContext(LoginInfoContext);
 
   useEffect(() => {
     const getItem = async () => {
@@ -66,7 +69,7 @@ function Order() {
       currentCardId: 904,
       currentOrder: cards.find((card) => card.id === 0),
       text: cards[0].defaultTextMessage,
-      sender: '',
+      sender: userInfo.name,
       reciever: [],
       count: 0,
       cost: 0,
