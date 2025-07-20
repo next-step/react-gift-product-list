@@ -254,14 +254,14 @@ function OrderPage() {
     console.log('authToken 값:', authToken);
 
     // receivers 배열의 필드명을 API 스펙에 맞게 변환
-    const orderData: OrderData = {
+    const orderData = {
       productId: product.id,
       message,
-      messageCardId: cards[selectedIdx].id, // number 타입 유지
-      ordererName: sender as string, // string으로 명확히 지정
+      messageCardId: String(cards[selectedIdx].id), // string으로 변환
+      ordererName: sender as string,
       receivers: receivers.map((receiver) => ({
         name: receiver.name,
-        phoneNumber: receiver.phone, // phone → phoneNumber로 변환
+        phoneNumber: receiver.phone, // 명세에 맞게 phoneNumber로 전송
         quantity: receiver.quantity,
       })),
     };

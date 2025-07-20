@@ -7,7 +7,7 @@ export type ReceiverForOrder = {
 export type OrderData = {
   productId: number;
   message: string;
-  messageCardId: number; // number로 수정
+  messageCardId: string; // string으로 수정
   ordererName: string;
   receivers: ReceiverForOrder[];
 };
