@@ -1,24 +1,56 @@
+import Loading from "@/components/common/Loading";
+import { ROUTE_PATH } from "@/components/routes/routePath";
+import useFetch from "@/hooks/useFetch";
+import { showFetchErrorToast } from "@/utils/showFetchToast";
 import styled from "@emotion/styled";
+import { useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+interface HeroSectionData {
+  themeId: number;
+  name: string;
+  title: string;
+  description: string;
+  backgroundColor: string;
+}
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
+  const { themesId } = useParams();
+  const { data, isLoading, error } = useFetch<HeroSectionData>(`/api/themes/${themesId}/info`);
+
+  if (isLoading) {
+    return <Loading height="127.2px" />;
+  }
+
+  if (error || !data) {
+    if (error?.statusCode === 404) {
+      showFetchErrorToast(error.statusCode, error.message, goHome);
+    } else {
+      showFetchErrorToast(error?.statusCode ?? 500, error?.message ?? "잠시 후 다시 시도해주세요.");
+    }
+    return null;
+  }
+
   return (
-    <Container>
-      <ThemesTitle>선물</ThemesTitle>
-      <Title>감동을 높여줄 생일 선물 리스트</Title>
-      <Description>예산에 쏙쏙 맞춰 AI가 자동으로 추천드려요!</Description>
+    <Container $backgroundColor={data.backgroundColor}>
+      <Name>{data.name}</Name>
+      <Title>{data.title}</Title>
+      <Description>{data.description}</Description>
     </Container>
   );
 };
 
 export default HeroSection;
 
-const Container = styled.section`
+const Container = styled.section<{ $backgroundColor: string }>`
   width: 100%;
   padding: 1.625rem 1rem 1.375rem;
-  background-color: green;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
   color: ${({ theme }) => theme.color.gray100};
 `;
-const ThemesTitle = styled.p`
+const Name = styled.p`
   font: ${({ theme }) => theme.typography.label1Bold};
 `;
 const Title = styled.h3`
