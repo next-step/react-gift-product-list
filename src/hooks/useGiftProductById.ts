@@ -3,6 +3,7 @@ import type { GiftItem } from '../types/GiftItem';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+
 const BASE_URL = 'http://localhost:3000';
 
 export const fetchGiftProductById = async (
@@ -19,6 +20,7 @@ export const fetchGiftProductById = async (
   }
   const data = await res.json();
   return data.data;
+
 };
 
 export const useGiftProductById = (id: number) => {
@@ -43,6 +45,7 @@ export const useGiftProductById = (id: number) => {
         setError(err.message || '알 수 없는 오류');
         toast.error(err.message);
         navigate('/', { replace: true });
+
       } finally {
         setLoading(false);
       }
@@ -50,6 +53,7 @@ export const useGiftProductById = (id: number) => {
 
     fetchProduct();
   }, [id, navigate]);
+
 
   return { data, loading, error };
 };

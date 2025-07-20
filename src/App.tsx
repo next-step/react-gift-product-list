@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ROUTES } from './constants/routes';
 
+
 const containerStyle = css`
   max-width: 720px;
   margin: 0 auto;
@@ -20,6 +21,8 @@ const containerStyle = css`
   justify-content: center;
   align-items: center;
 `;
+
+const queryClient = new QueryClient();
 
 const App = () => {
   return (
@@ -42,6 +45,7 @@ const App = () => {
           </BrowserRouter>
         </AuthProvider>
       </div>
+
     </ThemeProvider>
   );
 };

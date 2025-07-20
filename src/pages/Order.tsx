@@ -12,6 +12,7 @@ import { useGiftProductById } from '../hooks/useGiftProductById';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
+
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
 `;
@@ -202,6 +203,7 @@ const Order = () => {
   const navigate = useNavigate();
   const authToken = localStorage.getItem('authToken');
 
+
   const {
     data: product,
     loading,
@@ -269,6 +271,21 @@ const Order = () => {
       }
     }
   };
+
+  if (loading)
+    return (
+      <div style={{ padding: 20 }}>
+        상품 정보를 불러오는 중입니다...
+      </div>
+    );
+
+  if (error || !product)
+    return (
+      <div style={{ padding: 20 }}>
+        상품 정보를 불러오지 못했습니다.
+      </div>
+
+    );
 
   if (loading)
     return (
@@ -399,6 +416,7 @@ const Order = () => {
         onClick={handleOrder}
       >
         {(priceSum ?? 0).toLocaleString()}원 주문하기
+
       </BottomOrderButton>
     </>
   );
