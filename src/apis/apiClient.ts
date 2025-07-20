@@ -10,6 +10,20 @@ const apiClient = axios.create({
   },
 });
 
+function getAccessToken() {
+  return localStorage.getItem('authToken');
+}
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
 
