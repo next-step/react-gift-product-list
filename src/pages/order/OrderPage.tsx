@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { cardTemplates } from "@/features/order/constants/cardTemplate";
 import {
     ReceiverContextProvider,
     useReceiverContext,
 } from "@/features/order/contexts/ReceiverContext";
 import { useOrder } from "@/features/order/hooks/useOrder";
+import { useCreateOrder } from "@/features/order/services/createOrder";
 import { useProductSummaryByProductId } from "@/features/order/services/getProductSummaryByProductId";
 import { LetterCard } from "@/features/order/ui/LetterCard";
 import { ProductInfo } from "@/features/order/ui/ProductInfo";
@@ -32,9 +34,13 @@ function OrderPage() {
     const { id } = useParams();
 
     const modal = useModal();
-    const { receivers } = useReceiverContext();
-    const { orderRefs, submit, validationErrors } = useOrder();
+    const { nickname } = useAuth();
+    const {
+        receivers: { receivers },
+    } = useReceiverContext();
+    const { orderRefs, validationErrors, submit: validate } = useOrder();
     const { isPending, data: product } = useProductSummaryByProductId(Number(id));
+    const { request: createOrder } = useCreateOrder();
 
     const [selectedLetterCardId, setSelectedLetterCardId] = useState<number>(cardTemplates[0].id);
 
@@ -44,11 +50,22 @@ function OrderPage() {
     );
 
     const totalQuantity = useMemo(() => {
-        return receivers.receivers.reduce((total, receiver) => total + receiver.quantity, 0);
-    }, [receivers.receivers]);
+        return receivers.reduce((total, receiver) => total + receiver.quantity, 0);
+    }, [receivers]);
 
     const onSubmitButtonClick = () => {
-        console.log(submit());
+        validate();
+        createOrder({
+            productId: Number(id),
+            messageCardId: String(letterCard?.id),
+            message: String(orderRefs.message.current?.value),
+            ordererName: String(orderRefs.senderName.current?.value),
+            receivers: receivers.map((receiver) => ({
+                name: receiver.receiverName,
+                phoneNumber: receiver.phoneNumber,
+                quantity: receiver.quantity,
+            })),
+        });
     };
 
     if (!id) return <NotFoundPage />;
@@ -95,6 +112,7 @@ function OrderPage() {
                     ref={orderRefs.senderName}
                     placeholder="이름을 입력하세요."
                     error={validationErrors.senderName}
+                    defaultValue={nickname}
                 />
             </Styles.FieldSet>
 
@@ -110,7 +128,7 @@ function OrderPage() {
                         height="35px"
                         onClick={() => modal.open(<ReceiverModal />)}
                     >
-                        {receivers.receivers.length !== 0 ? "수정" : "추가"}
+                        {receivers.length !== 0 ? "수정" : "추가"}
                     </Button>
                 </Styles.ReceiverLabel>
 
