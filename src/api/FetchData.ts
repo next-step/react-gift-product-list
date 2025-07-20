@@ -7,10 +7,17 @@ const getFetch = async (object: string, params: string) => {
   return data;
 };
 
-const postFetch = async (object: string, body: Record<string, string> | null) => {
+const postFetch = async (
+  object: string,
+  body: Record<string, string> | null,
+  headers: { Authorization: string } | null
+) => {
   //console.log(`postFetch process : object : ${object} , body : ${body && body.toString()}`);
   try {
-    const res = await axios.post(import.meta.env.VITE_API_BASE_URL + object, body);
+    const res =
+      headers === null
+        ? await axios.post(import.meta.env.VITE_API_BASE_URL + object, body)
+        : await axios.post(import.meta.env.VITE_API_BASE_URL + object, body, { headers });
     const data = res.data.data;
     return data;
   } catch (error: AxiosError | unknown) {
@@ -27,11 +34,12 @@ export const apiClient = async (
   methods: HttpTypes,
   object: string,
   body: Record<string, string> | null,
-  params: string
+  params: string,
+  headers: { Authorization: string }
 ) => {
   if (methods == 'GET') {
     return getFetch(object, params);
   } else if (methods == 'POST') {
-    return postFetch(object, body);
+    return postFetch(object, body, headers);
   }
 };
