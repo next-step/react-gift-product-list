@@ -23,14 +23,17 @@ interface Product {
 const GiftRankingSection = () => {
   const receivers = ['전체', '여성이', '남성이', '청소년이'];
   const sorts = ['받고 싶어한', '많이 선물한', '위시로 받은'];
-  const receiverOptions = [
+  type TargetType = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
+  type RankType = 'MANY_WISH' | 'MANY_RECEIVE' | 'MANY_WISH_RECEIVE';
+
+  const receiverOptions: { text: string; apiValue: TargetType }[] = [
     { text: '전체', apiValue: 'ALL' },
     { text: '여성이', apiValue: 'FEMALE' },
     { text: '남성이', apiValue: 'MALE' },
     { text: '청소년이', apiValue: 'TEEN' },
   ];
 
-  const sortOptions = [
+  const sortOptions: { text: string; apiValue: RankType }[] = [
     { text: '받고 싶어한', apiValue: 'MANY_WISH' },
     { text: '많이 선물한', apiValue: 'MANY_RECEIVE' },
     { text: '위시로 받은', apiValue: 'MANY_WISH_RECEIVE' },
@@ -38,11 +41,12 @@ const GiftRankingSection = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const initialTargetType = searchParams.get('targetType') || 'ALL';
-  const initialRankType = searchParams.get('rankType') || 'MANY_WISH';
+  const initialTargetType = (searchParams.get('targetType') as TargetType) || 'ALL';
+  const initialRankType = (searchParams.get('rankType') as RankType) || 'MANY_WISH';
 
-  const [selectedTargetType, setSelectedTargetType] = useState<string>(initialTargetType);
-  const [selectedRankType, setSelectedRankType] = useState<string>(initialRankType);
+  const [selectedTargetType, setSelectedTargetType] = useState<TargetType>(initialTargetType);
+  const [selectedRankType, setSelectedRankType] = useState<RankType>(initialRankType);
+
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
