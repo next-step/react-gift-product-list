@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import type { Theme } from "@emotion/react";
 import { css } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
+import { ROUTE_PATHS } from "@/constants/routePath";
 
 type ThemeInfo = {
   name: string;
@@ -17,6 +19,8 @@ const Theme = () => {
   const { themeId } = useParams();
   const { fetchData } = useRequestHandler();
   const [themeInfo, setThemeInfo] = useState<ThemeInfo | null>(null);
+  const navigate = useNavigate();
+  const { MAIN } = ROUTE_PATHS;
 
   useEffect(() => {
     fetchData({
@@ -24,10 +28,14 @@ const Theme = () => {
         axios.get(`${import.meta.env.VITE_API_BASE_URL_THEME}/${themeId}/info`),
       onSuccess: (data) => {
         setThemeInfo(data.data.data);
-        console.log("Theme data fetched successfully:", data.data.data);
       },
       onError: (error) => {
-        console.error("Error fetching theme data:", error);
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status;
+          if (status == 404) {
+            navigate(MAIN);
+          }
+        }
       },
     });
   }, [themeId]);
