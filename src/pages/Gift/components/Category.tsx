@@ -2,8 +2,18 @@ import styled from "@emotion/styled";
 import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
 import type { CategoryType } from "@/types/CategoryType";
+import { useNavigate } from "react-router-dom";
+import { ROUTE_PATH } from "@/components/routes/routePath";
+import { useCallback } from "react";
 
 const Category = () => {
+  const navigate = useNavigate();
+  const goThemes = useCallback(
+    (themeId: number) => {
+      navigate(`${ROUTE_PATH.THEMES}/${themeId}`);
+    },
+    [navigate],
+  );
   const themes = useFetch<CategoryType[]>("/api/themes");
 
   if (themes.isLoading) {
@@ -24,7 +34,7 @@ const Category = () => {
       <Title>선물 테마</Title>
       <List>
         {themes.data?.map((category) => (
-          <Item key={category.themeId}>
+          <Item key={category.themeId} onClick={() => goThemes(category.themeId)}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
           </Item>
