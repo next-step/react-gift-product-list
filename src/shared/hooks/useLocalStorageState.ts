@@ -18,6 +18,7 @@ export const useLocalStorageState = <T extends SerializableValue>(key: string, i
     const [state, _setState] = useState<T>(() => {
         try {
             const stored = localStorage.getItem(key);
+            if (!stored) localStorage.setItem(key, JSONSerializer.stringify(initialValue));
             return stored ? JSONSerializer.parse<T>(stored) : initialValue;
         } catch {
             return initialValue;
