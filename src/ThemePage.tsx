@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getThemeInfo, type ThemeInfo } from "@/apis/theme";
 import { AxiosError } from "axios";
 import ThemeHeroSection from "@/sections/ThemeSection/ThemeHeroSection";
+import ThemeProductSection from "@/sections/ThemeSection/ThemeProductSection"
 
 export default function ThemePage() {
     const { themeId } = useParams();
@@ -29,7 +30,7 @@ export default function ThemePage() {
         fetchData();
     }, [themeId, navigate]);
 
-    if (!themeInfo) return <PageContainer>상품이 없습니다.</PageContainer>
+    if (!themeInfo || !themeId) return <PageContainer>상품이 없습니다.</PageContainer>
 
     return (
         <PageContainer>
@@ -39,6 +40,7 @@ export default function ThemePage() {
                 description={themeInfo.description}
                 backgroundColor={themeInfo.backgroundColor}
             />
+            <ThemeProductSection themeId={themeId} />
         </PageContainer>
     );
 }
