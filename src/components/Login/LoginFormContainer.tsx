@@ -32,7 +32,7 @@ const LoginForm = () => {
       email: id,
       password: pw,
     };
-    const fetchData = await apiClient('POST', BASIC_ENDPOINT.login, formBody, '');
+    const fetchData = await apiClient('POST', BASIC_ENDPOINT.login, formBody, '', null);
 
     if ((fetchData as HttpsFailedResponseTypes) && fetchData.statusCode < 500) {
       toast(fetchData.message);

@@ -35,7 +35,7 @@ export const apiClient = async (
   object: string,
   body: Record<string, string> | null,
   params: string,
-  headers: { Authorization: string }
+  headers: { Authorization: string } | null
 ) => {
   if (methods == 'GET') {
     return getFetch(object, params);

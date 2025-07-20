@@ -18,7 +18,8 @@ const getOrderFetchData = async (productId: string | null) => {
     'GET',
     BASIC_ENDPOINT.product + `/${productId}/summary`,
     null,
-    ''
+    '',
+    null
   );
   return fetchData.data;
 };
