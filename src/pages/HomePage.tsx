@@ -1,9 +1,6 @@
-import { useNavigate } from "react-router-dom";
-
 import { FriendSelectButton } from "@/entities/friends/ui/FriendSelectButton";
 import { FriendSelection } from "@/entities/friends/ui/FriendSelection";
 import { TargetGroupSelector } from "@/entities/gift/ui";
-import { GiftCard, GiftCardGrid } from "@/entities/gift/ui/GiftCard";
 import { RankTypeSelector } from "@/entities/gift/ui/RankTypeSelector";
 
 import { RankingGifts } from "@/features/ranking/ui/RankingGifts";
