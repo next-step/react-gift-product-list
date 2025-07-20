@@ -49,6 +49,7 @@ const LoginForm = () => {
         navigate(URLS.home);
       }
     }
+    onLoginSuccess?.();
   };
 
   return (

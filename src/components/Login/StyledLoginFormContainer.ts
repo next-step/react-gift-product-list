@@ -20,7 +20,6 @@ export const StyledLoginComponentDiv = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.spacing3};
   }
 `;
-
 export const StyledLoginButton = styled.button`
   margin-top: ${({ theme }) => theme.spacing.spacing12};
   background-color: ${({ theme }) => theme.sementicPalette.kakaoYellow};
