@@ -1,43 +1,41 @@
 ﻿import { createContext, useContext, useState, type ReactNode } from 'react'
-
+import {
+  loadUserInfo,
+  saveUserInfo,
+  clearUserInfo,
+  type UserInfo,
+} from '../utils/storage'
 interface AuthContextValue {
   isLoggedIn: boolean
-  userEmail: string | null
-  login: (email: string) => void
+  userInfo: UserInfo | null
+  login: (info: UserInfo) => void
   logout: () => void
 
 }
 const STORAGE_KEY = 'isLoggedIn'
-const EMAIL_KEY = 'userEmail'
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const stored = sessionStorage.getItem(STORAGE_KEY)
-    return stored === 'true'
-  })
-    const [userEmail, setUserEmail] = useState<string | null>(() => {
-    return sessionStorage.getItem(EMAIL_KEY)
-  })
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(() => loadUserInfo())
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!loadUserInfo())
 
-  const login = (email: string) => {
+  const login = (info: UserInfo) => {
     setIsLoggedIn(true)
-    setUserEmail(email)
+    setUserInfo(info)
     sessionStorage.setItem(STORAGE_KEY, 'true')
-    sessionStorage.setItem(EMAIL_KEY, email)
-
+    saveUserInfo(info)
   }
 
   const logout = () => {
     setIsLoggedIn(false)
-    setUserEmail(null)
+    setUserInfo(null)
     sessionStorage.removeItem(STORAGE_KEY)
-    sessionStorage.removeItem(EMAIL_KEY)
+    clearUserInfo()
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userEmail, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, userInfo, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

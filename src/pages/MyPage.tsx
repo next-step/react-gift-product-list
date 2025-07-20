@@ -41,10 +41,10 @@ const Text = styled.p`
 `
 
 export default function MyPage() {
-  const { logout, userEmail } = useAuth()
+  const { logout, userInfo } = useAuth()
   const navigate = useNavigate()
 
-  const nickname = userEmail ? userEmail.split('@')[0] : ''
+  const nickname = userInfo ? userInfo.name : ''
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -54,9 +54,10 @@ export default function MyPage() {
     <Layout>
       <Container>
         <Title>{nickname}님 안녕하세요!</Title>
-        {userEmail && (
-          <Text>이메일 주소는 {userEmail} 입니다.</Text>
-        )}        <Button onClick={handleLogout}>로그아웃</Button>
+        {userInfo && (
+          <Text>이메일 주소는 {userInfo.email} 입니다.</Text>
+        )}
+        <Button onClick={handleLogout}>로그아웃</Button>
       </Container>
     </Layout>
   )

@@ -6,6 +6,8 @@ import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
 import LoginFormSection from '@/components/LoginFormSection'
 import Layout from '@/Layout'
+import { postLogin } from '@/api/auth'
+import { toast } from 'react-toastify'
 
 const Container = styled.div`
   display: flex;
@@ -38,9 +40,19 @@ export default function LoginPage() {
   const from = (location.state as { from?: string })?.from ?? '/'
 
 
-  const handleSuccess = (userEmail: string) => {
-    login(userEmail)
-    navigate(from, { replace: true })
+  const handleSuccess = async (email: string, password: string) => {
+    try {
+      const info = await postLogin(email, password)
+      login(info)
+      navigate(from, { replace: true })
+    } catch (err: any) {
+      const code = err?.statusCode ?? 0
+      if (code >= 400 && code < 500) {
+        toast.error(err.message)
+      } else {
+        toast.error('로그인에 실패했습니다.')
+      }
+    }
   }
 
   return (

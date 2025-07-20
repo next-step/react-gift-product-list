@@ -6,6 +6,8 @@ import { RouterProvider } from 'react-router-dom'
 import router from '@/router'
 import { theme } from '@/theme'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,6 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <GlobalStyle />
       <AuthProvider>
         <RouterProvider router={router} />
+                <ToastContainer position="top-center" hideProgressBar />
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>,
