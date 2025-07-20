@@ -123,11 +123,9 @@ export const RankingGrid = () => {
               <RankBadge index={index}>{index + 1}</RankBadge>
               <ProductImage src={item.imageURL} alt={item.name} />
               <ProductInfo>
-                <Brand>{item.brandInfo.name}</Brand>
+                <Brand>{item.brandName}</Brand>
                 <Name>{item.name}</Name>
-                <Price>
-                  {item.price.sellingPrice.toLocaleString()}원
-                </Price>
+                <Price>{item.price.toLocaleString()}원</Price>
               </ProductInfo>
             </GiftCard>
           ))}
