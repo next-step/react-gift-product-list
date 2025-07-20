@@ -250,9 +250,6 @@ function OrderPage() {
     const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
     const authToken = userInfo.authToken;
 
-    console.log('전체 userInfo:', userInfo);
-    console.log('authToken 값:', authToken);
-
     // receivers 배열의 필드명을 API 스펙에 맞게 변환
     const orderData = {
       productId: product.id,
@@ -266,17 +263,11 @@ function OrderPage() {
       })),
     };
 
-    console.log('전송할 주문 데이터:', orderData);
-    console.log('authToken:', authToken);
-
     try {
       const response = await createOrder(orderData, authToken);
-      console.log('주문 성공:', response);
       toast.success('주문이 완료되었습니다!');
       navigate('/');
     } catch (error: any) {
-      console.error('주문 에러 상세:', error.response?.data);
-
       if (error.response?.status === 401) {
         toast.error('로그인이 필요합니다.');
         navigate('/login');
