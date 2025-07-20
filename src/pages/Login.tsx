@@ -10,6 +10,8 @@ import {
 import { postLogin } from '@/apis/login';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { useContext } from 'react';
+import { LoginInfoContext } from '@/contexts/LoginInfoContext';
 
 type LoginProps = {
   onLogin: () => void;
@@ -28,6 +30,7 @@ function Login({ onLogin }: LoginProps) {
     handlePwBlur,
     isValidForm,
   } = useLoginForm();
+  const { setLoginInfo } = useContext(LoginInfoContext);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -36,6 +39,7 @@ function Login({ onLogin }: LoginProps) {
 
       const responseInfo = await postLogin({ email: id, password: pw });
       localStorage.setItem('userInfo', JSON.stringify(responseInfo));
+      setLoginInfo(responseInfo);
       onLogin();
     } catch (err) {
       const error = err as AxiosError;

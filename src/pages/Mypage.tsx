@@ -5,7 +5,7 @@ import {
   MypageLogoutBtn,
 } from '@/styles/Mypage.styles';
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import useLoginForm from '@/hooks/useLoginForm';
 type MyPageProps = {
   onLogin: () => void;
@@ -32,15 +32,6 @@ function Mypage({ onLogin }: MyPageProps) {
     );
     onLogin();
   }
-
-  useEffect(() => {
-    const userInfoStr = localStorage.getItem('userInfo');
-    setLoginInfo({
-      email: userInfoStr ? JSON.parse(userInfoStr).email : '',
-      name: userInfoStr ? JSON.parse(userInfoStr).name : '',
-      authToken: userInfoStr ? JSON.parse(userInfoStr).authToken : '',
-    });
-  }, []);
 
   return (
     <MypageContainer>
