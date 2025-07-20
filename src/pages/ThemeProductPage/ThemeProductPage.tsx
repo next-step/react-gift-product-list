@@ -12,9 +12,22 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import styled from "@emotion/styled";
-import ProductsGrid from "../HomePage/components/ProductsGrid/ProductsGrid";
 import { PRODUCT_GRID_TYPES } from "../HomePage/components/ProductsGrid/types/productGridTypes";
 import type { ThemeInfo } from "@/types/ThemeInfo";
+import { useEffect, useRef, useState } from "react";
+import type { ThemeProduct } from "@/types/ThemeProducts";
+import ProductCard from "../HomePage/components/ProductsGrid/ProductCard";
+import { TRENDING_GIFTS_EMPTY_MESSAGES } from "../HomePage/components/TrendingGifts/constants/labels";
+import {
+  EmptyProductContainer,
+  EmptyProductText,
+} from "../HomePage/components/ProductsGrid/ProductsGrid";
+
+const Loader = styled.div`
+  width: 100%;
+  height: 50px;
+  background-color: transparent;
+`;
 
 const ProductListContainer = styled.div`
   width: 100%;
@@ -24,13 +37,54 @@ const ProductListContainer = styled.div`
   flex-direction: column;
 `;
 
+const ProductGridContainer = styled.div`
+  width: 95%;
+  display: grid;
+  grid-template-columns: ${({ theme }) => theme.layout.grid.columns.fixed3};
+  gap: ${({ theme }) => theme.spacing[2]};
+  margin-top: ${({ theme }) => theme.spacing[4]};
+`;
+
 function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
-  const { data: themeProducts, isLoading: isThemeProductsLoading } = useFetch({
-    fetchFn: () => getThemeProducts(Number(themeInfo.themeId)),
+  const loader = useRef<HTMLDivElement>(null);
+  const [cursor, setCursor] = useState<number>(0);
+  const [themeProducts, setThemeProducts] = useState<ThemeProduct[]>([]);
+
+  const { data, isLoading: isThemeProductsLoading } = useFetch({
+    fetchFn: () => getThemeProducts(Number(themeInfo.themeId), cursor),
     errorHandler: () => {
       console.error(THEME_PRODUCTS_API_MESSAGE.FETCH_ERROR);
     },
+    deps: [cursor],
   });
+
+  useEffect(() => {
+    if (data) {
+      setThemeProducts((prev) => [...prev, ...data.list]);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && data?.hasMoreList) {
+          setCursor(cursor + data?.list.length);
+        }
+      },
+      {
+        threshold: 0.5,
+      }
+    );
+
+    const el = loader.current;
+    if (el) {
+      observer.observe(el);
+    }
+
+    return () => {
+      if (el) {
+        observer.unobserve(el);
+      }
+    };
+  }, [isThemeProductsLoading, data?.hasMoreList]);
 
   return (
     <>
@@ -39,16 +93,34 @@ function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
         <HeroTitle>{themeInfo?.title}</HeroTitle>
         <HeroDescription>{themeInfo?.description}</HeroDescription>
       </HeroSection>
-      {isThemeProductsLoading ? (
-        <Loading />
-      ) : (
-        <ProductListContainer>
-          <ProductsGrid
-            products={themeProducts?.list || []}
-            type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
-          />
-        </ProductListContainer>
-      )}
+      <ProductListContainer>
+        <ProductGridContainer>
+          {themeProducts.length > 0 ? (
+            <>
+              {themeProducts.map((product, idx) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  imageURL={product.imageURL}
+                  name={product.name}
+                  brandName={product.brandInfo.name}
+                  sellingPrice={product.price.sellingPrice}
+                  index={idx}
+                  type={PRODUCT_GRID_TYPES.TRENDING_GIFTS}
+                />
+              ))}
+              {isThemeProductsLoading && <Loading />}
+            </>
+          ) : (
+            <EmptyProductContainer>
+              <EmptyProductText>
+                {TRENDING_GIFTS_EMPTY_MESSAGES.NO_PRODUCT}
+              </EmptyProductText>
+            </EmptyProductContainer>
+          )}
+        </ProductGridContainer>
+        <Loader ref={loader} />
+      </ProductListContainer>
     </>
   );
 }

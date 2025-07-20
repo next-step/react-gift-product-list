@@ -9,7 +9,7 @@ import {
   MoreInfo,
   MoreInfoWrapper,
 } from "../TrendingGifts/TrendingGifts.styles";
-import type { ProductGridType } from "./types/productGridTypes";
+import { PRODUCT_GRID_TYPES } from "./types/productGridTypes";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -19,7 +19,7 @@ const ProductGridContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing[4]};
 `;
 
-const EmptyProductContainer = styled.div`
+export const EmptyProductContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -29,7 +29,7 @@ const EmptyProductContainer = styled.div`
   margin-bottom: 125px;
 `;
 
-const EmptyProductText = styled.p`
+export const EmptyProductText = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
   font-weight: ${({ theme }) =>
     theme.typography.label.label1Regular.fontWeight};
@@ -37,10 +37,9 @@ const EmptyProductText = styled.p`
 
 interface ProductsGridPropsType {
   products: TrendingGiftsType[];
-  type: ProductGridType;
 }
 
-function ProductsGrid({ products, type }: ProductsGridPropsType) {
+function ProductsGrid({ products }: ProductsGridPropsType) {
   if (products.length === 0)
     return (
       <EmptyProductContainer>
@@ -62,7 +61,7 @@ function ProductsGrid({ products, type }: ProductsGridPropsType) {
             brandName={product.brandInfo.name}
             sellingPrice={product.price.sellingPrice}
             index={idx}
-            type={type}
+            type={PRODUCT_GRID_TYPES.TRENDING_GIFTS}
           />
         ))}
       </ProductGridContainer>

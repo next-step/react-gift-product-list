@@ -70,10 +70,14 @@ export const getThemeInfo = async (themeId: number): Promise<ThemeInfo> => {
 };
 
 export const getThemeProducts = async (
-  themeId: number
+  themeId: number,
+  cursor: number
 ): Promise<ThemeProducts> => {
   const response = await apiClient.get(
-    END_POINTS.THEME_PRODUCTS.replace(":themeId", themeId.toString())
+    END_POINTS.THEME_PRODUCTS.replace(":themeId", themeId.toString()).replace(
+      ":cursor",
+      cursor.toString()
+    )
   );
   return response.data.data;
 };
