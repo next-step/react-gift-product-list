@@ -1,11 +1,7 @@
 import styled from '@emotion/styled';
 import type { ProductSummary } from '@/types/product';
 
-interface ProductInfoProps {
-  product: ProductSummary;
-}
-
-const ProductInfo = ({ product }: ProductInfoProps) => {
+const ProductInfo = (product: ProductSummary) => {
   return (
     <Wrapper>
       <Label>상품 정보</Label>

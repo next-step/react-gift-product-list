@@ -114,7 +114,7 @@ const OrderPage = () => {
             <MessageInput />
             <SenderForm />
             <ReceiverForm />
-            <ProductInfo product={product} />
+            <ProductInfo {...product} />
             <OrderSubmitButton amount={totalPrice} />
           </Form>
         </FormProvider>

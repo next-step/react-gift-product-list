@@ -62,3 +62,4 @@
   - [x] CategoryContent 내부에서 useCategoryThemes를 호출
   - [x] OrderPage 내 로직 hook으로 분리
   - [x] ProductCard에서 호출 방식으로 ...product 활용
+  - [x] ProductInfo에서 (product: ProductSummary) 방식 활용
