@@ -199,13 +199,6 @@ const Order = () => {
   const productId = Number(id);
   const navigate = useNavigate();
 
-  const userInfoString = localStorage.getItem('userInfo');
-
-  if (userInfoString) {
-    const userInfo = JSON.parse(userInfoString);
-    console.log('authToken:', userInfo.authToken);
-  }
-
   const {
     data: product,
     loading,
@@ -253,10 +246,7 @@ const Order = () => {
       })),
     };
 
-    const authToken = userInfoString
-      ? JSON.parse(userInfoString).authToken
-      : null;
-
+    const authToken = userInfo?.authToken;
     if (!authToken) {
       alert('로그인이 필요합니다.');
       navigate('/login');
