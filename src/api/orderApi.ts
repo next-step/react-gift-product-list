@@ -14,11 +14,7 @@ interface OrderRequest {
   receivers: Receiver[];
 }
 
-export const submitOrder = async (orderData: OrderRequest, authToken: string) => {
-  const response = await API.post('/api/order', orderData, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  });
+export const submitOrder = async (orderData: OrderRequest) => {
+  const response = await API.post('/api/order', orderData);
   return response.data;
 };

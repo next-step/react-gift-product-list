@@ -69,7 +69,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
       try {
         const res = await fetchProductSummary(giftId);
         setProductInfo(res.data.data);
-      } catch{
+      } catch {
         toast.error('존재하지 않는 상품입니다.');
         navigate('/');
       }
@@ -117,29 +117,17 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
     if (!validateReceivers() || !productInfo) return;
 
     try {
-      const tokenData = localStorage.getItem('userInfo');
-      const token = tokenData ? JSON.parse(tokenData).authToken : null;
-
-      if (!token) {
-        toast.error('로그인이 필요합니다.');
-        navigate('/login');
-        return;
-      }
-
-      await submitOrder(
-        {
-          productId: productInfo.id,
-          message: data.message,
-          messageCardId: 'card123', 
-          ordererName: data.sender,
-          receivers: receiverList.map((r) => ({
-            name: r.name,
-            phoneNumber: r.phone,
-            quantity: r.quantity,
-          })),
-        },
-        token
-      );
+      await submitOrder({
+        productId: productInfo.id,
+        message: data.message,
+        messageCardId: 'card123',
+        ordererName: data.sender,
+        receivers: receiverList.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone,
+          quantity: r.quantity,
+        })),
+      });
 
       toast.success('주문이 완료되었습니다!');
       navigate('/');
