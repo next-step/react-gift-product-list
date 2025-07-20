@@ -16,9 +16,7 @@ import toLocaleString from '@/utils/toLocaleString';
 import useRanking from './hooks/useRnaking';
 import ProductInfo from './components/ProductInfo';
 import { useUserInfo } from '@/contexts/UserInfoContext';
-import { useEffect } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '@/api/apiBaseUrl';
+import postOrderInfo from './utils/postOrderInfo';
 import { toast } from 'react-toastify';
 
 export interface OrderInfoValues {
