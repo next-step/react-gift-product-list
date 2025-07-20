@@ -10,7 +10,6 @@ const SenderContainer = () => {
     register,
     formState: { errors },
   } = useFormContext<OrderFormValue>();
-
   return (
     <StyledSendPersonContainer className='send-person background-default margin-bottom-10'>
       <div>

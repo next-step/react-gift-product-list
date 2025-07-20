@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@src/api/FetchData';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
 import { PARAMS } from '@src/assets/params';
+import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 import { URLS } from '@src/assets/urls';
 import { orderSchema } from '@src/components/Schemas/orderSchmea';
 import type { GoodSummary } from '@src/types/Goods';
@@ -53,7 +54,7 @@ export const useOrderForm = () => {
     resolver: zodResolver(orderSchema),
     defaultValues: {
       msg: '',
-      sendName: '',
+      sendName: sessionStorage.getItem(SESSION_KEY_NAME.username) as string,
       recipients: [],
       total_count: 0,
     },
