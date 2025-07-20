@@ -8,7 +8,7 @@ import InputField from '@/components/common/InputField';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { ERROR_MESSAGES } from '@/constants/validation';
-import { isErrorWithMessage } from '@/utils/error';
+import { hasErrorMessage } from '@/utils/error';
 
 type FromState = {
   pathname: string;
@@ -40,7 +40,7 @@ const LoginFormSection = () => {
       await login({ email: email.value, password: password.value });
       navigate(redirectTo, { replace: true });
     } catch (err: unknown) {
-      const message = isErrorWithMessage(err)
+      const message = hasErrorMessage(err)
         ? err.response!.data!.message!
         : ERROR_MESSAGES.INVALID_LOGIN_DOMAIN;
       toast.error(message);

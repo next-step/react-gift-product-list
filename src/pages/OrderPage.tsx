@@ -18,16 +18,7 @@ import { loading } from '@/components/common/Loading';
 import { ORDER_API_URL } from '@/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
 import { useProductSummary } from '@/hooks/useProductSummary';
-
-const isAxiosErrorWithStatus = (
-  err: unknown,
-  status: number
-): err is { response: { status: number } } =>
-  typeof err === 'object' &&
-  err !== null &&
-  'response' in err &&
-  typeof (err as any).response?.status === 'number' &&
-  (err as any).response.status === status;
+import { hasAxiosErrorStatus } from '@/utils/error';
 
 const OrderPage = () => {
   const { id } = useParams();
@@ -82,7 +73,7 @@ const OrderPage = () => {
       );
       navigate(ROUTES.HOME);
     } catch (err: unknown) {
-      if (isAxiosErrorWithStatus(err, 401)) {
+      if (hasAxiosErrorStatus(err, 401)) {
         toast.error(ERROR_MESSAGES.LOGIN_REQUIRED);
         navigate(ROUTES.LOGIN, {
           state: {
