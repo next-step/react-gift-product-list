@@ -1,4 +1,6 @@
-import { getUserInfo, showToast } from "@/utils";
+import { ApiError, NetworkError, UnauthorizedError } from "@/api/custom-error";
+import { API_ERROR_MESSAGE } from "@/constants";
+import { getUserInfo } from "@/utils";
 import axios from "axios";
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -27,16 +29,15 @@ api.interceptors.response.use(
     return response;
   },
   error => {
-    if (error.response?.status === 401) {
-      const authErrorMessage = "로그인이 필요합니다.";
+    if (!error.response) throw new NetworkError();
 
-      showToast.error(authErrorMessage);
+    const { status, data } = error.response;
 
-      const customError = new Error(authErrorMessage);
-      customError.name = "AuthenticationError";
-      return Promise.reject(customError);
+    if (status === 401) {
+      throw new UnauthorizedError();
     }
-
-    return Promise.reject(error);
+    const errorMessage =
+      data?.message || data?.data?.message || API_ERROR_MESSAGE.DEFAULT;
+    throw new ApiError(errorMessage, status);
   },
 );
