@@ -1,5 +1,5 @@
 import StyledRankingAnyTagItem from '@src/components/Home/PresentRanking/Item/StyledRankingAnyTagItem';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 interface RANK_TAG_LIST_TYPE {
   [key: string]: string;
@@ -20,21 +20,25 @@ const isValidSelectedOption = (key: string): key is RankTagTypeList => {
 const RankingAnyTagItem = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
+  const params = useMemo(() => new URLSearchParams(search), [search]);
   const [selected, setSelected] = useState<RankTagTypeList>('MANY_WISH');
 
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    const rankType = params.get('rankType');
-    if (rankType && isValidSelectedOption(rankType)) {
-      setSelected(rankType);
-    } else {
-      params.set('rankType', selected);
+    if (params.get('rankType') === null) {
+      params.set('rankType', 'MANY_WISH');
       navigate(`?${params.toString()}`, { replace: true });
+    } else {
+      const rankType = params.get('rankType');
+      if (rankType && isValidSelectedOption(rankType)) {
+        setSelected(rankType);
+      } else {
+        params.set('rankType', selected);
+        navigate(`?${params.toString()}`, { replace: true });
+      }
     }
-  }, [search, navigate, selected]);
+  }, [navigate, search, params, selected]);
 
   const handleClick = (rankType: RankTagTypeList) => {
-    const params = new URLSearchParams(search);
     params.set('rankType', rankType);
     navigate(`?${params.toString()}`, { replace: true });
   };

@@ -1,6 +1,6 @@
 import StyledRankingSexTagItemBtn from '@src/components/Home/PresentRanking/Item/StyledRankingSexTagItemBtn';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 interface TARGET_ITEM_LIST {
   [key: string]: string;
@@ -37,21 +37,25 @@ const RankingSexTagItem = () => {
   const navigate = useNavigate();
 
   const { search } = useLocation();
+  const params = useMemo(() => new URLSearchParams(search), [search]);
   const [selected, setSelected] = useState<TARGET_ITEM_TYPE>('ALL');
 
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    const key = params.get('targetType');
-    if (key && isValidSelectedOption(key)) {
-      setSelected(key);
-    } else {
-      params.set('targetType', selected);
+    if (params.get('targetType') === null) {
+      params.set('targetType', 'ALL');
       navigate(`?${params.toString()}`, { replace: true });
+    } else {
+      const key = params.get('targetType');
+      if (key && isValidSelectedOption(key)) {
+        setSelected(key);
+      } else {
+        params.set('targetType', selected);
+        navigate(`?${params.toString()}`, { replace: true });
+      }
     }
-  }, [search, navigate, selected]);
+  }, [search, navigate, selected, params]);
 
   const handleClick = (key: TARGET_ITEM_TYPE) => {
-    const params = new URLSearchParams(search);
     params.set('targetType', key);
     navigate(`?${params.toString()}`, { replace: true });
   };
