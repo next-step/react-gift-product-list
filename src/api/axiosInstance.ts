@@ -1,3 +1,4 @@
+import { SESSION_USER_INFO_KEY } from "@/constants/storageKeys";
 import axios from "axios";
 
 const axiosInstance = axios.create({
@@ -10,7 +11,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   config => {
-    const sessionUserInfo = sessionStorage.getItem("kakaotech/userInfo");
+    const sessionUserInfo = sessionStorage.getItem(SESSION_USER_INFO_KEY);
     if (sessionUserInfo) {
       const { authToken } = JSON.parse(sessionUserInfo);
       config.headers.Authorization = authToken;
