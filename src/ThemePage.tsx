@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router";
 import PageContainer from "@/components/PageContainer";
 import { useEffect, useState } from "react";
 import { getThemeInfo, type ThemeInfo } from "@/apis/theme";
-import { AxiosError } from "axios";
+import { AxiosError, HttpStatusCode } from "axios";
 import ThemeHeroSection from "@/sections/ThemeSection/ThemeHeroSection";
 import ThemeProductSection from "@/sections/ThemeSection/ThemeProductSection"
 
@@ -22,7 +22,7 @@ export default function ThemePage() {
                 const data = await getThemeInfo(themeId);
                 setThemeInfo(data);
             } catch (error) {
-                if (error instanceof AxiosError && error.response?.status === 404) {
+                if (error instanceof AxiosError && error.response?.status === HttpStatusCode.NotFound) {
                     navigate("/");
                 }
             }

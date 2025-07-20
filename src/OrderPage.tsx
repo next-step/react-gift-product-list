@@ -15,7 +15,7 @@ import { orderSchema, type OrderFormData } from "@/utils/validateOrderSchema";
 import * as z from "zod";
 import { getProductSummary, type ProductSummary } from "@/apis/product";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
+import { AxiosError, HttpStatusCode } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import { orderProduct } from "@/apis/order";
 
@@ -108,7 +108,7 @@ function OrderPage() {
       alert(message);
       navigate("/");
     } catch (error) {
-      if (error instanceof AxiosError && error.response?.status === 401) {
+      if (error instanceof AxiosError && error.response?.status === HttpStatusCode.Unauthorized) {
         toast.error("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
         navigate("/login");
       } else {
