@@ -30,33 +30,33 @@ export const useOrderPageLogic = () => {
   const order = watch();
 
   useEffect(() => {
-    if (id) {
-      productApi
-        .execute(async () => {
-          const productData = await getProductSummary(Number(id));
+    if (!id) return;
 
-          setValue("product", {
+    productApi
+      .execute(async () => {
+        const productData = await getProductSummary(Number(id));
+
+        setValue("product", {
+          id: productData.id,
+          name: productData.name,
+          imageURL: productData.imageURL,
+          price: {
+            basicPrice: productData.price,
+            discountRate: 0,
+            sellingPrice: productData.price,
+          },
+          brandInfo: {
+            name: productData.brandName,
             id: productData.id,
-            name: productData.name,
             imageURL: productData.imageURL,
-            price: {
-              basicPrice: productData.price,
-              discountRate: 0,
-              sellingPrice: productData.price,
-            },
-            brandInfo: {
-              name: productData.brandName,
-              id: productData.id,
-              imageURL: productData.imageURL,
-            },
-          });
-
-          return productData;
-        })
-        .catch(() => {
-          goHomePage();
+          },
         });
-    }
+
+        return productData;
+      })
+      .catch(() => {
+        goHomePage();
+      });
   }, [id]);
 
   const handleOrderSubmit = async () => {
@@ -75,9 +75,11 @@ export const useOrderPageLogic = () => {
         return;
       }
 
+      const product = order.product;
+
       await orderApi.execute(async () => {
         return await createOrder({
-          productId: order.product!.id,
+          productId: product.id,
           message: order.message,
           messageCardId: String(order.cardTemplate?.id || ""),
           ordererName: order.senderName,
@@ -98,10 +100,7 @@ export const useOrderPageLogic = () => {
     } catch (error) {
       console.error("주문 처리 중 오류 발생:", error);
 
-      if (
-        error instanceof Error &&
-        error.message.includes("로그인이 필요합니다")
-      ) {
+      if (error instanceof Error) {
         goLoginPage({ redirect: false });
         return;
       }
