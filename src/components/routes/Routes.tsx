@@ -6,11 +6,13 @@ import LoginPage from "@/pages/Login/LoginPage";
 import ProfilePage from "@/pages/Profile/ProfilePage";
 import OrderPage from "@/pages/Order/OrderPage";
 import NotFoundPage from "@/pages/NotFound/NotFoundPage";
+import ThemesPage from "@/pages/Themes/ThemesPage";
 
 const Routes = () => {
   return (
     <RouterRoutes>
       <Route path={ROUTE_PATH.HOME} element={<GiftPage />} />
+      <Route path={ROUTE_PATH.THEMES_ID} element={<ThemesPage />} />
       <Route element={<AuthRoute />}>
         <Route path={ROUTE_PATH.LOGIN} element={<LoginPage />} />
       </Route>
