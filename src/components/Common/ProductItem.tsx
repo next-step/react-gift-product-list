@@ -94,8 +94,8 @@ const ItemName = styled.p`
     line-height: ${theme.font.body2Regular.lineHeight};
   `}
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const ItemPrice = styled.p`
