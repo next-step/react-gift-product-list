@@ -4,12 +4,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ROUTES } from '@/constants/routes';
 import type { Product } from '@/types/product';
 
-interface ProductCardProps {
-  product: Product;
+interface ProductCardProps extends Product {
   rank: number;
 }
 
-const ProductCard = ({ product, rank }: ProductCardProps) => {
+const ProductCard = ({ rank, ...product }: ProductCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
