@@ -1,5 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
+//object : 목적 대상 ex) login, themes 등
 const getFetch = async (object: string, params: string) => {
   const res = await axios.get(import.meta.env.VITE_API_BASE_URL + object + params);
   const data = res.data;
@@ -7,9 +8,18 @@ const getFetch = async (object: string, params: string) => {
 };
 
 const postFetch = async (object: string, body: Record<string, string> | null) => {
-  const res = await axios.post(process.env.VITE_API_BASE_URL + object, body);
-  const data = res.data;
-  return data;
+  //console.log(`postFetch process : object : ${object} , body : ${body && body.toString()}`);
+  try {
+    const res = await axios.post(import.meta.env.VITE_API_BASE_URL + object, body);
+    const data = res.data;
+    return data.message;
+  } catch (error: AxiosError | unknown) {
+    if (error instanceof AxiosError) {
+      return error.response?.data.data.message;
+    } else {
+      return error;
+    }
+  }
 };
 type HttpTypes = 'GET' | 'POST';
 

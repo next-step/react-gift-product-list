@@ -1,48 +1,25 @@
-import { URLS } from '@assets/urls';
-import { useLoginEmailForm } from '@hooks/useLoginEmailForm';
-import { useLoginPwForm } from '@hooks/useLoginPwForm';
 import {
   StyeldLoginInput,
   StyledLoginButton,
   StyledLoginComponentDiv,
   StyledLoginKakoLogo,
 } from '@src/components/Login/StyledLoginFormContainer';
-import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLoginForm } from './useLoginForm';
 
-interface LoginFormProp {
-  onLoginSuccess?: () => void;
-}
+const LoginForm = () => {
+  const {
+    id,
+    idError,
+    handleIdBlur,
+    handleIdChange,
+    pw,
+    pwError,
+    handlePwBlur,
+    handlePwChange,
+    isLoginButtonEnabled,
+    handelLogin,
+  } = useLoginForm();
 
-const LoginForm: React.FC<LoginFormProp> = ({ onLoginSuccess }) => {
-  const { id, idError, handleIdBlur, handleIdChange } = useLoginEmailForm();
-  const { pw, pwError, handlePwBlur, handlePwChange } = useLoginPwForm();
-  const navigate = useNavigate();
-
-  //로그인 타입 검사
-
-  const handelLogin = () => {
-    const username = id.split('@')[0];
-
-    sessionStorage.setItem('username', username);
-    sessionStorage.setItem('email', id);
-
-    const redirectProductId = sessionStorage.getItem('redirectProductId');
-    if (redirectProductId) {
-      sessionStorage.removeItem('redirectProductItem');
-      navigate(`${URLS.order}?productId=${redirectProductId}`);
-    } else {
-      navigate(URLS.home);
-    }
-    onLoginSuccess?.();
-  };
-
-  const isLoginButtonEnabled = useMemo(() => {
-    const isIdValid = !id || idError ? false : true;
-    const isPasswordValid = !pw || pwError ? false : true;
-
-    return isIdValid && isPasswordValid;
-  }, [id, pw, idError, pwError]);
   return (
     <>
       <StyledLoginComponentDiv>
