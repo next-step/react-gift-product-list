@@ -62,11 +62,11 @@ const ReceiverField = () => {
 
   const { watch, setValue } = useFormContext<OrderInfoValues>();
 
-  const receiverInfos = watch('receivers');
+  const receiverInfos = watch('receiverInfos');
   const isEmpty = receiverInfos.length ? false : true;
 
-  const handleChange = (value: OrderInfoValues['receivers']) => {
-    setValue('receivers', value);
+  const handleChange = (value: OrderInfoValues['receiverInfos']) => {
+    setValue('receiverInfos', value);
   };
 
   return (

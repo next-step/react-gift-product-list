@@ -158,9 +158,12 @@ const ReceiverModal = ({ onClose, handleChange, receiverInfos }: ReceiverInfoPro
   });
 
   const onSubmit = async () => {
-    const receiverInfos = receiverInfosForm.getValues('receiverInfos');
-    handleChange(receiverInfos);
-    onClose();
+    const isValid = await receiverInfosForm.trigger();
+    if (isValid) {
+      const receiverInfos = receiverInfosForm.getValues('receiverInfos');
+      handleChange(receiverInfos);
+      onClose();
+    }
   };
 
   return (
@@ -168,7 +171,7 @@ const ReceiverModal = ({ onClose, handleChange, receiverInfos }: ReceiverInfoPro
       <ModalWrapper>
         <ModalContainer>
           <form
-            onSubmit={receiverInfosForm.handleSubmit(onSubmit)}
+            // onSubmit={receiverInfosForm.handleSubmit(onSubmit)}
             style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}
           >
             <InfoArea>
@@ -204,7 +207,9 @@ const ReceiverModal = ({ onClose, handleChange, receiverInfos }: ReceiverInfoPro
               <ButtonCancel type="button" onClick={onClose}>
                 취소
               </ButtonCancel>
-              <ButtonAddDone type="submit">{fields.length}명 완료</ButtonAddDone>
+              <ButtonAddDone type="button" onClick={onSubmit}>
+                {fields.length}명 완료
+              </ButtonAddDone>
             </ButtonArea>
           </form>
         </ModalContainer>
