@@ -2,6 +2,7 @@ import { createContext, useEffect, useState, type ReactNode } from 'react';
 
 type User = {
   email: string;
+  name: string;
 };
 
 interface AuthContextType {
@@ -23,8 +24,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       try {
-        const { email } = JSON.parse(raw) as { email: string; token: string };
-        setUser({ email });
+        const { email, name } = JSON.parse(raw) as { email: string; name: string; token: string };
+        setUser({ email, name });
       } catch {
         localStorage.removeItem(STORAGE_KEY);
       }
@@ -34,9 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (legacyEmail && legacyToken) {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ email: legacyEmail, token: legacyToken })
+          JSON.stringify({ email: legacyEmail, name: '', token: legacyToken })
         );
-        setUser({ email: legacyEmail });
+        setUser({ email: legacyEmail, name: '' });
       }
       localStorage.removeItem(LEGACY_EMAIL);
       localStorage.removeItem(LEGACY_TOKEN);
@@ -47,7 +48,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(user);
     localStorage.removeItem(LEGACY_EMAIL);
     localStorage.removeItem(LEGACY_TOKEN);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ email: user.email, token }));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ email: user.email, name: user.name, token })
+    );
   };
 
   const logout = () => {

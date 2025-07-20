@@ -152,8 +152,8 @@ const Login: React.FC = () => {
   const handleClick = async () => {
     try {
       const res = await postLogin(id, pw);
-      const { email, authToken } = res.data.data;
-      login({ email }, authToken);
+      const { email, name, authToken } = res.data.data;
+      login({ email, name }, authToken);
       navigate(redirectTo, { replace: true });
     } catch (err: any) {
       alert(err.response?.data ?? '로그인 실패');
