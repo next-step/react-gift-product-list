@@ -1,6 +1,6 @@
 import TargetCategory from "./TargetCategory";
 import RankingCategory from "./RankingCategory";
-import RankingItem from "./RankingItem";
+import RankingItem from "../../Common/ProductItem";
 import styled from "@emotion/styled";
 import { useCallback, useState } from "react";
 import {

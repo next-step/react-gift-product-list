@@ -8,7 +8,7 @@ import { getThemesList } from "@/api/themes";
 import { useFetchData } from "@/hooks/useFetchData";
 import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
-import RankingItem from "@/components/Home/RankingSection/RankingItem";
+import RankingItem from "@/components/Common/ProductItem";
 
 const ThemeProductList = () => {
   const { themeId } = useParams<{ themeId: string }>();
