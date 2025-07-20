@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE } from '@/constant/constant';
 
 export async function fetchLogin(email: string, password: string) {
   try {
