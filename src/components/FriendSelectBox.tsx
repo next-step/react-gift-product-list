@@ -32,14 +32,17 @@ const Plus = styled.span`
 
 function FriendSelectBox() {
   const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
-  console.log('userInfo:', userInfo);
-  const name = userInfo.name;
-  console.log('name:', name);
+  const name =
+    userInfo && typeof userInfo.name === 'string' && userInfo.name.length > 0
+      ? userInfo.name
+      : null;
 
   return (
     <Box>
       <Plus>+</Plus>
-      {name ? `${name}님! ` : ''}선물할 친구를 선택해 주세요.
+      {name
+        ? `${name}님! 선물할 친구를 선택해 주세요.`
+        : '선물할 친구를 선택해주세요.'}
     </Box>
   );
 }

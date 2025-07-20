@@ -265,6 +265,14 @@ function OrderPage() {
 
     try {
       const response = await createOrder(orderData, authToken);
+      // 주문 상세 alert 추가
+      alert(
+        `주문이 완료되었습니다.\n` +
+          `상품명: ${product.name}\n` +
+          `구매 수량: ${totalQuantity}\n` +
+          `발신자 이름: ${sender}\n` +
+          `메시지: ${message}`,
+      );
       toast.success('주문이 완료되었습니다!');
       navigate('/');
     } catch (error: any) {

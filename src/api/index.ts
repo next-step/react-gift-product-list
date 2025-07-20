@@ -4,8 +4,11 @@ import type { ProductSummary } from '@/pages/OrderPage';
 import type { AxiosResponse } from 'axios';
 
 export interface LoginResponse {
-  token: string;
-  name: string;
+  data: {
+    email: string;
+    name: string;
+    authToken: string;
+  };
 }
 
 export interface ProductSummaryResponse {

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Box = styled.div`
   background-color: white;
@@ -56,6 +57,7 @@ function CategoryList({ onHide }: { onHide?: () => void }) {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -96,10 +98,16 @@ function CategoryList({ onHide }: { onHide?: () => void }) {
         }
         return (
           <List>
-            {themes.map((cat) => (
-              <Item key={cat.themeId}>
-                <Img src={cat.image} alt={cat.name} />
-                <Name>{cat.name}</Name>
+            {themes.map((theme) => (
+              <Item
+                key={theme.themeId}
+                onClick={() => {
+                  navigate(`/themes/${theme.themeId}`);
+                  if (onHide) onHide();
+                }}
+              >
+                <Img src={theme.image} alt={theme.name} />
+                <Name>{theme.name}</Name>
               </Item>
             ))}
           </List>
