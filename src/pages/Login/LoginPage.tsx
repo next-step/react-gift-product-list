@@ -53,14 +53,7 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        if (
-          error.response &&
-          typeof error.response.status === "number" &&
-          error.response.status >= 400 &&
-          error.response.status < 500
-        ) {
-          showErrorToast("올바른 이메일 형식이 아닙니다.");
-        }
+        showErrorToast("올바른 이메일 형식이 아닙니다.");
       }
     }
   };

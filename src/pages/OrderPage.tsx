@@ -31,14 +31,8 @@ export default function OrderPage() {
         setProduct(data);
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
-          if (
-            error.response?.status &&
-            error.response.status >= 400 &&
-            error.response.status < 500
-          ) {
-            showErrorToast("상품 정보를 불러올 수 없습니다.");
-            navigate("/gift", { replace: true });
-          }
+          showErrorToast("상품 정보를 불러올 수 없습니다.");
+          navigate("/gift", { replace: true });
         }
       }
     };
@@ -58,7 +52,7 @@ export default function OrderPage() {
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
-    0,
+    0
   );
 
   if (!product) return null;
@@ -106,7 +100,7 @@ export default function OrderPage() {
             quantity: r.quantity,
           })),
         },
-        authToken,
+        authToken
       );
 
       alert(`주문이 완료되었습니다.
