@@ -7,8 +7,7 @@ import {
   ErrorContainer,
   LoginForm,
 } from '@/styles/Login.styles';
-import { useContext } from 'react';
-import { LoginInfoContext } from '@/contexts/LoginInfoContext';
+import {postLogin} from '@/apis/login';
 
 type LoginProps = {
   onLogin: () => void;
@@ -28,15 +27,18 @@ function Login({ onLogin }: LoginProps) {
     isValidForm,
   } = useLoginForm();
 
-  const { setLoginInfo } = useContext(LoginInfoContext);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try{
+      e.preventDefault();
+      if (!isValidForm()) return;
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!isValidForm()) return;
-    setLoginInfo(id);
-    localStorage.setItem('id', id);
-    localStorage.setItem('name', id.split('@')[0]);
-    onLogin();
+      const responseInfo = await postLogin({email: id, password: pw});
+      localStorage.setItem('userInfo', JSON.stringify(responseInfo));
+      onLogin();
+    }
+    catch (err){
+      console.log(err);
+    }
   }
 
   return (

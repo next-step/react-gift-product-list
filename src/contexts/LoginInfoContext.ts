@@ -1,11 +1,16 @@
 import { createContext } from 'react';
+import type { LoginResponseDto } from '@/types/DTO/loginDTO';
 
 export type LoginInfoContextType = {
-  loginInfo: string;
-  setLoginInfo: (value: string) => void;
+  userInfo: LoginResponseDto;
+  setLoginInfo: (value: LoginResponseDto) => void;
 };
 
 export const LoginInfoContext = createContext<LoginInfoContextType>({
-  loginInfo: '',
+  userInfo: {
+    email: '',
+    name: '',
+    authToken: '',
+  },
   setLoginInfo: () => {},
 });

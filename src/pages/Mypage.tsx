@@ -13,24 +13,36 @@ type MyPageProps = {
 
 function Mypage({ onLogin }: MyPageProps) {
   const { logOut } = useLoginForm();
-  const { loginInfo, setLoginInfo } = useContext(LoginInfoContext);
+  const { userInfo, setLoginInfo } = useContext(LoginInfoContext);
   const [name, setName] = useState<string>('');
+
   function logout() {
-    setLoginInfo('');
-    console.log(loginInfo);
+    setLoginInfo({
+      email: '',
+      name: '',
+      authToken: '',
+    });
     logOut();
-    localStorage.setItem('id', '');
-    localStorage.setItem('name', '');
+    localStorage.setItem(
+      'userInfo',
+      JSON.stringify({
+        email: '',
+        name: '',
+        authToken: '',
+      }),
+    );
     onLogin();
   }
+
   useEffect(() => {
     setName(localStorage.getItem('name') || '');
   }, []);
+
   return (
     <MypageContainer>
       <MypageTitle>마이페이지</MypageTitle>
       <MypageContent>{name}님 안녕하세요!</MypageContent>
-      <MypageContent>이메일 주소는 {loginInfo}입니다.</MypageContent>
+      <MypageContent>이메일 주소는 {userInfo.email}입니다.</MypageContent>
       <MypageLogoutBtn onClick={logout}>로그아웃</MypageLogoutBtn>
     </MypageContainer>
   );
