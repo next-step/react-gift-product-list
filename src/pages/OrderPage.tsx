@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import type { Receiver } from "@/types/order";
 import { orderProduct, productSummary } from "@/services/order";
 import { showErrorToast } from "@/styles/toast";
-import { STORAGE_KEY } from "@/constants/storage";
 import type { Product } from "@/types/product";
 import axios from "axios";
 import { getUserFromSession } from "@/utils/getUserFromStorage";
@@ -51,7 +50,7 @@ export default function OrderPage() {
 
   const totalQuantity = receiverList.reduce(
     (sum, receiver) => sum + Number(receiver.quantity),
-    0
+    0,
   );
 
   if (!product) return null;
@@ -98,7 +97,7 @@ export default function OrderPage() {
             quantity: r.quantity,
           })),
         },
-        authToken
+        authToken,
       );
 
       alert(`주문이 완료되었습니다.
