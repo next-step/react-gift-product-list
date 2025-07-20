@@ -68,7 +68,6 @@ function SenderInputCompo({userName}:any) {
         phone: string;
         count: number;
     };
-    console.log(userName);
 
     const { register, formState} = useFormContext<OrderFormValues>();
     return (
