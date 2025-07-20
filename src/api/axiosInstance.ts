@@ -8,6 +8,20 @@ const axiosInstance = axios.create({
   timeout: 5000,
 });
 
+axiosInstance.interceptors.request.use(
+  config => {
+    const sessionUserInfo = sessionStorage.getItem("kakaotech/userInfo");
+    if (sessionUserInfo) {
+      const { authToken } = JSON.parse(sessionUserInfo);
+      config.headers.Authorization = authToken;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  },
+);
+
 axiosInstance.interceptors.response.use(
   response => {
     return response.data?.data ?? response.data;

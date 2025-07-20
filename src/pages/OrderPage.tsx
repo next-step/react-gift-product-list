@@ -88,7 +88,7 @@ const OrderPage = () => {
       })),
     };
 
-    postOrder({ orderData: orderRequestData, token: userInfo?.authToken || "" })
+    postOrder({ orderData: orderRequestData })
       .then(() => {
         alert(
           [
