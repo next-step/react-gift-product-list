@@ -31,24 +31,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthReady(true)
   }, [])
 
-  const login = async (email: string, password: string) => {
-    try {
-      const res = await axios.post('http://localhost:3000/api/login', { email, password })
+const login = async (email: string, password: string) => {
+  try {
+    const res = await axios.post('http://localhost:3000/api/login', { email, password })
 
+    const { authToken, email: userEmail, name } = res.data.data
 
-      const { authToken, email: userEmail, name } = res.data.data 
+    const userInfo = { authToken, email: userEmail, name }
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userInfo))
+    setUser({ email: userEmail, name })
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status
 
-      const userInfo = { authToken, email: userEmail, name }
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userInfo))
-      setUser({ email: userEmail, name })
-    } catch (error: any) {
-      if (error.response?.status >= 400 && error.response?.status < 500) {
-        toast.error(error.response.data?.message || '로그인 실패')
+      if (status && status >= 400 && status < 500) {
+        toast.error(error.response?.data?.message || '아이디 또는 비밀번호가 올바르지 않습니다.')
       } else {
-        toast.error('서버 오류가 발생했습니다.')
+        toast.error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
       }
+    } else {
+      toast.error('오류가 발생했습니다.')
     }
   }
+}
 
   const logout = () => {
     setUser(null)
