@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { JSONSerializer } from "@/shared/utils/json";
 
@@ -15,7 +15,7 @@ export interface SerializableRecord {
  * @param initialValue 초기값
  */
 export const useLocalStorageState = <T extends SerializableValue>(key: string, initialValue: T) => {
-    const [state, setState] = useState<T>(() => {
+    const [state, _setState] = useState<T>(() => {
         try {
             const stored = localStorage.getItem(key);
             return stored ? JSONSerializer.parse<T>(stored) : initialValue;
@@ -24,13 +24,14 @@ export const useLocalStorageState = <T extends SerializableValue>(key: string, i
         }
     });
 
-    useEffect(() => {
+    const setState = (newValue: T) => {
         try {
-            localStorage.setItem(key, JSONSerializer.stringify(state));
-        } catch {
-            console.warn(`[useLocalStorageState] 로컬 스토리지 저장 실패 : ${key}`);
+            _setState(newValue);
+            localStorage.setItem(key, JSONSerializer.stringify(newValue));
+        } catch (error) {
+            console.warn(`[useLocalStorageState] 로컬 스토리지 저장 실패 : ${key}`, error);
         }
-    }, [key, state]);
+    };
 
     return [state, setState] as const;
 };
