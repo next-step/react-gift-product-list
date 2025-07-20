@@ -48,21 +48,23 @@ function ThemeProductsGridContent({
   }
 
   return (
-    <ProductGridContainer>
-      {themeProducts.map((product, idx) => (
-        <ProductCard
-          key={product.id}
-          id={product.id}
-          imageURL={product.imageURL}
-          name={product.name}
-          brandName={product.brandInfo.name}
-          sellingPrice={product.price.sellingPrice}
-          index={idx}
-          type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
-        />
-      ))}
+    <>
+      <ProductGridContainer>
+        {themeProducts.map((product, idx) => (
+          <ProductCard
+            key={product.id}
+            id={product.id}
+            imageURL={product.imageURL}
+            name={product.name}
+            brandName={product.brandInfo.name}
+            sellingPrice={product.price.sellingPrice}
+            index={idx}
+            type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
+          />
+        ))}
+      </ProductGridContainer>
       {isThemeProductsLoading && <Loading />}
-    </ProductGridContainer>
+    </>
   );
 }
 
