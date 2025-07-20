@@ -12,6 +12,7 @@ import { showErrorToast } from "@/styles/toast";
 import { STORAGE_KEY } from "@/constants/storage";
 import type { Product } from "@/types/product";
 import axios from "axios";
+import { getUserFromSession } from "@/utils/getUserFromStorage";
 
 export default function OrderPage() {
   const navigate = useNavigate();
@@ -41,12 +42,10 @@ export default function OrderPage() {
   }, [itemId, navigate]);
 
   useEffect(() => {
-    const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+    const userInfo = getUserFromSession();
     if (!userInfo) return;
 
-    const user = JSON.parse(userInfo);
-    const name = user.name || "";
-    console.log("로그인 유저 이름:", name);
+    const name = userInfo.name || "";
     sender.setValue(name);
   }, []);
 
@@ -73,14 +72,13 @@ export default function OrderPage() {
     }
 
     try {
-      const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+      const userInfo = getUserFromSession();
       if (!userInfo) {
         navigate("/login");
         return;
       }
 
-      const user = JSON.parse(userInfo);
-      const authToken = user.authToken;
+      const authToken = userInfo.authToken;
 
       if (!authToken) {
         showErrorToast("로그인이 필요합니다.");
