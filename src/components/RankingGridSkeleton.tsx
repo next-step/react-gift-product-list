@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
-import { GiftCardSkeleton } from './GIftCardSkeleton';
+import { GiftCardSkeleton } from './GiftCardSkeleton';
+
 
 const grid = css`
   display: grid;
