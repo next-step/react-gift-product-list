@@ -15,7 +15,6 @@ type ItemInfoProps = {
   item: ProductSummary;
 };
 function ItemInfo({ item }: ItemInfoProps) {
-  console.log(item);
   return (
     <ItemInfoContainer>
       <ItemInfoTitle>상품 정보</ItemInfoTitle>
