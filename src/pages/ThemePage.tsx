@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getThemeInfo, getThemeProduct } from "@/services/theme";
 import styled from "@emotion/styled";
@@ -21,7 +21,10 @@ export default function ThemePage() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<ThemeInfo | null>(null);
   const [products, setProducts] = useState<ProductInfo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true); // 더 불러 올 게 있는지
+  const pageRef = useRef(1); // 현재 페이지 번호 저장
+  const loader = useRef<HTMLDivElement | null>(null); // 마지막 감지
 
   const goToOrder = (itemId: number) => {
     const userInfo = sessionStorage.getItem("userInfo");
@@ -32,15 +35,40 @@ export default function ThemePage() {
       });
   };
 
+  // 상품 불러오기
+  const fetchProducts = useCallback(
+    async (pageNum: number) => {
+      if (loading || !hasMore) return;
+      setLoading(true);
+      try {
+        if (!themeId) return;
+        const productData = await getThemeProduct(themeId);
+        const newProducts = productData.data.list;
+        pageRef.current = pageNum;
+        setProducts((prev) => [...prev, ...newProducts]);
+        setHasMore(newProducts.length > 0);
+      } catch (error) {
+        if (axios.isAxiosError(error))
+          showErrorToast("상품을 불러오는 데 실패했어요.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [themeId, loading, hasMore],
+  );
+
+  // 테마 정보 + 첫 페이지 상품
   useEffect(() => {
     const fetchTheme = async () => {
+      setLoading(true);
       try {
         if (!themeId) return;
         const data = await getThemeInfo(themeId);
         setTheme(data);
-
-        const productData = await getThemeProduct(themeId);
-        setProducts(productData.data.list);
+        setProducts([]);
+        setHasMore(true);
+        pageRef.current = 1;
+        await fetchProducts(1);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
           showErrorToast("존재하지 않는 테마입니다.");
@@ -50,9 +78,26 @@ export default function ThemePage() {
         setLoading(false);
       }
     };
-
     fetchTheme();
   }, [themeId, navigate]);
+
+  // Intersection Observer로 무한 스크롤
+  useEffect(() => {
+    if (loading) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          pageRef.current += 1;
+          fetchProducts(pageRef.current);
+        }
+      },
+      { root: null, rootMargin: "20px", threshold: 1.0 },
+    );
+    if (loader.current) observer.observe(loader.current);
+    return () => {
+      if (loader.current) observer.unobserve(loader.current);
+    };
+  }, [fetchProducts, hasMore, loading]);
 
   if (!theme) return null;
 
@@ -66,7 +111,7 @@ export default function ThemePage() {
         <Description>{theme.description}</Description>
       </HeaderWrapper>
       <CardWrapper>
-        {loading ? (
+        {products.length === 0 && loading ? (
           <Spinner />
         ) : products.length === 0 ? (
           <EmptyBox>
@@ -87,8 +132,10 @@ export default function ThemePage() {
                 </Price>
               </Card>
             ))}
+            <div ref={loader} style={{ height: 1 }} />
           </CardGrid>
         )}
+        {loading && <Spinner />}
       </CardWrapper>
     </Wrapper>
   );
