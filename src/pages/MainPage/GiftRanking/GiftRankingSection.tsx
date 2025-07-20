@@ -3,6 +3,7 @@ import ProductItem from './ProductItem';
 import { useEffect, useState, useCallback } from 'react';
 import FilterGroup from './FilterGroup';
 import { useSearchParams } from 'react-router-dom';
+import { useFetch } from '@/hooks/useFetch';
 
 interface Product {
   id: number;
@@ -47,9 +48,8 @@ const GiftRankingSection = () => {
   const [selectedTargetType, setSelectedTargetType] = useState<TargetType>(initialTargetType);
   const [selectedRankType, setSelectedRankType] = useState<RankType>(initialRankType);
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const url = `http://localhost:3000/api/products/ranking?targetType=${selectedTargetType}&rankType=${selectedRankType}`;
+  const { data: products, isLoading, error } = useFetch<Product[]>(url);
 
   useEffect(() => {
     setSearchParams({
@@ -57,37 +57,6 @@ const GiftRankingSection = () => {
       rankType: selectedRankType,
     });
   }, [selectedTargetType, selectedRankType, setSearchParams]);
-
-  const fetchRankingProducts = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/products/ranking?targetType=${selectedTargetType}&rankType=${selectedRankType}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      if (result && Array.isArray(result.data)) {
-        setProducts(result.data);
-      } else {
-        throw new Error('Unexpected API response structure or no data');
-      }
-    } catch (err) {
-      console.error('Failed to fetch ranking products:', err);
-      setError('상품 목록을 불러오는 데 실패했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedTargetType, selectedRankType]);
-
-  useEffect(() => {
-    fetchRankingProducts();
-  }, [fetchRankingProducts]);
 
   const handleReceiverSelect = useCallback((text: string) => {
     const apiValue = receiverOptions.find((opt) => opt.text === text)?.apiValue || 'ALL';
@@ -113,7 +82,7 @@ const GiftRankingSection = () => {
       return <S.ErrorMessage>{error}</S.ErrorMessage>;
     }
 
-    if (products.length === 0) {
+    if (!products || products.length === 0) {
       return <S.NoProductMessage>보여줄 상품 목록이 없습니다.</S.NoProductMessage>;
     }
 

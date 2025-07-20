@@ -1,6 +1,7 @@
 import * as S from './CategorySection.styles';
 import CategoryItem from './CategoryItem';
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
+import { useFetch } from '@/hooks/useFetch';
 
 interface Category {
   themeId: number;
@@ -9,39 +10,42 @@ interface Category {
 }
 
 const CategorySection = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const url = 'http://localhost:3000/api/themes';
+  const { data: categories = [], isLoading, error } = useFetch<Category[]>(url);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        setHasError(false);
+  // const [categories, setCategories] = useState<Category[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [hasError, setHasError] = useState(false);
 
-        const response = await fetch('http://localhost:3000/api/themes');
+  // useEffect(() => {
+  //   const fetchCategories = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       setHasError(false);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+  //       const response = await fetch('http://localhost:3000/api/themes');
 
-        const result = await response.json();
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
 
-        if (result && Array.isArray(result.data)) {
-          setCategories(result.data);
-        } else {
-          throw new Error('Unexpected API response structure');
-        }
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       const result = await response.json();
 
-    fetchCategories();
-  }, []);
+  //       if (result && Array.isArray(result.data)) {
+  //         setCategories(result.data);
+  //       } else {
+  //         throw new Error('Unexpected API response structure');
+  //       }
+  //     } catch (error) {
+  //       console.error('Failed to fetch categories:', error);
+  //       setHasError(true);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchCategories();
+  // }, []);
 
   if (isLoading) {
     return (
@@ -51,7 +55,7 @@ const CategorySection = () => {
     );
   }
 
-  if (hasError || categories.length === 0) {
+  if (error || !categories || categories.length === 0) {
     return null;
   }
 
