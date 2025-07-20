@@ -8,12 +8,7 @@ import { STORAGE_KEY } from "@/constants/storage";
 import { showErrorToast } from "@/styles/toast";
 import { REGEX } from "@/constants/regex";
 import { ERROR_MESSAGE } from "@/constants/messages";
-
-function isAxiosError(
-  error: unknown,
-): error is { response?: { status?: number } } {
-  return typeof error === "object" && error !== null && "isAxiosError" in error;
-}
+import axios from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -57,7 +52,7 @@ export default function LoginPage() {
 
       navigate(from, { replace: true });
     } catch (error: unknown) {
-      if (isAxiosError(error)) {
+      if (axios.isAxiosError(error)) {
         if (
           error.response &&
           typeof error.response.status === "number" &&

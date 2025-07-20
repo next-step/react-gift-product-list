@@ -11,12 +11,7 @@ import { orderProduct, productSummary } from "@/services/order";
 import { showErrorToast } from "@/styles/toast";
 import { STORAGE_KEY } from "@/constants/storage";
 import type { Product } from "@/types/product";
-
-function isAxiosError(
-  error: unknown,
-): error is { response?: { status?: number } } {
-  return typeof error === "object" && error !== null && "isAxiosError" in error;
-}
+import axios from "axios";
 
 export default function OrderPage() {
   const navigate = useNavigate();
@@ -35,7 +30,7 @@ export default function OrderPage() {
         const data = await productSummary(itemId);
         setProduct(data);
       } catch (error: unknown) {
-        if (isAxiosError(error)) {
+        if (axios.isAxiosError(error)) {
           if (
             error.response?.status &&
             error.response.status >= 400 &&
@@ -123,7 +118,7 @@ export default function OrderPage() {
 
       navigate("/");
     } catch (error: unknown) {
-      if (isAxiosError(error)) {
+      if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           showErrorToast("로그인이 필요합니다.");
           navigate("/login");
