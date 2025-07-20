@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Category } from '@/types/category';
-import { CATEGORY_THEMES_API_PATH } from '@/constants/api';
+import { CATEGORY_THEMES_API_URL } from '@/constants/api';
 
 interface UseCategoryThemesResult {
   data: Category[] | null;
@@ -10,9 +10,7 @@ interface UseCategoryThemesResult {
 }
 
 const fetchCategoryThemes = async (): Promise<Category[]> => {
-  const res = await axios.get<{ data: Category[] }>(
-    `${import.meta.env.VITE_API_BASE_URL}${CATEGORY_THEMES_API_PATH}`
-  );
+  const res = await axios.get<{ data: Category[] }>(CATEGORY_THEMES_API_URL);
   return res.data.data;
 };
 

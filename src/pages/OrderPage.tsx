@@ -17,13 +17,8 @@ import { useOrderForm } from '@/hooks/useOrderForm';
 import type { OrderFormValues } from '@/types/order';
 import { loading } from '@/components/common/Loading';
 import type { ProductSummary } from '@/types/product';
-import { ORDER_API_PATH, getProductSummaryPath } from '@/constants/api';
+import { ORDER_API_URL, getProductSummaryUrl } from '@/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
-
-const getProductSummaryUrl = (id: string) =>
-  `${import.meta.env.VITE_API_BASE_URL}${getProductSummaryPath(id)}`;
-
-const ORDER_API_URL = `${import.meta.env.VITE_API_BASE_URL}${ORDER_API_PATH}`;
 
 const isAxiosErrorWithStatus = (
   err: unknown,

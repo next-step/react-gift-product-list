@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import axios from 'axios';
-import { LOGIN_API_PATH, SESSION_STORAGE_KEY } from '@/constants/api';
+import { LOGIN_API_URL, SESSION_STORAGE_KEY } from '@/constants/api';
 
 type User = {
   email: string;
@@ -43,10 +43,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async ({ email, password }: LoginParams) => {
-    const res = await axios.post<{ data: User }>(
-      `${import.meta.env.VITE_API_BASE_URL}${LOGIN_API_PATH}`,
-      { email, password }
-    );
+    const res = await axios.post<{ data: User }>(`${LOGIN_API_URL}`, {
+      email,
+      password,
+    });
     const userData = res.data.data;
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userData));
     setUser(userData);

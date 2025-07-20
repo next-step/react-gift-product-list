@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Product } from '@/types/product';
-import { PRODUCT_RANKING_API_PATH } from '@/constants/api';
+import { PRODUCT_RANKING_API_URL } from '@/constants/api';
 
 interface UseProductRankingResult {
   data: Product[] | null;
@@ -14,7 +14,7 @@ const fetchProductRankings = async (
   rankType: string
 ): Promise<Product[]> => {
   const res = await axios.get<{ data: Product[] }>(
-    `${import.meta.env.VITE_API_BASE_URL}${PRODUCT_RANKING_API_PATH}`,
+    `${PRODUCT_RANKING_API_URL}`,
     { params: { targetType, rankType } }
   );
   return res.data.data;
