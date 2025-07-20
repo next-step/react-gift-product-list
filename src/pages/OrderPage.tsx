@@ -1,14 +1,15 @@
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import styled from '@emotion/styled'
 import Layout from '@/Layout'
 import { cardTemplates, type CardTemplate } from '@/data/cardTemplates'
-import type { Product } from '@/type'
+import { fetchProductSummary, type ProductSummary } from '@/api/product'
 import useOrderForm from '@/hooks/useOrderForm'
 import RecipientModal from '@/components/RecipientModal'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
+import { toast } from 'react-toastify'
 
 const Container = styled.div`
   display: flex;
@@ -180,10 +181,9 @@ const OrderButton = styled.button`
 `
 
 export default function OrderPage() {
-  const location = useLocation()
-  const product = (location.state as { product?: Product })?.product
+  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-
+  const [product, setProduct] = useState<ProductSummary | null>(null)
 
   const [selected, setSelected] = useState<CardTemplate>(cardTemplates[0])
   const [modalOpen, setModalOpen] = useState(false)
@@ -199,24 +199,45 @@ export default function OrderPage() {
     watch,
   } = useOrderForm(cardTemplates[0].defaultTextMessage)
 
-    const recipients = watch('recipients')
+  useEffect(() => {
+    if (!id) return
+
+    async function load() {
+      try {
+        const data = await fetchProductSummary(Number(id))
+        setProduct(data)
+      } catch (err: any) {
+        const code = err?.statusCode ?? 0
+        if (code >= 400 && code < 500) {
+          toast.error(err.message)
+          navigate('/', { replace: true })
+        } else {
+          toast.error('상품 정보를 불러오지 못했습니다.')
+        }
+      }
+    }
+
+    load()
+  }, [id, navigate])
+
+  const recipients = watch('recipients')
   const totalQty = recipients.reduce(
     (sum: number, r: { qty: number }) => sum + (r.qty ?? 0),
     0,
   )
-  const orderPrice = product ? product.price.sellingPrice * totalQty : 0
+  const orderPrice = product ? product.price * totalQty : 0
 
   const onSubmit = (data: any) => {
-        const totalQty = data.recipients.reduce(
+    const totalQty = data.recipients.reduce(
       (sum: number, r: { qty: number }) => sum + r.qty,
       0,
     )
-    const totalPrice = product ? product.price.sellingPrice * totalQty : 0
+    const totalPrice = product ? product.price * totalQty : 0
     alert(
-      `주문 완료:\n카드: ${selected.id}\n메시지: ${data.message}\n보낸 사람: ${data.sender}\n총 수량: ${totalQty}\n결제금액: ${totalPrice.toLocaleString()}원`,    )
-      navigate('/')
-    }
-     const handleCardSelect = (card: CardTemplate) => {
+      `주문 완료:\n카드: ${selected.id}\n메시지: ${data.message}\n보낸 사람: ${data.sender}\n총 수량: ${totalQty}\n결제금액: ${totalPrice.toLocaleString()}원`,)
+    navigate('/')
+  }
+  const handleCardSelect = (card: CardTemplate) => {
     setSelected(card)
     setValue('message', card.defaultTextMessage)
   }
@@ -235,9 +256,9 @@ export default function OrderPage() {
           ))}
         </CardGrid>
 
-          <Preview>
-            <img src={selected.imageUrl} alt="선택된 카드" />
-          </Preview>
+        <Preview>
+          <img src={selected.imageUrl} alt="선택된 카드" />
+        </Preview>
 
         <MessageInput
           {...register('message')}
@@ -255,11 +276,11 @@ export default function OrderPage() {
             placeholder="이름을 입력하세요."
           />
           {errors.sender && (
-            <ErrorMessage>{String(errors.sender.message)}</ErrorMessage>       )}
+            <ErrorMessage>{String(errors.sender.message)}</ErrorMessage>)}
           *실제 선물 발송 시 발신자 이름으로 반영되는 정보입니다.
-          </InfoSection>
+        </InfoSection>
 
-          <InfoSection>
+        <InfoSection>
           <RecipientHeader>
             <Label>받는 사람</Label>
             <button type="button" onClick={() => setModalOpen(true)}>
@@ -300,10 +321,10 @@ export default function OrderPage() {
             <ProductImage src={product.imageURL} alt="상품 이미지" />
             <Details>
               <ProductName>{product.name}</ProductName>
-              <Brand>{product.brandInfo.name}</Brand>
+              <Brand>{product.brandName}</Brand>
               <Price>
                 <span>상품가 </span>
-                {product.price.sellingPrice.toLocaleString()}원
+                {product.price.toLocaleString()}원
               </Price>
             </Details>
           </ProductInfo>
