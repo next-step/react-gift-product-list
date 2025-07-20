@@ -5,6 +5,7 @@ import NavigationBar from '@components/NavigationBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useAuth } from '@/hooks/useAuth';
+import { postLogin } from '@/Api/api';
 
 const Wrapper = styled.div(({ theme }) => ({
   width: '100%',
@@ -140,13 +141,23 @@ const Login: React.FC = () => {
     isFormValid,
   } = useLoginForm();
 
-  // 로그인 함수
   const { login } = useAuth();
 
-  const handleClick = () => {
-    const mockToken = 'mock-jwt-token';
-    login({ email: id }, mockToken);
-    navigate(redirectTo, { replace: true });
+  // const handleClick = () => {
+  //   const mockToken = 'mock-jwt-token';
+  //   login({ email: id }, mockToken);
+  //   navigate(redirectTo, { replace: true });
+  // };
+
+  const handleClick = async () => {
+    try {
+      const res = await postLogin(id, pw);
+      const { email, authToken } = res.data.data;
+      login({ email }, authToken);
+      navigate(redirectTo, { replace: true });
+    } catch (err: any) {
+      alert(err.response?.data ?? '로그인 실패');
+    }
   };
 
   return (
