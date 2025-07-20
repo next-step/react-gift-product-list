@@ -7,7 +7,9 @@ import {
   ErrorContainer,
   LoginForm,
 } from '@/styles/Login.styles';
-import {postLogin} from '@/apis/login';
+import { postLogin } from '@/apis/login';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 type LoginProps = {
   onLogin: () => void;
@@ -28,18 +30,25 @@ function Login({ onLogin }: LoginProps) {
   } = useLoginForm();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    try{
+    try {
       e.preventDefault();
       if (!isValidForm()) return;
 
-      const responseInfo = await postLogin({email: id, password: pw});
+      const responseInfo = await postLogin({ email: id, password: pw });
       localStorage.setItem('userInfo', JSON.stringify(responseInfo));
       onLogin();
+    } catch (err) {
+      const error = err as AxiosError;
+      if (error.response && error.response.status >= 400 && error.response.status < 500) {
+        toast.error(
+          (error.response.data as { message?: string })?.message ||
+            '클라이언트 에러가 발생했습니다.',
+        );
+      } else {
+        toast.error('알 수 없는 에러가 발생했습니다.');
+      }
     }
-    catch (err){
-      console.log(err);
-    }
-  }
+  };
 
   return (
     <LoginContainer>

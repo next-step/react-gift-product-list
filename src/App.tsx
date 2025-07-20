@@ -8,6 +8,8 @@ import Login from '@/pages/Login';
 import Mypage from '@/pages/Mypage';
 import Order from '@/pages/Order/Order';
 import NotFound from '@/NotFound';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const navigate = useNavigate();
@@ -39,6 +41,7 @@ function App() {
 
   return (
     <AppWrapper>
+      <ToastContainer autoClose={2000} />
       <ResetStyles />
       <Routes>
         <Route
