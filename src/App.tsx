@@ -11,6 +11,7 @@ import MyPage from './pages/MyPage';
 import Order from './pages/Order';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ROUTES } from './constants/routes';
 
 const containerStyle = css`
   max-width: 720px;
@@ -29,11 +30,14 @@ const App = () => {
           <BrowserRouter>
             <ToastContainer position="top-right" autoClose={3000} />
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<NotFoundPage />} />
-              <Route path="/my" element={<MyPage />} />
-              <Route path="/order/:id" element={<Order />} />
+              <Route path={ROUTES.HOME} element={<Home />} />
+              <Route path={ROUTES.LOGIN} element={<Login />} />
+              <Route
+                path={ROUTES.NOT_FOUND}
+                element={<NotFoundPage />}
+              />
+              <Route path={ROUTES.MY_PAGE} element={<MyPage />} />
+              <Route path={ROUTES.ORDER()} element={<Order />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>
