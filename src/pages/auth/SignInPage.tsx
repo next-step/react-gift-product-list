@@ -2,6 +2,7 @@ import kakaoLogo from "@/app/assets/kakao-logo.svg";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useSignIn } from "@/features/auth/hooks/useSignIn";
+import { useLogIn } from "@/features/auth/services/logIn";
 import { AuthInput } from "@/features/auth/ui/AuthInput";
 
 import { useRedirect } from "@/shared/hooks/useRedirect";
@@ -27,16 +28,19 @@ export default function SignInPage() {
         passwordInputProps,
     } = useSignIn();
 
-    const onSignIn = () => {
-        signIn(email.split("@")[0], email);
-        returnToRedirect();
+    const { request } = useLogIn();
+
+    const onSignIn = async () => {
+        const response = await request({ email, password });
+        signIn(email, response!.authToken);
+        returnToRedirect("/");
     };
 
     return (
         <Styles.Container>
             <Styles.KakaoLogo src={kakaoLogo} alt="카카오" />
 
-            <Styles.Form>
+            <Styles.Form onSubmit={(e) => e.preventDefault()}>
                 <Styles.FieldSet>
                     <AuthInput
                         type="email"
