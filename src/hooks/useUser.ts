@@ -1,9 +1,6 @@
 import { useState } from "react";
 
 function useUser() {
-  // const [id, setId2] = useState('');
-  // const [pw, setPw2] = useState('');
-  
   function setEmail(email:string) {
     sessionStorage.setItem('userEmail',email);
   }
