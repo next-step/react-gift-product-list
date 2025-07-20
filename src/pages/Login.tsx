@@ -5,15 +5,17 @@ import { useNavigate, useLocation } from "react-router-dom"
 import Blank from "@/components/Blank"
 import Icon from "@/assets/Icon.svg?react"
 import { useInput } from "@/hooks/useInput"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import type { FormEvent, FocusEventHandler } from "react"
 import type { ValueType } from "@/interfaces/ValueType"
+import { AuthContext } from "@/context/AuthContext"
+import { toast } from "react-toastify"
+
 import {
   checkValid,
   validateEmail,
   validatePassword,
 } from "@/functions/checkValid"
-import { useAuth } from "@/context/AuthContext"
 
 const Login = () => {
   const form: ValueType = {
@@ -26,10 +28,12 @@ const Login = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   )
-  const { login } = useAuth()
+
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || "/my"
+  const { login } = useContext(AuthContext)
+
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.target
     setErrors((prev) => ({
@@ -52,15 +56,22 @@ const Login = () => {
     }
   }
 
-  const handleLogin = () => {
-    const loginSuccess = login(data.email, data.password)
+  const handleLogin = async () => {
+    if (!isEmailValid || !isPasswordValid) return
 
-    if (loginSuccess) {
-      navigate(from, { replace: true })
-    } else {
-      console.log("login failed")
+    try {
+      const success = await login(data.email, data.password)
+
+      if (success) {
+        navigate(from, { replace: true })
+      } else {
+        toast.error("@kakao.com 이메일 주소만 가능합니다.")
+      }
+    } catch (error) {
+      console.log("로그인 중 오류가 발생했습니다. 다시 시도해주세요.")
     }
   }
+
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     handleLogin()
@@ -80,7 +91,6 @@ const Login = () => {
           onBlur={handleBlur}
           message={errors.email ?? ""}
         ></InputBlank>
-
         <Blank height="16px"></Blank>
         <InputBlank<ValueType>
           width="388px"
@@ -95,7 +105,6 @@ const Login = () => {
         <MoreButton
           background="kakaoYellow"
           borderRadius="spacing0"
-          onClick={handleLogin}
           disabled={!isEmailValid || !isPasswordValid}
         >
           로그인
