@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { css, ThemeProvider } from '@emotion/react';
 import { theme } from '@/theme/theme';
-import productData from '../data/productData';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { getProductRanking, type ProductRankingItem } from '@/services/product';
+import LoadingSpinner from './common/LoadingSpinner';
 
 const Wrapper = styled.section`
   padding: 0px 16px;
@@ -224,10 +225,55 @@ const MoreButtonFont = styled.p`
   text-align: center;
 `;
 
+const LoadingContainer = styled(PresentDisplay)`
+  width: 100%;
+  height: 240px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+`;
+
+const NoDataText = styled.p(({ theme }) => ({
+  fontSize: '0.875rem',
+  fontWeight: 400,
+  lineHeight: '1.1875rem',
+  color: theme.semanticColors.text.default,
+  margin: '0px',
+  width: '100%',
+  textAlign: 'center',
+}));
+
+const NoDataContainer = styled.div`
+  width: 100%;
+  height: 240px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+`;
+
 const PresentRanking: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
   const [selectedType, setSelectedType] = useState<'all' | 'female' | 'male' | 'teen'>('all');
   const [selectedPresentType, setSelectedPresentType] = useState<number>(0);
+  const [products, setProducts] = useState<ProductRankingItem[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const apiTargetTypeMap: Record<typeof selectedType, string> = {
+    all: 'ALL',
+    female: 'FEMALE',
+    male: 'MALE',
+    teen: 'TEEN',
+  };
+
+  const apiRankTypeMap = ['MANY_WISH', 'MANY_RECEIVE', 'MANY_WISH_RECEIVE'] as const;
 
   useEffect(() => {
     const savedType = localStorage.getItem('selectedType') as
@@ -239,25 +285,52 @@ const PresentRanking: React.FC = () => {
     const savedPresentType = localStorage.getItem('selectedPresentType');
 
     if (savedType) setSelectedType(savedType);
-    if (savedPresentType) setSelectedPresentType(Number(savedPresentType));
+    if (savedPresentType !== null) setSelectedPresentType(Number(savedPresentType));
   }, []);
 
+  useEffect(() => {
+    const fetchRanking = async () => {
+      setIsLoadingProducts(true);
+      setErrorMsg(null);
+
+      try {
+        const targetType = apiTargetTypeMap[selectedType];
+        const rankType = apiRankTypeMap[selectedPresentType];
+
+        const response = await getProductRanking(targetType, rankType);
+        setProducts(response.data.data);
+      } catch (error) {
+        console.error('랭킹 조회 실패', error);
+        setErrorMsg('실시간 랭킹을 불러오지 못했습니다.');
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    };
+
+    fetchRanking();
+  }, [selectedType, selectedPresentType]);
+
   const handleTypeSelect = (type: typeof selectedType) => {
+    setShowAll(false);
     setSelectedType(type);
     localStorage.setItem('selectedType', type);
   };
 
   const handlePresentTypeSelect = (index: number) => {
+    setShowAll(false);
+    const savedType = localStorage.getItem('selectedType') as
+      | 'all'
+      | 'female'
+      | 'male'
+      | 'teen'
+      | null;
+    const savedPresentType = localStorage.getItem('selectedPresentType');
+
+    if (savedType) setSelectedType(savedType);
+    if (savedPresentType) setSelectedPresentType(Number(savedPresentType));
     setSelectedPresentType(index);
     localStorage.setItem('selectedPresentType', index.toString());
   };
-
-  const {
-    name,
-    imageURL,
-    price: { sellingPrice },
-    brandInfo,
-  } = productData;
 
   const productsToShow = showAll ? 21 : 6;
 
@@ -270,11 +343,8 @@ const PresentRanking: React.FC = () => {
 
   const presentTypes = ['받고 싶어한', '많이 선물한', '위시로 받은'];
 
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  const goOrder = () => {
-    const to = `/Order?productId=${productData.id}`;
+  const goOrder = (productId: number) => {
+    const to = `/Order?productId=${productId}`;
 
     if (user) {
       navigate(to);
@@ -283,11 +353,8 @@ const PresentRanking: React.FC = () => {
     }
   };
 
-  const [selectedProduct, setSelectedProduct] = useState<typeof productData | null>(null);
-
-  const handleProductClick = () => {
-    setSelectedProduct(productData);
-    goOrder();
+  const handleProductClick = (productId: number) => {
+    goOrder(productId);
   };
 
   return (
@@ -319,48 +386,58 @@ const PresentRanking: React.FC = () => {
         </PresentType>
         <MarginBox2 />
         <PresentDisplayContainer>
-          <PresentDisplay>
-            {Array.from({ length: productsToShow }, (_, index) => (
-              <ProductBox key={index} onClick={handleProductClick}>
-                <NumberLogo
-                  css={css`
-                    background-color: ${index <= 2 ? 'rgb(252, 106, 102)' : 'rgb(176, 179, 186)'};
-                  `}
-                >
-                  {index + 1}
-                </NumberLogo>
-                <ProductInfo>
-                  <ProductImage src={imageURL} alt={name}></ProductImage>
-                  <div
+          {isLoadingProducts ? (
+            <LoadingContainer>
+              <LoadingSpinner />
+            </LoadingContainer>
+          ) : errorMsg ? null : products.length === 0 ? (
+            <NoDataContainer>
+              <NoDataText>상품이 없습니다.</NoDataText>
+            </NoDataContainer>
+          ) : (
+            <PresentDisplay>
+              {products.slice(0, productsToShow).map((p, index) => (
+                <ProductBox key={p.id} onClick={() => handleProductClick(p.id)}>
+                  <NumberLogo
                     css={css`
-                      width: 100%;
-                      height: 12px;
-                      background-color: transparent;
+                      background-color: ${index <= 2 ? 'rgb(252, 106, 102)' : 'rgb(176, 179, 186)'};
                     `}
-                  ></div>
-                  <SubProductName>{brandInfo.name}</SubProductName>
-                  <ProdudctName>{brandInfo.name}</ProdudctName>
-                  <div
-                    css={css`
-                      width: 100%;
-                      height: 4px;
-                      background-color: transparent;
-                    `}
-                  ></div>
-                  <ProductPrice>
-                    {sellingPrice}
-                    <span
+                  >
+                    {index + 1}
+                  </NumberLogo>
+                  <ProductInfo>
+                    <ProductImage src={p.imageURL} alt={p.name}></ProductImage>
+                    <div
                       css={css`
-                        font-weight: 400;
+                        width: 100%;
+                        height: 12px;
+                        background-color: transparent;
                       `}
-                    >
-                      원
-                    </span>
-                  </ProductPrice>
-                </ProductInfo>
-              </ProductBox>
-            ))}
-          </PresentDisplay>
+                    ></div>
+                    <SubProductName>{p.brandInfo.name}</SubProductName>
+                    <ProdudctName>{p.brandInfo.name}</ProdudctName>
+                    <div
+                      css={css`
+                        width: 100%;
+                        height: 4px;
+                        background-color: transparent;
+                      `}
+                    ></div>
+                    <ProductPrice>
+                      {p.price.sellingPrice}
+                      <span
+                        css={css`
+                          font-weight: 400;
+                        `}
+                      >
+                        원
+                      </span>
+                    </ProductPrice>
+                  </ProductInfo>
+                </ProductBox>
+              ))}
+            </PresentDisplay>
+          )}
         </PresentDisplayContainer>
         <div
           css={css`
@@ -369,11 +446,13 @@ const PresentRanking: React.FC = () => {
             background-color: transparent;
           `}
         ></div>
-        <MoreButtonContainer>
-          <MoreButton onClick={() => setShowAll(!showAll)}>
-            <MoreButtonFont>{showAll ? '접기' : '더보기'}</MoreButtonFont>
-          </MoreButton>
-        </MoreButtonContainer>
+        {products.length > 6 && (
+          <MoreButtonContainer>
+            <MoreButton onClick={() => setShowAll(!showAll)}>
+              <MoreButtonFont>{showAll ? '접기' : '더보기'}</MoreButtonFont>
+            </MoreButton>
+          </MoreButtonContainer>
+        )}
       </Wrapper>
     </ThemeProvider>
   );
