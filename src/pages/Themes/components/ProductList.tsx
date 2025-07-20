@@ -3,7 +3,7 @@ import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import type { RankingProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 interface ProductListData {
@@ -23,29 +23,67 @@ const ProductList = () => {
     [navigate],
   );
 
+  const [items, setItems] = useState<RankingProductType[]>([]);
+  const [cursor, setCursor] = useState(0);
+  const [hasMoreList, setHasMoreList] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const loader = useRef<HTMLDivElement>(null);
+
   const { themesId } = useParams();
-  const { data, isLoading } = useFetch<ProductListData>(`/api/themes/${themesId}/products`, {
-    params: {
-      cursor: 0,
-      limit: PRODUCT_LIST_LIMIT,
-    },
+  const productList = useFetch<ProductListData>(`/api/themes/${themesId}/products`, {
+    autoFetch: false,
   });
 
-  if (isLoading) {
-    return <Loading height="2353px" />;
-  }
+  const loadMoreItems = useCallback(async () => {
+    if (isLoading || !hasMoreList) return null;
 
-  if (!data) {
-    return null;
-  }
+    try {
+      setIsLoading(true);
+      const response = await productList.fetchData(undefined, undefined, {
+        cursor,
+        limit: PRODUCT_LIST_LIMIT,
+      });
+      if (response.data) {
+        setItems((prev) => [...prev, ...(response.data?.list ?? [])]);
+        setCursor(response.data.cursor);
+        setHasMoreList(response.data.hasMoreList);
+      }
+    } catch (error) {
+      console.error("상품 목록을 불러오는데 실패했습니다:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [cursor, hasMoreList, isLoading, productList.fetchData]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entries]) => {
+        if (entries.isIntersecting && hasMoreList && !isLoading) {
+          loadMoreItems();
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    const el = loader.current;
+    if (el && hasMoreList) {
+      observer.observe(el);
+    }
+
+    return () => {
+      if (el) {
+        observer.unobserve(el);
+      }
+    };
+  }, [cursor, hasMoreList, loadMoreItems, isLoading]);
 
   return (
     <Container>
       <Content>
-        {data.list.map((item) => (
+        {items.map((item) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemContent>
-              <ItemContentImg src={item.imageURL} />
+              <ItemContentImg src={item.imageURL} alt={item.name} />
               <ItemContentBrand>{item.brandInfo.name}</ItemContentBrand>
               <ItemContentTitle>{item.name}</ItemContentTitle>
               <ItemContentPrice>{item.price.sellingPrice}원</ItemContentPrice>
@@ -53,6 +91,11 @@ const ProductList = () => {
           </Item>
         ))}
       </Content>
+      <Loader ref={loader}>
+        {isLoading && <Loading height="50px" />}
+        {!hasMoreList && items.length === 0 && <Empty>상품이 없습니다.</Empty>}
+        {!hasMoreList && items.length > 0 && <EndMessage>모든 상품을 불러왔습니다.</EndMessage>}
+      </Loader>
     </Container>
   );
 };
@@ -62,6 +105,7 @@ export default ProductList;
 const Container = styled.div`
   background-color: ${({ theme }) => theme.color.backgroundColor.default};
   width: 100%;
+  height: calc(100vh - 44px - 128px);
   padding: ${({ theme }) => theme.spacing.spacing4};
 `;
 const Content = styled.div`
@@ -105,4 +149,27 @@ const ItemContentPrice = styled.p`
   color: ${({ theme }) => theme.color.textColor.default};
   margin-right: auto;
   word-break: break-word;
+`;
+const Loader = styled.div`
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Empty = styled.div`
+  width: 100%;
+  font: ${({ theme }) => theme.typography.subtitle2Regular};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${({ theme }) => theme.color.textColor.sub};
+`;
+
+const EndMessage = styled.div`
+  width: 100%;
+  font: ${({ theme }) => theme.typography.subtitle2Regular};
+  color: ${({ theme }) => theme.color.textColor.sub};
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
