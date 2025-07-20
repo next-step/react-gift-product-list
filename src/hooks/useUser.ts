@@ -1,4 +1,3 @@
-import { useState } from "react";
 
 function useUser() {
   function setEmail(email:string) {

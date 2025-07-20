@@ -16,8 +16,6 @@ import ReceiverInputCompo from '@/components/Order/ReceiverInputCompo';
 import ItemInfoCompo from '@/components/Order/ItemInfoCompo';
 import Modal from '@/components/Order/Modal';
 
-import axios from 'axios';
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
 import { ToastContainer, toast } from 'react-toastify';
 import useUser from '@/hooks/useUser';
 
@@ -139,7 +137,8 @@ function Order() {
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/products/${id}/summary`);
+        const response = await api.get(`/products/${id}/summary`);
+  
         setBrandName(response.data.data.brandName);
         setImageURL(response.data.data.imageURL);
         setItemName(response.data.data.name);
@@ -168,7 +167,7 @@ function Order() {
           quantity: Number(receiver.count),
         }));
 
-        const response = await axios.post(`${baseUrl}/order`, {
+        const response = await api.post('/order',{
           'productId': Number(id),
           'message': watch('message'),
           'messageCardId': String(watch('selectedId')),
@@ -179,6 +178,7 @@ function Order() {
             Authorization: getAuthToken(),
           }
         });
+
         alert(`주문이 완료되었습니다.\n상품명: ${name}\n구매 수량: ${totalCount}\n발신자 이름: ${watch('senderName')}\n메시지: ${watch('message')}`);
         navigate('/');
       } catch (error: any) {

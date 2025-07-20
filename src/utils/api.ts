@@ -3,9 +3,6 @@ import { toast } from 'react-toastify';
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
-    // 필요시 추가 설정도 가능
-    // timeout: 10000,
-    // headers: { 'Content-Type': 'application/json' },
 });
 
 export function IsErrorStatus(error: any, msg: string,navigate:any) {

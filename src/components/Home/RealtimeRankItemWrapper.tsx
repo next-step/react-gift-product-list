@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import { api } from '../../utils/api'
 // Item 영역 시작
 const RealtimeRankItemWrapperStyle = styled.div`
   width: 100%;
@@ -144,7 +144,7 @@ function RealtimeRankItemWrapper({ selectedGroup, selectedType }: { selectedGrou
 
             setIsLoading(true);
             try {
-                const response = await axios.get(`${baseUrl}/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
+                const response = await api.get(`/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
                 setRanking(response.data.data);
                 setIsError(false);
             } catch (error) {

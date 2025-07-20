@@ -4,7 +4,7 @@ import PromoBanner from './PromoBanner';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import { api } from '../../utils/api'
 
 const GiftCategorySelectorStyle = styled.div`
   width: auto;
@@ -84,7 +84,7 @@ function GiftCategorySelectorItemBox() {
   useEffect(() => {
     const fetchThemes = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/themes`);
+        const response = await api.get('/themes');
         setThemes(response.data.data);
       } catch (error) {
         setIsError(true);

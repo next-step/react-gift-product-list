@@ -7,10 +7,7 @@ import NavBar from '../components/NavBar';
 import useInput from '@/hooks/useInput';
 import useUser from '@/hooks/useUser';
 
-import axios from 'axios';
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
-import {ToastContainer, toast} from 'react-toastify';
-import { useState } from 'react';
+import {ToastContainer} from 'react-toastify';
 
 import { api, IsErrorStatus} from '../utils/api'
 
@@ -108,7 +105,7 @@ function Login() {
 
   const fetchLogin = async () => {
     try {
-      const response = await axios.post(`${baseUrl}/login`,{
+      const response = await api.post('/login',{
         'email': email.value,
         'password': password.value
       },{
