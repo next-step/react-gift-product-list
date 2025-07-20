@@ -3,5 +3,6 @@ export const PATH = {
   LOGIN: "/login",
   MY: "/my",
   ORDER: "/order/:itemId",
+  THEME: "/themes/:themeId",
   NOTFOUND: "*",
 };

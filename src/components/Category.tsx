@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useFetch } from "@/hooks/useFetch";
 import { API } from "@/constants/api";
+import { useNavigate } from "react-router-dom";
 
 type Theme = {
   themeId: number;
@@ -24,6 +25,7 @@ export default function Category() {
           {categories.map((item) => (
             <CategoryCard
               key={item.themeId}
+              themeId={item.themeId}
               image={item.image}
               name={item.name}
             />
@@ -35,9 +37,23 @@ export default function Category() {
   );
 }
 
-function CategoryCard({ image, name }: { image: string; name: string }) {
+function CategoryCard({
+  themeId,
+  image,
+  name,
+}: {
+  themeId: number;
+  image: string;
+  name: string;
+}) {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    navigate(`/themes/${themeId}`);
+  };
+
   return (
-    <CategoryItem>
+    <CategoryItem onClick={handleClick}>
       <Image src={image} alt={name} />
       <Label>{name}</Label>
     </CategoryItem>

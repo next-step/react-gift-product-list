@@ -9,6 +9,7 @@ import LoginPage from "@/pages/Login/LoginPage";
 import MyPage from "@/pages/MyPage";
 import NotFoundPage from "@/pages/NotfoundPage";
 import OrderPage from "@/pages/OrderPage";
+import ThemePage from "@/pages/ThemePage";
 import { ToastContainer } from "react-toastify";
 
 const LayoutWrapper = () => (
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: PATH.LOGIN, element: <LoginPage /> },
       { path: PATH.MY, element: <MyPage /> },
       { path: PATH.ORDER, element: <OrderPage /> },
+      { path: PATH.THEME, element: <ThemePage /> },
       { path: PATH.NOTFOUND, element: <NotFoundPage /> },
     ],
   },

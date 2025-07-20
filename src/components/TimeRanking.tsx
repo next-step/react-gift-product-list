@@ -4,6 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import Spacing from "./Spacing";
 import { useFetch } from "@/hooks/useFetch";
 import { API } from "@/constants/api";
+import type { ProductInfo } from "@/types/product";
 
 const genderOptions = [
   { label: "ALL", icon: "ALL", value: "ALL" },
@@ -18,20 +19,6 @@ type Gender = "ALL" | "여성" | "남성" | "청소년";
 type TargetType = "ALL" | "FEMALE" | "MALE" | "TEEN";
 type Rank = "받고 싶어한" | "많이 선물한" | "위시로 받은";
 type RankType = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
-
-type Product = {
-  id: number;
-  name: string;
-  price: {
-    basicPrice: number;
-    sellingPrice: number;
-    discountRate: number;
-  };
-  imageURL: string;
-  brandInfo: {
-    name: string;
-  };
-};
 
 export default function TimeRanking() {
   const navigate = useNavigate();
@@ -69,7 +56,7 @@ export default function TimeRanking() {
     }
   };
 
-  const { data, loading } = useFetch<Product[]>(API.PRODUCT_RANKING, {
+  const { data, loading } = useFetch<ProductInfo[]>(API.PRODUCT_RANKING, {
     targetType: searchTargetType(selectedGender),
     rankType: searchRankType(selectedRankType),
   });
