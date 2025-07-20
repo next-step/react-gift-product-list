@@ -43,7 +43,7 @@ const OrderPage = () => {
     defaultValues: {
       senderName: user?.email.split("@")[0] ?? "",
       message: "",
-      selectedCardId: null,
+      selectedCardId: "904",
       receivers: [],
     },
     mode: "onBlur",
@@ -60,24 +60,36 @@ const OrderPage = () => {
   };
 
   const onValid = async (data: OrderFormValues) => {
-    if (!product) return;
+  if (!product) return;
 
-    if (!token) {
-      toast.error("로그인이 필요합니다.");
-      navigate(PATH.LOGIN, { replace: true }); 
-      return;
-    }
+  if (!token) {
+    toast.error("로그인이 필요합니다.");
+    navigate(PATH.LOGIN, { replace: true });
+    return;
+  }
 
-    try {
-      await postCreateOrder(data, product.id, token);
-      toast.success("주문이 성공적으로 완료되었습니다!");
-      navigate(PATH.HOME, { replace: true }); 
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.data?.message || "주문 요청 중 오류가 발생했습니다.";
-      toast.error(msg);
+  try {
+    await postCreateOrder(data, product.id, token);
+
+    const totalQuantity = data.receivers.reduce((sum, r) => sum + r.quantity, 0);
+
+    const confirmed = window.confirm(
+      `주문이 완료되었습니다.\n` +
+      `상품명: ${product.name}\n` +
+      `구매 수량: ${totalQuantity}\n` +
+      `받는 사람: ${data.receivers[0].name}\n` +
+      `메시지: ${data.message}`
+    );
+
+    if (confirmed) {
+      navigate(PATH.HOME, { replace: true });
     }
-  };
+  } catch (err: any) {
+    const msg = err?.response?.data?.data?.message || "주문 요청 중 오류가 발생했습니다.";
+    toast.error(msg);
+  }
+};
+
 
   const fetchProduct = useCallback(async () => {
     if (!id || isNaN(Number(id))) {

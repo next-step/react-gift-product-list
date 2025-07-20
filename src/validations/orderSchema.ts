@@ -11,7 +11,7 @@ export const orderFormSchema = z.object({
     .min(1, "메시지를 입력해주세요."),
 
   selectedCardId: z
-    .number()
+    .string()
     .nullable()
     .optional(),
 

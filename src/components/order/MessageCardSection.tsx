@@ -12,7 +12,7 @@ const MessageCardSection = () => {
   const message = useWatch({ control, name: "message" });
 
   const handleSelectCard = (card: MessageCard) => {
-    setValue("selectedCardId", card.id);
+setValue("selectedCardId", String(card.id));
 
     const isCurrentMessageDefault = messageCards.some(
       (c) => c.defaultTextMessage === message
@@ -24,8 +24,7 @@ const MessageCardSection = () => {
   };
 
   const selectedCard =
-    messageCards.find((card) => card.id === selectedCardId) ?? messageCards[0];
-
+  messageCards.find((card) => String(card.id) === selectedCardId) ?? messageCards[0];
   return (
     <Wrapper>
       <ThumbList>
