@@ -8,6 +8,8 @@ import { Navigation } from "@/components/header/Navigation";
 import { Spinner } from "@/components/common/Spinner";
 import { fetchThemeInfo, fetchThemeProducts } from "@/api/theme";
 import { PATH } from "@/constants/path";
+import { useIntersect } from "@/hooks/useIntersect";
+import type { ProductSummary } from "@/api/product";
 
 interface ThemeInfo {
   themeId: number;
@@ -17,29 +19,16 @@ interface ThemeInfo {
   backgroundColor: string;
 }
 
-interface Product {
-  id: number;
-  name: string;
-  price: {
-    basicPrice: number;
-    sellingPrice: number;
-    discountRate: number;
-  };
-  imageURL: string;
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
-}
-
 const ThemeProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [theme, setTheme] = useState<ThemeInfo | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductSummary[]>([]);
+  const [cursor, setCursor] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const loadThemeInfo = useCallback(async () => {
     try {
@@ -53,20 +42,35 @@ const ThemeProduct = () => {
   }, [id, navigate]);
 
   const loadProducts = useCallback(async () => {
+    if (!hasMore || isLoadingMore) return;
+
+    setIsLoadingMore(true);
     try {
-      const data = await fetchThemeProducts(Number(id), 0, 10);
-      setProducts(data.list);
+      const data = await fetchThemeProducts(Number(id), cursor, 10);
+      setProducts(prev => [...prev, ...data.list]);
+      setCursor(data.cursor);
+      setHasMore(data.hasMoreList);
     } catch {
-      setProducts([]);
+      setHasMore(false);
     } finally {
+      setIsLoadingMore(false);
       setLoading(false);
     }
-  }, [id]);
+  }, [cursor, hasMore, isLoadingMore, id]);
 
   useEffect(() => {
     loadThemeInfo();
+  }, [loadThemeInfo]);
+
+  useEffect(() => {
     loadProducts();
-  }, [loadThemeInfo, loadProducts]);
+  }, [loadProducts]);
+
+  const observerRef = useIntersect<HTMLDivElement>(() => {
+  if (!isLoadingMore && hasMore) {
+    loadProducts();
+  }
+}, hasMore);
 
   if (loading) return <Spinner size={48} withWrapper />;
 
@@ -88,16 +92,32 @@ const ThemeProduct = () => {
             <EmptyBox>상품이 없습니다.</EmptyBox>
           ) : (
             <ProductList>
-              {products.map((item) => (
-                <ProductCard key={item.id}>
-                  <ProductImage src={item.imageURL} alt={item.name} />
-                  <ProductName>{item.name}</ProductName>
-                  <ProductBrand>{item.brandInfo.name}</ProductBrand>
-                  <ProductPrice>
-                    {item.price.sellingPrice.toLocaleString()}원
-                  </ProductPrice>
-                </ProductCard>
-              ))}
+              {products.map((item, index) => {
+                const isLast = index === products.length - 1;
+                return (
+                  <ProductCard key={item.id}>
+                    {isLast ? (
+                      <div ref={observerRef}>
+                        <ProductImage src={item.imageURL} alt={item.name} />
+                        <ProductName>{item.name}</ProductName>
+                        <ProductBrand>{item.brandInfo.name}</ProductBrand>
+                        <ProductPrice>
+                          {item.price.sellingPrice.toLocaleString()}원
+                        </ProductPrice>
+                      </div>
+                    ) : (
+                      <>
+                        <ProductImage src={item.imageURL} alt={item.name} />
+                        <ProductName>{item.name}</ProductName>
+                        <ProductBrand>{item.brandInfo.name}</ProductBrand>
+                        <ProductPrice>
+                          {item.price.sellingPrice.toLocaleString()}원
+                        </ProductPrice>
+                      </>
+                    )}
+                  </ProductCard>
+                );
+              })}
             </ProductList>
           )}
         </Section>
