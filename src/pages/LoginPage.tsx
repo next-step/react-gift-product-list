@@ -1,13 +1,10 @@
 ﻿import { useNavigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext'
 import styled from '@emotion/styled'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
 import LoginFormSection from '@/components/LoginFormSection'
 import Layout from '@/Layout'
-import { postLogin } from '@/api/auth'
-import { toast } from 'react-toastify'
 
 const Container = styled.div`
   display: flex;
@@ -36,23 +33,11 @@ const Logo = styled.h2`
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useAuth()
   const from = (location.state as { from?: string })?.from ?? '/'
 
 
-  const handleSuccess = async (email: string, password: string) => {
-    try {
-      const info = await postLogin(email, password)
-      login(info)
-      navigate(from, { replace: true })
-    } catch (err: any) {
-      const code = err?.statusCode ?? 0
-      if (code >= 400 && code < 500) {
-        toast.error(err.message)
-      } else {
-        toast.error('로그인에 실패했습니다.')
-      }
-    }
+  const handleSuccess = () => {
+    navigate(from, { replace: true })
   }
 
   return (

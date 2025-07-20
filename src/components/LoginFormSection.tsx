@@ -4,9 +4,13 @@ import useLoginForm from '@/hooks/useLoginForm'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
+import { useAuth } from '@/contexts/AuthContext'
+import { postLogin } from '@/api/auth'
+import { toast } from 'react-toastify'
+import type { UserInfo } from '@/utils/storage'
 
 interface LoginFormSectionProps {
-  onSuccess: (email: string, password: string) => void
+  onSuccess?: (info: UserInfo) => void
 }
 
 const Form = styled.form`
@@ -58,25 +62,36 @@ const Button = styled.button`
 `
 
 export default function LoginFormSection({ onSuccess }: LoginFormSectionProps) {
-    const {
-        email,
-        setEmail,
-        password,
-        setPassword,
-        emailError,
-        passwordError,
-        handleEmailBlur,
-        handlePasswordBlur,
-        isValid,
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    emailError,
+    passwordError,
+    handleEmailBlur,
+    handlePasswordBlur,
+    isValid,
+  } = useLoginForm()
+  const { login } = useAuth()
 
-    } = useLoginForm()
-
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!emailError && !passwordError && email && password) {
-      onSuccess(email, password)
-        }
+    if (!isValid) return
+
+    try {
+      const info = await postLogin(email, password)
+      login(info)
+      onSuccess?.(info)
+    } catch (err: any) {
+      const code = err?.statusCode ?? 0
+      if (code >= 400 && code < 500) {
+        toast.error(err.message)
+      } else {
+        toast.error('로그인에 실패했습니다.')
+      }
     }
+  }
 
     return (
         <Form onSubmit={handleSubmit}>
