@@ -7,7 +7,7 @@ import { URLS } from '@assets/urls';
 import { Spacer } from '@src/styles/Spacer';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SESSION_KEY_NAME } from '@src/assets/sessionId';
+import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 
 const NavigationBar = () => {
   const navigate = useNavigate();

@@ -9,7 +9,7 @@ import { apiClient } from '@src/api/FetchData';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
 import { useNavigate } from 'react-router-dom';
 import { URLS } from '@src/assets/urls';
-import { SESSION_KEY_NAME } from '@src/assets/sessionId';
+import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 import type { HttpsFailedResponseTypes } from '../../types/LoginFetchDataType';
 import { toast, ToastContainer } from 'react-toastify';
 

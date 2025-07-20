@@ -1,4 +1,4 @@
-import { SESSION_KEY_NAME } from '@src/assets/sessionId';
+import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 import {
   StyledSelectFriendBtn,
   StyledSelectFriendBtnPlus,
