@@ -272,6 +272,7 @@ const Order = () => {
       alert(
         `주문이 완료되었습니다.\n 상품명: ${product?.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
       );
+      navigate('/');
     } catch (err: any) {
       if (err.response?.status === 401) {
         alert('로그인이 필요합니다.');
