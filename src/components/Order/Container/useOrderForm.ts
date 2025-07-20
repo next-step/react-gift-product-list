@@ -7,6 +7,7 @@ import { URLS } from '@src/assets/urls';
 import { orderSchema } from '@src/components/Schemas/orderSchmea';
 import type { GoodSummary } from '@src/types/Goods';
 import type { OrderFormValue } from '@src/types/OrderFormValues';
+import type { Recipient } from '@src/types/Recipient';
 import { useEffect, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -68,6 +69,24 @@ export const useOrderForm = () => {
   } = methods;
   const onSubmit: SubmitHandler<OrderFormValue> = (data) => {
     alert(`Name: ${data.sendName}, Message: ${data.msg}`);
+
+    const postOrder = async () => {
+      const orderBody = {
+        productId: selectedProduct?.id,
+        message: data.msg,
+        orderName: data.sendName,
+        receivers: data.recipients.map((recipient: Recipient) => {
+          return {
+            name: recipient.receiveName,
+            phoneNumber: recipient.receiveTel,
+            quantity: recipient.count,
+          };
+        }),
+      };
+      console.log(orderBody);
+      //   const fetchOrder = await apiClient('POST', BASIC_ENDPOINT.order);
+    };
+    postOrder();
   };
 
   const currentRecipients = watch('recipients');
