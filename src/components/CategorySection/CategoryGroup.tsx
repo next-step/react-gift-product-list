@@ -1,16 +1,13 @@
 import styled from '@emotion/styled';
-import { useCategoryThemes } from '@/hooks/useCategoryThemes';
 import CategoryContent from '@/components/CategorySection/CategoryContent';
 
 const CategoryGroup = () => {
-  const themes = useCategoryThemes();
-
   return (
     <Section>
       <TitleWrapper>
         <Title>선물 테마</Title>
       </TitleWrapper>
-      <CategoryContent themes={themes} />
+      <CategoryContent />
     </Section>
   );
 };
