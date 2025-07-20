@@ -9,6 +9,9 @@ import {
 } from "@/hooks/order";
 import { getProductSummary } from "@/api/product";
 import { createOrder } from "@/api/order/create-order";
+import { ApiError, UnauthorizedError } from "@/api/custom-error";
+import { showToast } from "@/utils";
+import { API_ERROR_MESSAGE } from "@/constants";
 
 export const useOrderPageLogic = () => {
   const { goHomePage, goLoginPage } = useRouter();
@@ -17,15 +20,9 @@ export const useOrderPageLogic = () => {
   const { totalQuantity } = useOrderCalculation();
   const { id } = useParams<{ id: string }>();
 
-  const productApi = useApiStatus({
-    showErrorToast: true,
-  });
+  const productApi = useApiStatus();
 
-  const orderApi = useApiStatus({
-    showSuccessToast: false,
-    showErrorToast: true,
-    rethrowError: true,
-  });
+  const orderApi = useApiStatus();
 
   const order = watch();
 
@@ -54,30 +51,35 @@ export const useOrderPageLogic = () => {
 
         return productData;
       })
-      .catch(() => {
-        goHomePage();
+      .catch(error => {
+        if (
+          error instanceof ApiError &&
+          error.statusCode >= 400 &&
+          error.statusCode < 500
+        ) {
+          showToast.error(error.message);
+          goHomePage();
+        } else if (error instanceof UnauthorizedError) {
+          showToast.error(API_ERROR_MESSAGE.LOGIN);
+          goLoginPage({ redirect: false });
+        } else {
+          showToast.error(API_ERROR_MESSAGE.DEFAULT);
+        }
       });
   }, [id]);
 
   const handleOrderSubmit = async () => {
-    try {
-      const isValidForm = await validateAllFields();
+    const isValidForm = await validateAllFields();
+    if (!isValidForm) return;
 
-      if (!isValidForm) {
-        return;
-      }
+    if (!isOrderComplete()) return;
 
-      if (!isOrderComplete()) {
-        return;
-      }
+    if (!order.product) return;
 
-      if (!order.product) {
-        return;
-      }
+    const product = order.product;
 
-      const product = order.product;
-
-      await orderApi.execute(async () => {
+    orderApi
+      .execute(async () => {
         return await createOrder({
           productId: product.id,
           message: order.message,
@@ -90,21 +92,25 @@ export const useOrderPageLogic = () => {
               quantity: receiver.quantity,
             })) || [],
         });
+      })
+      .then(() => {
+        alert(
+          `주문이 완료되었습니다.\n상품명: ${order.product?.name}\n구매 수량:${totalQuantity} \n발신자 이름: ${order.senderName}\n메시지: ${order.message}`,
+        );
+        reset();
+        goHomePage();
+      })
+      .catch(error => {
+        if (error instanceof UnauthorizedError) {
+          showToast.error(API_ERROR_MESSAGE.LOGIN);
+          goLoginPage({ redirect: false });
+        } else if (error instanceof ApiError) {
+          showToast.error(`주문 실패: ${error.message}`);
+        } else {
+          showToast.error(API_ERROR_MESSAGE.ORDER || API_ERROR_MESSAGE.DEFAULT);
+        }
+        console.error("주문 처리 중 오류 발생:", error);
       });
-
-      alert(
-        `주문이 완료되었습니다.\n상품명: ${order.product?.name}\n구매 수량:${totalQuantity} \n발신자 이름: ${order.senderName}\n메시지: ${order.message}`,
-      );
-      reset();
-      goHomePage();
-    } catch (error) {
-      console.error("주문 처리 중 오류 발생:", error);
-
-      if (error instanceof Error) {
-        goLoginPage({ redirect: false });
-        return;
-      }
-    }
   };
 
   return {
