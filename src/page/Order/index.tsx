@@ -10,10 +10,69 @@ import toLocaleString from '@/utils/toLocaleString';
 import useRanking from './hooks/useRnaking';
 import ProductInfo from './components/ProductInfo';
 import { useUserInfo } from '@/contexts/UserInfoContext';
-import { useEffect } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '@/api/apiBaseUrl';
+import postOrderInfo from './utils/postOrderInfo';
 import { toast } from 'react-toastify';
+
+export interface OrderInfoValues {
+  message: string;
+  name: string;
+  receiverInfos: { name: string; phoneNumber: string; quantity: number }[];
+}
+
+const OrderPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { productSummaryData } = useRanking(id as string);
+  const { userInfo } = useUserInfo();
+  const orderForm = useForm<OrderInfoValues>({
+    defaultValues: { message: '축하해요.', name: userInfo.name, receiverInfos: [] },
+  });
+
+  const onSubmit = async (orderData: OrderInfoValues) => {
+    if (!id) return;
+    if (orderData.receiverInfos.length <= 0) {
+      toast('받는 사람이 없습니다');
+      return;
+    }
+
+    const token = userInfo.token;
+    const isSuccess = await postOrderInfo({
+      orderData,
+      navigate,
+      id,
+      token,
+    });
+
+    if (isSuccess) {
+      alert(`
+      주문이 완료되었습니다.
+      상품명: ${productSummaryData?.name}
+      구매 수량: ${orderData.receiverInfos.length}
+      발신자 이름: ${orderData.name}
+      메시지: ${orderData.message}`);
+      navigate(ROUTES.HOME);
+    }
+  };
+
+  return (
+    <>
+      <Section>
+        <FormProvider {...orderForm}>
+          <form onSubmit={orderForm.handleSubmit(onSubmit)}>
+            <MessageCardSection />
+            <MessageInput />
+            <SenderInfo />
+            <ReceiverField />
+            {productSummaryData && <ProductInfo productSummaryData={productSummaryData} />}
+            <OrderButton type="submit">{toLocaleString(29000)}원 주문하기</OrderButton>
+          </form>
+        </FormProvider>
+      </Section>
+    </>
+  );
+};
+
+export default OrderPage;
 
 const Section = styled.section`
   width: 100%;
@@ -39,85 +98,3 @@ const OrderButton = styled.button`
     opacity: 0.6;
   }
 `;
-export interface OrderInfoValues {
-  message: string;
-  name: string;
-  receivers: { name: string; phoneNumber: string; quantity: number }[];
-}
-
-const OrderPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { productSummaryData } = useRanking(id as string);
-  const { userInfo } = useUserInfo();
-  const orderForm = useForm<OrderInfoValues>({
-    defaultValues: { message: '축하해요.', name: userInfo.name, receivers: [] },
-  });
-
-  const watch = orderForm.watch;
-  const { message, name, receivers } = watch();
-
-  // console.log(message, name, receivers);
-
-  const onSubmit = () => {
-    alert('주문 성공!');
-    navigate(ROUTES.HOME);
-  };
-
-  useEffect(() => {
-    const data = {
-      productId: Number(id),
-      message: message,
-      messageCardId: 'card123',
-      ordererName: name,
-      receivers: receivers,
-    };
-
-    const headers = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: userInfo.token,
-      },
-    };
-    const dataFetch = async () => {
-      try {
-        const response = await axios.post(`${API_BASE_URL}/api/order`, data, headers);
-        console.log(response.data.data);
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-          const status = error.response?.data?.data?.statusCode;
-          toast(
-            status && status >= 400 && status < 500
-              ? error.response?.data?.data?.message
-              : '기타 에러 발생(서버 에러, 네트워크 에러 등)'
-          );
-          if (status === 401) {
-            navigate(ROUTES.LOGIN);
-          }
-        }
-        return false;
-      }
-    };
-
-    dataFetch();
-  }, []);
-
-  return (
-    <>
-      <Section>
-        <FormProvider {...orderForm}>
-          <form onSubmit={orderForm.handleSubmit(onSubmit)}>
-            <MessageCardSection />
-            <MessageInput />
-            <SenderInfo />
-            <ReceiverField />
-            {productSummaryData && <ProductInfo productSummaryData={productSummaryData} />}
-            <OrderButton type="submit">{toLocaleString(29000)}원 주문하기</OrderButton>
-          </form>
-        </FormProvider>
-      </Section>
-    </>
-  );
-};
-
-export default OrderPage;
