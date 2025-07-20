@@ -1,8 +1,18 @@
-import { rankingItemMock } from "@/assets/rankingItemMock";
+import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import useFetch from "@/hooks/useFetch";
+import type { RankingProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+interface ProductListData {
+  list: RankingProductType[];
+  cursor: number;
+  hasMoreList: boolean;
+}
+
+const PRODUCT_LIST_LIMIT = 20;
 
 const ProductList = () => {
   const navigate = useNavigate();
@@ -12,19 +22,33 @@ const ProductList = () => {
     },
     [navigate],
   );
+
+  const { themesId } = useParams();
+  const { data, isLoading } = useFetch<ProductListData>(`/api/themes/${themesId}/products`, {
+    params: {
+      cursor: 0,
+      limit: PRODUCT_LIST_LIMIT,
+    },
+  });
+
+  if (isLoading) {
+    return <Loading height="2353px" />;
+  }
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <Container>
       <Content>
-        {rankingItemMock.map((item) => (
+        {data.list.map((item) => (
           <Item key={item.id} onClick={() => goOrderPage(item.id)}>
             <ItemContent>
               <ItemContentImg src={item.imageURL} />
               <ItemContentBrand>{item.brandInfo.name}</ItemContentBrand>
               <ItemContentTitle>{item.name}</ItemContentTitle>
-              <ItemContentPrice>
-                {item.price.sellingPrice}
-                <span>원</span>
-              </ItemContentPrice>
+              <ItemContentPrice>{item.price.sellingPrice}원</ItemContentPrice>
             </ItemContent>
           </Item>
         ))}
