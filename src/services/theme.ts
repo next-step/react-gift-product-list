@@ -8,4 +8,4 @@ export const getThemeInfo = async (themeId: string) => {
 export const getThemeProduct = async (themeId: string) => {
   const product = await baseHttp.get(`/themes/${themeId}/products`);
   return product.data;
-}
+};

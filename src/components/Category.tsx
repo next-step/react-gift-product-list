@@ -47,7 +47,7 @@ function CategoryCard({
   name: string;
 }) {
   const navigate = useNavigate();
-  
+
   const handleClick = () => {
     navigate(`/themes/${themeId}`);
   };
