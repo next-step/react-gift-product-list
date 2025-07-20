@@ -15,6 +15,7 @@ import type { ThemeInfo } from "@/types/ThemeInfo";
 import { useEffect, useRef, useState } from "react";
 import type { ThemeProduct } from "@/types/ThemeProducts";
 import ThemeProductsGrid from "./ThemeProductsGrid";
+import { OBSERVER_OPTIONS } from "./constants/observer";
 
 function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
   const loader = useRef<HTMLDivElement>(null);
@@ -41,7 +42,7 @@ function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
         }
       },
       {
-        threshold: 0.5,
+        threshold: OBSERVER_OPTIONS.THRESHOLD,
       }
     );
 
