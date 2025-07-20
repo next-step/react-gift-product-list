@@ -1,8 +1,5 @@
 import type { ThemeProduct } from "@/types/ThemeProducts";
-import {
-  EmptyProductContainer,
-  EmptyProductText,
-} from "../HomePage/components/TrendingGifts/TrendingGiftsProductsGrid";
+import EmptyProductContainer from "@/components/ProductCard/EmptyProductContainer";
 import { THEME_PRODUCTS_LABELS } from "./constants/labels";
 import styled from "@emotion/styled";
 import ProductCard from "@/components/ProductCard/ProductCard";
@@ -46,11 +43,7 @@ function ThemeProductsGridContent({
 
   if (themeProducts.length === 0) {
     return (
-      <EmptyProductContainer>
-        <EmptyProductText>
-          {THEME_PRODUCTS_LABELS.EMPTY_PRODUCT}
-        </EmptyProductText>
-      </EmptyProductContainer>
+      <EmptyProductContainer label={THEME_PRODUCTS_LABELS.EMPTY_PRODUCT} />
     );
   }
 

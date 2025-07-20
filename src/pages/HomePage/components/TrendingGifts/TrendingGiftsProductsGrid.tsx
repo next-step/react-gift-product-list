@@ -7,6 +7,7 @@ import {
 import ProductCard from "../../../../components/ProductCard/ProductCard";
 import { MoreInfo, MoreInfoWrapper } from "./TrendingGifts.styles";
 import { PRODUCT_GRID_TYPES } from "../../../../components/ProductCard/types/productGridTypes";
+import EmptyProductContainer from "@/components/ProductCard/EmptyProductContainer";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -16,22 +17,6 @@ const ProductGridContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing[4]};
 `;
 
-export const EmptyProductContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 125px;
-  margin-bottom: 125px;
-`;
-
-export const EmptyProductText = styled.p`
-  font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
-  font-weight: ${({ theme }) =>
-    theme.typography.label.label1Regular.fontWeight};
-`;
-
 interface ProductsGridPropsType {
   products: TrendingGiftsType[];
 }
@@ -39,11 +24,7 @@ interface ProductsGridPropsType {
 function TrendingGiftsProductsGrid({ products }: ProductsGridPropsType) {
   if (products.length === 0)
     return (
-      <EmptyProductContainer>
-        <EmptyProductText>
-          {TRENDING_GIFTS_EMPTY_MESSAGES.NO_PRODUCT}
-        </EmptyProductText>
-      </EmptyProductContainer>
+      <EmptyProductContainer label={TRENDING_GIFTS_EMPTY_MESSAGES.NO_PRODUCT} />
     );
 
   return (
