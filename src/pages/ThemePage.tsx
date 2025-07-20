@@ -83,7 +83,7 @@ export default function ThemePage() {
                 <Spacing height="4px" />
                 <Price>
                   {item.price.sellingPrice.toLocaleString()}
-                  <PriceeUnit>원</PriceeUnit>
+                  <PriceUnit>원</PriceUnit>
                 </Price>
               </Card>
             ))}
@@ -106,28 +106,22 @@ const HeaderWrapper = styled.section<{ backgroundColor: string }>`
 `;
 
 const Name = styled.p`
-  font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.1875rem;
-  color: rgb(247, 248, 249);
+  ${({ theme }) => theme.typography.label1Bold};
+  color: ${({ theme }) => theme.colors.gray[100]};
   margin: 0px;
   text-align: left;
 `;
 
 const Title = styled.h5`
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.6875rem;
-  color: rgb(255, 255, 255);
+  ${({ theme }) => theme.typography.title1Bold};
+  color: ${({ theme }) => theme.colors.gray.white};
   margin: 0px;
   text-align: left;
 `;
 
 const Description = styled.p`
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.375rem;
-  color: rgb(243, 244, 245);
+  ${({ theme }) => theme.typography.body1Regular};
+  color: ${({ theme }) => theme.colors.gray[200]};
   margin: 0px;
   text-align: left;
 `;
@@ -160,14 +154,12 @@ const Image = styled.img`
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 4px;
-  background-color: rgb(243, 244, 245);
+  background-color: ${({ theme }) => theme.colors.gray[200]};
 `;
 
 const Brand = styled.p`
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.1875rem;
-  color: rgb(176, 179, 186);
+  ${({ theme }) => theme.typography.body2Regular};
+  color: ${({ theme }) => theme.colors.gray[600]};
   margin: 0px;
   text-align: left;
   overflow: hidden;
@@ -176,10 +168,8 @@ const Brand = styled.p`
 `;
 
 const Label = styled.h6`
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.1875rem;
-  color: rgb(42, 48, 56);
+  ${({ theme }) => theme.typography.body2Regular};
+  color: ${({ theme }) => theme.colors.gray[900]};
   margin: 0px;
   text-align: left;
   display: -webkit-box;
@@ -190,20 +180,16 @@ const Label = styled.h6`
 `;
 
 const Price = styled.p`
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.5rem;
-  color: rgb(42, 48, 56);
+  ${({ theme }) => theme.typography.title2Bold};
+  color: ${({ theme }) => theme.colors.gray[900]};
   margin: 0px;
   text-align: left;
   word-break: break-word;
 `;
 
-const PriceeUnit = styled.span`
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5rem;
-  color: rgb(42, 48, 56);
+const PriceUnit = styled.span`
+  ${({ theme }) => theme.typography.subtitle1Regular};
+  color: ${({ theme }) => theme.colors.gray[900]};
   margin: 0px;
   text-align: left;
   word-break: break-word;
