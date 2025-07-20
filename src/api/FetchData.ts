@@ -11,11 +11,11 @@ const postFetch = async (object: string, body: Record<string, string> | null) =>
   //console.log(`postFetch process : object : ${object} , body : ${body && body.toString()}`);
   try {
     const res = await axios.post(import.meta.env.VITE_API_BASE_URL + object, body);
-    const data = res.data;
-    return data.message;
+    const data = res.data.data;
+    return data;
   } catch (error: AxiosError | unknown) {
     if (error instanceof AxiosError) {
-      return error.response?.data.data.message;
+      return error.response?.data.data;
     } else {
       return error;
     }

@@ -7,13 +7,14 @@ import { URLS } from '@assets/urls';
 import { Spacer } from '@src/styles/Spacer';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SESSION_KEY_NAME } from '@src/assets/sessionId';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
   type LoginMessgageTypes = '로그인' | '마이페이지';
 
   const [loginMessage, setLoginMessage] = useState<LoginMessgageTypes>('로그인');
-  const isLogined = sessionStorage.getItem('username');
+  const isLogined = sessionStorage.getItem(SESSION_KEY_NAME.username);
 
   const handelBack = () => {
     const referrer = document.referrer; // 이전 페이지의 URL

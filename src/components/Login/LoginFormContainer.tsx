@@ -5,8 +5,15 @@ import {
   StyledLoginKakoLogo,
 } from '@src/components/Login/StyledLoginFormContainer';
 import { useLoginForm } from './useLoginForm';
+import { apiClient } from '@src/api/FetchData';
+import { BASIC_ENDPOINT } from '@src/assets/endpoints';
+import { useNavigate } from 'react-router-dom';
+import { URLS } from '@src/assets/urls';
+import { SESSION_KEY_NAME } from '@src/assets/sessionId';
+import type { HttpsFailedResponseTypes } from './LoginFetchDataType';
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const {
     id,
     idError,
@@ -17,8 +24,31 @@ const LoginForm = () => {
     handlePwBlur,
     handlePwChange,
     isLoginButtonEnabled,
-    handelLogin,
   } = useLoginForm();
+
+  const handleLogin = async () => {
+    const formBody = {
+      email: id,
+      password: pw,
+    };
+    const fetchData = await apiClient('POST', BASIC_ENDPOINT.login, formBody, '');
+
+    if ((fetchData as HttpsFailedResponseTypes) && fetchData.statusCode < 500) {
+      //toast메시지
+    } else {
+      sessionStorage.setItem(SESSION_KEY_NAME.email, fetchData.email);
+      sessionStorage.setItem(SESSION_KEY_NAME.username, fetchData.name);
+      sessionStorage.setItem(SESSION_KEY_NAME.token, fetchData.authToken);
+
+      const redirectProductId = sessionStorage.getItem('redirectProductId');
+      if (redirectProductId) {
+        sessionStorage.removeItem('redirectProductId');
+        navigate(`${URLS.order}?productId=${redirectProductId}`);
+      } else {
+        navigate(URLS.home);
+      }
+    }
+  };
 
   return (
     <>
@@ -44,7 +74,7 @@ const LoginForm = () => {
           placeholder='비밀번호'
         />
         {pwError && <p>{pwError}</p>}
-        <StyledLoginButton onClick={handelLogin} disabled={!isLoginButtonEnabled}>
+        <StyledLoginButton onClick={handleLogin} disabled={!isLoginButtonEnabled}>
           로그인
         </StyledLoginButton>
       </StyledLoginComponentDiv>
