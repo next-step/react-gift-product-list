@@ -1,13 +1,11 @@
 import { useParams } from 'react-router-dom'
 import Layout from '@/components/Layout'
 import RecipientOverlay from '@/components/RecipientOverlay'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import CardData from '@/data/CardData'
-import { mockProductList } from '@/data/products'
 import type { Recipient } from '@/components/RecipientOverlay'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/Root'
-import { useEffect, useRef } from 'react'
 import {
   Container,
   Section,
@@ -27,6 +25,7 @@ import {
   ErrorText,
   RecipientTable,
 } from '@/styles/OrderPage.styled'
+import { toast } from 'react-toastify'
 
 export const OrderPage = () => {
   const didNavigate = useRef(false)
@@ -34,21 +33,37 @@ export const OrderPage = () => {
   const navigate = useNavigate()
 
   const [product, setProduct] = useState(null)
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    if (userInfo?.name) {
+      setSenderName(userInfo.name)
+    }
+  }, [])
+
   useEffect(() => {
     if (!productId) return
 
     const fetchProduct = async () => {
       try {
         const res = await fetch(`/api/products/${productId}`)
+        if (!res.ok) {
+          const text = await res.text()
+          toast.error(`상품 정보를 불러올 수 없습니다: ${text}`)
+          navigate(PATHS.HOME)
+          return
+        }
         const data = await res.json()
         setProduct(data.data)
       } catch (err) {
-        console.error(err)
+        toast.error('상품 정보를 불러오는 중 오류가 발생했습니다.')
+        navigate(PATHS.HOME)
       }
     }
 
     fetchProduct()
   }, [productId])
+
   const [orderCompleted, setOrderCompleted] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
   const selectedCard = CardData.find((card) => card.id === selectedCardId)
@@ -64,41 +79,62 @@ export const OrderPage = () => {
     recipients: '',
   })
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     const errors = {
       message: '',
       senderName: '',
       recipients: '',
     }
 
-    if (!message.trim()) {
-      errors.message = '메시지를 입력해주세요.'
-    }
-    if (!senderName.trim()) {
-      errors.senderName = '보내는 사람 이름을 입력해주세요.'
-    }
-    if (recipients.length === 0) {
-      errors.recipients = '받는 사람을 한 명 이상 추가해주세요.'
-    }
+    if (!message.trim()) errors.message = '메시지를 입력해주세요.'
+    if (!senderName.trim()) errors.senderName = '보내는 사람 이름을 입력해주세요.'
+    if (recipients.length === 0) errors.recipients = '받는 사람을 한 명 이상 추가해주세요.'
 
     setFormErrors(errors)
-
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
 
-    alert(
-      `주문이 완료되었습니다.
-      상품명: ${product?.name || ''}
-      구매 수량: ${totalQuantity}
-      발신자 이름: ${senderName}
-      메시지: ${message}`
-    )
-    setOrderCompleted(true)
-    if (!didNavigate.current) {
-      navigate(PATHS.HOME)
-      didNavigate.current = true
+    const authToken = localStorage.getItem('authToken')
+
+    try {
+      const res = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          productId,
+          senderName,
+          message,
+          recipients,
+          quantity: totalQuantity,
+        }),
+      })
+
+      if (res.status === 401) {
+        toast.error('로그인이 필요합니다.')
+        navigate(PATHS.LOGIN)
+        return
+      }
+
+      if (!res.ok) {
+        const text = await res.text()
+        toast.error(`주문 실패: ${text}`)
+        return
+      }
+
+      toast.success('주문이 완료되었습니다.')
+      setOrderCompleted(true)
+      if (!didNavigate.current) {
+        navigate(PATHS.HOME)
+        didNavigate.current = true
+      }
+    } catch (err) {
+      toast.error('주문 요청 중 오류가 발생했습니다.')
     }
   }
+
   useEffect(() => {
     if (orderCompleted && !didNavigate.current) {
       const timer = setTimeout(() => {
