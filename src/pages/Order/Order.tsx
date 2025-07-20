@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
 import { useContext } from 'react';
+import { postOrder } from '@/apis/order';
 
 export type RecieverType = {
   name: string;
@@ -90,16 +91,44 @@ function Order() {
   const currentCardId = watch('currentCardId');
   const cost = watch('cost');
 
+  const handleOrder = async (data: FormValues) => {
+    try {
+      const response = await postOrder({
+        productId: parsedItemId,
+        message: data.text,
+        messageCardId: String(data.currentCardId),
+        ordererName: data.sender,
+        receivers: data.reciever.map((receiver) => ({
+          name: receiver.name,
+          phoneNumber: receiver.phone,
+          quantity: receiver.count,
+        })),
+      });
+      if (response.data.success) {
+        toast.success('주문이 완료되었습니다.');
+        alert(
+          `주문이 완료되었습니다.\n상품명: ${item?.name}\n구매 수량: ${data.count}\n발신자 이름: ${data.sender}\n메시지: ${data.text}`,
+        );
+        navigate('/');
+      } else {
+        toast.error('주문에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response?.status === 401) {
+        toast.error(`로그인이 필요합니다. ${err}`);
+        navigate('/login');
+      }
+    }
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (!item) return <div>상품 정보를 찾을 수 없습니다.</div>;
   return (
     <OrderContainer
       onSubmit={handleSubmit(
         (data) => {
-          alert(
-            `주문이 완료되었습니다.\n상품명: ${item.name}\n구매 수량: ${data.count}\n발신자 이름: ${data.sender}\n메시지: ${data.text}`,
-          );
-          navigate('/');
+          handleOrder(data);
         },
         (errors) => {
           alert(`폼 에러 ${errors}`);

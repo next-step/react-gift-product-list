@@ -17,7 +17,7 @@ apiClient.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${token}`;
     }
     return config;
   },
@@ -26,12 +26,9 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
-
   (error: unknown) => {
     if (axios.isAxiosError(error)) {
-      type ErrorResponseData = { data?: { status?: string } };
-      const statusMsg = (error.response?.data as ErrorResponseData)?.data?.status ?? '에러 발생';
-      return Promise.reject(new Error(statusMsg));
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   },
