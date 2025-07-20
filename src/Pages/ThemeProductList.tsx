@@ -2,13 +2,14 @@ import Header from "@/components/Common/Header";
 import Layout from "@/components/Common/Layout";
 import { SectionContainer } from "@/components/Common/SectionLayout";
 import styled from "@emotion/styled";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { getThemesList } from "@/api/themes";
 import { useFetchData } from "@/hooks/useFetchData";
 import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 import RankingItem from "@/components/Common/ProductItem";
+import { toast } from "react-toastify";
 
 type ThemeProductsResponse = {
   list: BasicGiftProduct[];
@@ -18,6 +19,7 @@ type ThemeProductsResponse = {
 
 const ThemeProductList = () => {
   const { themeId } = useParams<{ themeId: string }>();
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState<BasicGiftProduct[]>([]);
   const [cursor, setCursor] = useState(0);
@@ -25,6 +27,8 @@ const ThemeProductList = () => {
   const [loadingMore, setLoadingMore] = useState(false);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation();
+  const isDirectEnter = location.key === "default";
 
   const fetchFn = useCallback(async () => {
     const res = await getThemesList(Number(themeId), 0, 10);
@@ -35,7 +39,17 @@ const ThemeProductList = () => {
     data: initialData,
     loading,
     error,
+    errorStatus,
   } = useFetchData<ThemeProductsResponse>(fetchFn);
+
+  useEffect(() => {
+    if (errorStatus === 404) {
+      if (isDirectEnter) {
+        toast.error("해당 ID에 일치하는 데이터가 없습니다.");
+      }
+      navigate("/");
+    }
+  }, [errorStatus, isDirectEnter, navigate]);
 
   useEffect(() => {
     if (initialData) {
