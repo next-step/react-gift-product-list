@@ -18,7 +18,7 @@ export const Grid = styled.div`
   gap: ${({ theme }) => theme.spacing.spacing3};
 `;
 
-export const Item = styled.div`
+export const Item = styled.button`
   text-align: center;
 `;
 
