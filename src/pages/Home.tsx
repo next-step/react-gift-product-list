@@ -4,10 +4,12 @@ import SelectFriendContainer from '@src/components/Home/SelectFriend/SelectFrien
 import NavigationBar from '@components/Common/NavigationBar';
 import StyledTopestDiv from '@src/styles/StyledTopesDiv';
 import { Spacer } from '@src/styles/Spacer';
+import { ToastContainer } from 'react-toastify';
 
 function Home() {
   return (
     <StyledTopestDiv>
+      <ToastContainer />
       <NavigationBar />
       <SelectFriendContainer />
       <PresentThemeContainer />

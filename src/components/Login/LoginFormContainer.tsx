@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { URLS } from '@src/assets/urls';
 import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 import type { HttpsFailedResponseTypes } from '../../types/LoginFetchDataType';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -54,7 +54,6 @@ const LoginForm = () => {
   return (
     <>
       <StyledLoginComponentDiv>
-        <ToastContainer />
         <StyledLoginKakoLogo>kakao</StyledLoginKakoLogo>
         <StyeldLoginInput
           type='text'

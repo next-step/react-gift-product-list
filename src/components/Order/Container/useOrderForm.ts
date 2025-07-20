@@ -2,12 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@src/api/FetchData';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
 import { PARAMS } from '@src/assets/params';
+import { URLS } from '@src/assets/urls';
 import { orderSchema } from '@src/components/Schemas/orderSchmea';
 import type { GoodSummary } from '@src/types/Goods';
 import type { OrderFormValue } from '@src/types/OrderFormValues';
 import { useEffect, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const getOrderFetchData = async (productId: string | null) => {
   const fetchData = await apiClient(
@@ -16,30 +18,37 @@ const getOrderFetchData = async (productId: string | null) => {
     null,
     ''
   );
-
   return fetchData.data;
 };
 
 export const useOrderForm = () => {
   const [searchParams] = useSearchParams();
   const [selectedProduct, setSelectedProduct] = useState<GoodSummary | null>(null);
+  const navigate = useNavigate();
 
   //url를 통해 받은 상품 id를 가지고 상품 container를 생성해 렌더링
   useEffect(() => {
     const productId = searchParams.get(PARAMS.productId);
 
     const fetchAndSetProduct = async () => {
-      const fetchData = await getOrderFetchData(productId);
-
-      if (fetchData && fetchData.statusCode < 500) {
-        console.log('0');
-      } else {
-        setSelectedProduct(fetchData);
+      try {
+        const fetchData = await getOrderFetchData(productId);
+        console.log(fetchData);
+        if (fetchData && fetchData.statusCode < 500) {
+          toast(fetchData.message);
+          navigate(URLS.home);
+        } else {
+          setSelectedProduct(fetchData);
+        }
+      } catch (error) {
+        console.error('상품 조회 중 에러 발생:', error);
+        toast('상품 정보를 불러올 수 없습니다.');
+        navigate(URLS.home);
       }
     };
 
     fetchAndSetProduct();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
   const methods = useForm<OrderFormValue>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
