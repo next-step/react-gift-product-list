@@ -47,7 +47,6 @@ const GiftRankingSection = () => {
   const [selectedTargetType, setSelectedTargetType] = useState<TargetType>(initialTargetType);
   const [selectedRankType, setSelectedRankType] = useState<RankType>(initialRankType);
 
-
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,6 +104,36 @@ const GiftRankingSection = () => {
   const currentSortText =
     sortOptions.find((opt) => opt.apiValue === selectedRankType)?.text || '받고 싶어한';
 
+  const renderContent = () => {
+    if (isLoading) {
+      return <S.LoadingMessage>상품 목록을 불러오는 중...</S.LoadingMessage>;
+    }
+
+    if (error) {
+      return <S.ErrorMessage>{error}</S.ErrorMessage>;
+    }
+
+    if (products.length === 0) {
+      return <S.NoProductMessage>보여줄 상품 목록이 없습니다.</S.NoProductMessage>;
+    }
+
+    return (
+      <S.Grid>
+        {products.map((product) => (
+          <ProductItem
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            imageURL={product.imageURL}
+            sellingPrice={product.price.sellingPrice}
+            brandImageURL={product.brandInfo.imageURL}
+            brandName={product.brandInfo.name}
+          />
+        ))}
+      </S.Grid>
+    );
+  };
+
   return (
     <S.Section>
       <FilterGroup
@@ -113,27 +142,7 @@ const GiftRankingSection = () => {
         onSelect={handleReceiverSelect}
       />
       <FilterGroup items={sorts} selected={currentSortText} onSelect={handleSortSelect} />
-      {isLoading ? (
-        <S.LoadingMessage>상품 목록을 불러오는 중...</S.LoadingMessage>
-      ) : error ? (
-        <S.ErrorMessage>{error}</S.ErrorMessage>
-      ) : products.length === 0 ? (
-        <S.NoProductMessage>보여줄 상품 목록이 없습니다.</S.NoProductMessage>
-      ) : (
-        <S.Grid>
-          {products.map((product) => (
-            <ProductItem
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              imageURL={product.imageURL}
-              sellingPrice={product.price.sellingPrice}
-              brandImageURL={product.brandInfo.imageURL}
-              brandName={product.brandInfo.name}
-            />
-          ))}
-        </S.Grid>
-      )}
+      {renderContent()}
     </S.Section>
   );
 };
