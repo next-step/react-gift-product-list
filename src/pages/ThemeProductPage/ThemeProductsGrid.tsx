@@ -31,6 +31,48 @@ const ProductGridContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing[4]};
 `;
 
+interface RenderThemeProductsGridPropsType {
+  themeProducts: ThemeProduct[];
+  isThemeProductsLoading: boolean;
+}
+
+function ThemeProductsGridContent({
+  themeProducts,
+  isThemeProductsLoading,
+}: RenderThemeProductsGridPropsType) {
+  if (isThemeProductsLoading && themeProducts.length === 0) {
+    return <Loading />;
+  }
+
+  if (themeProducts.length === 0) {
+    return (
+      <EmptyProductContainer>
+        <EmptyProductText>
+          {THEME_PRODUCTS_LABELS.EMPTY_PRODUCT}
+        </EmptyProductText>
+      </EmptyProductContainer>
+    );
+  }
+
+  return (
+    <ProductGridContainer>
+      {themeProducts.map((product, idx) => (
+        <ProductCard
+          key={product.id}
+          id={product.id}
+          imageURL={product.imageURL}
+          name={product.name}
+          brandName={product.brandInfo.name}
+          sellingPrice={product.price.sellingPrice}
+          index={idx}
+          type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
+        />
+      ))}
+      {isThemeProductsLoading && <Loading />}
+    </ProductGridContainer>
+  );
+}
+
 interface ThemeProductsGridPropsType {
   themeProducts: ThemeProduct[];
   isThemeProductsLoading: boolean;
@@ -44,31 +86,10 @@ function ThemeProductsGrid({
 }: ThemeProductsGridPropsType) {
   return (
     <ProductListContainer>
-      {isThemeProductsLoading && themeProducts.length === 0 ? (
-        <Loading />
-      ) : themeProducts.length === 0 ? (
-        <EmptyProductContainer>
-          <EmptyProductText>
-            {THEME_PRODUCTS_LABELS.EMPTY_PRODUCT}
-          </EmptyProductText>
-        </EmptyProductContainer>
-      ) : (
-        <ProductGridContainer>
-          {themeProducts.map((product, idx) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              imageURL={product.imageURL}
-              name={product.name}
-              brandName={product.brandInfo.name}
-              sellingPrice={product.price.sellingPrice}
-              index={idx}
-              type={PRODUCT_GRID_TYPES.THEME_PRODUCTS}
-            />
-          ))}
-          {isThemeProductsLoading && <Loading />}
-        </ProductGridContainer>
-      )}
+      <ThemeProductsGridContent
+        themeProducts={themeProducts}
+        isThemeProductsLoading={isThemeProductsLoading}
+      />
       <Loader ref={isLoaderRef} />
     </ProductListContainer>
   );
