@@ -1,5 +1,13 @@
 import styled from '@emotion/styled';
 
+export const Frame = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
+`;
 export const ThemeInfoBanner = styled.div<{ backgroundColor: string }>`
   padding-top: 26px;
   padding-left: 16px;
@@ -22,4 +30,11 @@ export const Description = styled.p`
 export const Box = styled.div`
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
   padding: 4px;
+`;
+export const Noitem = styled.div`
+  width: 100%;
+  height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

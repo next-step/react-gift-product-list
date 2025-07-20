@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from 'react';
 import useApi from '@/apis/useApi';
 import { API_URLS } from './constants';
 
@@ -24,12 +25,44 @@ interface ThemeProductsResponse {
     hasMoreList: boolean;
   };
 }
+interface InfiniteProducts {
+  list: Product[];
+  isLoading: boolean;
+  error: Error | null;
+  hasMore: boolean;
+  loadMore: () => void;
+}
 
-export const useGetThemeProducts = (themeId: number) => {
-  const { data, isLoading, error } = useApi<ThemeProductsResponse>(
-    'get',
-    API_URLS.THEME_PRODUCTS(themeId)
-  );
+export const useGetThemeProducts = (
+  themeId: number,
+  limit = 10,
+): InfiniteProducts => {
+  const [cursor, setCursor] = useState(0);
+  const [list, setList] = useState<Product[]>([]);
+  const [hasMore, setHasMore] = useState(true);
 
-  return { products: data?.data.list || [], isLoading, error };
+  const { isLoading, error, execute } = useApi<
+    ThemeProductsResponse,
+    { params: { cursor: number; limit: number } }
+  >('get', API_URLS.THEME_PRODUCTS(themeId));
+
+  const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+    const res = await execute({ params: { cursor, limit } });
+    setList(prev => {
+      const merged = [...prev, ...res.data.list];
+      const map = new Map<number, Product>();
+      merged.forEach(item => map.set(item.id, item));
+      return Array.from(map.values());
+    });
+    setCursor(res.data.cursor);
+    setHasMore(res.data.hasMoreList);
+  }, [cursor, limit, hasMore, isLoading, execute]);
+
+
+  useEffect(() => {
+    loadMore();
+  }, []);
+
+  return { list, isLoading, error, hasMore, loadMore };
 };
