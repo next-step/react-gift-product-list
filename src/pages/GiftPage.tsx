@@ -7,6 +7,7 @@ import { FriendSelector } from '@/components/FriendSelector/FriendSelector';
 import { RankingSection } from '@/components/RankingSection/RankingSection';
 import { useFetchThemes } from '@/api/fetchThemes';
 import { Loading } from '@/components/common/Loading';
+import { useNavigate } from 'react-router';
 
 const AppContainer = styled.div`
   max-width: 720px;
@@ -17,6 +18,7 @@ const AppContainer = styled.div`
 
 export const GiftPage = () => {
   const { themes, themesLoading, themesError } = useFetchThemes();
+  const navigate = useNavigate();
 
   return (
     <AppContainer>
@@ -29,7 +31,7 @@ export const GiftPage = () => {
       ) : (
         <CategoryGrid
           categories={themes}
-          onCategoryClick={(category) => console.log('카테고리 클릭', category)}
+          onCategoryClick={(category) => navigate(`/theme/${category.themeId}`)}
         />
       )}
       <Banner
