@@ -38,7 +38,7 @@ function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && data?.hasMoreList) {
-          setCursor(cursor + data?.list.length);
+          setCursor((prev) => prev + data?.list.length);
         }
       },
       {
