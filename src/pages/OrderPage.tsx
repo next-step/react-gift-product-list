@@ -46,7 +46,7 @@ export const OrderPage = () => {
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`/api/products/${productId}`)
+        const res = await fetch(`/api/products/${productId}/summary`)
         if (!res.ok) {
           const text = await res.text()
           toast.error(`상품 정보를 불러올 수 없습니다: ${text}`)
