@@ -1,25 +1,31 @@
 import { useParams } from 'react-router-dom';
 import { useGetThemeInfo } from './useGetThemeInfo';
+import { useGetThemeProducts } from './useGetThemeProducts';
 import * as S from './styles';
+import ThemeProductList from './ThemeProductList';
 
 const ThemeProductsPage = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const { themeInfo, error } = useGetThemeInfo(Number(themeId));
+  const { themeInfo, error: themeError } = useGetThemeInfo(Number(themeId));
+  const { products, isLoading, error: productsError } = useGetThemeProducts(Number(themeId));
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (themeError || productsError) {
+    return <div>Error: {themeError?.message || productsError?.message}</div>;
   }
 
-  if (!themeInfo) {
-    return <div>Theme not found</div>;
+  if (isLoading || !themeInfo) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <S.ThemeInfoBanner backgroundColor={themeInfo.backgroundColor}>
-      <S.Theme>{themeInfo.name}</S.Theme>
-      <S.Title>{themeInfo.title}</S.Title>
-      <S.Description>{themeInfo.description}</S.Description>
-    </S.ThemeInfoBanner>
+    <>
+      <S.ThemeInfoBanner backgroundColor={themeInfo.backgroundColor}>
+        <S.Theme>{themeInfo.name}</S.Theme>
+        <S.Title>{themeInfo.title}</S.Title>
+        <S.Description>{themeInfo.description}</S.Description>
+      </S.ThemeInfoBanner>
+      <ThemeProductList products={products} />
+    </>
   );
 };
 

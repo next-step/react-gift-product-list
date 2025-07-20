@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 
 export const Section = styled.section`
-  padding: ${({ theme }) => theme.spacing.spacing10}
-    ${({ theme }) => theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing10};
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
 `;
 

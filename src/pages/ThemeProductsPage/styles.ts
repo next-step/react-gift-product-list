@@ -16,7 +16,10 @@ export const Title = styled.h2`
   font: ${({ theme }) => theme.typography.title1Bold};
   padding-bottom: 4px;
 `;
-
 export const Description = styled.p`
   font-size: 1rem;
+`;
+export const Box = styled.div`
+  background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
+  padding: 4px;
 `;
