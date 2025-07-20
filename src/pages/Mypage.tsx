@@ -5,7 +5,7 @@ import {
   MypageLogoutBtn,
 } from '@/styles/Mypage.styles';
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import useLoginForm from '@/hooks/useLoginForm';
 type MyPageProps = {
   onLogin: () => void;
@@ -14,7 +14,6 @@ type MyPageProps = {
 function Mypage({ onLogin }: MyPageProps) {
   const { logOut } = useLoginForm();
   const { userInfo, setLoginInfo } = useContext(LoginInfoContext);
-  const [name, setName] = useState<string>('');
 
   function logout() {
     setLoginInfo({
@@ -35,13 +34,18 @@ function Mypage({ onLogin }: MyPageProps) {
   }
 
   useEffect(() => {
-    setName(localStorage.getItem('name') || '');
+    const userInfoStr = localStorage.getItem('userInfo');
+    setLoginInfo({
+      email: userInfoStr ? JSON.parse(userInfoStr).email : '',
+      name: userInfoStr ? JSON.parse(userInfoStr).name : '',
+      authToken: userInfoStr ? JSON.parse(userInfoStr).authToken : '',
+    });
   }, []);
 
   return (
     <MypageContainer>
       <MypageTitle>마이페이지</MypageTitle>
-      <MypageContent>{name}님 안녕하세요!</MypageContent>
+      <MypageContent>{userInfo.name}님 안녕하세요!</MypageContent>
       <MypageContent>이메일 주소는 {userInfo.email}입니다.</MypageContent>
       <MypageLogoutBtn onClick={logout}>로그아웃</MypageLogoutBtn>
     </MypageContainer>
