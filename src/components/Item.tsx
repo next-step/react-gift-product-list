@@ -29,7 +29,7 @@ function Item({ index, itemData }: ItemProps) {
   }
 
   return (
-    <ItemContainerStyle onClick={() => handleItemClick(index)}>
+    <ItemContainerStyle onClick={() => handleItemClick(itemData.id)}>
       <ItemImageWrapper>
         <ItemIndex index={index}>{index + 1}</ItemIndex>
         <ItemImg src={itemData.imageURL} alt={itemData.name} />

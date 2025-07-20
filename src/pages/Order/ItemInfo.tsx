@@ -9,23 +9,24 @@ import {
   DetailPrice,
   DetailPriceContainer,
 } from '@/styles/Order/ItemInfo.styles';
-import type { mockItemType } from '@/mocks/mockItem';
+import type { ProductSummary } from '@/types/DTO/productDTO';
 
 type ItemInfoProps = {
-  item: mockItemType;
+  item: ProductSummary;
 };
 function ItemInfo({ item }: ItemInfoProps) {
+  console.log(item);
   return (
     <ItemInfoContainer>
       <ItemInfoTitle>상품 정보</ItemInfoTitle>
       <ItemContainer>
-        <ItemImg src={item.imageURL} />
+        {item.imageURL && <ItemImg src={item.imageURL} />}
         <DetailContainer>
           <DeatilTitle>{item.name}</DeatilTitle>
-          <DetailCompany>{item.brandInfo.name}</DetailCompany>
+          <DetailCompany>{item.brandName}</DetailCompany>
           <DetailPriceContainer>
             <p>상품가</p>
-            <DetailPrice>{item.price.basicPrice}</DetailPrice>
+            <DetailPrice>{item.price}</DetailPrice>
           </DetailPriceContainer>
         </DetailContainer>
       </ItemContainer>

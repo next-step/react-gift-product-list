@@ -1,14 +1,18 @@
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { OrderContainer } from '@/styles/Order/Order.styles';
 import OrderBtn from '@/components/OrderBtn';
 import Cards from '@/pages/Order/Cards';
 import Sender from '@/pages/Order/Sender';
 import Reciever from '@/pages/Order/Reciever/Reciever';
 import ItemInfo from '@/pages/Order/ItemInfo';
-import { mockItemList } from '@/mocks/mockItem';
 import type { ordersType } from '@/mocks/mockorder';
 import { cards } from '@/mocks/mockorder';
+import { getSummary } from '@/apis/product';
+import type { ProductSummary } from '@/types/DTO/productDTO';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 export type RecieverType = {
   name: string;
@@ -26,11 +30,29 @@ export type FormValues = {
 };
 
 function Order() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { orderId } = useParams();
   const parsedItemId = Number(orderId);
-  const item = location.state?.item || mockItemList.find((i) => i.id === parsedItemId);
+  const [item, setItem] = useState<ProductSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getItem = async () => {
+      try {
+        setLoading(true);
+        const response = await getSummary({ productId: parsedItemId });
+        setItem(response.data);
+      } catch (err) {
+        const error = err as AxiosError;
+        toast.error(`상품 정보를 불러오는 데 실패했습니다. ${error}`);
+        navigate('/');
+        return;
+      } finally {
+        setLoading(false);
+      }
+    };
+    getItem();
+  }, [parsedItemId]);
 
   const {
     register,
@@ -59,14 +81,14 @@ function Order() {
   const handleRecieverUpdate = (newList: RecieverType[]) => {
     const totalCount = newList.reduce((sum, r) => sum + (r.count || 0), 0);
     setValue('count', totalCount);
-    setValue('cost', totalCount * item.price.basicPrice);
+    if (item) setValue('cost', totalCount * item.price);
   };
 
   const currentCardId = watch('currentCardId');
   const cost = watch('cost');
 
+  if (loading) return <div>로딩 중...</div>;
   if (!item) return <div>상품 정보를 찾을 수 없습니다.</div>;
-
   return (
     <OrderContainer
       onSubmit={handleSubmit(
