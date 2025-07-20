@@ -12,7 +12,6 @@ import { useGiftProductById } from '../hooks/useGiftProductById';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
-
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
 `;
@@ -42,14 +41,12 @@ const MessageInput = styled.textarea`
   font-size: 16px;
   box-sizing: border-box;
   border: 1px solid ${({ theme }) => theme.colors.borderDefault};
-
   border-radius: 8px;
 `;
 
 const SectionBox = styled.div`
   max-width: 720px;
   background-color: ${({ theme }) => theme.colors.gray00};
-
   margin: 12px 20px;
   padding: 20px;
 `;
@@ -201,8 +198,13 @@ const Order = () => {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
   const navigate = useNavigate();
-  const authToken = localStorage.getItem('authToken');
 
+  const userInfoString = localStorage.getItem('userInfo');
+
+  if (userInfoString) {
+    const userInfo = JSON.parse(userInfoString);
+    console.log('authToken:', userInfo.authToken);
+  }
 
   const {
     data: product,
@@ -251,6 +253,16 @@ const Order = () => {
       })),
     };
 
+    const authToken = userInfoString
+      ? JSON.parse(userInfoString).authToken
+      : null;
+
+    if (!authToken) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
     try {
       await axios.post(`${BASE_URL}/api/order`, orderData, {
         headers: {
@@ -261,7 +273,6 @@ const Order = () => {
         `주문이 완료되었습니다.\n 상품명: ${product?.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
       );
     } catch (err: any) {
-      console.log('authToken from localStorage:', authToken);
       if (err.response?.status === 401) {
         alert('로그인이 필요합니다.');
         navigate('/login');
@@ -284,7 +295,6 @@ const Order = () => {
       <div style={{ padding: 20 }}>
         상품 정보를 불러오지 못했습니다.
       </div>
-
     );
 
   if (loading)
@@ -371,7 +381,7 @@ const Order = () => {
                   </TableRow>
                 </TableHead>
                 <tbody>
-                  {receiverList.map((r, i) => (
+                  {receiverList.map(r => (
                     <TableRow key={r.id}>
                       <TableCell>{r.name}</TableCell>
                       <TableCell>{r.phoneNumber}</TableCell>
@@ -416,7 +426,6 @@ const Order = () => {
         onClick={handleOrder}
       >
         {(priceSum ?? 0).toLocaleString()}원 주문하기
-
       </BottomOrderButton>
     </>
   );

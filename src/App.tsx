@@ -28,7 +28,10 @@ const App = () => {
       <div css={containerStyle}>
         <AuthProvider>
           <BrowserRouter>
-            <ToastContainer position="top-right" autoClose={3000} />
+            <ToastContainer
+              position="top-right"
+              autoClose={3 * 1_000}
+            />
             <Routes>
               <Route path={ROUTES.HOME} element={<Home />} />
               <Route path={ROUTES.LOGIN} element={<Login />} />
