@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useAuth } from '@/hooks/useAuth';
 import { postLogin } from '@/Api/api';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Wrapper = styled.div(({ theme }) => ({
   width: '100%',
@@ -143,12 +145,6 @@ const Login: React.FC = () => {
 
   const { login } = useAuth();
 
-  // const handleClick = () => {
-  //   const mockToken = 'mock-jwt-token';
-  //   login({ email: id }, mockToken);
-  //   navigate(redirectTo, { replace: true });
-  // };
-
   const handleClick = async () => {
     try {
       const res = await postLogin(id, pw);
@@ -156,7 +152,21 @@ const Login: React.FC = () => {
       login({ email, name }, authToken);
       navigate(redirectTo, { replace: true });
     } catch (err: any) {
-      alert(err.response?.data ?? '로그인 실패');
+      if (axios.isAxiosError(err) && err.response?.status === 400) {
+        const raw = err.response.data;
+        const msg: string =
+          typeof raw === 'string'
+            ? raw
+            : raw?.data?.message || raw?.message || raw?.error || JSON.stringify(raw);
+
+        if (msg.includes('올바른 이메일 형식이 아닙니다.')) {
+          toast.error('올바른 이메일 형식이 아닙니다.');
+        } else if (msg.includes('@kakao.com')) {
+          toast.error('@kakao.com 이메일 주소만 가능합니다.');
+        }
+      } else {
+        toast.error('예상치 못한 오류가 발생했습니다.');
+      }
     }
   };
 
