@@ -150,7 +150,7 @@ export const OrderPage = () => {
         </Section>
 
         <Section>
-          <Label>보내는 사람</Label>
+          <Label style={{ textAlign: 'left', display: 'block', marginBottom: '0.5rem' }}>보내는 사람</Label>
           <Input
             placeholder="이름을 입력하세요."
             value={senderName}
@@ -231,7 +231,7 @@ export const OrderPage = () => {
         </Section>
 
         <Section>
-          <Label>상품 정보</Label>
+          <Label style={{ textAlign: 'left', display: 'block', marginBottom: '0.5rem' }}>상품 정보</Label>
           <ProductInfo>
             {product?.imageURL ? (
               <img

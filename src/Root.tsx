@@ -24,7 +24,7 @@ const authProtected = (element: React.ReactNode) => (
 const router = createBrowserRouter([
   {
     path: PATHS.LOGIN,
-    element: authProtected(<LoginPage />),
+    element: <LoginPage />,
   },
   {
     path: PATHS.HOME,

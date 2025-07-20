@@ -7,6 +7,7 @@ import { MotivationBanner } from '@/components/MotivationBanner'
 import { CategorySection } from '@/components/CategorySection/CategorySection'
 import './App.css' 
 
+
 const AppWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.gray[100]};
   display: flex;
@@ -15,9 +16,10 @@ const AppWrapper = styled.div`
 
 function App() {
   return (
+    
     <AppWrapper>
       <Layout>
-        <main>
+        <main >
           <GiftFriendSelector />
           <HomeContentCard>
             <CategorySection />

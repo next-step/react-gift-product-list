@@ -36,7 +36,7 @@ const Text = styled.p`
 
 export const GiftFriendSelector = () => {
   const { user } = useAuth();
-
+  const userName = user?.email?.split('@')[0];
   return (
     <Wrapper>
       <Button>
@@ -44,11 +44,12 @@ export const GiftFriendSelector = () => {
           <Plus size={20} color="#000" />
         </IconCircle>
         <Text>
-          {user && <strong>{user.split('@')[0]}님! </strong>}
+          {user && <strong>{userName}님! </strong>}
           선물할 친구를 선택해 주세요.
         </Text>
       </Button>
     </Wrapper>
   )
 }
+
 export default GiftFriendSelector

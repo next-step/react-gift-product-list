@@ -1,42 +1,68 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 type AuthContextType = {
-  user: string | null
+  user: { email: string; name: string } | null
   isLoggedIn: boolean
-  login: (username: string) => void
+  login: (email: string, password: string) => Promise<void>
   logout: () => void
+  isAuthReady: boolean
 }
-const STORAGE_KEY_USER = 'user';
+
+const STORAGE_KEY_USER = 'userInfo'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null)
-
+  const [user, setUser] = useState<{ email: string; name: string } | null>(null)
+  const [isAuthReady, setIsAuthReady] = useState(false)
   useEffect(() => {
-    const storedUser = localStorage.getItem(STORAGE_KEY_USER)
-    if (storedUser) {
-      setUser(storedUser)
+    const stored = localStorage.getItem(STORAGE_KEY_USER)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      setUser({ email: parsed.email, name: parsed.name })
     }
+    setIsAuthReady(true)
   }, [])
 
-  const login = (username: string) => {
-    setUser(username)
-    localStorage.setItem(STORAGE_KEY_USER, username)
+  const login = async (email: string, password: string) => {
+    try {
+      const res = await axios.post('http://localhost:3000/api/login', { email, password })
+
+
+      const { authToken, email: userEmail, name } = res.data.data 
+
+      const userInfo = { authToken, email: userEmail, name }
+      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userInfo))
+      setUser({ email: userEmail, name })
+    } catch (error: any) {
+      if (error.response?.status >= 400 && error.response?.status < 500) {
+        toast.error(error.response.data?.message || '로그인 실패')
+      } else {
+        toast.error('서버 오류가 발생했습니다.')
+      }
+    }
   }
 
   const logout = () => {
     setUser(null)
     localStorage.removeItem(STORAGE_KEY_USER)
   }
-  const isLoggedIn = !!user
+
   return (
     <AuthContext.Provider
       value={{
         user,
+        isLoggedIn: !!user,
         login,
         logout,
-        isLoggedIn,
+        isAuthReady,
       }}
     >
       {children}
@@ -46,7 +72,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth는 AuthProvider내에서만 실행.')
+  if (!context) throw new Error('useAuth는 AuthProvider 내에서만 사용해야 합니다.')
   return context
 }
+
 export default AuthProvider
