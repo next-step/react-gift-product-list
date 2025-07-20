@@ -3,4 +3,5 @@ export const BASIC_ENDPOINT = {
   theme: 'themes',
   ranking: 'products/ranking',
   order: 'order',
+  product: 'products',
 };

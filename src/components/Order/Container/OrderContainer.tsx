@@ -1,67 +1,27 @@
-import { useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import StyledTopestDiv from '@src/styles/StyledTopesDiv';
 import OrderCardTemplateContainer from '@src/components/Order/OrderCardTemplate/OrderCardTemplateContainer';
-import { GOODS_DATA, type Goods } from '@assets/goodsData';
+
 import { Spacer } from '@src/styles/Spacer';
-import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
+import { FormProvider } from 'react-hook-form';
 import SenderContainer from '../Sender/SenderContainer';
-import type { OrderFormValue } from '@src/types/OrderFormValues';
 import RecipientsModalContainer from '../RecipientsModal/RecipientsModalContainer';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { orderSchema } from '../../Schemas/orderSchmea';
 import {
   StyledItemInfoContainer,
   StyledOrderButton,
 } from '@src/components/Order/Container/StyledOrderContainer';
+import { useOrderForm } from './useOrderForm';
 
 const OrderContainer = () => {
-  const [searchParams] = useSearchParams();
-  const [selectedProduct, setSelectedProduct] = useState<Goods | null>(null);
-
-  //url를 통해 받은 상품 id를 가지고 상품 container를 생성해 렌더링
-  useEffect(() => {
-    const productId = searchParams.get('productId');
-    if (productId) {
-      const foundProduct = GOODS_DATA.find((item: Goods) => item.id.toString() === productId);
-      setSelectedProduct(foundProduct || null);
-    } else {
-      setSelectedProduct(GOODS_DATA.length > 0 ? GOODS_DATA[0] : null);
-    }
-  }, [searchParams]);
-
-  const methods = useForm<OrderFormValue>({
-    resolver: zodResolver(orderSchema),
-    defaultValues: {
-      msg: '',
-      sendName: '',
-      recipients: [],
-      total_count: 0,
-    },
-  });
   const {
+    selectedProduct,
+    methods,
     handleSubmit,
     control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = methods;
-
-  const onSubmit: SubmitHandler<OrderFormValue> = (data) => {
-    alert(`Name: ${data.sendName}, Message: ${data.msg}`);
-  };
-  const currentRecipients = watch('recipients');
-  const totalCount = currentRecipients.reduce(
-    (sum, recipient) => sum + Number(recipient.count || 0),
-    0
-  );
-
-  useEffect(() => {
-    setValue('total_count', totalCount);
-  }, [currentRecipients, setValue, totalCount]);
-
-  const totalPrice = selectedProduct ? totalCount * selectedProduct.price.sellingPrice : 0;
-
+    errors,
+    onSubmit,
+    currentRecipients,
+    totalPrice,
+  } = useOrderForm();
   return (
     <FormProvider {...methods}>
       <StyledTopestDiv>
@@ -86,12 +46,10 @@ const OrderContainer = () => {
                 />
                 <div>
                   <p className='body1Regular'>{selectedProduct.name}</p>
-                  <p className='label2Regular'>{selectedProduct.brandInfo.name}</p>
+                  <p className='label2Regular'>{selectedProduct.brandName}</p>
 
                   <p className='item-price body2Bold basic-label'>
-                    <span className='label1Regular'>
-                      상품가 {selectedProduct.price.sellingPrice}원
-                    </span>
+                    <span className='label1Regular'>상품가 {selectedProduct.price}원</span>
                   </p>
                 </div>
               </div>
@@ -101,7 +59,7 @@ const OrderContainer = () => {
           </StyledItemInfoContainer>
 
           <StyledOrderButton type='submit' className='order body1Bold'>
-            {selectedProduct ? `${totalPrice}원 주문하기 (${totalCount}개)` : '상품을 선택해주세요'}
+            {selectedProduct ? `${totalPrice}원 주문하기` : '상품을 선택해주세요'}
           </StyledOrderButton>
           <Spacer />
         </form>
