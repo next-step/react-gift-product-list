@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 export type UseHttpOptions<Req, Res> = {
     apiFunction: (requestBody?: Req) => Promise<Res>;
@@ -15,27 +15,27 @@ export const useHTTP = <Req = unknown, Res = unknown>({
     const [data, setData] = useState<Res | null>(null);
     const [error, setError] = useState<unknown>(null);
 
-    const request = useCallback(
-        async (requestBody?: Req) => {
-            setIsPending(true);
-            setError(null);
+    const onErrorRef = useRef(onError);
+    const apiFunctionRef = useRef(apiFunction);
 
-            try {
-                const result = await apiFunction(requestBody);
-                setData(result);
-                return result;
-            } catch (err) {
-                setError(err);
+    const request = useCallback(async (requestBody?: Req) => {
+        setIsPending(true);
+        setError(null);
 
-                if (!onError) throw err;
-                else onError(err);
-                return null;
-            } finally {
-                setIsPending(false);
-            }
-        },
-        [apiFunction, onError],
-    );
+        try {
+            const result = await apiFunctionRef.current(requestBody);
+            setData(result);
+            return result;
+        } catch (err) {
+            const onError = onErrorRef.current;
+            setError(err);
+            if (!onError) throw err;
+            else onError(err);
+            return null;
+        } finally {
+            setIsPending(false);
+        }
+    }, []);
 
     useEffect(() => {
         if (requestOnMount) {
