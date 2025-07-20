@@ -5,6 +5,11 @@ import { useNavigate } from "react-router";
 import Input from "@/components/login/Input";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { useValidate } from "@/components/login/useValidate";
+import axios from "axios";
+import { STORAGE_KEYS } from "@/constants/storageKyes";
+import { useRequestHandler } from "@/hooks/useRequestHandler";
+
+const loginURL = import.meta.env.VITE_API_BASE_URL_LOGIN;
 
 const Login = () => {
   const { setUser } = useUserInfo();
@@ -23,6 +28,7 @@ const Login = () => {
   const email = useValidate(validateEmail, "이메일 형식을 지켜주세요.");
   const password = useValidate(validatePassword, "비밀번호는 8자 이상입니다.");
   const isFormValid = email.isValid && password.isValid;
+  const { fetchData } = useRequestHandler();
 
   return (
     <div css={containerStyle()}>
@@ -47,13 +53,38 @@ const Login = () => {
       </div>
 
       <button
-        onClick={() => {
+        onClick={async () => {
           if (isFormValid) {
-            sessionStorage.setItem("email", email.string);
-            setUser({
-              email: email.string,
+            fetchData({
+              fetcher: () =>
+                axios.post(
+                  loginURL,
+                  {
+                    email: email.string,
+                    password: password.string,
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                ),
+              onSuccess: (response: any) => {
+                const logUserInfo = {
+                  email: response.data.data.email,
+                  name: response.data.data.name,
+                  authToken: response.data.data.authToken,
+                };
+
+                setUser(logUserInfo);
+                sessionStorage.setItem(
+                  STORAGE_KEYS.USER_INFO,
+                  JSON.stringify(logUserInfo)
+                );
+
+                navigate("/my");
+              },
             });
-            navigate("/my");
           }
         }}
         css={buttonStyle(theme, isFormValid)}
@@ -96,7 +127,6 @@ const inputContainerStyle = (theme: Theme) => css`
   width: 80%;
   gap: ${theme.spacing.spacing8};
   padding: ${theme.spacing.spacing6};
-  padding: ${theme.spacing.spacing0};
 `;
 
 const inputStyle = (theme: Theme, isFormValid: boolean) => css`
@@ -116,6 +146,6 @@ const containerStyle = () => css`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  100vh;
-  width: 100%; : height
+  height : 100vh;
+  width: 100%; : 
 `;

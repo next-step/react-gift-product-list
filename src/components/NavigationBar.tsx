@@ -3,10 +3,12 @@ import type { Theme } from "@emotion/react";
 import { IoArrowBackOutline, IoPersonOutline } from "react-icons/io5";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router";
+import { ROUTE_PATHS } from "@/constants/routePath";
 
 const NavigationBar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { MAIN, MYPAGE } = ROUTE_PATHS;
 
   return (
     <div css={navigationBarStyles(theme)}>
@@ -15,7 +17,7 @@ const NavigationBar = () => {
           if (window.history.length) {
             navigate(-1);
           } else {
-            navigate("/");
+            navigate(MAIN);
           }
         }}
         css={iconButtonStyles(theme)}
@@ -26,7 +28,7 @@ const NavigationBar = () => {
 
       <h1
         onClick={() => {
-          navigate("/");
+          navigate(MAIN);
         }}
         css={titleStyles(theme)}
       >
@@ -35,7 +37,7 @@ const NavigationBar = () => {
 
       <button
         onClick={() => {
-          navigate("/my");
+          navigate(MYPAGE);
         }}
         css={iconButtonStyles(theme)}
         aria-label="프로필"

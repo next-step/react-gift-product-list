@@ -1,8 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cardData } from "@/data/cardData";
 import { useTheme } from "@emotion/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { giftData } from "@/data/giftData";
 import CardView from "@/components/order/CardView";
 import {
   CardWrapperStyle,
@@ -29,11 +28,23 @@ import { css } from "@emotion/react";
 import ReceiverModal from "@/components/order/ReceiverModal";
 import type { Theme } from "@emotion/react";
 import ReceiverInfoTable from "@/components/order/ReceiverInfoTable";
+import axios from "axios";
+import { useUserInfo } from "@/hooks/useUserInfo";
+import { useRequestHandler } from "@/hooks/useRequestHandler";
+import { ROUTE_PATHS } from "@/constants/routePath";
+
+type Product = {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+};
 
 const Order: React.FC = () => {
   const theme = useTheme();
   const [selectedId, setSelectedId] = useState<number>();
-  const { id } = useParams<{ id: string }>();
+  const { productId } = useParams<{ productId: string }>();
   const SenderNameRef = useRef<HTMLInputElement>(null);
   const GiftMessageRef = useRef<HTMLTextAreaElement>(null);
   const [messageError, setMessageError] = useState("");
@@ -42,6 +53,9 @@ const Order: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [receivers, setReceivers] = useState<FormData["order"]>([]);
   const navigate = useNavigate();
+  const [product, setProduct] = useState<Product | null>(null);
+  const { MAIN } = ROUTE_PATHS;
+
   const totalQuantity =
     receivers.length === 0
       ? 0
@@ -77,17 +91,43 @@ const Order: React.FC = () => {
     if (hasError) return;
 
     alert(
-      `주문 상품명: ${selectedGift?.name}\n` +
+      `주문 상품명: ${product?.name}\n` +
         `보내는 사람: ${SenderNameRef.current?.value}\n` +
         `메시지: ${GiftMessageRef.current?.value}\n` +
         `받는 사람 수: ${receivers.length}명\n` +
         `총 수량: ${totalQuantity}개`
     );
-    navigate("/");
+    navigate(MAIN);
   };
 
-  const selectedGiftId = id ? parseInt(id, 10) : undefined;
-  const selectedGift = giftData.find((gift) => gift.id === selectedGiftId);
+  const { user } = useUserInfo();
+  const orderURL = import.meta.env.VITE_API_BASE_URL_ORDER;
+
+  const { fetchData } = useRequestHandler();
+
+  useEffect(() => {
+    if (!productId) return;
+    fetchData({
+      fetcher: () =>
+        axios.get(
+          `${import.meta.env.VITE_API_BASE_URL_PRODUCT}/${productId}/summary`
+        ),
+      onSuccess: (data) => {
+        setProduct(data.data.data);
+      },
+      onError: (error) => {
+        if (axios.isAxiosError(error)) {
+          navigate("/login");
+        }
+      },
+    });
+  }, [productId]);
+
+  const renewedReceivers = receivers.map((receiver) => ({
+    name: receiver.receiverName,
+    phoneNumber: receiver.phoneNumber,
+    quantity: receiver.quantity,
+  }));
 
   return (
     <div css={WrapperStyle(theme)}>
@@ -122,7 +162,8 @@ const Order: React.FC = () => {
               type="text"
               ref={SenderNameRef}
               placeholder="이름을 입력하세요."
-            ></input>
+              defaultValue={user?.name}
+            />
             {senderError && <p css={ErrorMessageStyle}>{senderError}</p>}
           </div>
         </div>
@@ -159,27 +200,49 @@ const Order: React.FC = () => {
       <div css={productWrapper(theme)}>
         <img
           css={productImage(theme)}
-          src={selectedGift?.imageURL}
-          alt={selectedGift?.name}
+          src={product?.imageURL}
+          alt={product?.name}
         />
         <div css={productInfoStyle(theme)}>
-          <p css={productNameStyle(theme)}>{selectedGift?.name}</p>
-          <p css={productBrandStyle(theme)}>{selectedGift?.brandInfo.name}</p>
+          <p css={productNameStyle(theme)}>{product?.name}</p>
+          <p css={productBrandStyle(theme)}>{product?.brandName}</p>
           <p css={productPriceStyle(theme)}>
-            <strong>{selectedGift?.price.basicPrice.toLocaleString()}</strong>원
+            <strong>{product?.price.toLocaleString()}</strong>원
           </p>
         </div>
       </div>
       <div css={fixedBottomStyle(theme)}>
         <div
-          onClick={() => {
+          onClick={async () => {
             handleSubmit();
+            try {
+              await axios.post(
+                orderURL,
+                {
+                  productId: Number(productId),
+                  message: GiftMessageRef.current?.value,
+                  messageCardId: String(selectedId),
+                  ordererName: SenderNameRef.current?.value,
+                  receivers: renewedReceivers,
+                },
+                {
+                  headers: {
+                    Authorization: user?.authToken,
+                  },
+                }
+              );
+            } catch (error) {
+              if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                  navigate("/login");
+                }
+              }
+            }
           }}
           css={totalPriceBoxStyle}
         >
           <p css={SubmitStyle(theme)}>
-            {(selectedGift?.price?.sellingPrice || 0) * totalQuantity}원
-            주문하기
+            {(product?.price || 0) * totalQuantity}원 주문하기
           </p>
         </div>
       </div>

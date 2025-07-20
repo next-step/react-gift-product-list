@@ -1,13 +1,14 @@
-import { Navigate } from "react-router-dom";
+import { STORAGE_KEYS } from "@/constants/storageKyes";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const email = sessionStorage.getItem("email");
+const ProtectedRoute = () => {
+  const userInfo = sessionStorage.getItem(STORAGE_KEYS.USER_INFO);
 
-  if (!email) {
+  if (!userInfo) {
     return <Navigate to="/login" replace />;
+  } else {
+    return <Outlet />;
   }
-
-  return children;
 };
 
 export default ProtectedRoute;
