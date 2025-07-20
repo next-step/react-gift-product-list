@@ -37,11 +37,13 @@ function ThemeProductsGridContent({
   themeProducts,
   isThemeProductsLoading,
 }: RenderThemeProductsGridPropsType) {
-  if (isThemeProductsLoading && themeProducts.length === 0) {
+  const isThemeProductsEmpty = themeProducts.length === 0;
+
+  if (isThemeProductsLoading && isThemeProductsEmpty) {
     return <Loading />;
   }
 
-  if (themeProducts.length === 0) {
+  if (isThemeProductsEmpty) {
     return (
       <EmptyProductContainer label={THEME_PRODUCTS_LABELS.EMPTY_PRODUCT} />
     );
