@@ -4,12 +4,13 @@ import { SectionContainer } from "@/components/Common/SectionLayout";
 import styled from "@emotion/styled";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState, useRef } from "react";
-import { getThemesList } from "@/api/themes";
+import { getThemesDetail, getThemesList } from "@/api/themes";
 import { useFetchData } from "@/hooks/useFetchData";
 import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
 import RankingItem from "@/components/Common/ProductItem";
 import { toast } from "react-toastify";
+import type { ThemeInfo } from "@/types/theme";
 
 type ThemeProductsResponse = {
   list: BasicGiftProduct[];
@@ -30,6 +31,14 @@ const ThemeProductList = () => {
   const location = useLocation();
   const isDirectEnter = location.key === "default";
 
+  const fetchThemeInfo = useCallback(async () => {
+    const res = await getThemesDetail(Number(themeId));
+    return { data: { data: res.data.data } };
+  }, [themeId]);
+
+  const { data: themeInfo, loading: heroLoading } =
+    useFetchData<ThemeInfo>(fetchThemeInfo);
+
   const fetchFn = useCallback(async () => {
     const res = await getThemesList(Number(themeId), 0, 10);
     return { data: { data: res.data.data } };
@@ -37,7 +46,7 @@ const ThemeProductList = () => {
 
   const {
     data: initialData,
-    loading,
+    loading: listLoading,
     error,
     errorStatus,
   } = useFetchData<ThemeProductsResponse>(fetchFn);
@@ -97,27 +106,33 @@ const ThemeProductList = () => {
   return (
     <Layout>
       <Header title="선물하기" />
-      {loading ? (
-        <LoadingSpinner color="#000000" loading={loading} size={35} />
-      ) : (
-        <ListContainer>
+
+      <ListContainer>
+        <HeroBanner bgColor={themeInfo?.backgroundColor}>
+          <ThemeName>{themeInfo?.name}</ThemeName>
+          <ThemeTitle>{themeInfo?.title}</ThemeTitle>
+          <ThemeDescription>{themeInfo?.description}</ThemeDescription>
+        </HeroBanner>
+        {heroLoading ? (
+          <LoadingSpinner color="#000000" loading={heroLoading} size={35} />
+        ) : (
           <SectionContainer>
-            <HeroBanner>
-              <ThemeName>졸업선물</ThemeName>
-              <ThemeTitle>졸업을 축하하는 축하리스트</ThemeTitle>
-            </HeroBanner>
-            <ProudctList>
-              {(products ?? []).map((product) => (
-                <RankingItem
-                  key={product.id}
-                  id={product.id}
-                  name={product.name}
-                  imageURL={product.imageURL}
-                  price={product.price}
-                  brandInfo={product.brandInfo}
-                />
-              ))}
-            </ProudctList>
+            {listLoading ? (
+              <LoadingSpinner color="#000000" loading={listLoading} size={35} />
+            ) : (
+              <ProudctList>
+                {(products ?? []).map((product) => (
+                  <RankingItem
+                    key={product.id}
+                    id={product.id}
+                    name={product.name}
+                    imageURL={product.imageURL}
+                    price={product.price}
+                    brandInfo={product.brandInfo}
+                  />
+                ))}
+              </ProudctList>
+            )}
             {loadingMore && (
               <LoadingSpinner
                 color="#000000"
@@ -128,8 +143,8 @@ const ThemeProductList = () => {
             )}
             <div ref={loaderRef} style={{ height: "20px" }} />
           </SectionContainer>
-        </ListContainer>
-      )}
+        )}
+      </ListContainer>
     </Layout>
   );
 };
@@ -145,17 +160,42 @@ const ListContainer = styled.form`
   padding-bottom: 60px;
 `;
 
-const HeroBanner = styled.div`
+const HeroBanner = styled.div<{ bgColor?: string }>`
   width: 100%;
-  background-color: #ff0000;
+  background-color: ${(props) => props.bgColor};
+  padding: ${({ theme }) => theme.spacing.spacing6}
+    ${({ theme }) => theme.spacing.spacing4};
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const ThemeName = styled.p`
-  ${({ theme }) => theme.font.subtitle1Bold}
+  ${({ theme }) => `
+    font-size: ${theme.font.subtitle2Bold.size};
+    font-weight: ${theme.font.subtitle2Bold.weight};
+    line-height: ${theme.font.subtitle2Bold.lineHeight};
+  `}
+  color: #ffffff
 `;
 
 const ThemeTitle = styled.p`
-  ${({ theme }) => theme.font.title1Bold}
+  ${({ theme }) => `
+    font-size: ${theme.font.title1Bold.size};
+    font-weight: ${theme.font.title1Bold.weight};
+    line-height: ${theme.font.title1Bold.lineHeight};
+  `}
+  color: #ffffff
+`;
+
+const ThemeDescription = styled.p`
+  ${({ theme }) => `
+    font-size: ${theme.font.body1Regular.size};
+    font-weight: ${theme.font.body1Regular.weight};
+    line-height: ${theme.font.body1Regular.lineHeight};
+  `}
+  color: #ffffff
 `;
 
 const ProudctList = styled.div`
