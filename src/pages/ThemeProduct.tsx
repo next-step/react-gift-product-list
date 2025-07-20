@@ -6,9 +6,8 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Navigation } from "@/components/header/Navigation";
 import { Spinner } from "@/components/common/Spinner";
-import { fetchThemeInfo } from "@/api/theme"; 
+import { fetchThemeInfo, fetchThemeProducts } from "@/api/theme";
 import { PATH } from "@/constants/path";
-
 
 interface ThemeInfo {
   themeId: number;
@@ -18,11 +17,28 @@ interface ThemeInfo {
   backgroundColor: string;
 }
 
-const ThemeProductsPage = () => {
+interface Product {
+  id: number;
+  name: string;
+  price: {
+    basicPrice: number;
+    sellingPrice: number;
+    discountRate: number;
+  };
+  imageURL: string;
+  brandInfo: {
+    id: number;
+    name: string;
+    imageURL: string;
+  };
+}
+
+const ThemeProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [theme, setTheme] = useState<ThemeInfo | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadThemeInfo = useCallback(async () => {
@@ -33,22 +49,32 @@ const ThemeProductsPage = () => {
       if (err?.response?.status === 404) {
         navigate(PATH.HOME, { replace: true });
       }
-    } finally {
-      setLoading(false);
     }
   }, [id, navigate]);
 
+  const loadProducts = useCallback(async () => {
+    try {
+      const data = await fetchThemeProducts(Number(id), 0, 10);
+      setProducts(data.list);
+    } catch {
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     loadThemeInfo();
-  }, [loadThemeInfo]);
+    loadProducts();
+  }, [loadThemeInfo, loadProducts]);
 
-  if (loading) 
-    return <Spinner size={48} withWrapper />;
+  if (loading) return <Spinner size={48} withWrapper />;
 
   return (
     <PageLayout>
       <PageContainer>
         <Navigation />
+
         {theme && (
           <HeroSection bgColor={theme.backgroundColor}>
             <ThemeLabel>{theme.name}</ThemeLabel>
@@ -56,23 +82,42 @@ const ThemeProductsPage = () => {
             <ThemeDescription>{theme.description}</ThemeDescription>
           </HeroSection>
         )}
+
+        <Section>
+          {products.length === 0 ? (
+            <EmptyBox>상품이 없습니다.</EmptyBox>
+          ) : (
+            <ProductList>
+              {products.map((item) => (
+                <ProductCard key={item.id}>
+                  <ProductImage src={item.imageURL} alt={item.name} />
+                  <ProductName>{item.name}</ProductName>
+                  <ProductBrand>{item.brandInfo.name}</ProductBrand>
+                  <ProductPrice>
+                    {item.price.sellingPrice.toLocaleString()}원
+                  </ProductPrice>
+                </ProductCard>
+              ))}
+            </ProductList>
+          )}
+        </Section>
       </PageContainer>
     </PageLayout>
   );
 };
 
-export default ThemeProductsPage;
+export default ThemeProduct;
 
 const HeroSection = styled.section<{ bgColor: string }>`
   background-color: ${({ bgColor }) => bgColor};
-  padding: 25px 20px;
-  border-radius: 8px;
+  padding: 24px 16px;
+  border-radius: 5px;
 `;
 
 const ThemeLabel = styled.p`
   ${({ theme }) => theme.typography.label1Regular};
   color: ${({ theme }) => theme.colors.textDefault};
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 const ThemeTitle = styled.h2`
@@ -85,4 +130,50 @@ const ThemeDescription = styled.p`
   ${({ theme }) => theme.typography.body1Regular};
   color: ${({ theme }) => theme.colors.textDefault};
   margin: 0;
+`;
+
+const Section = styled.section`
+  margin-top: 5px;
+`;
+
+const EmptyBox = styled.div`
+  text-align: center;
+  padding: 40px 0;
+  color: ${({ theme }) => theme.colors.textSub};
+  ${({ theme }) => theme.typography.body1Regular};
+`;
+
+const ProductList = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+`;
+
+const ProductCard = styled.li`
+  border-radius: 5px;
+  padding: 15px;
+`;
+
+const ProductImage = styled.img`
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+`;
+
+const ProductName = styled.p`
+  ${({ theme }) => theme.typography.body2Bold};
+  color: ${({ theme }) => theme.colors.textDefault};
+  margin: 9px 0 4px;
+`;
+
+const ProductBrand = styled.p`
+  ${({ theme }) => theme.typography.body2Regular};
+  color: ${({ theme }) => theme.colors.textSub};
+  margin: 0;
+`;
+
+const ProductPrice = styled.p`
+  ${({ theme }) => theme.typography.body1Bold};
+  color: ${({ theme }) => theme.colors.textDefault};
+  margin: 3px 0 0;
 `;

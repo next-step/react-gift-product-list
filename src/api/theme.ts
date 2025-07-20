@@ -1,5 +1,6 @@
 //테마 목록 조회용
 import { client } from "./client";
+import type { ProductSummary } from "@/api/product";
 
 export interface Theme {
   themeId: number;
@@ -30,5 +31,20 @@ export const fetchThemeInfo = async (
   const response = await client.get<{ data: ThemeInfo }>(
     `/api/themes/${themeId}/info`
   );
+  return response.data.data;
+};
+
+export const fetchThemeProducts = async (
+  themeId: number,
+  cursor: number = 0,
+  limit: number = 15
+): Promise<{
+  list: ProductSummary[];
+  cursor: number;
+  hasMoreList: boolean;
+}> => {
+  const response = await client.get(`/api/themes/${themeId}/products`, {
+    params: { cursor, limit },
+  });
   return response.data.data;
 };
