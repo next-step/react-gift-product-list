@@ -52,7 +52,7 @@ const useFetch = <TResponse, TBody = unknown>(
     ],
   );
 
-  const [isLoading, setIsLoading] = useState<boolean>(autoFetch);
+  const [isLoading, setIsLoading] = useState(autoFetch);
   const [error, setError] = useState<ErrorData | undefined>(undefined);
   const [data, setData] = useState<TResponse | null>(null);
 

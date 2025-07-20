@@ -33,7 +33,7 @@ const OrderPage = () => {
 };
 
 const OrderPageContent = () => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { handleSubmit: createSubmitHandler, getValues } = useFormContext();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
