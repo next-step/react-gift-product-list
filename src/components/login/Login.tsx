@@ -8,6 +8,7 @@ import { useValidate } from "@/components/login/useValidate";
 import axios from "axios";
 import { STORAGE_KEYS } from "@/constants/storageKyes";
 import { useRequestHandler } from "@/hooks/useRequestHandler";
+import { ROUTE_PATHS } from "@/constants/routePath";
 
 const loginURL = import.meta.env.VITE_API_BASE_URL_LOGIN;
 
@@ -15,6 +16,7 @@ const Login = () => {
   const { setUser } = useUserInfo();
   const theme = useTheme();
   const navigate = useNavigate();
+  const { MYPAGE } = ROUTE_PATHS;
 
   const validateEmail = (email: string) => {
     const EMAIL_REGEXP = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,7 +84,7 @@ const Login = () => {
                   JSON.stringify(logUserInfo)
                 );
 
-                navigate("/my");
+                navigate(MYPAGE);
               },
             });
           }

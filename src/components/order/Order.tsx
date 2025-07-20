@@ -54,7 +54,7 @@ const Order: React.FC = () => {
   const [receivers, setReceivers] = useState<FormData["order"]>([]);
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
-  const { MAIN } = ROUTE_PATHS;
+  const { MAIN, LOGIN } = ROUTE_PATHS;
 
   const totalQuantity =
     receivers.length === 0
@@ -117,7 +117,7 @@ const Order: React.FC = () => {
       },
       onError: (error) => {
         if (axios.isAxiosError(error)) {
-          navigate("/login");
+          navigate(LOGIN);
         }
       },
     });
@@ -234,7 +234,7 @@ const Order: React.FC = () => {
             } catch (error) {
               if (axios.isAxiosError(error)) {
                 if (error.response?.status === 401) {
-                  navigate("/login");
+                  navigate(LOGIN);
                 }
               }
             }
