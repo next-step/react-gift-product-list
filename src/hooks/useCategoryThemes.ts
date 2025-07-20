@@ -3,19 +3,13 @@ import axios from 'axios';
 import type { Category } from '@/types/category';
 import { CATEGORY_THEMES_API_URL } from '@/constants/api';
 
-interface UseCategoryThemesResult {
-  data: Category[] | null;
-  pending: boolean;
-  error: boolean;
-}
-
 const fetchCategoryThemes = async (): Promise<Category[]> => {
   const res = await axios.get<{ data: Category[] }>(CATEGORY_THEMES_API_URL);
   return res.data.data;
 };
 
-export const useCategoryThemes = (): UseCategoryThemesResult => {
-  const [data, setData] = useState<Category[] | null>(null);
+const useFetch = <T>(fetchFn: () => Promise<T>) => {
+  const [data, setData] = useState<T | null>(null);
   const [pending, setPending] = useState(true);
   const [error, setError] = useState(false);
 
@@ -24,7 +18,7 @@ export const useCategoryThemes = (): UseCategoryThemesResult => {
       setPending(true);
       setError(false);
       try {
-        const result = await fetchCategoryThemes();
+        const result = await fetchFn();
         setData(result);
       } catch {
         setError(true);
@@ -35,7 +29,9 @@ export const useCategoryThemes = (): UseCategoryThemesResult => {
     };
 
     load();
-  }, []);
+  }, [fetchFn]);
 
   return { data, pending, error };
 };
+
+export const useCategoryThemes = () => useFetch(fetchCategoryThemes);

@@ -58,3 +58,4 @@
 - [ ] 2단계 피드백 반영
   - [x] isErrorWithMessage 유틸 함수로 분리
   - [x] api 관련 하드코딩 부분 상수화 처리
+  - [x] useCategoryThemes.ts에서 useFetch() 라는 훅을 정의해서 사용
