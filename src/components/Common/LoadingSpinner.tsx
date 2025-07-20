@@ -4,10 +4,20 @@ import type { CSSProperties } from "react";
 type Props = {
   color?: string;
   loading: boolean;
-  size: number;
+  size?: number;
+  marginSize?: number;
 };
 
-export const LoadingSpinner = ({ color = "#000000", loading, size }: Props) => {
+export const LoadingSpinner = ({
+  color = "#000000",
+  loading,
+  size,
+  marginSize = 100,
+}: Props) => {
+  const override: CSSProperties = {
+    display: "block",
+    margin: `${marginSize}px auto`,
+  };
   return (
     <Spinner
       color={color}
@@ -17,9 +27,4 @@ export const LoadingSpinner = ({ color = "#000000", loading, size }: Props) => {
       data-testid="loader"
     />
   );
-};
-
-const override: CSSProperties = {
-  display: "block",
-  margin: "100px auto",
 };
