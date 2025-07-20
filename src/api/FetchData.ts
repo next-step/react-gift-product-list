@@ -1,23 +1,23 @@
 import axios, { AxiosError } from 'axios';
 
-//object : 목적 대상 ex) login, themes 등
-const getFetch = async (object: string, params: string) => {
-  const res = await axios.get(import.meta.env.VITE_API_BASE_URL + object + params);
+//requestName : 목적 대상 ex) login, themes 등
+const getFetch = async (requestName: string, params: string) => {
+  const res = await axios.get(import.meta.env.VITE_API_BASE_URL + requestName + params);
   const data = res.data;
   return data;
 };
 
-const postFetch = async (
-  object: string,
-  body: Record<string, string> | null,
+const postFetch = async <T extends object>(
+  requestName: string,
+  body: T,
   headers: { Authorization: string } | null
 ) => {
-  //console.log(`postFetch process : object : ${object} , body : ${body && body.toString()}`);
   try {
+    console.log(body);
     const res =
       headers === null
-        ? await axios.post(import.meta.env.VITE_API_BASE_URL + object, body)
-        : await axios.post(import.meta.env.VITE_API_BASE_URL + object, body, { headers });
+        ? await axios.post(import.meta.env.VITE_API_BASE_URL + requestName, body)
+        : await axios.post(import.meta.env.VITE_API_BASE_URL + requestName, body, { headers });
     const data = res.data.data;
     return data;
   } catch (error: AxiosError | unknown) {
@@ -30,16 +30,16 @@ const postFetch = async (
 };
 type HttpTypes = 'GET' | 'POST';
 
-export const apiClient = async (
+export const apiClient = async <T extends object>(
   methods: HttpTypes,
-  object: string,
-  body: Record<string, string> | null,
+  requestName: string,
+  body: T,
   params: string,
   headers: { Authorization: string } | null
 ) => {
   if (methods == 'GET') {
-    return getFetch(object, params);
+    return getFetch(requestName, params);
   } else if (methods == 'POST') {
-    return postFetch(object, body, headers);
+    return postFetch(requestName, body, headers);
   }
 };

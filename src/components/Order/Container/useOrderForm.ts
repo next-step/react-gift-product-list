@@ -17,7 +17,7 @@ const getOrderFetchData = async (productId: string | null) => {
   const fetchData = await apiClient(
     'GET',
     BASIC_ENDPOINT.product + `/${productId}/summary`,
-    null,
+    {},
     '',
     null
   );
@@ -55,7 +55,8 @@ export const useOrderForm = () => {
     resolver: zodResolver(orderSchema),
     defaultValues: {
       msg: '',
-      sendName: sessionStorage.getItem(SESSION_KEY_NAME.username) as string,
+      msgId: '',
+      sendName: '',
       recipients: [],
       total_count: 0,
     },
@@ -71,10 +72,12 @@ export const useOrderForm = () => {
     alert(`Name: ${data.sendName}, Message: ${data.msg}`);
 
     const postOrder = async () => {
+      const authToken = sessionStorage.getItem(SESSION_KEY_NAME.token) as string;
       const orderBody = {
         productId: selectedProduct?.id,
         message: data.msg,
-        orderName: data.sendName,
+        messageCardId: data.msgId,
+        orderName: String(data.sendName),
         receivers: data.recipients.map((recipient: Recipient) => {
           return {
             name: recipient.receiveName,
@@ -84,7 +87,21 @@ export const useOrderForm = () => {
         }),
       };
       console.log(orderBody);
-      //   const fetchOrder = await apiClient('POST', BASIC_ENDPOINT.order);
+      try {
+        const fetchOrder = await apiClient('POST', BASIC_ENDPOINT.order, orderBody, '', {
+          Authorization: authToken,
+        });
+        console.log(orderBody.orderName);
+        console.log(fetchOrder);
+        if (fetchOrder.statusCode === 401) {
+          navigate(URLS.login);
+        } else if (fetchOrder.success === true) {
+          alert('주문 성공');
+          navigate(URLS.home);
+        }
+      } catch (error) {
+        alert(`${error}발생`);
+      }
     };
     postOrder();
   };

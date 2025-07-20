@@ -19,6 +19,7 @@ const OrderCardTemplateContainer = () => {
 
   //템플릿을 선택했을때 기본 messgae를 만들어 리렌더링하기 위한 useEffect()
   useEffect(() => {
+    setValue('msgId', `card${selectedTemplate.id}`);
     setValue('msg', selectedTemplate.defaultTextMessage, { shouldValidate: true });
   }, [selectedTemplate, setValue]);
 

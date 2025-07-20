@@ -1,15 +1,23 @@
+import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 import {
   StyledSendPersonContainer,
   SyltedOrderInput,
 } from '@src/components/Order/Container/StyledOrderContainer';
 import type { OrderFormValue } from '@src/types/OrderFormValues';
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 const SenderContainer = () => {
   const {
     register,
+    setValue,
     formState: { errors },
   } = useFormContext<OrderFormValue>();
+
+  useEffect(() => {
+    const name = sessionStorage.getItem(SESSION_KEY_NAME.username as string);
+    setValue('sendName', String(name));
+  });
   return (
     <StyledSendPersonContainer className='send-person background-default margin-bottom-10'>
       <div>
