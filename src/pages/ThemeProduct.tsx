@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import styled from "@emotion/styled";
+import * as S from "@/styles/ThemeProductStyles";
 
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -54,23 +54,18 @@ const ThemeProduct = () => {
       setHasMore(false);
     } finally {
       setIsLoadingMore(false);
-      setLoading(false);
     }
   }, [cursor, hasMore, isLoadingMore, id]);
 
   useEffect(() => {
-    loadThemeInfo();
-  }, [loadThemeInfo]);
+    const init = async () => {
+      await Promise.all([loadThemeInfo(), loadProducts()]);
+      setLoading(false);
+    };
+    init();
+  }, [loadThemeInfo, loadProducts]);
 
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
-
-  const observerRef = useIntersect<HTMLDivElement>(() => {
-    if (!isLoadingMore && hasMore) {
-      loadProducts();
-    }
-  }, hasMore);
+  const observerRef = useIntersect<HTMLDivElement>(loadProducts, hasMore);
 
   if (loading) return <Spinner size={48} withWrapper />;
 
@@ -80,121 +75,51 @@ const ThemeProduct = () => {
         <Navigation />
 
         {theme && (
-          <HeroSection bgColor={theme.backgroundColor}>
-            <ThemeLabel>{theme.name}</ThemeLabel>
-            <ThemeTitle>{theme.title}</ThemeTitle>
-            <ThemeDescription>{theme.description}</ThemeDescription>
-          </HeroSection>
+          <S.HeroSection bgColor={theme.backgroundColor}>
+            <S.ThemeLabel>{theme.name}</S.ThemeLabel>
+            <S.ThemeTitle>{theme.title}</S.ThemeTitle>
+            <S.ThemeDescription>{theme.description}</S.ThemeDescription>
+          </S.HeroSection>
         )}
 
-        <Section>
+        <S.Section>
           {products.length === 0 ? (
-            <EmptyBox>상품이 없습니다.</EmptyBox>
+            <S.EmptyBox>상품이 없습니다.</S.EmptyBox>
           ) : (
-            <ProductList>
+            <S.ProductList>
               {products.map((item, index) => {
                 const isLast = index === products.length - 1;
                 return (
-                  <ProductCard key={item.id}>
+                  <S.ProductCard key={item.id}>
                     {isLast ? (
                       <div ref={observerRef}>
-                        <ProductImage src={item.imageURL} alt={item.name} />
-                        <ProductName>{item.name}</ProductName>
-                        <ProductBrand>{item.brandInfo.name}</ProductBrand>
-                        <ProductPrice>
+                        <S.ProductImage src={item.imageURL} alt={item.name} />
+                        <S.ProductName>{item.name}</S.ProductName>
+                        <S.ProductBrand>{item.brandInfo.name}</S.ProductBrand>
+                        <S.ProductPrice>
                           {item.price.sellingPrice.toLocaleString()}원
-                        </ProductPrice>
+                        </S.ProductPrice>
                       </div>
                     ) : (
                       <>
-                        <ProductImage src={item.imageURL} alt={item.name} />
-                        <ProductName>{item.name}</ProductName>
-                        <ProductBrand>{item.brandInfo.name}</ProductBrand>
-                        <ProductPrice>
+                        <S.ProductImage src={item.imageURL} alt={item.name} />
+                        <S.ProductName>{item.name}</S.ProductName>
+                        <S.ProductBrand>{item.brandInfo.name}</S.ProductBrand>
+                        <S.ProductPrice>
                           {item.price.sellingPrice.toLocaleString()}원
-                        </ProductPrice>
+                        </S.ProductPrice>
                       </>
                     )}
-                  </ProductCard>
+                  </S.ProductCard>
                 );
               })}
-            </ProductList>
+            </S.ProductList>
           )}
           {hasMore && isLoadingMore && <Spinner size={32} withWrapper />}
-        </Section>
+        </S.Section>
       </PageContainer>
     </PageLayout>
   );
 };
 
 export default ThemeProduct;
-
-const HeroSection = styled.section<{ bgColor: string }>`
-  background-color: ${({ bgColor }) => bgColor};
-  padding: 24px 16px;
-  border-radius: 5px;
-`;
-
-const ThemeLabel = styled.p`
-  ${({ theme }) => theme.typography.label1Regular};
-  color: ${({ theme }) => theme.colors.gray00};
-  margin-bottom: 8px;
-`;
-
-const ThemeTitle = styled.h2`
-  ${({ theme }) => theme.typography.title1Bold};
-  color: ${({ theme }) => theme.colors.gray00};
-  margin: 0 0 5px;
-`;
-
-const ThemeDescription = styled.p`
-  ${({ theme }) => theme.typography.body1Regular};
-  color: ${({ theme }) => theme.colors.gray00};
-  margin: 0;
-`;
-
-const Section = styled.section`
-  margin-top: 5px;
-`;
-
-const EmptyBox = styled.div`
-  text-align: center;
-  padding: 40px 0;
-  color: ${({ theme }) => theme.colors.gray800};
-  ${({ theme }) => theme.typography.body1Regular};
-`;
-
-const ProductList = styled.ul`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-`;
-
-const ProductCard = styled.li`
-  border-radius: 5px;
-  padding: 15px;
-`;
-
-const ProductImage = styled.img`
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-`;
-
-const ProductName = styled.p`
-  ${({ theme }) => theme.typography.body2Bold};
-  color: ${({ theme }) => theme.colors.textDefault};
-  margin: 9px 0 4px;
-`;
-
-const ProductBrand = styled.p`
-  ${({ theme }) => theme.typography.body2Regular};
-  color: ${({ theme }) => theme.colors.textSub};
-  margin: 0;
-`;
-
-const ProductPrice = styled.p`
-  ${({ theme }) => theme.typography.body1Bold};
-  color: ${({ theme }) => theme.colors.textDefault};
-  margin: 3px 0 0;
-`;
