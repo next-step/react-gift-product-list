@@ -11,10 +11,10 @@ const postFetch = async (object: string, body: Record<string, string> | null) =>
   const data = res.data;
   return data;
 };
-type httpTypes = 'GET' | 'POST';
+type HttpTypes = 'GET' | 'POST';
 
-export const ApiClient = async (
-  methods: httpTypes,
+export const apiClient = async (
+  methods: HttpTypes,
   object: string,
   body: Record<string, string> | null,
   params: string

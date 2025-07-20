@@ -1,4 +1,6 @@
-import { ApiClient } from '@src/api/FetchData';
+import { apiClient } from '@src/api/FetchData';
+import { BASIC_ENDPOINT } from '@src/assets/endpoints';
+import { PARAMS } from '@src/assets/params';
 import type { Goods } from '@src/types/Goods';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -11,13 +13,13 @@ export const useRankingItem = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(search);
-    const rankType = params.get('rankType');
-    const targetType = params.get('targetType');
+    const rankType = params.get(PARAMS.rankType);
+    const targetType = params.get(PARAMS.targetType);
     const typeUrls = `?targetType=${targetType}&rankType=${rankType}`;
 
     const fetchProductRanking = async () => {
       try {
-        const data = await ApiClient('GET', 'products/ranking', null, typeUrls);
+        const data = await apiClient('GET', BASIC_ENDPOINT.ranking, null, typeUrls);
         setGoods(data);
         setError(false);
       } catch (error) {
