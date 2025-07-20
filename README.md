@@ -60,3 +60,4 @@
   - [x] api 관련 하드코딩 부분 상수화 처리
   - [x] useCategoryThemes.ts에서 useFetch() 라는 훅을 정의해서 사용
   - [x] CategoryContent 내부에서 useCategoryThemes를 호출
+  - [x] OrderPage 내 로직 hook으로 분리

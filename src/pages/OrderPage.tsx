@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
@@ -16,9 +15,9 @@ import { FormProvider } from 'react-hook-form';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import type { OrderFormValues } from '@/types/order';
 import { loading } from '@/components/common/Loading';
-import type { ProductSummary } from '@/types/product';
-import { ORDER_API_URL, getProductSummaryUrl } from '@/constants/api';
+import { ORDER_API_URL } from '@/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
+import { useProductSummary } from '@/hooks/useProductSummary';
 
 const isAxiosErrorWithStatus = (
   err: unknown,
@@ -34,28 +33,7 @@ const OrderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [product, setProduct] = useState<ProductSummary | undefined>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await axios.get<{ data: ProductSummary }>(
-          getProductSummaryUrl(id!)
-        );
-        setProduct(res.data.data);
-      } catch {
-        toast.error(ERROR_MESSAGES.LOAD_PRODUCT_FAIL, {
-          toastId: 'product-load-fail',
-        });
-        navigate(ROUTES.HOME);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (id) fetchProduct();
-  }, [id, navigate]);
+  const { product, isLoading } = useProductSummary(id);
 
   const {
     methods,
