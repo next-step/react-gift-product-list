@@ -54,7 +54,7 @@ const SenderInputErrorTxt = styled.p`
   width: 95%;
 `;
 
-function SenderInputCompo({userName}:any) {
+function SenderInputCompo() {
     type OrderFormValues = {
         selectedId: number;
         message: string;
