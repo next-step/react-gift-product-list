@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { typographyMixin } from './Typography'
 import type { ReactNode, ButtonHTMLAttributes } from 'react'
-import { theme } from '@/styles/theme'
 
 // * 버튼 컴포넌트
 // ? shadcn ui 에서의 버튼 컴포넌트를 참고하여 작성 (+ size 옵션 추가)
@@ -33,7 +32,7 @@ const StyledButton = styled.button<{
   size: ButtonSize
 }>`
   border: none;
-  border-radius: ${theme.spacing.spacing1};
+  border-radius: ${({ theme }) => theme.spacing.spacing1};
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 
@@ -42,7 +41,7 @@ const StyledButton = styled.button<{
   justify-content: center;
 
   /* 크기별 스타일 */
-  ${({ size }) => {
+  ${({ size, theme }) => {
     switch (size) {
       case 'small': // * 작은 버튼
         return `
@@ -68,7 +67,7 @@ const StyledButton = styled.button<{
   }}
 
   /* variant 스타일 */
-  ${({ variant }) => {
+  ${({ variant, theme }) => {
     switch (variant) {
       case 'kakao': // * 카카오 브랜드 컬러 버튼
         return `

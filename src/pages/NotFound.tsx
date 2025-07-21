@@ -1,6 +1,5 @@
 import { Button, PageContainer, typographyMixin } from '@/components/ui'
 import { ROUTE_PATH } from '@/Router'
-import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
 import { useNavigate } from 'react-router-dom'
 
@@ -31,20 +30,20 @@ const Image = styled.img`
   height: 150px;
   object-fit: cover;
 
-  margin-bottom: ${theme.spacing.spacing3};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing3};
 `
 
 // * 타이틀
 const Title = styled.h1`
   ${typographyMixin('title1Bold')}
 
-  color: ${theme.semanticColors.text.default};
+  color: ${({ theme }) => theme.semanticColors.text.default};
 `
 
 // * 서브타이틀
 const Subtitle = styled.p`
   ${typographyMixin('subtitle2Regular')}
 
-  color: ${theme.semanticColors.text.sub};
-  margin: ${theme.spacing.spacing3} 0 ${theme.spacing.spacing6};
+  color: ${({ theme }) => theme.semanticColors.text.sub};
+  margin: ${({ theme }) => `${theme.spacing.spacing3} 0 ${theme.spacing.spacing6}`};
 `

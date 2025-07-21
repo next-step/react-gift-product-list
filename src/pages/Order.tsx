@@ -4,7 +4,6 @@ import { OrderFormProvider, useOrderForm } from '@/contexts/order'
 import { orderCardMock, type CardData } from '@/features/order'
 import { ROUTE_PATH } from '@/Router'
 import { OrderCardSection, ReceiverSection, SenderSection } from '@/features/order/components'
-import { theme } from '@/styles/theme'
 import { Button, Loading, PageContainer, Typography } from '@/components/ui'
 import type { ProductSummary } from '@/api/types/product'
 import { fetchProductSummary } from '@/api/services/product'
@@ -13,6 +12,7 @@ import { STORAGES } from '@/api/constants/storages'
 import type { CreateOrderRequest } from '@/api/types/order'
 import { createOrder } from '@/api/services/order'
 import { toast } from 'react-toastify'
+import { useTheme } from '@emotion/react'
 
 // * 주문하기 페이지 (주문하기 폼 Provider 포함)
 export const Order = () => {
@@ -29,6 +29,7 @@ export const Order = () => {
 
 // * 주문하기 컨텐츠
 export const OrderContent = () => {
+  const theme = useTheme()
   const navigate = useNavigate()
   // * URL 파라미터로 부터 상품 id 값 가져오기
   const { id } = useParams<{ id: string }>()
@@ -168,16 +169,16 @@ export const OrderContent = () => {
 // * 주문하기 페이지 컨테이너
 const OrderContainer = styled(PageContainer)`
   justify-content: start;
-  background-color: ${theme.semanticColors.background.disabled};
-  gap: ${theme.spacing.spacing2};
+  background-color: ${({ theme }) => theme.semanticColors.background.disabled};
+  gap: ${({ theme }) => theme.spacing.spacing2};
 `
 
 // * 상품 정보 섹션
 const ProductInfoSection = styled.section`
   width: 100%;
-  padding: ${theme.spacing.spacing4} ${theme.spacing.spacing4};
-  background-color: ${theme.semanticColors.background.default};
-  border-bottom: 1px solid ${theme.semanticColors.border.default};
+  padding: ${({ theme }) => `${theme.spacing.spacing4} ${theme.spacing.spacing4}`};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
+  border-bottom: 1px solid ${({ theme }) => theme.semanticColors.border.default};
 
   display: flex;
   flex-direction: column;
@@ -185,60 +186,66 @@ const ProductInfoSection = styled.section`
 
 // * 섹션 제목
 const SectionTitle = styled(Typography)`
-  margin-bottom: ${theme.spacing.spacing3};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing3};
 `
 
 // * 상품 정보 컨테이너
 const ProductInfo = styled.div`
-  padding: ${theme.spacing.spacing4};
-
-  border: 1px solid ${theme.semanticColors.border.disabled};
-  border-radius: ${theme.spacing.spacing2};
-
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing.spacing3};
+  ${({ theme }) => `
+    padding: ${theme.spacing.spacing4};
+    border: 1px solid ${theme.semanticColors.border.disabled};
+    border-radius: ${theme.spacing.spacing2};
+    display: flex;
+    align-items: center;
+    gap: ${theme.spacing.spacing3};
+  `}
 `
 
 // * 상품 이미지
 const ProductImage = styled.img`
   width: 4rem;
   height: 4rem;
-  border-radius: ${theme.spacing.spacing1};
+  border-radius: ${({ theme }) => theme.spacing.spacing1};
   object-fit: cover;
 `
 
 // * 상품 상세 정보
 const ProductDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.spacing.spacing1};
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.spacing.spacing1};
+  `}
 `
 
 // * 상품 명 컨테이너
 const ProductNameContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.spacing.spacing1};
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.spacing.spacing1};
+  `}
 `
 
 // * 상품명
 const ProductName = styled(Typography)`
-  color: ${theme.semanticColors.text.default};
+  color: ${({ theme }) => theme.semanticColors.text.default};
 `
 
 // * 상품 브랜드
 const ProductBrand = styled(Typography)`
-  color: ${theme.semanticColors.text.sub};
+  color: ${({ theme }) => theme.semanticColors.text.sub};
 `
 
 // * 상품 가격 컨테이너
 const ProductPriceContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: ${theme.spacing.spacing1};
-  flex-wrap: wrap;
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${theme.spacing.spacing1};
+    flex-wrap: wrap;
+  `}
 `
 
 // * 상품 가격 라벨
@@ -246,7 +253,7 @@ const ProductPriceLabel = styled(Typography)``
 
 // * 상품 판매가
 const ProductSellingPrice = styled(Typography)`
-  color: ${theme.semanticColors.text.default};
+  color: ${({ theme }) => theme.semanticColors.text.default};
 `
 
 // * 주문 버튼 섹션
@@ -264,7 +271,7 @@ const LoadingContainer = styled(PageContainer)`
   flex: 1;
 
   justify-content: center;
-  background-color: ${theme.semanticColors.background.default};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
 `
 
 export default Order

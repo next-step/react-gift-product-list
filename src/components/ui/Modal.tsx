@@ -3,7 +3,6 @@ import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from './Button'
 import { Typography } from './Typography'
-import { theme } from '@/styles/theme'
 
 // * 모달 컴포넌트
 export const Modal = ({
@@ -64,7 +63,7 @@ const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: ${theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing4};
 `
 
 // * 모달 컨테이너
@@ -76,8 +75,8 @@ const Container = styled.div`
   flex-direction: column;
   min-height: 200px;
 
-  background-color: ${theme.semanticColors.background.default};
-  border-radius: ${theme.spacing.spacing2};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
+  border-radius: ${({ theme }) => theme.spacing.spacing2};
   overflow: hidden;
 
   animation: modalAppear 0.2s ease-out;
@@ -98,8 +97,8 @@ const Container = styled.div`
 // * 닫기 버튼
 const CloseButton = styled(Button)`
   position: absolute;
-  top: ${theme.spacing.spacing3};
-  right: ${theme.spacing.spacing3};
+  top: ${({ theme }) => theme.spacing.spacing3};
+  right: ${({ theme }) => theme.spacing.spacing3};
   width: 2rem;
   height: 2rem;
   padding: 0;
@@ -108,14 +107,13 @@ const CloseButton = styled(Button)`
 
 // * 모달 헤더
 const ModalHeader = styled.div`
-  padding: ${theme.spacing.spacing5};
-  /* border-bottom: 1px solid ${theme.semanticColors.border.default}; */
+  padding: ${({ theme }) => theme.spacing.spacing5};
 
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: start;
-  gap: ${theme.spacing.spacing1};
+  gap: ${({ theme }) => theme.spacing.spacing1};
 `
 
 // * 모달 제목
@@ -126,20 +124,19 @@ const ModalTitle = styled(Typography)`
 // * 모달 컨텐츠
 const ModalContent = styled.div<{ hasHeader: boolean; hasFooter: boolean }>`
   flex: 1;
-  padding: ${theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing4};
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.spacing4};
+  gap: ${({ theme }) => theme.spacing.spacing4};
 
-  ${({ hasHeader }) => !hasHeader && `padding-top: ${theme.spacing.spacing6};`}
-  ${({ hasFooter }) => !hasFooter && `padding-bottom: ${theme.spacing.spacing6};`}
+  ${({ hasHeader, theme }) => (!hasHeader ? `padding-top: ${theme.spacing.spacing6};` : '')}
+  ${({ hasFooter, theme }) => (!hasFooter ? `padding-bottom: ${theme.spacing.spacing6};` : '')}
 `
 
 // * 모달 푸터
 const ModalFooter = styled.div`
-  padding: ${theme.spacing.spacing4};
-  /* border-top: 1px solid ${theme.semanticColors.border.default}; */
+  padding: ${({ theme }) => theme.spacing.spacing4};
   display: flex;
-  gap: ${theme.spacing.spacing2};
+  gap: ${({ theme }) => theme.spacing.spacing2};
   justify-content: flex-end;
 `

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { Typography } from '@/components/ui'
 import type { ThemeInfo } from '@/api/types/theme'
-import { theme } from '@/styles/theme'
 
 interface HeroSectionProps {
   themeInfo: ThemeInfo
@@ -25,7 +24,7 @@ export const HeroSection = ({ themeInfo }: HeroSectionProps) => {
 // * 컨테이너
 const Container = styled.section`
   width: 100%;
-  padding: ${theme.spacing.spacing6} ${theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing6} ${({ theme }) => theme.spacing.spacing4};
   display: flex;
   align-items: center;
 `
@@ -34,7 +33,7 @@ const Container = styled.section`
 const HeroContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.spacing1};
+  gap: ${({ theme }) => theme.spacing.spacing1};
 
-  color: ${theme.colors.gray.gray00};
+  color: ${({ theme }) => theme.colors.gray.gray00};
 `

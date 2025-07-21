@@ -1,14 +1,16 @@
 import styled from '@emotion/styled'
 import { useNavigate } from 'react-router-dom'
 import { ROUTE_PATH } from '@/Router'
-import { theme } from '@/styles/theme'
 import { typographyMixin } from '@/components/ui'
 import type { Product } from '@/api/types/product'
+import { useTheme } from '@emotion/react'
 
 // * 실시간 급상승 상품 아이템 컴포넌트
 export const ProductItem = ({ product, index }: { product: Product; index?: number }) => {
   const navigate = useNavigate()
   const productRank = index !== undefined ? index + 1 : undefined
+
+  const theme = useTheme()
 
   // * 상품 클릭시 핸들러
   const handleProductClick = () => {
@@ -46,30 +48,29 @@ export const ProductItem = ({ product, index }: { product: Product; index?: numb
 
 // * 실시간 급상승 상품 아이템 컨테이너 (article 시맨틱 태그 사용)
 const ProductItemContainer = styled.article`
-  position: relative;
-
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: ${theme.spacing.spacing2};
-
-  cursor: pointer;
+  ${({ theme }) => `
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: ${theme.spacing.spacing2};
+    cursor: pointer;
+  `}
 `
 
 // * 실시간 급상승 상품 랭크
 const ProductRank = styled.span<{ rank: number }>`
   position: absolute;
-  top: ${theme.spacing.spacing1};
-  left: ${theme.spacing.spacing1};
+  top: ${({ theme }) => theme.spacing.spacing1};
+  left: ${({ theme }) => theme.spacing.spacing1};
 
   width: 20px;
   height: 20px;
 
-  ${({ rank }) => {
+  ${({ rank, theme }) => {
     if (rank <= 3) {
       return `
         background-color: ${theme.colors.red.red600};
@@ -83,7 +84,7 @@ const ProductRank = styled.span<{ rank: number }>`
     }
   }}
 
-  border-radius: ${theme.spacing.spacing1};
+  border-radius: ${({ theme }) => theme.spacing.spacing1};
 
   ${typographyMixin('label2Bold')}
 
@@ -98,24 +99,25 @@ const ProductImage = styled.img`
   aspect-ratio: 1 / 1;
 
   object-fit: cover;
-  border-radius: ${theme.spacing.spacing1};
+  border-radius: ${({ theme }) => theme.spacing.spacing1};
 `
 
 // * 실시간 급상승 브랜드 & 이름 컨테이너
 const ProductTitleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: ${theme.spacing.spacing0};
-
-  ${typographyMixin('label1Regular')}
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: ${theme.spacing.spacing0};
+    ${typographyMixin('label1Regular')}
+  `}
 `
 
 // * 실시간 급상승 상품 브랜드
 const ProductBrand = styled.span`
   /* 보조 텍스트 색상 */
-  color: ${theme.semanticColors.text.sub};
+  color: ${({ theme }) => theme.semanticColors.text.sub};
 `
 
 // * 실시간 급상승 상품 이름
@@ -123,22 +125,21 @@ const ProductName = styled.span``
 
 // * 실시간 급상승 상품 가격 컨테이너
 const ProductPrice = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: ${theme.spacing.spacing1};
-
-  ${typographyMixin('body1Regular')}
-
-  /* 화면 축소 시 원치 않는 찌그러짐 방지 */
-  flex-wrap: wrap;
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.spacing.spacing1};
+    ${typographyMixin('body1Regular')}
+    flex-wrap: wrap;
+  `}
 `
 
 // * 실시간 급상승 상품 할인율
 const ProductDiscountRate = styled.span`
   /* 할인 - 정보 색상 */
-  color: ${theme.semanticColors.status.info};
+  color: ${({ theme }) => theme.semanticColors.status.info};
 `
 
 // * 실시간 급상승 상품 원래 가격

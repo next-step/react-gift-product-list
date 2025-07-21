@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { Typography, Loading } from '@/components/ui'
 import type { Product } from '@/api/types/product'
-import { theme } from '@/styles/theme'
 import { ProductItem } from '@/features/product'
 import { useRef } from 'react'
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
@@ -79,26 +78,27 @@ export const ProductList = ({
 
 // * 상품 리스트 섹션
 const ProductListSection = styled.section`
-  width: 100%;
-  min-height: 15rem;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${theme.spacing.spacing3};
+  ${({ theme }) => `
+    width: 100%;
+    min-height: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: ${theme.spacing.spacing3};
+  `}
 `
 
 // * 상품 리스트 컨테이너
 const ProductContainer = styled.div`
-  width: 100%;
-  height: fit-content;
-
-  padding: ${theme.spacing.spacing4};
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: ${theme.spacing.spacing2};
-  row-gap: ${theme.spacing.spacing5};
+  ${({ theme }) => `
+    width: 100%;
+    height: fit-content;
+    padding: ${theme.spacing.spacing4};
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: ${theme.spacing.spacing2};
+    row-gap: ${theme.spacing.spacing5};
+  `}
 `
 
 // * 서브 컨테이너 (로딩 or 에러 or 빈 페이지)
