@@ -41,6 +41,7 @@ function Login({ onLogin }: LoginProps) {
       const responseInfo = await postLogin({ email: id, password: pw });
       setAccessToken(responseInfo.authToken);
       setLoginInfo(responseInfo);
+      localStorage.setItem('userInfo', JSON.stringify(responseInfo));
       onLogin();
     } catch (err) {
       const error = err as AxiosError;

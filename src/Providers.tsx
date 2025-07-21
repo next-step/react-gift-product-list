@@ -1,7 +1,7 @@
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
 import { ThemeProvider } from '@emotion/react';
 import { theme } from '@/styles/ResetStyles';
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import type { LoginResponseDto } from '@/types/DTO/loginDTO';
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -10,6 +10,12 @@ export function Providers({ children }: { children: ReactNode }) {
     name: '',
     authToken: '',
   });
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem('userInfo');
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+  }, []);
 
   return (
     <LoginInfoContext.Provider value={{ userInfo, setLoginInfo: setUserInfo }}>
