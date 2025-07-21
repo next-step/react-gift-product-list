@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, memo, useMemo } from "react";
 import { getThemeProducts, type ThemeProduct, DEFAULT_THEME_PRODUCT_LIMIT } from "@/apis/theme";
-import AsyncBoundary from "@/components/AsyncBoundary";
 import { useNavigate } from "react-router";
-import { useCallback } from "react";
+import Spinner from "@/components/Spinner";
 
 
 interface ThemeProductSectionProps {
@@ -63,6 +62,23 @@ const EmptyWrapper = styled.div`
   height: 150px;
 `;
 
+const ProductCardComponent = memo(function ProductCardComponent({
+    product,
+    onClick,
+}: {
+    product: ThemeProduct;
+    onClick: () => void;
+}) {
+    return (
+        <ProductCard onClick={onClick}>
+            <ProductImage src={product.imageURL} alt={product.name} />
+            <Brand>{product.brandInfo.name}</Brand>
+            <Name>{product.name}</Name>
+            <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
+        </ProductCard>
+    );
+});
+
 export default function ThemeProductSection({ themeId }: ThemeProductSectionProps) {
     const [products, setProducts] = useState<ThemeProduct[]>([]);
     const [cursor, setCursor] = useState(0);
@@ -71,6 +87,13 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
     const [error, setError] = useState(false);
     const observerRef = useRef<HTMLDivElement | null>(null);
     const navigate = useNavigate();
+
+    const handleClick = useCallback(
+        (id: number) => () => {
+            navigate(`/order/${id}`);
+        },
+        [navigate]
+    );
 
     const loadInitialProducts = useCallback(async () => {
         setLoading(true);
@@ -88,15 +111,22 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
     }, [themeId]);
 
     const loadMoreProducts = useCallback(async () => {
+        console.log("loadMoreProducts called");
         if (loading || !hasMore) return;
 
         setLoading(true);
         try {
             const res = await getThemeProducts(themeId, cursor, DEFAULT_THEME_PRODUCT_LIMIT);
             setProducts((prev) => {
-                const merged = [...prev, ...res.list];
-                const uniqueMap = new Map(merged.map((item) => [item.id, item]));
-                return Array.from(uniqueMap.values());
+                const prevMap = new Map(prev.map((p) => [p.id, p]));
+                const merged = [...prev];
+
+                for (const item of res.list) {
+                    if (!prevMap.has(item.id)) {
+                        merged.push(item);
+                    }
+                }
+                return merged;
             });
             setCursor(res.cursor);
             setHasMore(res.hasMoreList);
@@ -117,11 +147,13 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
 
     useEffect(() => {
         if (!hasMore || loading) return;
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                loadMoreProducts();
-            }
-        },
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    console.log("observer triggered");
+                    loadMoreProducts();
+                }
+            },
             { threshold: 0.1 }
         );
 
@@ -138,33 +170,49 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
         };
     }, [loadMoreProducts, hasMore, loading]);
 
-    if (!loading && !error && products.length === 0) {
+    const renderedProductCards = useMemo(
+        () =>
+            products.map((product) => (
+                <ProductCardComponent
+                    key={product.id}
+                    product={product}
+                    onClick={handleClick(product.id)}
+                />
+            )),
+        [products, handleClick]
+    );
+
+    if (error) {
         return (
-            <AsyncBoundary loading={loading} error={error}>
-                <Section>
-                    <EmptyWrapper>
-                        <Message>상품이 없습니다.</Message>
-                    </EmptyWrapper>
-                </Section>
-            </AsyncBoundary>
+            <Section>
+                <EmptyWrapper>
+                    <Message>문제가 발생했습니다. 다시 시도해 주세요.</Message>
+                </EmptyWrapper>
+            </Section>
         );
     }
-
-    return (
-        <AsyncBoundary loading={loading} error={error}>
+    if (loading && products.length === 0) {
+        return (
             <Section>
-                <Grid>
-                    {products.map((product) => (
-                        <ProductCard key={product.id} onClick={() => navigate(`/order/${product.id}`)}>
-                            <ProductImage src={product.imageURL} alt={product.name} />
-                            <Brand>{product.brandInfo.name}</Brand>
-                            <Name>{product.name}</Name>
-                            <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
-                        </ProductCard>
-                    ))}
-                </Grid>
-                <div ref={observerRef} style={{ height: "1px" }} />
+                <EmptyWrapper>
+                    <Spinner />
+                </EmptyWrapper>
             </Section>
-        </AsyncBoundary>
+        );
+    }
+    if (products.length === 0) {
+        return (
+            <Section>
+                <EmptyWrapper>
+                    <Message>상품이 없습니다.</Message>
+                </EmptyWrapper>
+            </Section>
+        );
+    }
+    return (
+        <Section>
+            <Grid>{renderedProductCards}</Grid>
+            <div ref={observerRef} style={{ height: "20px" }} />
+        </Section>
     );
 }
