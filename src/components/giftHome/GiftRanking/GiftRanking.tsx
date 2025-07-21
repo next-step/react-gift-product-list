@@ -25,7 +25,7 @@ const rankTypeLabels: Record<RankType, string> = {
   MANY_WISH_RECEIVE: '위시로 받은',
 };
 
-const GiftChart = () => {
+const GiftRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedTarget = (searchParams.get('target') as TargetType) || 'ALL';
@@ -117,7 +117,7 @@ const GiftChart = () => {
   );
 };
 
-export default GiftChart;
+export default GiftRanking;
 
 const Layout = styled.div`
   padding: ${({ theme }) => theme.spacing.spacing6};
