@@ -1,4 +1,3 @@
-// src/pages/MyPage.tsx
 import styled from '@emotion/styled';
 import { Header } from '../components/common/Header';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,10 +15,8 @@ const LogoutButton = styled.button`
 `;
 
 function MyPage() {
-  const { userEmail, logout } = useAuth();
+  const { userInfo, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-
-  const userName = userEmail ? userEmail.split('@')[0] : '';
 
   const handleLogout = () => {
     logout();
@@ -28,14 +25,20 @@ function MyPage() {
 
   return (
     <div>
-      <Header></Header>
-      <br />
-      <h1>마이페이지</h1>
-      <br />
-      <InfoP>{userName}님 안녕하세요!</InfoP>
-      <InfoP>이메일 주소는 {userEmail}입니다!</InfoP>
-      <br />
-      <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+      {isAuthenticated ? (
+        <>
+          <Header></Header>
+          <br />
+          <h1>마이페이지</h1>
+          <br />
+          <InfoP>{userInfo?.name}님 안녕하세요!</InfoP>
+          <InfoP>이메일 주소는 {userInfo?.email}입니다!</InfoP>
+          <br />
+          <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+        </>
+      ) : (
+        <p>로그인이 필요합니다.</p>
+      )}
     </div>
   );
 }

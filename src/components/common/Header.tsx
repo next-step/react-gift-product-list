@@ -34,7 +34,7 @@ export const Header = () => {
           navigate(-1);
         }}
       />
-      <Title>선물하기</Title>
+      <Title onClick={() => navigate('/')}>선물하기</Title>
       <FiUser size={20} onClick={handleClick} />
     </HeaderContainer>
   );

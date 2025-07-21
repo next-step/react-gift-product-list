@@ -108,7 +108,7 @@ const ErrorText = styled.div`
 export interface Receiver {
   id: number;
   name: string;
-  phone: string;
+  phoneNumber: string;
   quantity: number;
 }
 
@@ -121,7 +121,7 @@ interface ReceiverModalProps {
 interface ReceiverFormValues {
   receivers: {
     name: string;
-    phone: string;
+    phoneNumber: string;
     quantity: number;
   }[];
 }
@@ -155,7 +155,7 @@ const ReceiverModal = ({
       alert('받는 사람은 최대 10명까지 가능합니다!');
       return;
     }
-    append({ name: '', phone: '', quantity: 1 });
+    append({ name: '', phoneNumber: '', quantity: 1 });
   };
 
   const onSubmit = (data: ReceiverFormValues) => {
@@ -165,8 +165,9 @@ const ReceiverModal = ({
 
   const isPhoneDuplicate = (value: string, index: number) => {
     return (
-      receivers.filter((r, i) => i !== index && r.phone === value)
-        .length === 0 || '중복된 전화번호입니다.'
+      receivers.filter(
+        (r, i) => i !== index && r.phoneNumber === value
+      ).length === 0 || '중복된 전화번호입니다.'
     );
   };
 
@@ -217,7 +218,7 @@ const ReceiverModal = ({
               <Label>전화번호</Label>
               <Controller
                 control={control}
-                name={`receivers.${idx}.phone`}
+                name={`receivers.${idx}.phoneNumber`}
                 rules={{
                   required: '전화번호를 입력해주세요.',
                   pattern: {
@@ -230,13 +231,15 @@ const ReceiverModal = ({
                   <Input
                     {...field}
                     placeholder="전화번호를 입력하세요."
-                    isInvalid={!!errors?.receivers?.[idx]?.phone}
+                    isInvalid={
+                      !!errors?.receivers?.[idx]?.phoneNumber
+                    }
                   />
                 )}
               />
-              {errors?.receivers?.[idx]?.phone && (
+              {errors?.receivers?.[idx]?.phoneNumber && (
                 <ErrorText>
-                  {errors.receivers[idx]?.phone?.message}
+                  {errors.receivers[idx]?.phoneNumber?.message}
                 </ErrorText>
               )}
 

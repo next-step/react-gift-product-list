@@ -32,15 +32,13 @@ const MessageCard = ({ selected, onCardSelect }: Props) => {
       <ScrollContainer>
         {orderCardTemplates.map(card => {
           return (
-            <>
-              <Thumbnail
-                key={card.id}
-                src={card.imageUrl}
-                alt={card.defaultTextMessage}
-                selected={selected === card.id}
-                onClick={() => onCardSelect(card.id)}
-              />
-            </>
+            <Thumbnail
+              key={card.id}
+              src={card.imageUrl}
+              alt={card.defaultTextMessage}
+              selected={selected === card.id}
+              onClick={() => onCardSelect(card.id)}
+            />
           );
         })}
       </ScrollContainer>

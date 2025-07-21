@@ -9,11 +9,9 @@ import NotFoundPage from './pages/NotFoundPage';
 import { AuthProvider } from './contexts/AuthContext';
 import MyPage from './pages/MyPage';
 import Order from './pages/Order';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ROUTES } from './constants/routes';
 
 const containerStyle = css`
   max-width: 720px;
@@ -23,28 +21,30 @@ const containerStyle = css`
   align-items: center;
 `;
 
-const queryClient = new QueryClient();
-
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <Global styles={reset} />
-        <div css={containerStyle}>
-          <AuthProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<NotFoundPage />} />
-                <Route path="/my" element={<MyPage />} />
-                <Route path="/order/:id" element={<Order />} />
-              </Routes>
-            </BrowserRouter>
-          </AuthProvider>
-        </div>
-      </QueryClientProvider>
-
+      <Global styles={reset} />
+      <div css={containerStyle}>
+        <AuthProvider>
+          <BrowserRouter>
+            <ToastContainer
+              position="top-right"
+              autoClose={3 * 1_000}
+            />
+            <Routes>
+              <Route path={ROUTES.HOME} element={<Home />} />
+              <Route path={ROUTES.LOGIN} element={<Login />} />
+              <Route
+                path={ROUTES.NOT_FOUND}
+                element={<NotFoundPage />}
+              />
+              <Route path={ROUTES.MY_PAGE} element={<MyPage />} />
+              <Route path={ROUTES.ORDER()} element={<Order />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </div>
     </ThemeProvider>
   );
 };

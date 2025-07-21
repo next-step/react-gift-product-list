@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '../components/common/Header';
 import MessageCard from '../components/MessageCard';
 import styled from '@emotion/styled';
@@ -7,8 +7,10 @@ import ReceiverModal, {
   type Receiver,
 } from '../components/ReceiverModal';
 import { useReceiverForm } from '../hooks/useReceiverForm';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGiftProductById } from '../hooks/useGiftProductById';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const MessaageWrapper = styled.div`
   padding: 8px 20px;
@@ -39,14 +41,12 @@ const MessageInput = styled.textarea`
   font-size: 16px;
   box-sizing: border-box;
   border: 1px solid ${({ theme }) => theme.colors.borderDefault};
-
   border-radius: 8px;
 `;
 
 const SectionBox = styled.div`
   max-width: 720px;
   background-color: ${({ theme }) => theme.colors.gray00};
-
   margin: 12px 20px;
   padding: 20px;
 `;
@@ -197,6 +197,7 @@ const QuantityCell = styled(TableCell)`
 const Order = () => {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
+  const navigate = useNavigate();
 
   const {
     data: product,
@@ -222,17 +223,70 @@ const Order = () => {
     0
   );
 
-  const priceSum = product
-    ? product.price.sellingPrice * totalQuantity
-    : 0;
+  const priceSum = product?.price ? product.price * totalQuantity : 0;
 
-  const handleOrder = () => {
-    if (!sendorNameInput.isValid || !product) return;
+  const { userInfo } = useAuth();
 
-    alert(
-      `주문이 완료되었습니다.\n 상품명: ${product.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
-    );
+  useEffect(() => {
+    if (userInfo?.name) sendorNameInput.setValue(userInfo.name);
+  });
+
+  const BASE_URL = 'http://localhost:3000';
+
+  const handleOrder = async () => {
+    const orderData = {
+      productId: productId,
+      message,
+      messageCardId: String(selectedCard?.id),
+      ordererName: sendorNameInput.value,
+      receivers: receiverList.map(r => ({
+        name: r.name,
+        phoneNumber: r.phoneNumber,
+        quantity: Number(r.quantity),
+      })),
+    };
+
+    const authToken = userInfo?.authToken;
+    if (!authToken) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await axios.post(`${BASE_URL}/api/order`, orderData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      alert(
+        `주문이 완료되었습니다.\n 상품명: ${product?.name}\n 구매 수량: ${totalQuantity}\n 발신자 이름: ${sendorNameInput.value}\n 메시지: ${message}\n`
+      );
+      navigate('/');
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        alert('주문에 실패했습니다.');
+        console.error(err.message);
+      }
+    }
   };
+
+  if (loading)
+    return (
+      <div style={{ padding: 20 }}>
+        상품 정보를 불러오는 중입니다...
+      </div>
+    );
+
+  if (error || !product)
+    return (
+      <div style={{ padding: 20 }}>
+        상품 정보를 불러오지 못했습니다.
+      </div>
+    );
 
   if (loading)
     return (
@@ -277,6 +331,7 @@ const Order = () => {
             placeholder="이름을 입력하세요."
             onChange={e => sendorNameInput.setValue(e.target.value)}
             onBlur={sendorNameInput.handleBlur}
+            defaultValue={sendorNameInput.value}
           />
           {!sendorNameInput.isValid && (
             <ErrorText>{sendorNameInput.error}</ErrorText>
@@ -317,10 +372,10 @@ const Order = () => {
                   </TableRow>
                 </TableHead>
                 <tbody>
-                  {receiverList.map((r, i) => (
+                  {receiverList.map(r => (
                     <TableRow key={r.id}>
                       <TableCell>{r.name}</TableCell>
-                      <TableCell>{r.phone}</TableCell>
+                      <TableCell>{r.phoneNumber}</TableCell>
                       <QuantityCell>{r.quantity}</QuantityCell>
                     </TableRow>
                   ))}
@@ -343,13 +398,14 @@ const Order = () => {
             />
             <div>
               <div style={{ fontWeight: 'bold' }}>{product.name}</div>
-              <div style={{ color: '#888' }}>
-                {product.brandInfo.name}
-              </div>
+              <div style={{ color: '#888' }}>{product.brandName}</div>
               <div>
                 상품가{' '}
                 <strong>
-                  {product.price.sellingPrice.toLocaleString()}원
+                  {product?.price !== undefined
+                    ? product.price.toLocaleString()
+                    : '0'}
+                  원
                 </strong>
               </div>
             </div>
@@ -360,7 +416,7 @@ const Order = () => {
         disabled={!sendorNameInput.isValid}
         onClick={handleOrder}
       >
-        {priceSum.toLocaleString()}원 주문하기
+        {(priceSum ?? 0).toLocaleString()}원 주문하기
       </BottomOrderButton>
     </>
   );

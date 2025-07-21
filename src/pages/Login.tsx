@@ -4,6 +4,8 @@ import { FiArrowLeft, FiUser } from 'react-icons/fi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInputWithValidation } from '../hooks/useInputValidation';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const PageWrapper = styled.div`
   display: flex;
@@ -101,14 +103,19 @@ const validatePassword = (value: string) => {
   return '';
 };
 
+const userInfoStorage = {
+  set: (data: { authToken: string; email: string; name: string }) => {
+    localStorage.setItem('userInfo', JSON.stringify(data));
+  },
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   const emailInput = useInputWithValidation('', validateEmail);
   const passwordInput = useInputWithValidation('', validatePassword);
-
   const isFormValid = emailInput.isValid && passwordInput.isValid;
 
   if (isAuthenticated) {
@@ -116,17 +123,37 @@ const Login = () => {
     return null;
   }
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!isFormValid) return;
-    login(emailInput.value);
 
-    const redirectPath = location.state?.from?.pathname;
-    navigate(redirectPath || '/my', { replace: true });
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/login',
+        {
+          email: emailInput.value,
+          password: passwordInput.value,
+        }
+      );
 
-    if (redirectPath) {
-      navigate(redirectPath, { replace: true });
-    } else {
-      window.location.replace('/');
+      console.log('로그인 응답:', response.data);
+
+      const { authToken, email, name } = response.data.data;
+
+      login({ email, name, authToken });
+
+      userInfoStorage.set({ authToken, email, name });
+
+      const redirectPath = location.state?.from?.pathname;
+      navigate(redirectPath || '/my', { replace: true });
+    } catch (error: any) {
+      if (
+        error.response?.status >= 400 &&
+        error.response?.status < 500
+      ) {
+        toast.error(error.response.data?.message || '로그인 실패');
+      } else {
+        toast.error('서버 오류가 발생했습니다.');
+      }
     }
   };
 
