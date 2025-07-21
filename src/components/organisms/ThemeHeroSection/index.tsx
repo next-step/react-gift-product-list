@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getThemeInfo } from '@/lib/api/themes';
 import type { ThemeInfo } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
+import { useErrorHandler } from '@/utils/errorHandler';
 import { Loading, ErrorMessage } from '@/components';
 import * as S from './styles';
 
@@ -10,6 +12,8 @@ interface ThemeHeroSectionProps {
 }
 
 const ThemeHeroSection = ({ themeId }: ThemeHeroSectionProps) => {
+  const navigate = useNavigate();
+  const { handleError } = useErrorHandler();
   const { fetchState, setLoading, setSuccess, setError, reset } = useFetchState<ThemeInfo | null>(null);
 
   useEffect(() => {
@@ -24,13 +28,17 @@ const ThemeHeroSection = ({ themeId }: ThemeHeroSectionProps) => {
         const themeInfo = await getThemeInfo(themeId);
         setSuccess(themeInfo);
       } catch (error) {
-        console.error('테마 정보 조회 실패:', error);
+        handleError(error, {
+          404: () => {
+            navigate('/');
+          }
+        });    
         setError();
       }
     };
 
     fetchThemeInfo();
-  }, [themeId, setLoading, setSuccess, setError, reset]);
+  }, [themeId, setLoading, setSuccess, setError, reset, handleError, navigate]);
 
   return (
     <>
