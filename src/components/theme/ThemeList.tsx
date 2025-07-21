@@ -12,6 +12,14 @@ const ProductGrid = styled.ul`
   padding: 16px;
 `;
 
+const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  ${({ theme }) => theme.typography.body2Regular};
+`;
+
 export default function ThemeList() {
   const { themeId } = useParams();
   const parsedId = Number(themeId);
@@ -19,6 +27,10 @@ export default function ThemeList() {
   const { items, loading, loaderRef } = useInfiniteScroll<Product>((cursor) =>
     fetchThemeProducts(parsedId, cursor),
   );
+
+  if (!loading && items.length === 0) {
+    return <EmptyState>상품이 없습니다.</EmptyState>;
+  }
 
   return (
     <>

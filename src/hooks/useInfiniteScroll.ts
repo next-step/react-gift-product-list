@@ -9,6 +9,27 @@ export function useInfiniteScroll<T>(
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
+  const loadMore = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchFunc(cursor);
+      setItems((prev) => [...prev, ...result.list]);
+      setCursor(result.cursor);
+      setHasMore(result.hasMoreList);
+    } catch (err) {
+      console.error(err);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (items.length === 0 && !loading && hasMore) {
+      loadMore();
+    }
+  }, []);
+
   useEffect(() => {
     if (!hasMore || loading) return;
 
@@ -28,21 +49,6 @@ export function useInfiniteScroll<T>(
       if (el) observer.unobserve(el);
     };
   }, [hasMore, loading]);
-
-  const loadMore = async () => {
-    setLoading(true);
-    try {
-      const result = await fetchFunc(cursor);
-      setItems((prev) => [...prev, ...result.list]);
-      setCursor(result.cursor);
-      setHasMore(result.hasMoreList);
-    } catch (err) {
-      console.error(err);
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return { items, loading, loaderRef };
 }

@@ -21,6 +21,6 @@ export async function fetchThemeProducts(themeId: number, cursor = 0, limit = 10
   }
 
   const data = await res.json();
-  console.log('✅ Received products:', data.data);
+  console.log('📦 API 응답:', data);
   return data.data;
 }
