@@ -1,14 +1,29 @@
+import type { Receiver } from '@/type/order';
 import axios from 'axios';
 
-const loginUrl = 'http://localhost:3000/api/order';
+const orderUrl = 'http://localhost:3000/api/order';
 
-export async function orderAPI( email:string, password:string) {
+export async function orderAPI(
+  productId: number,
+  message: string,
+  messageCardId: string,
+  ordererName: string,
+  receivers: Receiver[],
+  authToken : string
+  ) {
   try {
-    const response = await axios.post(loginUrl, {
-      email,
-      password
-    });
-    return response.data
+    await axios.post(orderUrl, {
+      productId,
+      message,
+      messageCardId,
+      ordererName,
+      receivers,
+    },
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      });
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.data?.message);

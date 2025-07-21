@@ -11,3 +11,9 @@ export interface Order {
     },
   ];
 }
+
+export type Receiver = {
+    name: string;
+    phoneNumber: string;
+    quantity: number;
+  };

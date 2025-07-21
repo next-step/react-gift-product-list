@@ -35,7 +35,7 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const visibleCount = isExpanded ? item.length : GIFTLENGTH;
+    const visibleCount = isExpanded ? item?.length : GIFTLENGTH;
     const shownProducts = (item as ProductItem[]).slice(0, visibleCount);
 
     const handleClickProduct = (item: ProductItem) => {
@@ -54,7 +54,7 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
             <Spinner />
         </SpinnerWrapper>
     )
-    if (!item || item.length === 0) return (
+    if (!item || item?.length === 0) return (
         <CentorAlignDiv240>
             <p>상품이 없습니다</p>
         </CentorAlignDiv240>

@@ -1,6 +1,7 @@
+import { useAuth } from '@/context/AuthContext';
 import { useOrder } from '@/context/OrderContext';
 import { useReceiver } from '@/context/ReceiverContext';
-import useFetchFromUrl from '@/hook/useFetchFromUrl';
+import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
 import {
   DefaultComponentDiv,
   EmptyDiv8h,
@@ -15,23 +16,28 @@ import {
   SubTitle,
 } from '@/styles/Common.styled';
 import type { ProductItemSummary } from '@/type/product';
+import { orderAPI } from '@/utils/orderApi';
 import { useEffect } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 
 const OrderCheck = () => {
-  const navigate = useNavigate();
-  const { ordererName, message } = useOrder();
-
+  const { ordererName, message, messageCardId } = useOrder();
   const { receivers } = useReceiver();
+  const { user } = useAuth();
 
+  const navigate = useNavigate();
   const location = useLocation();
+
   const query = new URLSearchParams(location.search);
-  const id = query.get('id');
+  const idParam = query.get('id');
+  const id = idParam !== null ? Number(idParam) : null;
 
   const productUrl = `http://localhost:3000/api/products/${id}/summary`;
-  const { item, error } = useFetchFromUrl<ProductItemSummary>(productUrl);
+  const { item, error } = useFetchFromUrlT<ProductItemSummary>(productUrl);
+
+
   useEffect(() => {
     if (error) {
       toast.error((error as Error).message);
@@ -44,21 +50,35 @@ const OrderCheck = () => {
   const name = item?.name;
   const brandName = item?.brandName;
 
-  const handleOrder = () => {
+
+  const handleOrder = async () => {
     ordererName.validate();
 
     if (!ordererName.error) {
-      alert(`주문이 완료되었습니다. 
+      try {
+        await orderAPI(
+          (id ?? 0),
+          message,
+          messageCardId,
+          ordererName.value,
+          receivers,
+          (user?.authToken ?? '')
+        )
+        alert(`주문이 완료되었습니다. 
         상품명:${name} 
         구매수량: ${total}
         발신자 이름: ${ordererName.value}
         메세지: ${message}
         `);
-      navigate('/');
+        navigate('/');
+      } catch (error) {
+        navigate('/login');
+        throw new Error(`${(error as Error).message}`);
+      }
     }
   };
 
-  const total = receivers.reduce((acc, receiver) => acc + receiver.count, 0);
+  const total = receivers.reduce((acc, receiver) => acc + receiver.quantity, 0);
 
   return (
     <DefaultComponentDiv>
