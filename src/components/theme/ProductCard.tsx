@@ -10,16 +10,16 @@ interface Props {
 }
 
 export default function ProductCard({ item }: Props) {
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const goToOrder = (itemId: number) => {
-      const userInfo = getUserFromSession();
-      if (userInfo) navigate(PATH.toORDER(itemId));
-      else
-        navigate(PATH.LOGIN, {
-          state: { from: `/order/${itemId}` },
-        });
-    };
-    
+    const userInfo = getUserFromSession();
+    if (userInfo) navigate(PATH.toORDER(itemId));
+    else
+      navigate(PATH.LOGIN, {
+        state: { from: `/order/${itemId}` },
+      });
+  };
+
   return (
     <Card onClick={() => goToOrder(item.id)}>
       <Image src={item.imageURL} />
