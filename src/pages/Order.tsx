@@ -24,6 +24,22 @@ type SelectedCard = {
   id: number;
   message: string;
 };
+const fetchProductSummary = (product_id:number) => {
+  return axios
+    .get(`http://localhost:3000/api/products/${product_id}/summary`)
+    .then((res) => res.data.data);
+};
+
+const fetchOrder = async(body, token) => {
+  return axios
+    .post(`http://localhost:3000/api/order`, body, {
+      headers: {
+        Authorization: token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((res) => res.data);
+}
 
 const Order = () => {
   const navigate = useNavigate();
@@ -39,11 +55,11 @@ const Order = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     control,
     watch,
     reset,
     setValue,
+    formState: { errors },
   } = useForm<OrderFormData>({
     defaultValues: {
       senderName: '',
@@ -60,26 +76,11 @@ const Order = () => {
   const receivers = watch('receivers');
 
   // -------------------- ✅ 데이터 패칭 --------------------
-  const fetchProductSummary = useCallback(() => {
-    return axios
-      .get(`http://localhost:3000/api/products/${product_id}/summary`)
-      .then((res) => res.data.data);
-  }, [product_id]);
-
-  const fetchOrder = useCallback((body, token) => {
-    return axios
-      .post(`http://localhost:3000/api/order`, body, {
-        headers: {
-          Authorization: token,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((res) => res.data);
-  }, []);
-
+  
   const { data, isLoading } = useFetch({
-    fetcher: fetchProductSummary,
+    fetcher: () => fetchProductSummary(product_id),
     initValue: null,
+    deps:[productId]
   });
 
   const {
@@ -87,7 +88,12 @@ const Order = () => {
     isLoading: isOrderPosting,
     error: orderError,
     post,
-  } = usePost({ fetcher: fetchOrder });
+  } = usePost({ fetcher: (body, token) => fetchOrder(body, token) });
+
+  console.log('orderData', orderData);  
+  console.log('orderError', orderError);
+
+
 
   // -------------------- ✅ useEffect --------------------
   useEffect(() => {
@@ -105,7 +111,6 @@ const Order = () => {
     }
   }, [selectedCard, setValue]);
 
-  // -------------------- ✅ 핸들러 --------------------
   const handleClickOrderBtn = handleSubmit((formData) => {
     const body = {
       productId: product_id,
@@ -114,6 +119,8 @@ const Order = () => {
       ordererName: formData.senderName,
       receivers: formData.receivers,
     };
+console.log('formData', formData);
+console.log('body', body);
 
     post(body, user.token)
       .then((res) => {
@@ -128,15 +135,14 @@ const Order = () => {
         }
       });
   });
-  // -------------------- ✅ 렌더링 조건 --------------------
-  if (isLoading || !data || !user?.name) return <div>로딩중...</div>;
-
+if (isLoading) return <div>로딩중...(fetch 중)</div>;
+if (!data) return <div>로딩중...(data 없음)</div>;
+if (!user?.name) return <div>로딩중...(user name 없음)</div>;
   // -------------------- ✅ 가격 계산 --------------------
   const productPrice = data.price;
   const receiversTotalQuantity = receivers.reduce((sum, r) => sum + r.quantity, 0);
   const totalPrice = productPrice * receiversTotalQuantity;
 
-  // -------------------- ✅ UI 렌더링 --------------------
   return (
     <div>
       <Navbar />

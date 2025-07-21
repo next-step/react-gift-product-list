@@ -2,11 +2,12 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import { useEffect, useState } from 'react';
-type Props = {
-  fetcher: () => Promise<any>;
-  initValue: any;
+type Props<T> = {
+  fetcher: () => Promise<T>;
+  initValue: T;
+  deps: any[]; // 의존성 배열
 };
-export const useFetch = <T>({ fetcher, initValue }: Props<T>) => {
+export const useFetch = <T>({ fetcher, initValue, deps }: Props<T>) => {
   const [data, setData] = useState<T>(initValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
@@ -50,7 +51,7 @@ export const useFetch = <T>({ fetcher, initValue }: Props<T>) => {
     fetchData();
 
     return () => {};
-  }, [fetcher]);
+  }, deps);
 
   return { data, isLoading, error };
 };
