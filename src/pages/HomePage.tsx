@@ -2,14 +2,18 @@ import { Main, Section } from '@/components/layout';
 import { CategorySection } from '@/components/category';
 import { FriendSelectSection, PromoSection } from '@/components/misc';
 import { RankingSection } from '@/components/ranking';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
   const handleSelectFriend = () => {
     console.log('친구 선택 클릭');
   };
 
   const handleCategoryClick = (category: any) => {
-    console.log('카테고리 클릭:', category);
+    // 카테고리 클릭 시 해당 테마 상품 목록 페이지로 이동
+    navigate(`/themes/${category.themeId}`);
   };
 
   return (
