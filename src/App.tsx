@@ -22,7 +22,7 @@ import {
   ROUTE_MY,
   ROUTE_ORDER,
   ROUTE_NOT_FOUND,
-  ROUTE_THEME_PRODUCTS, // 추가
+  ROUTE_THEME_PRODUCTS,
 } from '@/constants';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
