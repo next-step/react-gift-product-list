@@ -1,13 +1,13 @@
 import { useParams, useNavigate } from "react-router";
 import PageContainer from "@/components/PageContainer";
 import { useEffect, useState } from "react";
-import { getThemeInfo, type ThemeInfo } from "@/apis/theme";
+import { getThemeInfo, type ThemeID, type ThemeInfo } from "@/apis/theme";
 import { AxiosError, HttpStatusCode } from "axios";
 import ThemeHeroSection from "@/sections/ThemeSection/ThemeHeroSection";
 import ThemeProductSection from "@/sections/ThemeSection/ThemeProductSection"
 
 export default function ThemePage() {
-    const { themeId } = useParams();
+    const { themeId } = useParams<{ themeId: ThemeID}>();
     const navigate = useNavigate();
     const [themeInfo, setThemeInfo] = useState<ThemeInfo | null>(null);
 
@@ -30,7 +30,7 @@ export default function ThemePage() {
         fetchData();
     }, [themeId, navigate]);
 
-    if (!themeInfo || !themeId) return <PageContainer>상품이 없습니다.</PageContainer>
+    if (!themeInfo || !themeId) return null;
 
     return (
         <PageContainer>
