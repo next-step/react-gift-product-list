@@ -12,6 +12,12 @@ export interface ThemeInfo {
     backgroundColor: string;
 }
 
+export interface ThemeProductsResponse {
+    list: RankingProduct[];
+    cursor: number;
+    hasMoreList: boolean;
+}
+
 export interface RankingProduct {
     id: number;
     name: string;
