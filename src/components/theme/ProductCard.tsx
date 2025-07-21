@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 import type { Product } from '@/types/Product';
 
 const Card = styled.li`
@@ -36,8 +37,14 @@ interface Props {
 }
 
 export default function ProductCard({ product }: Props) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/order/${product.id}`);
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <ItemImage src={product.imageURL} alt={product.name} />
       <Brand>{product.brandInfo.name}</Brand>
       <Name>{product.name}</Name>
