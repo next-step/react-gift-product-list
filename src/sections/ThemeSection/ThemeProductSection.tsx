@@ -111,7 +111,6 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
     }, [themeId]);
 
     const loadMoreProducts = useCallback(async () => {
-        console.log("loadMoreProducts called");
         if (loading || !hasMore) return;
 
         setLoading(true);
@@ -150,7 +149,6 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
-                    console.log("observer triggered");
                     loadMoreProducts();
                 }
             },
