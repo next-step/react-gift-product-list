@@ -1,14 +1,16 @@
 import axiosInstance from "./axiosInstance";
 
+export type ThemeID = string;
+
 export interface ThemeInfo {
-    themeId: number;
+    themeId: ThemeID;
     name: string;
     title: string;
     description: string;
     backgroundColor: string;
 }
 
-export async function getThemeInfo(themeId: string): Promise<ThemeInfo> {
+export async function getThemeInfo(themeId: ThemeID): Promise<ThemeInfo> {
     const res = await axiosInstance.get<{ data: ThemeInfo }>(`/api/themes/${themeId}/info`);
     return res.data.data;
 }
@@ -36,7 +38,7 @@ export interface GetThemeProductsResponse {
 }
 
 export async function getThemeProducts(
-    themeId: string,
+    themeId: ThemeID,
     cursor = 0,
     limit = 10
 ): Promise<GetThemeProductsResponse> {
