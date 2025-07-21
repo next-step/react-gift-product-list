@@ -1,16 +1,26 @@
 import styled from "@emotion/styled";
+import { useParams } from "react-router-dom";
+import { useApiRequest } from "@/hooks/useApiRequest";
 import type { Product } from "@/types/api_types";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-type Props = {
-  products: Product[];
+type ThemeProductResponse = {
+  list: Product[];
 };
 
-export default function ThemeProductsList({ products }: Props) {
-  if (products.length === 0) return <p>상품이 없습니다.</p>;
+export default function ThemeProductsList() {
+  const { themeId } = useParams<{ themeId: string }>();
+  const { data, status, error } = useApiRequest<ThemeProductResponse>({
+    url: `/api/themes/${themeId}/products`,
+  });
+
+  if (status === "loading") return <LoadingSpinner />;
+  if (!data || data.list.length === 0)
+    return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
 
   return (
     <List>
-      {products.map((product) => (
+      {data.list.map((product) => (
         <Card key={product.id}>
           <Image src={product.imageURL} alt={product.name} />
           <Name>{product.name}</Name>
@@ -21,6 +31,12 @@ export default function ThemeProductsList({ products }: Props) {
     </List>
   );
 }
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin-top: 50px;
+`;
 
 const List = styled.div`
   display: grid;

@@ -3,8 +3,12 @@ import { useApiRequest } from "@/hooks/useApiRequest";
 import styled from "@emotion/styled";
 import ThemeProductsList from "@/pages/themeproductspage/ThemeProductsList";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
-import type { ThemeInfo, ThemeProductResponse } from "@/types/api_types";
+import type { ThemeInfo } from "@/types/api_types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
+import { HTTP_STATUS } from "@/utils/HTTP_STATUS";
 
 export default function ThemeProductsPage() {
   const { themeId } = useParams();
@@ -13,23 +17,37 @@ export default function ThemeProductsPage() {
   if (!parsedThemeId) {
     return <p>잘못된 경로입니다.</p>;
   }
-  const { data: themeInfo, status: themeStatus } = useApiRequest<ThemeInfo>({
+  const {
+    data: themeInfo,
+    status: themeStatus,
+    error: themeError,
+  } = useApiRequest<ThemeInfo>({
     url: API_ENDPOINTS.THEME_INFO(parsedThemeId),
   });
-  const { data: productData, status: productStatus } =
-    useApiRequest<ThemeProductResponse>({
-      url: API_ENDPOINTS.THEME_PRODUCTS(parsedThemeId),
-    });
 
-  if (themeStatus === "loading" || productStatus === "loading")
-    return <LoadingSpinner />;
-  if (
-    themeStatus === "error" ||
-    productStatus === "error" ||
-    !themeInfo ||
-    !productData
-  )
+  const navigate = useNavigate();
+  const handleError = useApiErrorHandler({
+    fallbackMessage: "테마 정보를 불러올 수 없습니다.",
+    customHandler: (statusCode) => {
+      if (statusCode === HTTP_STATUS.NOT_FOUND) {
+        navigate("/");
+        return true;
+      }
+      return false;
+    },
+  });
+
+  useEffect(() => {
+    if (themeStatus === "error" && themeError) {
+      handleError(themeError);
+    }
+  }, [themeStatus, themeError, handleError]);
+
+  if (themeStatus === "loading") return <LoadingSpinner />;
+
+  if (!themeInfo) {
     return <p>정보를 불러올 수 없습니다.</p>;
+  }
 
   return (
     <div>
@@ -39,7 +57,7 @@ export default function ThemeProductsPage() {
         <ThemeInfoDes>{themeInfo.description}</ThemeInfoDes>
       </Banner>
       <section>
-        <ThemeProductsList products={productData.list} />
+        <ThemeProductsList />
       </section>
     </div>
   );
