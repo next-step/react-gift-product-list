@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import { ROUTE_HOME, ROUTE_LOGIN } from '@/constants';
 import { postOrder } from '@/api';
+import type { ProductSummary } from '../hooks/useProduct';
 
 interface OrderFormData {
   selectedCardId: number;
@@ -192,6 +193,76 @@ const BackButton = styled.button`
   }
 `;
 
+// 주문 데이터 가공 함수
+function makeOrderData(
+  product: ProductSummary,
+  data: any,
+  selectedCardId: string | number
+) {
+  return {
+    productId: product.id,
+    message: data.message,
+    messageCardId: String(selectedCardId),
+    ordererName: data.sender,
+    receivers: data.recipients.map(
+      (r: { name: string; phone: string; quantity: number }) => ({
+        name: r.name,
+        phoneNumber: r.phone, // phone → phoneNumber
+        quantity: r.quantity,
+      })
+    ),
+  };
+}
+
+// 수량 계산 함수
+function getTotalQuantity(recipients: { quantity: number }[]): number {
+  return recipients.reduce(
+    (sum: number, recipient: { quantity: number }) => sum + recipient.quantity,
+    0
+  );
+}
+
+// 총 가격 계산 함수
+function getTotalPrice(price: number, totalQuantity: number): number {
+  return price * totalQuantity;
+}
+
+// 안내 메시지 생성 함수
+function makeOrderCompleteMessage(
+  product: ProductSummary,
+  data: any,
+  totalQuantity: number,
+  totalPrice: number
+): string {
+  const recipientList = data.recipients
+    .map(
+      (r: { name: string; phone: string; quantity: number }, i: number) =>
+        `${i + 1}. ${r.name} (${r.phone}) - ${r.quantity}개`
+    )
+    .join('\n');
+  return `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
+}
+
+// 에러 핸들링 함수
+function handleOrderError(
+  error: any,
+  navigate: (path: string, options?: any) => void,
+  toast: { error: (msg: string) => void },
+  ROUTE_LOGIN: string
+) {
+  const status = error?.response?.status;
+  const message =
+    error?.response?.data?.data?.message || '주문에 실패했습니다.';
+  if (status === 401) {
+    toast.error('로그인이 필요합니다.');
+    navigate(ROUTE_LOGIN, { replace: true });
+  } else if (status && status >= 400 && status < 500) {
+    toast.error(message);
+  } else {
+    alert('주문에 실패했습니다.');
+  }
+}
+
 const OrderPage = () => {
   const { user } = useAuth();
   const { productId } = useParams<{ productId: string }>();
@@ -275,43 +346,21 @@ const OrderPage = () => {
     if (!product || !user) return;
 
     try {
-      const orderData = {
-        productId: product.id,
-        message: data.message,
-        messageCardId: String(selectedCardId),
-        ordererName: data.sender,
-        receivers: data.recipients.map((r) => ({
-          name: r.name,
-          phoneNumber: r.phone, // phone → phoneNumber
-          quantity: r.quantity,
-        })),
-      };
+      const orderData = makeOrderData(product, data, selectedCardId);
       console.log('orderData to send:', orderData);
       await postOrder(orderData, user.authToken);
-      // 안내 메시지 구성
-      const totalQuantity = data.recipients.reduce(
-        (sum, recipient) => sum + recipient.quantity,
-        0
+      const totalQuantity = getTotalQuantity(data.recipients);
+      const totalPrice = getTotalPrice(product.price, totalQuantity);
+      const msg = makeOrderCompleteMessage(
+        product,
+        data,
+        totalQuantity,
+        totalPrice
       );
-      const totalPrice = product.price * totalQuantity;
-      const recipientList = data.recipients
-        .map((r, i) => `${i + 1}. ${r.name} (${r.phone}) - ${r.quantity}개`)
-        .join('\n');
-      const msg = `주문이 완료되었습니다.\n상품명: ${product.name}\n보내는 사람: ${data.sender}\n받는사람 목록:\n${recipientList}\n총 수량: ${totalQuantity}개\n총 가격: ${totalPrice.toLocaleString()}원\n메시지: ${data.message}`;
       alert(msg);
       navigate('/');
-    } catch (error: any) {
-      const status = error?.response?.status;
-      const message =
-        error?.response?.data?.data?.message || '주문에 실패했습니다.';
-      if (status === 401) {
-        toast.error('로그인이 필요합니다.');
-        navigate(ROUTE_LOGIN, { replace: true });
-      } else if (status && status >= 400 && status < 500) {
-        toast.error(message);
-      } else {
-        alert('주문에 실패했습니다.');
-      }
+    } catch (error) {
+      handleOrderError(error, navigate, toast, ROUTE_LOGIN);
     }
   });
 
