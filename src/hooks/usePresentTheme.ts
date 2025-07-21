@@ -2,6 +2,7 @@ import { apiClient } from '@src/api/FetchData';
 import { useEffect, useState } from 'react';
 import type { Themes } from '../components/Home/PresentTheme/Item/ThemeType';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
+import type { HttpTypes } from '@src/api/HttpType';
 
 export const usePresentTheme = () => {
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -19,7 +20,14 @@ export const usePresentTheme = () => {
   useEffect(() => {
     const fetchProductRanking = async () => {
       try {
-        const data = await apiClient('GET', BASIC_ENDPOINT.theme, {}, '', null);
+        const apiRequestData = {
+          methods: 'GET' as HttpTypes,
+          requestName: BASIC_ENDPOINT.theme,
+          body: {},
+          params: '',
+          headers: null,
+        };
+        const data = await apiClient(apiRequestData);
         setThemes(data);
         setError(false);
       } catch (error) {

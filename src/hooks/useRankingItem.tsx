@@ -1,4 +1,5 @@
 import { apiClient } from '@src/api/FetchData';
+import type { HttpTypes } from '@src/api/HttpType';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
 import { PARAMS } from '@src/assets/params';
 import type { Goods } from '@src/types/Goods';
@@ -19,7 +20,14 @@ export const useRankingItem = () => {
 
     const fetchProductRanking = async () => {
       try {
-        const data = await apiClient('GET', BASIC_ENDPOINT.ranking, {}, typeUrls, null);
+        const apiRequestData = {
+          methods: 'GET' as HttpTypes,
+          requestName: BASIC_ENDPOINT.ranking,
+          body: {},
+          params: typeUrls,
+          headers: null,
+        };
+        const data = await apiClient(apiRequestData);
         setGoods(data);
         setError(false);
       } catch (error) {

@@ -1,8 +1,10 @@
 import axios, { AxiosError } from 'axios';
+import type { HttpTypes } from './HttpType';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 //requestName : 목적 대상 ex) login, themes 등
 const getFetch = async (requestName: string, params: string) => {
-  const res = await axios.get(import.meta.env.VITE_API_BASE_URL + requestName + params);
+  const res = await axios.get(BASE_URL + requestName + params);
   const data = res.data;
   return data;
 };
@@ -15,8 +17,8 @@ const postFetch = async <T extends object>(
   try {
     const res =
       headers === null
-        ? await axios.post(import.meta.env.VITE_API_BASE_URL + requestName, body)
-        : await axios.post(import.meta.env.VITE_API_BASE_URL + requestName, body, { headers });
+        ? await axios.post(BASE_URL + requestName, body)
+        : await axios.post(BASE_URL + requestName, body, { headers });
     const data = res.data.data;
     return data;
   } catch (error: AxiosError | unknown) {
@@ -27,18 +29,19 @@ const postFetch = async <T extends object>(
     }
   }
 };
-type HttpTypes = 'GET' | 'POST';
 
-export const apiClient = async <T extends object>(
-  methods: HttpTypes,
-  requestName: string,
-  body: T,
-  params: string,
-  headers: { Authorization: string } | null
-) => {
-  if (methods == 'GET') {
-    return getFetch(requestName, params);
-  } else if (methods == 'POST') {
-    return postFetch(requestName, body, headers);
+type ApiParameters = {
+  methods: HttpTypes;
+  requestName: string;
+  body: object;
+  params: string;
+  headers: { Authorization: string } | null;
+};
+
+export const apiClient = async (parameters: ApiParameters) => {
+  if (parameters.methods == 'GET') {
+    return getFetch(parameters.requestName, parameters.params);
+  } else if (parameters.methods == 'POST') {
+    return postFetch(parameters.requestName, parameters.body, parameters.headers);
   }
 };

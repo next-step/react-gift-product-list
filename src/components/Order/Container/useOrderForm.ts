@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiClient } from '@src/api/FetchData';
+import type { HttpTypes } from '@src/api/HttpType';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
 import { PARAMS } from '@src/assets/params';
 import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
@@ -14,13 +15,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const getOrderFetchData = async (productId: string | null) => {
-  const fetchData = await apiClient(
-    'GET',
-    BASIC_ENDPOINT.product + `/${productId}/summary`,
-    {},
-    '',
-    null
-  );
+  const apiRequestData = {
+    methods: 'GET' as HttpTypes,
+    requestName: BASIC_ENDPOINT.product + `/${productId}/summary`,
+    body: {},
+    params: '',
+    headers: null,
+  };
+
+  const fetchData = await apiClient(apiRequestData);
   return fetchData.data;
 };
 
@@ -85,9 +88,16 @@ export const useOrderForm = () => {
         }),
       };
       try {
-        const fetchOrder = await apiClient('POST', BASIC_ENDPOINT.order, orderBody, '', {
-          Authorization: authToken,
-        });
+        const apiRequestData = {
+          methods: 'POST' as HttpTypes,
+          requestName: BASIC_ENDPOINT.order,
+          body: orderBody,
+          params: '',
+          headers: {
+            Authorization: authToken,
+          },
+        };
+        const fetchOrder = await apiClient(apiRequestData);
         if (fetchOrder.statusCode === 401) {
           navigate(URLS.login);
         } else if (fetchOrder.success === true) {
