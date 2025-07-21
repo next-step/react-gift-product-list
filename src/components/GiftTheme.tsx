@@ -50,7 +50,7 @@ export default function GiftTheme() {
       <Title>선물 테마</Title>
       <Grid>
         {(themes ?? []).map(({ themeId, name, image }) => (
-          <CategoryItem key={themeId} name={name} image={image} />
+          <CategoryItem key={themeId} themeId={themeId} name={name} image={image} />
         ))}
       </Grid>
     </Wrapper>

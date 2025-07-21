@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 
 interface CategoryItemProps {
   name: string;
   image: string;
+  themeId: number;
 }
 
 const ItemWrapper = styled.li`
@@ -24,9 +26,15 @@ const ItemName = styled.span`
   color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
-export default function CategoryItem({ name, image }: CategoryItemProps) {
+export default function CategoryItem({ name, image, themeId }: CategoryItemProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/themes/${themeId}`);
+  };
+
   return (
-    <ItemWrapper>
+    <ItemWrapper onClick={handleClick}>
       <ItemImage src={image} alt={name} />
       <ItemName>{name}</ItemName>
     </ItemWrapper>
