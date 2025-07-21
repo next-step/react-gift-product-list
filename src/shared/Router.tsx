@@ -6,6 +6,7 @@ import { ROUTE_PATH } from './RoutePath';
 import { MyPage } from '@/pages/MyPage';
 import { OrderPage } from '@/pages/OrderPage';
 import { PrivateRoute } from './PrivateRoute';
+import { ThemeProductListPage } from '@/pages/ThemeProductListPage';
 
 export const Router = () => {
   return (
@@ -14,6 +15,7 @@ export const Router = () => {
         <Route path={ROUTE_PATH.HOME} element={<GiftPage />} />
         <Route path={ROUTE_PATH.LOGIN} element={<Login />} />
         <Route path={ROUTE_PATH.NOT_FOUND} element={<NotFound />} />
+        <Route path={ROUTE_PATH.THEME_PRODUCT_LIST} element={<ThemeProductListPage />} />
         <Route
           path={ROUTE_PATH.MY_PAGE}
           element={

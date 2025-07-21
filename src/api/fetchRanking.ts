@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { type Product } from '@/types';
 import axios from 'axios';
+import { API_BASE } from '@/constant/constant';
 
 // API 호출 함수 (내부에서만 사용)
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
 async function fetchRanking(targetType: string, rankType: string): Promise<Product[]> {
   const { data } = await axios(`${API_BASE}/api/products/ranking`, {
     params: { targetType, rankType },
