@@ -10,32 +10,20 @@ import Order from '@/pages/Order/Order';
 import NotFound from '@/NotFound';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useContext } from 'react';
+import { LoginInfoContext } from '@/contexts/LoginInfoContext';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { userInfo } = useContext(LoginInfoContext);
 
   function handleBackClick() {
     if (location.pathname !== '/') navigate(-1);
   }
 
-  function handleLoginClick() {
-    const userInfoStr = localStorage.getItem('userInfo');
-    let isLoggedIn = false;
-
-    if (userInfoStr) {
-      try {
-        const userInfo = JSON.parse(userInfoStr);
-        if (userInfo.authToken) {
-          isLoggedIn = true;
-        }
-      } catch (e) {
-        console.error('Login Error', e);
-        isLoggedIn = false;
-      }
-    }
-
-    if (isLoggedIn) navigate('/my');
+  function HandleLoginClick() {
+    if (userInfo.authToken) navigate('/my');
     else navigate('/login');
   }
 
@@ -48,7 +36,7 @@ function App() {
           element={
             <WithHeaderLayout
               handleBackClick={handleBackClick}
-              handleLoginClick={handleLoginClick}
+              handleLoginClick={HandleLoginClick}
             />
           }
         >

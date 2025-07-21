@@ -39,9 +39,6 @@ function Login({ onLogin }: LoginProps) {
       if (!isValidForm()) return;
 
       const responseInfo = await postLogin({ email: id, password: pw });
-      localStorage.setItem('email', responseInfo.email);
-      localStorage.setItem('name', responseInfo.name);
-      localStorage.setItem('authToken', responseInfo.authToken);
       setAccessToken(responseInfo.authToken);
       setLoginInfo(responseInfo);
       onLogin();

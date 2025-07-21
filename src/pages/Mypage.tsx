@@ -24,7 +24,6 @@ function Mypage({ onLogin }: MyPageProps) {
       authToken: '',
     });
     logOut();
-    localStorage.removeItem('userInfo');
     setAccessToken(null);
     onLogin();
   }
