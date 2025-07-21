@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
 `;
