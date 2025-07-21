@@ -10,6 +10,7 @@ import LoginPage from "./LoginPage";
 import NotFoundPage from "./NotFoundPage";
 import MyPage from "./MyPage";
 import OrderPage from "./OrderPage";
+import ThemePage from "./ThemePage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 
@@ -37,6 +38,9 @@ function App() {
           } />
           <Route path="/order/:id" element={
             <OrderPage />
+          } />
+          <Route path="/theme/:themeId" element={
+            <ThemePage />
           } />
           <Route path="/*" element={
             <NotFoundPage />
