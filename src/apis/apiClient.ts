@@ -10,14 +10,27 @@ const apiClient = axios.create({
   },
 });
 
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  accessToken = token;
+}
+
+apiClient.interceptors.request.use(
+  (config) => {
+    if (accessToken) {
+      config.headers.Authorization = accessToken;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
-
   (error: unknown) => {
     if (axios.isAxiosError(error)) {
-      type ErrorResponseData = { data?: { status?: string } };
-      const statusMsg = (error.response?.data as ErrorResponseData)?.data?.status ?? '에러 발생';
-      return Promise.reject(new Error(statusMsg));
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   },

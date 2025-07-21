@@ -7,8 +7,12 @@ import {
   ErrorContainer,
   LoginForm,
 } from '@/styles/Login.styles';
+import { postLogin } from '@/apis/login';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 import { useContext } from 'react';
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
+import { setAccessToken } from '@/apis/apiClient';
 
 type LoginProps = {
   onLogin: () => void;
@@ -27,17 +31,30 @@ function Login({ onLogin }: LoginProps) {
     handlePwBlur,
     isValidForm,
   } = useLoginForm();
-
   const { setLoginInfo } = useContext(LoginInfoContext);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!isValidForm()) return;
-    setLoginInfo(id);
-    localStorage.setItem('id', id);
-    localStorage.setItem('name', id.split('@')[0]);
-    onLogin();
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+      if (!isValidForm()) return;
+
+      const responseInfo = await postLogin({ email: id, password: pw });
+      setAccessToken(responseInfo.authToken);
+      setLoginInfo(responseInfo);
+      localStorage.setItem('userInfo', JSON.stringify(responseInfo));
+      onLogin();
+    } catch (err) {
+      const error = err as AxiosError;
+      if (error.response && error.response.status >= 400 && error.response.status < 500) {
+        toast.error(
+          (error.response.data as { message?: string })?.message ||
+            '클라이언트 에러가 발생했습니다.',
+        );
+      } else {
+        toast.error('알 수 없는 에러가 발생했습니다.');
+      }
+    }
+  };
 
   return (
     <LoginContainer>

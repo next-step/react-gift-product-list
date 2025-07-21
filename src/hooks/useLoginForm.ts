@@ -18,6 +18,9 @@ function useLoginForm() {
   function isEmail(value: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
+  function isKakaoEmail(value: string) {
+    return /^[a-zA-Z0-9._%+-]+@kakao\.com$/.test(value);
+  }
 
   function validateId(id: string): ValidateResult {
     if (!id) {
@@ -25,6 +28,9 @@ function useLoginForm() {
     }
     if (!isEmail(id)) {
       return { ok: false, reason: 'ID는 이메일 형식으로 입력해주세요.' };
+    }
+    if (!isKakaoEmail(id)) {
+      return { ok: false, reason: 'ID는 카카오 이메일 형식으로 입력해주세요.' };
     }
     return { ok: true };
   }
@@ -57,7 +63,6 @@ function useLoginForm() {
   }
 
   const isValid = validateId(id).ok && validatePw(pw).ok;
-  // const isValid = idError === '' && pwError === '' && id !== '' && pw.length >= 8;
 
   return {
     id,
