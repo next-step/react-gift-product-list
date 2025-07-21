@@ -1,10 +1,12 @@
 import Navigation from '@/components/Navigation';
+import ThemeHero from '@/components/ThemeSection/ThemeHero';
 
 const ThemePage = () => {
   return (
     <>
       <Navigation />
-      <main>ThemePage 입니다</main>
+      <ThemeHero />
+      <main>상품 목록 영역 (추후 구현)</main>
     </>
   );
 };

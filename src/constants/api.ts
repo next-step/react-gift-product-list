@@ -15,3 +15,9 @@ export const LOGIN_API_URL = `${BASE_URL}${LOGIN_API_PATH}`;
 export const ORDER_API_URL = `${BASE_URL}${ORDER_API_PATH}`;
 export const PRODUCT_RANKING_API_URL = `${BASE_URL}${PRODUCT_RANKING_API_PATH}`;
 export const CATEGORY_THEMES_API_URL = `${BASE_URL}${CATEGORY_THEMES_API_PATH}`;
+
+export const getThemeInfoPath = (themeId: string | number): string =>
+  `/api/themes/${themeId}/info`;
+
+export const getThemeInfoUrl = (themeId: string | number): string =>
+  `${BASE_URL}${getThemeInfoPath(themeId)}`;
