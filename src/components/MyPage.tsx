@@ -5,9 +5,11 @@ import { useTheme } from "@emotion/react";
 import { css } from "@emotion/react";
 import { ClipLoader } from "react-spinners";
 import { STORAGE_KEYS } from "@/constants/storageKyes";
+import { ROUTE_PATHS } from "@/constants/routePath";
 
 const MyPage: React.FC = () => {
   const { user } = useUserInfo();
+  const { LOGIN } = ROUTE_PATHS;
 
   const theme = useTheme();
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ const MyPage: React.FC = () => {
       <button
         onClick={() => {
           sessionStorage.removeItem(STORAGE_KEYS.USER_INFO);
-          navigate("/login");
+          navigate(LOGIN);
         }}
         css={buttonStyle(theme)}
       >

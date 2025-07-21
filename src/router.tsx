@@ -7,8 +7,9 @@ import { createBrowserRouter } from "react-router-dom";
 import { ROUTE_PATHS } from "./constants/routePath";
 import App from "@/App";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Theme from "@/components/theme/Theme";
 
-const { MAIN, LOGIN, MYPAGE, ORDER, NOT_FOUND } = ROUTE_PATHS;
+const { MAIN, LOGIN, MYPAGE, ORDER, NOT_FOUND, THEME } = ROUTE_PATHS;
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
           { path: MYPAGE, element: <MyPage /> },
           { path: ORDER, element: <Order /> },
         ],
+      },
+      {
+        path: THEME,
+        element: <Theme />,
       },
       {
         path: LOGIN,

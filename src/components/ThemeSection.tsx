@@ -4,6 +4,7 @@ import { useTheme } from "@emotion/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 const themeURL = import.meta.env.VITE_API_BASE_URL_THEME;
 
@@ -18,6 +19,7 @@ const ThemeSection = () => {
   const [themeData, setThemeData] = useState<ThemeItem[] | null>(null);
   const [isThemeLoading, setIsThemeLoading] = useState(true);
   const [isThemeError, setIsThemeError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTheme = async () => {
@@ -47,6 +49,7 @@ const ThemeSection = () => {
         themeData &&
         themeData.map((themeInfo) => (
           <div
+            onClick={() => navigate(`THEME/${themeInfo.themeId}`)}
             css={categoryItemStyle(theme)}
             key={themeInfo.themeId}
             className="category-item"
