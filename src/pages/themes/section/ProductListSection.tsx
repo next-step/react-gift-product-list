@@ -33,6 +33,10 @@ export const ProductListSection = ({ themeId }: Props) => {
         ))}
       </Grid>
       {hasMore && <ObserverTrigger ref={observerRef} />}
+
+      {loading && products.length > 0 && (
+        <LoadingMessage>{ERROR_MESSAGES.PRODUCT.LOAD}</LoadingMessage>
+      )}
     </>
   );
 };
@@ -53,4 +57,11 @@ const Placeholder = styled.div`
 
 const ObserverTrigger = styled.div`
   height: 1px;
+`;
+
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.semantic.text.default};
 `;
