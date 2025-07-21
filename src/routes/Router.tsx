@@ -6,6 +6,7 @@ import NotFoundPage from '@/features/NotFound/pages/NotFoundPage'
 import NavLayout from '@/component/Layout/NavLayout'
 import MyPage from '@/features/My/pages/MyPage'
 import OrderPage from '@/features/Order/pages/OrderPage'
+import ThemePage from '@/features/Theme/pages/ThemePage'
 import PrivateRoute from '@/routes/PrivateRoute'
 
 export const ROUTE_PATH = {
@@ -13,6 +14,7 @@ export const ROUTE_PATH = {
   LOGIN: '/login',
   MY: '/my',
   ORDER: '/order/:productId',
+  THEME: '/themes/:themeId',
   NOT_FOUND: '*',
 }
 
@@ -27,11 +29,11 @@ const Router = createBrowserRouter([
         element: <GiftPage />,
       },
       {
-        path: ROUTE_PATH.LOGIN.slice(1),
+        path: ROUTE_PATH.LOGIN,
         element: <LoginPage />,
       },
       {
-        path: ROUTE_PATH.MY.slice(1),
+        path: ROUTE_PATH.MY,
         element: (
           <PrivateRoute>
             <MyPage />
@@ -39,12 +41,16 @@ const Router = createBrowserRouter([
         ),
       },
       {
-        path: 'order/:productId',
+        path: ROUTE_PATH.ORDER,
         element: (
           <PrivateRoute>
             <OrderPage />
           </PrivateRoute>
         ),
+      },
+      {
+        path: ROUTE_PATH.THEME,
+        element: <ThemePage />,
       },
     ],
   },
