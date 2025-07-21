@@ -9,6 +9,7 @@ import OrderPage from "@/pages/order";
 import { ROUTES } from "@/constants/routes";
 import { useEffect } from "react";
 import { setNavigate } from "@/lib/navigation";
+import ThemePage from "@/pages/themes";
 
 function InitNavigateSetter() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function Router() {
       <Routes>
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+        <Route path={ROUTES.THEME_DETAIL_TEMPLATE} element={<ThemePage />} />
         <Route path="*" element={<NotFoundPage />} />
         <Route
           path={ROUTES.MY}
