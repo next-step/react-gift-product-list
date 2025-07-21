@@ -1,10 +1,15 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useReceiver } from '@/contexts/ReceiverContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { z, string } from 'zod';
 import { orders } from '@/data/orders';
+import { createOrder } from '@/lib/api/order';
+import { type OrderRequest} from '@/types/api';
+import { handleApiError } from '@/utils/errorHandler';
 
-import { type RankingProduct } from '@/types/api';
+import { type ProductSummary } from '@/types/api';
 import { type TextAreaChangeHandler, type InputChangeHandler } from '@/components';
 
 interface CardState {
@@ -27,12 +32,13 @@ const orderValidationSchema = z.object({
 });
 
 interface UseOrderFormProps {
-  product?: RankingProduct;
+  product?: ProductSummary;
 }
 
 export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
   const navigate = useNavigate();
   const { receiverList } = useReceiver();
+  const { userInfo } = useAuth();
 
   const [cardState, setCardState] = useState<CardState>({
     selectedCardId: orders[0]?.id || 904,
@@ -40,7 +46,7 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
   });
 
   const [formData, setFormData] = useState<FormData>({
-    senderName: '',
+    senderName: userInfo?.name || '',
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({
@@ -85,11 +91,6 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
   };
 
   const validateForm = (): boolean => {
-    if (receiverList.length === 0) {
-      alert('받는 사람을 추가해주세요.');
-      return false;
-    }
-
     const result = orderValidationSchema.safeParse({
       message: cardState.message,
       senderName: formData.senderName,
@@ -114,14 +115,43 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
     return true;
   };
 
-  const handleOrder = () => {
-    if (validateForm()) {
+  const handleOrder = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    if (!product) {
+      alert('상품 정보를 불러올 수 없습니다.');
+      return;
+    }
+
+    if (!userInfo?.authToken) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const orderData: OrderRequest = {
+        productId: product.id,
+        message: cardState.message,
+        messageCardId: cardState.selectedCardId.toString(),
+        ordererName: formData.senderName,
+        receivers: receiverList.map(receiver => ({
+          name: receiver.name,
+          phoneNumber: receiver.phone,
+          quantity: receiver.quantity
+        }))
+      };
+
+      await createOrder(orderData, userInfo.authToken);
+      
       const totalQuantity = receiverList.reduce((sum, receiver) => sum + receiver.quantity, 0);
       const receiverNames = receiverList.map(receiver => receiver.name).join(', ');
       
       const orderInfo = `주문이 완료되었습니다.
 
-상품명: ${product?.name || '선택된 상품 없음'}
+상품명: ${product.name}
 구매수량: ${totalQuantity}개
 발신자이름: ${formData.senderName}
 받는사람: ${receiverNames}
@@ -129,6 +159,13 @@ export const useOrderForm = ({ product }: UseOrderFormProps = {}) => {
 
       alert(orderInfo);
       navigate('/');
+    } catch (error: unknown) {
+      const customHandlers = {
+        400: (message?: string) => {
+          toast.error(message || '유효성 검사에 실패했습니다.');
+        }
+      }; 
+      handleApiError(error, navigate, customHandlers);
     }
   };
 

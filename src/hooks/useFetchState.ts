@@ -21,8 +21,8 @@ export const useFetchState = <T>(initialData: T, initialLoading = false): UseFet
     data: initialData,
   });
 
-  const setLoading = useCallback(() => {
-    setFetchState(prev => ({ ...prev, isLoading: true, isError: false }));
+  const setLoading = useCallback((isLoading: boolean) => {
+    setFetchState(prev => ({ ...prev, isLoading, isError: false }));
   }, []);
 
   const setSuccess = useCallback((data: T) => {

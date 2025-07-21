@@ -10,14 +10,19 @@ const CategoryField = () => {
   const { fetchState, setLoading, setSuccess, setError } = useFetchState<Theme[]>([], true);
   
   useEffect(() => {
-    setLoading(true); 
-      getThemes()
-        .then((data) => {
-          setSuccess(data);
-        })
-        .catch(() => {
-          setError();
-        });
+    const fetchThemes = async () => {
+      setLoading(true);
+      try {
+        const data = await getThemes();
+        setSuccess(data);
+      } catch {
+        setError();
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchThemes();
   }, []);
 
   return (

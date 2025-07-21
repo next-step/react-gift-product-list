@@ -1,16 +1,20 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { orders } from '@/data/orders';
-import { getProductById } from '@/lib/api';
-import { type RankingProduct } from '@/types/api';
+import { getProductSummary } from '@/lib/api/rankingProducts';
+import { type ProductSummary } from '@/types/api';
 import { useFetchState } from '@/hooks/useFetchState';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import { Loading, ErrorMessage } from '@/components';
+import { useErrorHandler } from '@/utils/errorHandler';
 import OrderTemplate from './template';
 
 const Order = () => {
   const { productId } = useParams<{ productId: string }>();
-  const { fetchState, setLoading, setSuccess, setError } = useFetchState<RankingProduct | undefined>(undefined, true);
+  const navigate = useNavigate();
+  const { fetchState, setLoading, setSuccess, setError } = useFetchState<ProductSummary | undefined>(undefined, true);
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     if (!productId) {
@@ -21,15 +25,25 @@ const Order = () => {
       try {
         setLoading(true);
         
-        const productData = await getProductById(parseInt(productId));
+        const productData = await getProductSummary(parseInt(productId));
         setSuccess(productData);
-      } catch (error) {
+      } catch (error: unknown) {
+        const customHandlers = {
+          400: (message?: string) => {
+            toast.error(message || '현재 없는 상품입니다');
+            navigate('/');
+          }
+        };
+
+        handleError(error, customHandlers);
         setError();
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [productId, navigate, setLoading, setSuccess, setError, handleError]);
 
   const {
     cardState,
