@@ -72,8 +72,6 @@ const ThemeProductList = () => {
   const loadMore = useCallback(async () => {
     setLoadingMore(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       const res = await getThemesList(Number(themeId), cursor, 10);
       const data = res.data.data;
       setProducts((prev) => [...prev, ...data.list]);

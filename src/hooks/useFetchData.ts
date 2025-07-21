@@ -10,7 +10,6 @@ export function useFetchData<T>(fetchFn: () => Promise<{ data: { data: T } }>) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         setLoading(true);
         const response = await fetchFn();
         setData(response.data.data);
