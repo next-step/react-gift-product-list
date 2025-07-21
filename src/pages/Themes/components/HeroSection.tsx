@@ -3,7 +3,7 @@ import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import { showFetchErrorToast } from "@/utils/showFetchToast";
 import styled from "@emotion/styled";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 interface HeroSectionData {
@@ -20,16 +20,21 @@ const HeroSection = () => {
   const { themeId } = useParams();
   const { data, isLoading, error } = useFetch<HeroSectionData>(`/api/themes/${themeId}/info`);
 
+  useEffect(() => {
+    if (error) {
+      if (error?.statusCode === 404) {
+        showFetchErrorToast(error.statusCode, error.message, goHome);
+      } else {
+        showFetchErrorToast(error?.statusCode ?? 500, error?.message ?? "잠시 후 다시 시도해주세요.");
+      }
+    }
+  }, [error, goHome]);
+
   if (isLoading) {
     return <Loading height="127.2px" />;
   }
 
   if (error || !data) {
-    if (error?.statusCode === 404) {
-      showFetchErrorToast(error.statusCode, error.message, goHome);
-    } else {
-      showFetchErrorToast(error?.statusCode ?? 500, error?.message ?? "잠시 후 다시 시도해주세요.");
-    }
     return null;
   }
 
