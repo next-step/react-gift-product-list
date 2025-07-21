@@ -1,33 +1,46 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm, useFieldArray } from 'react-hook-form';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 import Navbar from '@/components/navbar/Navbar';
 import { PaddingLg, PaddingSm, PaddingGraySm, PaddingMd } from '../components/common/Padding';
 import CardMessage from '@/components/common/cardmessage/CardMessage';
 import SenderForm from '@/components/order/senderform/SenderForm';
 import ProductInfo from '@/components/order/ProductInfo';
 import OrderBtn from '@/components/order/OrderBtn';
-import { useParams } from 'react-router-dom';
 import CardSelector from '@/components/order/CardSelector';
 import ReceiverModal from '@/components/order/receivermodal/ReceiverModal';
-import { useFieldArray, useForm } from 'react-hook-form';
-import type { OrderFormData } from '@/components/order/receiverlist/types';
 import ReceiverList from '@/components/order/receiverlist/ReceiverList';
-import { useCallback, useEffect, useState } from 'react';
+
 import { useFetch } from '@/hooks/useFetch';
-import axios from 'axios';
-import { useAuth } from '@/contexts/AuthContext';
 import usePost from '@/hooks/usePost';
-type selectedCardType = {
+import { useAuth } from '@/contexts/AuthContext';
+import type { OrderFormData } from '@/components/order/receiverlist/types';
+import { ROUTE_PATH } from '@/routes/Router';
+
+type SelectedCard = {
   id: number;
   message: string;
 };
-const Order = () => {
-  const { user, setUser } = useAuth();
-  const { productId } = useParams();
 
+const Order = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { productId } = useParams();
+  const product_id = Number(productId);
+
+  // -------------------- ✅ 상태 선언 --------------------
+  const [selectedCard, setSelectedCard] = useState<SelectedCard>();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // -------------------- ✅ 폼 관련 --------------------
   const {
     register,
     handleSubmit,
     formState: { errors },
-    control, //control: useFieldArray, useController 등 advanced 기능을 쓸 때 필요한 핵심 객체!
+    control,
     watch,
     reset,
     setValue,
@@ -38,36 +51,21 @@ const Order = () => {
       receivers: [],
     },
   });
-  const receivers = watch('receivers');
+
   const { fields } = useFieldArray({
     control,
-    name: "receivers",
+    name: 'receivers',
   });
-  useEffect(() => {
-    if (user?.name) {
-      reset((prev) => ({
-        ...prev,
-        senderName: user.name,
-      }));
-    }
-  }, [user, reset]);
- 
-  const [selectedCard, setSelectedCard] = useState<selectedCardType>();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-   useEffect(() => {
-     if (selectedCard?.message) {
-       setValue('cardMessage', selectedCard.message);
-     }
-   }, [selectedCard, setValue]);
 
-  const product_id = Number(productId);
-  console.log(productId);
+  const receivers = watch('receivers');
+
+  // -------------------- ✅ 데이터 패칭 --------------------
   const fetchProductSummary = useCallback(() => {
-    console.log('axios 하기 ');
     return axios
       .get(`http://localhost:3000/api/products/${product_id}/summary`)
       .then((res) => res.data.data);
   }, [product_id]);
+
   const fetchOrder = useCallback((body, token) => {
     return axios
       .post(`http://localhost:3000/api/order`, body, {
@@ -78,10 +76,12 @@ const Order = () => {
       })
       .then((res) => res.data);
   }, []);
-  const { data, isLoading, error } = useFetch<ProductSummary>({
+
+  const { data, isLoading } = useFetch({
     fetcher: fetchProductSummary,
     initValue: null,
   });
+
   const {
     data: orderData,
     isLoading: isOrderPosting,
@@ -89,41 +89,61 @@ const Order = () => {
     post,
   } = usePost({ fetcher: fetchOrder });
 
-  if (isLoading || !data || !user.name) return <div>로딩중...</div>;
+  // -------------------- ✅ useEffect --------------------
+  useEffect(() => {
+    if (user?.name) {
+      reset((prev) => ({
+        ...prev,
+        senderName: user.name,
+      }));
+    }
+  }, [user, reset]);
 
-  console.log(orderData, isOrderPosting, orderError, post);
-  console.log(data);
-  const productPrice = data.price;
-  console.log(productPrice);
+  useEffect(() => {
+    if (selectedCard?.message) {
+      setValue('cardMessage', selectedCard.message);
+    }
+  }, [selectedCard, setValue]);
 
-  const receiversTotalQuantity = receivers.reduce((sum, receiver) => sum + receiver.quantity, 0);
-  const totalPrice = productPrice * receiversTotalQuantity;
+  // -------------------- ✅ 핸들러 --------------------
   const handleClickOrderBtn = handleSubmit((formData) => {
     const body = {
-      productId: Number(productId),
+      productId: product_id,
       message: formData.cardMessage,
-      messageCardId: selectedCard.id,
+      messageCardId: selectedCard?.id,
       ordererName: formData.senderName,
       receivers: formData.receivers,
     };
-    console.log('주문하기 post 보내기 일보직전!', body);
+
     post(body, user.token)
-      .then((res) => alert(res))
+      .then((res) => {
+        toast.success('주문이 완료되었습니다!');
+      })
       .catch((e) => {
-        alert(e.message);
+        if (e.response?.status === 401) {
+          toast.error('로그인이 필요합니다.');
+          navigate(ROUTE_PATH.LOGIN); // ✅ 로그인 페이지로 이동
+        } else {
+          toast.error(e.message || '주문 중 오류가 발생했습니다.');
+        }
       });
   });
+  // -------------------- ✅ 렌더링 조건 --------------------
+  if (isLoading || !data || !user?.name) return <div>로딩중...</div>;
 
+  // -------------------- ✅ 가격 계산 --------------------
+  const productPrice = data.price;
+  const receiversTotalQuantity = receivers.reduce((sum, r) => sum + r.quantity, 0);
+  const totalPrice = productPrice * receiversTotalQuantity;
+
+  // -------------------- ✅ UI 렌더링 --------------------
   return (
     <div>
       <Navbar />
       <PaddingSm />
       <CardSelector setSelectedCard={setSelectedCard} />
       <PaddingLg />
-      <CardMessage
-         register={register}
-        error={errors.cardMessage?.message}
-      />
+      <CardMessage register={register} error={errors.cardMessage?.message} />
       <PaddingMd />
       <PaddingGraySm />
       <SenderForm register={register} error={errors.senderName?.message} />
@@ -132,6 +152,7 @@ const Order = () => {
       <PaddingGraySm />
       <ProductInfo product={data} />
       <OrderBtn totalPrice={totalPrice} onClick={handleClickOrderBtn} />
+
       {isModalVisible && (
         <ReceiverModal
           setIsVisible={setIsModalVisible}

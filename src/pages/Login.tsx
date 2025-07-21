@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { PaddingMd, PaddingSm } from '@/components/common/Padding';
 import usePost from '@/hooks/usePost';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -91,8 +92,8 @@ const Login = () => {
         password.reset();
         setUser(userInfo);
         localStorage.setItem('user', JSON.stringify(userInfo));
-console.log('모두다 잘 저장했다. !!!!', userInfo, localStorage.getItem('user'));
-        navigate('/');
+toast.success("로그인이 완료되었습니다.") 
+       navigate('/');
       } catch (e) {
         alert(e.message);
       }

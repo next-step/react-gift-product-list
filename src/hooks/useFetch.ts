@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
+
 import { useEffect, useState } from 'react';
 type Props = {
   fetcher: () => Promise<any>;
@@ -30,7 +32,7 @@ export const useFetch = <T>({ fetcher, initValue }: Props<T>) => {
 
           };
           if (errorInfo.statusCode && errorInfo.statusCode >= 400 && errorInfo.statusCode < 500) {
-            alert(`⚠️ ${errorInfo.message}`); //토스티파이 !!
+            toast.error(`⚠️ ${errorInfo.message}`); 
           }
 
           //일단 js 런타임 에러!  e.message는 Error 객체의 기본 메시지
