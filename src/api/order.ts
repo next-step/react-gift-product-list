@@ -16,6 +16,7 @@ export interface OrderRequest {
 
 export interface OrderResponse {
   success: boolean
+  message?: string
 }
 
 export async function postOrder(
@@ -28,8 +29,8 @@ export async function postOrder(
     headers: { Authorization: token },
   })
 
-  if (typeof data !== 'object' || typeof data.success !== 'boolean') {
-    throw new Error('Invalid response from /api/order')
+  if (!data.success) {
+    throw new Error(data.message || '주문에 실패했습니다.')
   }
 
   return data
