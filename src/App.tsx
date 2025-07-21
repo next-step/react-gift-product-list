@@ -48,39 +48,11 @@ function App() {
   const navigate = useNavigate();
 
   const getNavigationConfig = () => {
-    switch (location.pathname) {
-      case ROUTE_HOME:
-        return {
-          title: '선물하기',
-          showBackButton: true,
-          showProfileButton: true,
-        };
-      case ROUTE_LOGIN:
-        return {
-          title: '로그인',
-          showBackButton: true,
-          showProfileButton: false,
-        };
-      case ROUTE_MY:
-        return {
-          title: '마이페이지',
-          showBackButton: true,
-          showProfileButton: false,
-        };
-      default:
-        if (location.pathname.startsWith(ROUTE_ORDER)) {
-          return {
-            title: '선물하기',
-            showBackButton: true,
-            showProfileButton: false,
-          };
-        }
-        return {
-          title: 'Page Not Found',
-          showBackButton: true,
-          showProfileButton: false,
-        };
-    }
+    return {
+      title: '선물하기',
+      showBackButton: true,
+      showProfileButton: true,
+    };
   };
 
   const navConfig = getNavigationConfig();
