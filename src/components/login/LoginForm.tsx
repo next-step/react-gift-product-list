@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import LogoImg from '@/Assets/icons/logo.png';
 import LoginButton from '@/components/login/LoginButton';
+
 import { useLoginForm } from '@/hooks/useLoginForm';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useLoginHandler } from '@/hooks/useLoginHandler';
 
 const Container = styled.div`
   width: 100%;
@@ -53,20 +53,12 @@ const LoginForm = () => {
     handlePasswordBlur,
   } = useLoginForm();
 
-  const { login } = useAuth();
+  const { handleLogin } = useLoginHandler();
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
-
-    const userData = { email };
-    login(userData);
-
-    navigate(from, { replace: true });
+    await handleLogin(email, password);
   };
 
   return (

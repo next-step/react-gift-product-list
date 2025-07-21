@@ -1,11 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useAuth } from '@/context/AuthContext';
 
 import ReceiverInfo from '@/components/order/ReceiverInfo';
-import { GiftList } from '@/mock-data/GiftList';
+import { fetchProductSummary } from '@/api/productApi';
+import { submitOrder } from '@/api/orderApi';
 
 import type { Receiver } from '@/types/receiver';
+import type { ProductSummary } from '@/types/product';
+
 import {
   Wrapper,
   Section,
@@ -34,9 +39,10 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const giftId = location.state?.id;
-  const selectedGift = GiftList.find((gift) => gift.id === giftId);
 
   const [receiverList, setReceiverList] = useState<Receiver[]>([]);
+  const [productInfo, setProductInfo] = useState<ProductSummary | null>(null);
+  const { user } = useAuth();
 
   const {
     register,
@@ -45,18 +51,35 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
     formState: { errors },
   } = useForm<GiftFormValues>({
     defaultValues: {
-      sender: '',
+      sender: user?.name || '',
       message: templateMessage ?? '',
     },
   });
 
   useEffect(() => {
     setValue('message', templateMessage);
-  }, [templateMessage, setValue]);
+    if (user?.name) {
+      setValue('sender', user.name);
+    }
+  }, [templateMessage, user?.name, setValue]);
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!giftId) return;
+      try {
+        const res = await fetchProductSummary(giftId);
+        setProductInfo(res.data.data);
+      } catch {
+        toast.error('존재하지 않는 상품입니다.');
+        navigate('/');
+      }
+    };
+    loadProduct();
+  }, [giftId, navigate]);
 
   const validateReceivers = () => {
     if (receiverList.length === 0) {
-      alert('최소 1명의 받는 사람을 등록해주세요.');
+      toast.error('최소 1명의 받는 사람을 등록해주세요.');
       return false;
     }
 
@@ -65,24 +88,24 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
       const r = receiverList[i];
 
       if (!r.name.trim()) {
-        alert(`${i + 1}번 받는 사람 이름을 입력해주세요.`);
+        toast.error(`${i + 1}번 받는 사람 이름을 입력해주세요.`);
         return false;
       }
 
       if (!/^010\d{8}$/.test(r.phone)) {
-        alert(`${i + 1}번 전화번호는 01012345678 형식이어야 합니다.`);
+        toast.error(`${i + 1}번 전화번호는 01012345678 형식이어야 합니다.`);
         return false;
       }
 
       if (phoneSet.has(r.phone)) {
-        alert(`${i + 1}번 전화번호가 중복됩니다.`);
+        toast.error(`${i + 1}번 전화번호가 중복됩니다.`);
         return false;
       }
 
       phoneSet.add(r.phone);
 
       if (r.quantity < 1) {
-        alert(`${i + 1}번 수량은 1 이상이어야 합니다.`);
+        toast.error(`${i + 1}번 수량은 1 이상이어야 합니다.`);
         return false;
       }
     }
@@ -90,21 +113,35 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
     return true;
   };
 
-  const onSubmit = (data: GiftFormValues) => {
-    if (!validateReceivers()) return;
+  const onSubmit = async (data: GiftFormValues) => {
+    if (!validateReceivers() || !productInfo) return;
 
-    alert(
-      `주문이 완료되었습니다.
-      상품명: ${selectedGift?.name}
-      받는 사람 수: ${receiverList.length}
-      발신자 이름: ${data.sender}
-      메시지: ${data.message}`
-    );
+    try {
+      await submitOrder({
+        productId: productInfo.id,
+        message: data.message,
+        messageCardId: 'card123',
+        ordererName: data.sender,
+        receivers: receiverList.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone,
+          quantity: r.quantity,
+        })),
+      });
 
-    navigate('/');
+      toast.success('주문이 완료되었습니다!');
+      navigate('/');
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        toast.error('로그인이 만료되었습니다.');
+        navigate('/login');
+      } else {
+        toast.error('주문에 실패했습니다.');
+      }
+    }
   };
 
-  if (!selectedGift) return <div>선택한 상품이 없습니다.</div>;
+  if (!productInfo) return <div>상품 정보를 불러오는 중입니다...</div>;
 
   return (
     <Wrapper>
@@ -114,9 +151,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
           <InputBox>
             <StyledTextarea
               placeholder="메시지를 입력하세요"
-              {...register('message', {
-                required: '메시지는 반드시 입력 되어야 해요.',
-              })}
+              {...register('message', { required: '메시지는 반드시 입력되어야 해요.' })}
               error={!!errors.message}
             />
             {errors.message && <ErrorMsg>{errors.message.message}</ErrorMsg>}
@@ -129,9 +164,7 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
             <StyledInput
               type="text"
               placeholder="이름을 입력하세요."
-              {...register('sender', {
-                required: '보내는 사람 이름이 반드시 입력 되어야 해요.',
-              })}
+              {...register('sender', { required: '보내는 사람 이름이 반드시 입력되어야 해요.' })}
               error={!!errors.sender}
             />
             {errors.sender && <ErrorMsg>{errors.sender.message}</ErrorMsg>}
@@ -147,17 +180,17 @@ const GiftForm = ({ templateMessage }: GiftSenderProps) => {
         <Section>
           <Label>상품 정보</Label>
           <ProductInfo>
-            <ProductImage src={selectedGift.imageURL} alt={selectedGift.name} />
+            <ProductImage src={productInfo.imageURL} alt={productInfo.name} />
             <ProductDetails>
-              <strong>{selectedGift.name}</strong>
-              <span>{selectedGift.brandInfo.name}</span>
-              <b>상품가 {selectedGift.price.sellingPrice.toLocaleString()}원</b>
+              <strong>{productInfo.name}</strong>
+              <span>{productInfo.brandInfo.name}</span>
+              <b>상품가 {productInfo.price.sellingPrice.toLocaleString()}원</b>
             </ProductDetails>
           </ProductInfo>
         </Section>
 
         <OrderButton type="submit">
-          {selectedGift.price.sellingPrice.toLocaleString()}원 주문하기
+          {productInfo.price.sellingPrice.toLocaleString()}원 주문하기
         </OrderButton>
       </form>
     </Wrapper>
