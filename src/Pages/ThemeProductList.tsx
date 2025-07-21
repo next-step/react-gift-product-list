@@ -26,7 +26,6 @@ const ThemeProductList = () => {
   const [products, setProducts] = useState<BasicGiftProduct[]>([]);
   const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
@@ -70,22 +69,17 @@ const ThemeProductList = () => {
   }, [initialData]);
 
   const loadMore = useCallback(async () => {
-    setLoadingMore(true);
-    try {
-      const res = await getThemesList(Number(themeId), cursor, 10);
-      const data = res.data.data;
-      setProducts((prev) => [...prev, ...data.list]);
-      setCursor(data.cursor);
-      setHasMore(data.hasMoreList);
-    } finally {
-      setLoadingMore(false);
-    }
+    const res = await getThemesList(Number(themeId), cursor, 10);
+    const data = res.data.data;
+    setProducts((prev) => [...prev, ...data.list]);
+    setCursor(data.cursor);
+    setHasMore(data.hasMoreList);
   }, [themeId, cursor]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+        if (entries[0].isIntersecting && hasMore) {
           loadMore();
         }
       },
@@ -98,7 +92,7 @@ const ThemeProductList = () => {
     return () => {
       if (currentLoader) observer.unobserve(currentLoader);
     };
-  }, [hasMore, loadingMore, loadMore]);
+  }, [hasMore, loadMore]);
 
   const { user } = useAuthContext();
   const isLoggedIn = !!user;
@@ -150,10 +144,10 @@ const ThemeProductList = () => {
                 ))}
               </ProudctList>
             )}
-            {loadingMore && (
+            {hasMore && (
               <LoadingSpinner
                 color="#000000"
-                loading={loadingMore}
+                loading={true}
                 size={35}
                 marginSize={0}
               />
