@@ -18,6 +18,8 @@ export const PATHS = {
   MY: '/my',
   CATEGORY: '/category/:themeId',
 }as const
+import { ToastContainer } from 'react-toastify'
+
 const authProtected = (element: React.ReactNode) => (
   <ProtectedRoute>{element}</ProtectedRoute>
 )
@@ -49,7 +51,15 @@ const router = createBrowserRouter([
 const Root = () => {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={2000}
+          hideProgressBar
+          theme="colored"
+        />
+        <RouterProvider router={router} />
+      </>
     </AuthProvider>
   )
 }

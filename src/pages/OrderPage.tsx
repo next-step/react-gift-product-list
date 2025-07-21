@@ -40,29 +40,30 @@ export const OrderPage = () => {
       setSenderName(userInfo.name)
     }
   }, [])
+const hasFetched = useRef(false)
 
-  useEffect(() => {
-    if (!productId) return
+useEffect(() => {
+  if (hasFetched.current) return
+  hasFetched.current = true
 
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(`/api/products/${productId}/summary`)
-        if (!res.ok) {
-          const text = await res.text()
-          toast.error(`상품 정보를 불러올 수 없습니다: ${text}`)
-          navigate(PATHS.HOME)
-          return
-        }
-        const data = await res.json()
-        setProduct(data.data)
-      } catch (err) {
-        toast.error('상품 정보를 불러오는 중 오류가 발생했습니다.')
+  const fetchProduct = async () => {
+    try {
+      const res = await fetch(`/api/products/${productId}/summary`)
+      if (!res.ok) {
+        toast.error('존재하지 않는 상품입니다.')
         navigate(PATHS.HOME)
+        return
       }
+      const data = await res.json()
+      setProduct(data.data)
+    } catch (err) {
+      toast.error('상품 정보 요청 중 오류 발생')
+      navigate(PATHS.HOME)
     }
+  }
 
-    fetchProduct()
-  }, [productId])
+  fetchProduct()
+}, [productId])
 
   const [orderCompleted, setOrderCompleted] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
