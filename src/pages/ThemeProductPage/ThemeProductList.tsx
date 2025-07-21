@@ -32,7 +32,6 @@ const ThemeProductList = () => {
   const [loading, setLoading] = useState(false);
 
   const observerRef = useRef<HTMLDivElement | null>(null);
-  const observerInstance = useRef<IntersectionObserver | null>(null);
 
   const loadProducts = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -45,15 +44,12 @@ const ThemeProductList = () => {
         hasMoreList,
       } = await fetchThemeProducts(numericThemeId, cursor, LIMIT);
 
-      setProducts((prev) => {
-        const combined = [...prev, ...newProducts];
-        const unique = combined.filter(
-          (product, index, self) =>
-            index === self.findIndex((p) => p.id === product.id)
-        );
-        return unique;
-      });
-
+      setProducts((prev) => [
+        ...prev,
+        ...newProducts.filter(
+          (newItem) => !prev.some((existing) => existing.id === newItem.id)
+        ),
+      ]);
       setCursor(nextCursor);
       setHasMore(hasMoreList);
     } catch (e) {
@@ -62,39 +58,35 @@ const ThemeProductList = () => {
     } finally {
       setLoading(false);
     }
-  }, [cursor, hasMore, loading, numericThemeId, navigate]);
+  }, [numericThemeId, cursor, hasMore, loading, navigate]);
 
   useEffect(() => {
     loadProducts();
-  }, [loadProducts]);
+  }, []);
 
   useEffect(() => {
     if (!observerRef.current) return;
 
-    if (observerInstance.current) {
-      observerInstance.current.disconnect();
-    }
-
-    observerInstance.current = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !loading && hasMore) {
+        if (entries[0].isIntersecting && hasMore && !loading) {
           loadProducts();
         }
       },
-      { threshold: 1 }
+      {
+        threshold: 0.1,
+        rootMargin: '100px',
+      }
     );
 
-    observerInstance.current.observe(observerRef.current);
+    observer.observe(observerRef.current);
 
-    return () => {
-      if (observerInstance.current && observerRef.current) {
-        observerInstance.current.unobserve(observerRef.current);
-      }
-    };
-  }, [loadProducts, loading, hasMore]);
+    return () => observer.disconnect();
+  }, [loadProducts, hasMore, loading]);
 
-  if (!products.length && !loading)
+  if (!products.length && !loading) {
     return <div css={emptyStyle}>상품이 없습니다.</div>;
+  }
 
   return (
     <>
@@ -117,7 +109,8 @@ const ThemeProductList = () => {
       <div
         ref={observerRef}
         css={css`
-          height: 20px;
+          height: 1px;
+          margin-top: ${theme.spacing[10]};
         `}
       />
       {loading && <div css={loadingStyle}>로딩 중...</div>}
