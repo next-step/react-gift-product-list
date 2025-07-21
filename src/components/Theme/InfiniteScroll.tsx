@@ -75,19 +75,23 @@ const RealtimeItemPriceTxt = styled.p`
 function InfiniteScroll({ themeId }: { themeId: string }) {
     const [isLoading, setIsLoading] = useState(true);
     const [infiItem, setInfiItem] = useState();
+    const [isEmpty, setIsEmpty] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchThemeHero = async () => {
             try {
                 const response = await api.get(`/themes/${themeId}/products`);
-
                 setInfiItem(response.data.data.list);
                 setIsLoading(false);
+                // console.log(infiItem);
+                console.log(response.data.data.list);
+                if(response.data.data.list.length === 0) {
+                    setIsEmpty(true);
+                }
             } catch (error) {
-                IsErrorStatus(error, '', navigate);
-            } finally {
-
+                setIsLoading(false);
+                IsErrorStatus(error, '', navigate);    
             }
         };
 
@@ -102,7 +106,7 @@ function InfiniteScroll({ themeId }: { themeId: string }) {
     }
 
     if (isLoading) return <Spinner />;
-
+    if (isEmpty) return <h1>상품이 없습니다</h1>;
     return (
         <RealtimeRankItemWrapperStyle>
             <RealtimeRankItemGrid>{infiItem.map((item) => (
