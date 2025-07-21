@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import Spacing from "./Spacing";
+import Spacing from "../Spacing";
 import { useFetch } from "@/hooks/useFetch";
 import { API } from "@/constants/api";
 import type { ProductInfo } from "@/types/product";

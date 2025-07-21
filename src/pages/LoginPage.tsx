@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import Spacing from "@/components/Spacing";
-import { useLoginForm } from "./useLoginForm";
+import { useLoginForm } from "../hooks/useLoginForm";
 import { css, type Theme } from "@emotion/react";
 import { auth } from "@/services/auth";
 import { STORAGE_KEY } from "@/constants/storage";

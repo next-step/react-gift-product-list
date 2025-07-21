@@ -5,7 +5,7 @@ import theme from "@/styles/theme";
 import { PATH } from "@/paths";
 import { MainLayout } from "@/components/MainLayout";
 import HomePage from "@/pages/HomePage";
-import LoginPage from "@/pages/Login/LoginPage";
+import LoginPage from "@/pages/LoginPage";
 import MyPage from "@/pages/MyPage";
 import NotFoundPage from "@/pages/NotfoundPage";
 import OrderPage from "@/pages/OrderPage";

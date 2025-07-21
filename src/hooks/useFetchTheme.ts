@@ -3,15 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getThemeInfo } from "@/services/theme";
 import { showErrorToast } from "@/styles/toast";
-
-type ThemeInfo = {
-  themeId: number;
-  name: string;
-  image: string;
-  title: string;
-  description: string;
-  backgroundColor: string;
-};
+import type { ThemeInfo } from "@/types/theme";
 
 export function useFetchTheme(themeId?: string) {
   const [theme, setTheme] = useState<ThemeInfo | null>(null);

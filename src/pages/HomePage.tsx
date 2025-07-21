@@ -1,7 +1,7 @@
-import Category from "../components/Category";
-import Friends from "../components/Friends";
-import Banner from "../components/Banner";
-import TimeRanking from "../components/TimeRanking";
+import Category from "@/components/home/Category"; 
+import Friends from "@/components/home/Friends";
+import Banner from "@/components/home/Banner";
+import TimeRanking from "@/components/home/TimeRanking";
 
 function HomePage() {
   return (
