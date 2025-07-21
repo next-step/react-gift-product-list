@@ -26,6 +26,20 @@ const ThemeProductPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
+  // 추가 상품 불러오기
+  const loadMore = useCallback(() => {
+    if (!themeId || loading || !hasMore) return;
+    setLoading(true);
+    fetchThemeProducts(Number(themeId), cursor, 10)
+      .then((res) => {
+        setProducts((prev) => [...prev, ...res.data.list]);
+        setCursor(res.data.cursor);
+        setHasMore(res.data.hasMoreList);
+      })
+      .catch(() => setError('상품 목록을 불러올 수 없습니다.'))
+      .finally(() => setLoading(false));
+  }, [themeId, cursor, loading, hasMore]);
+
   // 최초 테마 정보 + 첫 상품 목록 불러오기
   useEffect(() => {
     if (!themeId) return;
@@ -47,20 +61,6 @@ const ThemeProductPage = () => {
       })
       .finally(() => setLoading(false));
   }, [themeId]);
-
-  // 추가 상품 불러오기
-  const loadMore = useCallback(() => {
-    if (!themeId || loading || !hasMore) return;
-    setLoading(true);
-    fetchThemeProducts(Number(themeId), cursor, 10)
-      .then((res) => {
-        setProducts((prev) => [...prev, ...res.data.list]);
-        setCursor(res.data.cursor);
-        setHasMore(res.data.hasMoreList);
-      })
-      .catch(() => setError('상품 목록을 불러올 수 없습니다.'))
-      .finally(() => setLoading(false));
-  }, [themeId, cursor, loading, hasMore]);
 
   // Intersection Observer로 하단 감지
   useEffect(() => {

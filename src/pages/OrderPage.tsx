@@ -203,7 +203,7 @@ function OrderPage() {
     async function getProduct() {
       try {
         const res = await fetchProductSummary(Number(productId));
-        setProduct(res.data.data as ProductSummary); // 타입 단언 추가
+        setProduct(res.data.data);
       } catch (error: any) {
         toast.error(
           error.response?.data?.message || '상품 정보를 불러올 수 없습니다.',
