@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
+import { YellowButton, ErrorMessage as CommonError } from '@/components/common'
 
 export const Container = styled.div`
   display: flex;
@@ -52,12 +53,7 @@ export const Preview = styled.section`
   }
 `
 
-export const ErrorMessage = styled.p`
-  margin: 0 0 ${spacing.spacing2};
-  color: ${colors.status.critical};
-  font-size: ${typography.body2Regular.fontSize};
-  line-height: ${typography.body2Regular.lineHeight};
-`
+export { CommonError as ErrorMessage }
 
 export const MessageInput = styled.textarea`
   width: 100%;
@@ -158,19 +154,8 @@ export const RecipientRow = styled.div`
   ${typography.body2Regular};
 `
 
-export const OrderButton = styled.button`
+export const OrderButton = styled(YellowButton)`
   padding: ${spacing.spacing3};
-  background-color: ${colors.brand.kakaoYellow};
-  border: none;
-  border-radius: 4px;
   font-size: ${typography.subtitle1Bold.fontSize};
   font-weight: ${typography.subtitle1Bold.fontWeight};
-  cursor: pointer;
-  &:hover {
-    background-color: ${colors.brand.kakaoYellowHover};
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
 `

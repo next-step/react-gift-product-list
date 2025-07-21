@@ -7,6 +7,7 @@ import { spacing } from '@/theme/spacing'
 import { useAuth } from '@/contexts/AuthContext'
 import { postLogin } from '@/api/auth'
 import { toast } from 'react-toastify'
+import { ErrorMessage, YellowButton } from '@/components/common'
 import type { UserInfo } from '@/utils/storage'
 
 interface LoginFormSectionProps {
@@ -34,31 +35,8 @@ const Input = styled.input`
   }
 `
 
-const ErrorMessage = styled.p`
-  margin: 0 0 ${spacing.spacing3};
-  color: ${colors.status.critical};
-  font-size: ${typography.body2Regular.fontSize};
-  line-height: ${typography.body2Regular.lineHeight};
-`
-
-const Button = styled.button`
+const Button = styled(YellowButton)`
   height: 48px;
-  background-color: ${colors.brand.kakaoYellow};
-  border: none;
-  border-radius: 4px;
-  font-size: ${typography.body1Bold.fontSize};
-  font-weight: ${typography.body1Bold.fontWeight};
-  cursor: pointer;
-  transition: background 0.2s ease;
-
-  &:hover:enabled {
-    background-color: ${colors.brand.kakaoYellowHover};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
 `
 
 export default function LoginFormSection({ onSuccess }: LoginFormSectionProps) {

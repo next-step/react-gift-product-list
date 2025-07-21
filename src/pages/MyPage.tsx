@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
+import { YellowButton } from '@/components/common'
 
 const Container = styled.div`
   display: flex;
@@ -21,19 +22,8 @@ const Title = styled.h1`
   margin-bottom: ${spacing.spacing6};
 `
 
-const Button = styled.button`
-  padding: ${spacing.spacing2} ${spacing.spacing4};
-  background-color: ${colors.brand.kakaoYellow};
-  border: none;
-  border-radius: 4px;
-  font-size: ${typography.body1Bold.fontSize};
-  font-weight: ${typography.body1Bold.fontWeight};
-  cursor: pointer;
-  transition: background 0.2s ease;
-  &:hover {
-    background-color: ${colors.brand.kakaoYellowHover};
-  }
-`
+const Button = styled(YellowButton)``
+
 const Text = styled.p`
   font-size: ${typography.body1Regular.fontSize};
   font-weight: ${typography.body1Regular.fontWeight};
