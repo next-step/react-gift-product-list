@@ -24,3 +24,28 @@ export const getProductSummary = async (productId: number): Promise<ProductSumma
   const { data } = await api.get<ProductSummaryResponse>(`/api/products/${productId}/summary`);
   return data.data;
 };
+
+interface OrderBody {
+  productId: number;
+  message: string;
+  messageCardId: string;
+  ordererName: string;
+  receivers: {
+    name: string;
+    phoneNumber: string;
+    quantity: number;
+  }[];
+}
+
+export const postOrder = (body: OrderBody) => api.post('/api/order', body);
+
+api.interceptors.request.use((config) => {
+  const raw = localStorage.getItem('auth');
+  if (raw) {
+    try {
+      const { authToken } = JSON.parse(raw);
+      if (authToken) config.headers.Authorization = authToken;
+    } catch {}
+  }
+  return config;
+});

@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       try {
-        const { email, name } = JSON.parse(raw) as { email: string; name: string; token: string };
+        const { email, name } = JSON.parse(raw) as { email: string; name: string };
         setUser({ email, name });
       } catch {
         localStorage.removeItem(STORAGE_KEY);
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (legacyEmail && legacyToken) {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ email: legacyEmail, name: '', token: legacyToken })
+          JSON.stringify({ email: legacyEmail, name: '', authToken: legacyToken })
         );
         setUser({ email: legacyEmail, name: '' });
       }
@@ -44,13 +44,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = (user: User, token: string) => {
+  const login = (user: User, authToken: string) => {
     setUser(user);
     localStorage.removeItem(LEGACY_EMAIL);
     localStorage.removeItem(LEGACY_TOKEN);
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ email: user.email, name: user.name, token })
+      JSON.stringify({ email: user.email, name: user.name, authToken })
     );
   };
 

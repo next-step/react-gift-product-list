@@ -9,7 +9,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ROUTE_PATH } from '@/routes/Routes';
 import { useForm, FormProvider, Controller, useWatch } from 'react-hook-form';
 import { useContext, useEffect, useState } from 'react';
-import { getProductSummary } from '@/Api/api';
+import { getProductSummary, postOrder } from '@/Api/api';
 import { toast } from 'react-toastify';
 import { AuthContext } from '@/contexts/AuthContext';
 
@@ -50,6 +50,7 @@ const OrderForm = () => {
     brandInfo: { name: string };
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [messageCardId, setMessageCardId] = useState<string>(String(MOCK_CARDFORM_LIST[0].id));
 
   useEffect(() => {
     if (!productId) {
@@ -98,19 +99,47 @@ const OrderForm = () => {
     formState: { errors },
   } = methods;
 
-  const onSubmit = (data: OrderFormValues) => {
+  const onSubmit = async (data: OrderFormValues) => {
+    if (data.recipients.length === 0) {
+      toast.error('받는 사람을 한 명 이상 추가해 주세요.');
+      return;
+    }
     if (!selectedProduct) {
       toast.error('상품 정보를 불러오지 못했습니다.');
       return;
     }
     const totalQty = data.recipients.reduce((s, r) => s + r.quantity, 0);
-    alert(
-      `주문 완료!\n` +
-        `상품명: ${selectedProduct.name}\n` +
-        `총 수량: ${totalQty}\n` +
-        data.recipients.map((r, i) => `[${i + 1}] ${r.name} (${r.phone}) x${r.quantity}\n`).join('')
-    );
-    navigate(ROUTE_PATH.HOME);
+
+    // navigate(ROUTE_PATH.HOME);
+
+    try {
+      await postOrder({
+        productId,
+        message: data.message,
+        messageCardId,
+        ordererName: data.sender,
+        receivers: data.recipients.map((r) => ({
+          name: r.name,
+          phoneNumber: r.phone,
+          quantity: r.quantity,
+        })),
+      });
+      alert(
+        `주문 완료!\n` +
+          `상품명: ${selectedProduct.name}\n` +
+          `구매 수량: ${totalQty}\n` +
+          `발신자 이름: ${user?.name}\n` +
+          `메시지: ${messageCardId}`
+      );
+      navigate(ROUTE_PATH.HOME);
+    } catch (e: any) {
+      if (e.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+      toast.error(e.response?.data?.message ?? '주문 요청 실패');
+    }
   };
 
   const recipients = useWatch({ control: methods.control, name: 'recipients' });
@@ -133,6 +162,7 @@ const OrderForm = () => {
                 message={field.value}
                 onMessageChange={field.onChange}
                 messageError={errors.message?.message}
+                onCardChange={(id) => setMessageCardId(String(id))}
               />
             )}
           />
