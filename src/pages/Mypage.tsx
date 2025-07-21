@@ -22,14 +22,7 @@ function Mypage({ onLogin }: MyPageProps) {
       authToken: '',
     });
     logOut();
-    localStorage.setItem(
-      'userInfo',
-      JSON.stringify({
-        email: '',
-        name: '',
-        authToken: '',
-      }),
-    );
+    localStorage.removeItem('userInfo');
     onLogin();
   }
 
