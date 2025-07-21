@@ -21,6 +21,7 @@ const Card = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
+  cursor: pointer;
 `;
 
 const RankBadge = styled.div<{ isTop3: boolean }>`

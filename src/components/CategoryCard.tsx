@@ -12,6 +12,7 @@ const Card = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
 `;
 
 const Image = styled.img`
