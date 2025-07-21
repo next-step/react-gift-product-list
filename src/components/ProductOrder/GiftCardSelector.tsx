@@ -4,24 +4,24 @@ import { orderData } from '@/data/ORDER_DATA';
 
 type GiftCardSelectorProps = {
   message: string;
-  setMessage: (msg: string) => void;
+  onChangeMessage: (value: string) => void;
   messageCardId: string;
-  setMessageCardId: (id: string) => void;
+  onChangeMessageCardId: (value: string) => void;
 };
 
 const GiftCardSelector = ({
   message,
-  setMessage,
+  onChangeMessage,
   messageCardId,
-  setMessageCardId,
+  onChangeMessageCardId,
 }: GiftCardSelectorProps) => {
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
   const selectedCard = orderData[selectedCardIndex];
 
   useEffect(() => {
-    setMessage(selectedCard.defaultTextMessage);
-    setMessageCardId(selectedCard.id);
-  }, [selectedCard, setMessage, setMessageCardId]);
+    onChangeMessage(selectedCard.defaultTextMessage);
+    onChangeMessageCardId(selectedCard.id);
+  }, [selectedCard, onChangeMessage, onChangeMessageCardId]);
 
   const handleCardSelect = (index: number) => {
     setSelectedCardIndex(index);
@@ -47,7 +47,7 @@ const GiftCardSelector = ({
         </CardFrame>
         <CardMessage
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => onChangeMessage(e.target.value)}
         />
       </SelectedCardPreview>
     </>
