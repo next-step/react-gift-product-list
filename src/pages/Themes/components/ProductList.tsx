@@ -29,8 +29,8 @@ const ProductList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const loader = useRef<HTMLDivElement>(null);
 
-  const { themesId } = useParams();
-  const productList = useFetch<ProductListData>(`/api/themes/${themesId}/products`, {
+  const { themeId } = useParams();
+  const productList = useFetch<ProductListData>(`/api/themes/${themeId}/products`, {
     autoFetch: false,
   });
 

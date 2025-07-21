@@ -17,8 +17,8 @@ interface HeroSectionData {
 const HeroSection = () => {
   const navigate = useNavigate();
   const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
-  const { themesId } = useParams();
-  const { data, isLoading, error } = useFetch<HeroSectionData>(`/api/themes/${themesId}/info`);
+  const { themeId } = useParams();
+  const { data, isLoading, error } = useFetch<HeroSectionData>(`/api/themes/${themeId}/info`);
 
   if (isLoading) {
     return <Loading height="127.2px" />;
