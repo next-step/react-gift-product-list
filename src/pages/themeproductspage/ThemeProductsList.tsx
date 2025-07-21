@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import type { Product } from "@/types/api_types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
@@ -13,6 +13,7 @@ type ThemeProductResponse = {
 
 export default function ThemeProductsList() {
   const { themeId } = useParams<{ themeId: string }>();
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [cursor, setCursor] = useState<string | null | undefined>(undefined);
@@ -84,6 +85,10 @@ export default function ThemeProductsList() {
     };
   }, [handleObserver]);
 
+  const handleItemClick = (id: number) => {
+    navigate(`/order/${id}`);
+  };
+
   if (initLoading) return <LoadingSpinner />;
   if (products.length === 0)
     return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
@@ -92,7 +97,7 @@ export default function ThemeProductsList() {
     <>
       <List>
         {products.map((product) => (
-          <Card key={product.id}>
+          <Card key={product.id} onClick={() => handleItemClick(product.id)}>
             <Image src={product.imageURL} alt={product.name} />
             <Name>{product.name}</Name>
             <Brand>{product.brandInfo.name}</Brand>
@@ -122,6 +127,7 @@ const List = styled.div`
 const Card = styled.div`
   overflow: hidden;
   text-align: center;
+  cursor: pointer;
 `;
 
 const Image = styled.img`
