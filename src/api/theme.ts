@@ -1,10 +1,12 @@
+import axios from 'axios';
 import type { ThemeInfo } from '@/types/theme';
 import type { Product } from '@/types/product';
 
 export async function fetchThemeInfo(themeId: number) {
-  const res = await fetch(`/api/themes/${themeId}/info`);
-  if (!res.ok) throw new Error('테마 정보를 불러올 수 없습니다.');
-  return res.json() as Promise<{ data: ThemeInfo }>;
+  const res = await axios.get<{ data: ThemeInfo }>(
+    `/api/themes/${themeId}/info`,
+  );
+  return res.data;
 }
 
 export async function fetchThemeProducts(
@@ -12,11 +14,8 @@ export async function fetchThemeProducts(
   cursor = 0,
   limit = 10,
 ) {
-  const res = await fetch(
-    `/api/themes/${themeId}/products?cursor=${cursor}&limit=${limit}`,
-  );
-  if (!res.ok) throw new Error('상품 목록을 불러올 수 없습니다.');
-  return res.json() as Promise<{
+  const res = await axios.get<{
     data: { list: Product[]; cursor: number; hasMoreList: boolean };
-  }>;
+  }>(`/api/themes/${themeId}/products?cursor=${cursor}&limit=${limit}`);
+  return res.data;
 }
