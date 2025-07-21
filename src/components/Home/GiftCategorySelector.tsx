@@ -6,6 +6,8 @@ import axios from 'axios';
 
 import { api } from '../../utils/api'
 
+import { useLocation, useNavigate } from 'react-router-dom';
+
 const GiftCategorySelectorStyle = styled.div`
   width: auto;
   height: auto;
@@ -80,6 +82,8 @@ function GiftCategorySelectorItemBox() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  const navigate = useNavigate();
+
   // 최초 랜더링시 axios로 api요청후 state 세팅
   useEffect(() => {
     const fetchThemes = async () => {
@@ -106,10 +110,16 @@ function GiftCategorySelectorItemBox() {
     return null;
   }
 
+  const handleThemeClick = (themeId: number) => {
+    const query = new URLSearchParams({ themeId: themeId.toString()}).toString();
+
+    navigate(`/theme?${query}`);
+  }
+  
   return (
     <GiftCategorySelectorItemBoxGrid>
       {themes.map((item) => (
-        <GiftCategorySelectorItemWrapper key={item.themeId}>
+        <GiftCategorySelectorItemWrapper key={item.themeId} onClick={() => handleThemeClick(item.themeId)}>
           <GiftCategorySelectorItemImg
             src={item.image}
             alt={item.name}
