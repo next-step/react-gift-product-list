@@ -25,6 +25,7 @@ function GiftThemePanel() {
               return (
                 <ThemeButton
                   key={theme.themeId}
+                  id={theme.themeId}
                   image={theme.image}
                   caption={theme.name}
                 />

@@ -1,15 +1,20 @@
 import styled from "@emotion/styled";
+import { PATH } from "@src/router/Router";
+import { useNavigate } from "react-router-dom";
 
 type ThemeButtonProps = {
+  id: number;
   image: string;
   caption: string;
 };
 
-function ThemeButton({ image, caption }: ThemeButtonProps) {
+function ThemeButton({ id, image, caption }: ThemeButtonProps) {
+  const navigate = useNavigate();
+
   return (
     <ThemeButtonWrapper
       onClick={() => {
-        console.log(`Navigate to ${caption}`);
+        navigate(PATH.THEME + `/${id}`);
       }}
     >
       <ThemeImageHolder src={image} alt="image" />

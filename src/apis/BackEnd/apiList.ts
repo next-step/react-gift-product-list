@@ -111,3 +111,35 @@ export async function postOrder(orderInfo: OrderBody, authToken: string) {
     handleError(error);
   }
 }
+
+export const THEME_INFO_CODE = { NOT_FOUND: 404 };
+export async function fetchThemeInfo(themeId: string) {
+  try {
+    const response = await instance.get(BE.API.THEME.INFO(themeId));
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export const THEME_PRODUCTS_CODE = { NOT_FOUND: 404 };
+export async function fetchThemeProducts(
+  themeId: string,
+  cursor: number = 0,
+  limit: number = 10
+) {
+  try {
+    const response = await instance.get(
+      BE.API.THEME.PRODUCTS(themeId) + `?cursor=${cursor}&limit=${limit}`
+    );
+
+    function delay(ms: number) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    await delay(1000);
+
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+}
