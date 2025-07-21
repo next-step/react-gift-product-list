@@ -48,8 +48,8 @@ const Receiver = () => {
             {receivers.map((receiver, i) => (
               <ListBody key={i}>
                 <p>{receiver.name}</p> 
-                <p>{receiver.phone} </p>
-                <p>{receiver.count}</p>
+                <p>{receiver.phoneNumber} </p>
+                <p>{receiver.quantity}</p>
               </ListBody>
             ))}
           </ReceiverList>
