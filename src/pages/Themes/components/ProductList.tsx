@@ -35,6 +35,12 @@ const ProductList = () => {
         cursor,
         limit: PRODUCT_LIST_LIMIT,
       });
+
+      if (response.error) {
+        setHasMoreList(false);
+        return null;
+      }
+
       if (response.data) {
         setItems((prev) => [...prev, ...(response.data?.list ?? [])]);
         setCursor(response.data.cursor);
@@ -42,6 +48,7 @@ const ProductList = () => {
       }
     } catch (error) {
       console.error("상품 목록을 불러오는데 실패했습니다:", error);
+      setHasMoreList(false);
     } finally {
       setIsLoading(false);
     }
