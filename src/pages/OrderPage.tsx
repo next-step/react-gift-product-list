@@ -85,25 +85,18 @@ const OrderPage = () => {
       })),
     };
 
-    postOrder({ orderData: orderRequestData })
-      .then(() => {
-        alert(
-          [
-            "주문이 완료되었습니다.",
-            `상품명: ${gift.name}`,
-            `구매 수량: ${totalCount}개`,
-            `보낸 사람: ${data.sender}`,
-            `메시지: ${data.message}`,
-          ].join("\n"),
-        );
-        navigate(ROUTE_PATH.HOME, { replace: true });
-      })
-      .catch(error => {
-        if (error.errorStatus === 401) {
-          navigate(ROUTE_PATH.LOGIN, { replace: true });
-          return;
-        }
-      });
+    postOrder({ orderData: orderRequestData }).then(() => {
+      alert(
+        [
+          "주문이 완료되었습니다.",
+          `상품명: ${gift.name}`,
+          `구매 수량: ${totalCount}개`,
+          `보낸 사람: ${data.sender}`,
+          `메시지: ${data.message}`,
+        ].join("\n"),
+      );
+      navigate(ROUTE_PATH.HOME, { replace: true });
+    });
   };
 
   return (

@@ -1,4 +1,5 @@
 import { SESSION_USER_INFO_KEY } from "@/constants/storageKeys";
+import { ROUTE_PATH } from "@/routes/paths";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -30,10 +31,13 @@ axiosInstance.interceptors.response.use(
   },
   error => {
     toast.error(error.response?.data?.data?.message || "다시 시도해주세요.");
-    return Promise.reject({
-      ...error,
-      errorStatus: error.response?.status,
-    });
+    if (error.response?.status === 401) {
+      window.location.href = ROUTE_PATH.LOGIN;
+    }
+    if (error.response?.status === 404) {
+      window.location.href = ROUTE_PATH.HOME;
+    }
+    return Promise.reject(error);
   },
 );
 
