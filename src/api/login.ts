@@ -1,5 +1,4 @@
 import apiClient from '@/api/apiClient';
-import toast from 'react-hot-toast';
 
 interface LoginRequest {
   email: string;
@@ -28,7 +27,9 @@ export const login = async (
 
     return response.data;
   } catch (error: any) {
-    toast.error(error?.response?.data?.message || '로그인에 실패했습니다.');
+    if (error?.response?.status === 401) {
+      sessionStorage.removeItem('userInfo');
+    }
     throw error;
   }
 };

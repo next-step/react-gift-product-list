@@ -114,7 +114,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Login failed:', error);
       const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage);
+
+      if (error.response?.status === 401) {
+        const storedUserInfo = sessionStorage.getItem('userInfo');
+        if (storedUserInfo) {
+          toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+          setUser(null);
+          setIsLoggedIn(false);
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error(errorMessage);
+      }
+
       throw error;
     } finally {
       setIsLoading(false);
