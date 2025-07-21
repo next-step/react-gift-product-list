@@ -9,12 +9,15 @@ import { MyPage } from './pages/MyPage';
 import { AuthProvider } from './contexts/AuthContext';
 import OrderPage from './pages/OrderPage';
 import { PrivateRoute } from './router/PrivateRoute';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = { palette, typography, spacing } as const;
 
 const App = () => (
   <ThemeProvider theme={theme}>
     <GlobalStyle />
+    <ToastContainer />
     <BrowserRouter>
       <AuthProvider>
         <Routes>
