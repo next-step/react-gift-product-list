@@ -6,6 +6,11 @@ import { NavBar } from '@/components/NavBar';
 import type { MessageCard } from '@/types';
 import { rankingAll } from '@/data/rankings';
 import { messageCardTemplates } from '@/data/messageCards';
+import { toastError, toastSuccess } from '@/utils/toast';
+import axios from 'axios';
+import { getProductSummary, createOrder } from '@/api/services';
+import { useFetch } from '@/hooks/useFetch';
+import { useAuth } from '@/contexts/AuthContext';
 
 import * as S from '@/styles/OrderPage.styles';
 import { MessageCardSection } from '@/components/order/MessageCardSection';
@@ -20,8 +25,16 @@ import { orderFormSchema, type OrderFormValues } from '@/lib/schemas';
 const OrderPage = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
-  const item = rankingAll.find(it => it.id === Number(itemId));
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuth();
+
+  const { data: item, isLoading, error } = useFetch(() => getProductSummary(itemId!), [itemId]);
+  useEffect(() => {
+    if (error) {
+      toastError('상품 정보를 불러오는 데 실패했습니다.');
+      navigate('/');
+    }
+  }, [error, navigate]);
 
   const {
     register,
@@ -34,32 +47,52 @@ const OrderPage = () => {
     defaultValues: {
       senderName: '내 이름',
       message: messageCardTemplates[0].defaultTextMessage,
+      selectedCardId: messageCardTemplates[0].id,
       recipients: [],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({ control, name: 'recipients' });
-  
+  const { fields, remove } = useFieldArray({ control, name: 'recipients' });
+
   const recipients = useWatch({ control, name: 'recipients' });
   const messageValue = useWatch({ control, name: 'message' });
-
-  const [selectedCard, setSelectedCard] = useState<MessageCard>(messageCardTemplates[0]);
-  useEffect(() => {
-    setValue('message', selectedCard.defaultTextMessage);
-  }, [selectedCard, setValue]);
+  const selectedCardId = useWatch({ control, name: 'selectedCardId' });
+  
+  const handleCardSelect = (card: MessageCard) => {
+    setValue('selectedCardId', card.id);
+    setValue('message', card.defaultTextMessage);
+  };
+  const selectedCard = messageCardTemplates.find(card => card.id === selectedCardId) || messageCardTemplates[0];
 
   const handleRecipientsUpdate = (updatedRecipients: OrderFormValues['recipients']) => {
     setValue('recipients', updatedRecipients, { shouldValidate: true });
     setIsModalOpen(false);
   };
 
-  const onSubmit: SubmitHandler<OrderFormValues> = (data) => {
-    console.log('최종 주문 데이터:', data);
-    alert('주문 성공!');
-    navigate('/');
+  const onSubmit: SubmitHandler<OrderFormValues> = async (data) => {
+    const orderData = {
+      productId: Number(itemId),
+      message: data.message,
+      messageCardId: selectedCard.id.toString(),
+      ordererName: data.senderName,
+      receivers: data.recipients.map(r => ({ name: r.name, phoneNumber: r.phone, quantity: r.quantity })),
+    };
+    try {
+      await createOrder(orderData);
+      toastSuccess('주문이 성공적으로 완료되었습니다!');
+      navigate('/');
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        toastError('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        toastError('주문 처리 중 오류가 발생했습니다.');
+        console.error(err);
+      }
+    }
   };
 
-  if (!item) {
+  if (isLoading || !item) {
     return (
       <Layout>
         <NavBar />
@@ -68,7 +101,7 @@ const OrderPage = () => {
     );
   }
 
-  const totalPrice = (recipients || []).reduce((sum, current) => sum + (item.price.sellingPrice * current.quantity), 0);
+  const totalPrice = (recipients || []).reduce((sum, current) => sum + (item.price * current.quantity), 0);
 
   return (
     <Layout>
@@ -77,14 +110,9 @@ const OrderPage = () => {
         <div css={S.pageWrapper}>
           <MessageCardSection
             selectedCard={selectedCard}
-            onCardSelect={setSelectedCard}
+            onCardSelect={handleCardSelect}
             message={messageValue || ''}
             onMessageChange={(e) => setValue('message', e.target.value, { shouldValidate: true })}
-          />
-          <hr css={S.divider} />
-          <GiftingForm
-            register={register}
-            errors={errors}
           />
           <hr css={S.divider} />
           <div css={{ padding: `0 16px` }}>
@@ -104,13 +132,13 @@ const OrderPage = () => {
           <hr css={S.divider} />
           <ProductInfoSection item={item} />
         </div>
-        <OrderPageFooter totalPrice={totalPrice} onSubmit={handleSubmit(onSubmit)}/>
+        <OrderPageFooter totalPrice={totalPrice} />
 
       </form>
       {isModalOpen && (
         <AddRecipientModal
           onClose={() => setIsModalOpen(false)}
-          onComplete={handleRecipientsUpdate} 
+          onComplete={handleRecipientsUpdate}
           initialRecipients={recipients}
         />
       )}

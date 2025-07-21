@@ -27,6 +27,11 @@ export const getProductDetail = async (productId: string) => {
   return response.data.data;
 };
 
+export const getProductSummary = async (productId: string) => {
+  const response = await client.get(`/api/products/${productId}/summary`);
+  return response.data.data;
+};
+
 export const login = async (email: string, password: string) => {
   const response = await client.post('/api/login', { email, password });
   return response.data.data;

@@ -36,7 +36,7 @@ export const FriendSelectBar = () => {
       </span>
       {isLoggedIn && user ? (
         <span>
-          <strong css={{ fontWeight: 'bold' }}>{user.id}</strong>님! 선물할 친구를 선택해주세요.
+          <strong css={{ fontWeight: 'bold' }}>{user.name}</strong>님! 선물할 친구를 선택해주세요.
         </span>
       ) : (
         '선물할 친구를 선택해주세요.'

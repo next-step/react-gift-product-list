@@ -1,6 +1,7 @@
+import { getStorageItem } from '@/utils/storage';
 import axios from 'axios';
 const baseURL = 'http://localhost:3000/';
-//const baseURL = import.meta.env.VITE_API_URL;
+
 
 export const client = axios.create({
   baseURL,
@@ -8,7 +9,7 @@ export const client = axios.create({
 
 client.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('authToken');
+    const token = getStorageItem('authToken');
     if (token) {
       config.headers.Authorization = token;
     }
