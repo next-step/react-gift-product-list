@@ -101,7 +101,7 @@ const OrderPage = () => {
     );
   }
 
-  const totalPrice = (recipients || []).reduce((sum, current) => sum + (item.price.sellingPrice * current.quantity), 0);
+  const totalPrice = (recipients || []).reduce((sum, current) => sum + (item.price * current.quantity), 0);
 
   return (
     <Layout>
