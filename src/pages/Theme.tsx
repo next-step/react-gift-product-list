@@ -8,7 +8,7 @@ import { api, IsErrorStatus } from '../utils/api'
 import { Spinner } from '@/components/Spinner';
 
 import HeroSection from '@/components/Theme/HeroSection';
-// import InfiniteScroll from '@/components/Theme/InfiniteScroll';
+import InfiniteScroll from '@/components/Theme/InfiniteScroll';
 
 function Theme() {
     const [searchParams] = useSearchParams(); // 얘는 여기있는게 맞아
@@ -19,7 +19,7 @@ function Theme() {
         <Layout>
             <NavBar></NavBar>
             <HeroSection themeId={themeId}/>
-            {/* <InfiniteScroll themeId={themeId}/> */}
+            <InfiniteScroll themeId={themeId}/>
         </Layout>
     );
 }
