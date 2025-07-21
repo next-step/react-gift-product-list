@@ -7,6 +7,7 @@ interface HeroSectionProps {
   themeInfo: ThemeInfo
 }
 
+// * 히어로 섹션 컴포넌트
 export const HeroSection = ({ themeInfo }: HeroSectionProps) => {
   return (
     <Container style={{ background: themeInfo.backgroundColor }}>
@@ -21,6 +22,7 @@ export const HeroSection = ({ themeInfo }: HeroSectionProps) => {
   )
 }
 
+// * 컨테이너
 const Container = styled.section`
   width: 100%;
   padding: ${theme.spacing.spacing6} ${theme.spacing.spacing4};
@@ -28,6 +30,7 @@ const Container = styled.section`
   align-items: center;
 `
 
+// * 히어로 텍스트 컨텐츠 컨테이너
 const HeroContent = styled.div`
   display: flex;
   flex-direction: column;
