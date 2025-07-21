@@ -17,6 +17,7 @@ export const useInfiniteScroll = ({
   useEffect(() => {
     if (!enabled || !ref.current) return;
 
+    const element = ref.current;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -26,10 +27,10 @@ export const useInfiniteScroll = ({
       { threshold },
     );
 
-    observer.observe(ref.current);
+    observer.observe(element);
 
     return () => {
-      if (ref.current) observer.unobserve(ref.current);
+      observer.unobserve(element);
     };
   }, [enabled, onIntersect, threshold]);
 
