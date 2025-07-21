@@ -6,6 +6,7 @@ import type { Product } from '@/types/product';
 
 interface ProductCardProps extends Product {
   rank: number;
+  hideRank?: boolean;
 }
 
 const ProductCard = ({ rank, ...product }: ProductCardProps) => {
@@ -31,7 +32,7 @@ const ProductCard = ({ rank, ...product }: ProductCardProps) => {
 
   return (
     <Card onClick={handleClick}>
-      <RankBadge rank={rank}>{rank}</RankBadge>
+      {!product.hideRank && rank && <RankBadge rank={rank}>{rank}</RankBadge>}
       <Image src={product.imageURL} alt={product.name} />
       <Brand>{product.brandInfo.name}</Brand>
       <Name>{product.name}</Name>

@@ -52,7 +52,11 @@ const ThemeProductList = () => {
         cursor: nextCursor,
       } = res.data.data;
 
-      setProducts(prev => [...prev, ...newProducts]);
+      setProducts(prev => {
+        const merged = [...prev, ...newProducts];
+        const unique = Array.from(new Map(merged.map(p => [p.id, p])).values());
+        return unique;
+      });
       setHasMore(hasMoreList);
       setCursor(nextCursor);
     } catch {
@@ -91,7 +95,12 @@ const ThemeProductList = () => {
     <>
       <CardGrid>
         {products.map((product, index) => (
-          <ProductCard key={product.id} {...product} rank={index + 1} />
+          <ProductCard
+            key={product.id}
+            {...product}
+            rank={index + 1}
+            hideRank
+          />
         ))}
       </CardGrid>
       {pending && <LoadingText>상품을 불러오는 중...</LoadingText>}
