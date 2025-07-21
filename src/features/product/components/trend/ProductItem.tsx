@@ -6,9 +6,9 @@ import { typographyMixin } from '@/components/ui'
 import type { Product } from '@/api/types/product'
 
 // * 실시간 급상승 상품 아이템 컴포넌트
-export const ProductItem = ({ product, index }: { product: Product; index: number }) => {
+export const ProductItem = ({ product, index }: { product: Product; index?: number }) => {
   const navigate = useNavigate()
-  const productRank = index + 1
+  const productRank = index !== undefined ? index + 1 : undefined
 
   // * 상품 클릭시 핸들러
   const handleProductClick = () => {
@@ -17,7 +17,7 @@ export const ProductItem = ({ product, index }: { product: Product; index: numbe
 
   return (
     <ProductItemContainer onClick={handleProductClick}>
-      <ProductRank rank={productRank}>{productRank}</ProductRank>
+      {productRank && <ProductRank rank={productRank}>{productRank}</ProductRank>}
       <ProductImage src={product.imageURL} alt={product.name} />
       <ProductTitleContainer>
         <ProductBrand>{product.brandInfo.name}</ProductBrand>
@@ -29,12 +29,15 @@ export const ProductItem = ({ product, index }: { product: Product; index: numbe
           <>
             <ProductDiscountRate>{product.price.discountRate}%</ProductDiscountRate>
             <ProductBasicPrice style={{ textDecoration: 'line-through' }}>
-              {product.price.basicPrice}
+              {product.price.basicPrice.toLocaleString()}
             </ProductBasicPrice>
           </>
         )}
         <ProductSellingPrice>
-          <span css={theme.typography.body.body1Bold}>{product.price.sellingPrice}</span> 원
+          <span css={theme.typography.body.body1Bold}>
+            {product.price.sellingPrice.toLocaleString()}
+          </span>{' '}
+          원
         </ProductSellingPrice>
       </ProductPrice>
     </ProductItemContainer>
