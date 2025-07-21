@@ -1,4 +1,5 @@
 import apiClient from "@/api/apiClient";
+import { PAGE_SIZE } from "@/constants/pagination";
 
 export type Theme = {
   themeId: number;
@@ -47,7 +48,7 @@ export const fetchThemeInfo = async (themeId: number): Promise<ThemeInfo> => {
 export const fetchThemeProducts = async (
   themeId: number,
   cursor = 0,
-  limit = 10,
+  limit = PAGE_SIZE,
 ): Promise<ThemeProductResponse> => {
   return await apiClient.get(`/themes/${themeId}/products`, {
     params: { cursor, limit },
