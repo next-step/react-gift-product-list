@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../apiBaseUrl';
+import { API_BASE_URL, apiClient } from '../apiClient';
 import type { OrderInfoValues } from '@/page/Order';
 
 interface FetchOrderProps {
@@ -24,7 +23,7 @@ const fetchOrder = async ({ orderData, id, token }: FetchOrderProps) => {
       Authorization: `${token}`,
     },
   };
-  const response = await axios.post(`${API_BASE_URL}/api/order`, data, headers);
+  const response = await apiClient.post(`${API_BASE_URL}/api/order`, data, headers);
   console.log(response.data.data);
 };
 

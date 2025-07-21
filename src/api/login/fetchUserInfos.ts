@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../apiBaseUrl';
+import { API_BASE_URL, apiClient } from '../apiClient';
 import type { UserInfoProps } from '@/page/Login/hooks/useLogin';
 
 const fetchUserInfos = async ({ username, password }: UserInfoProps) => {
@@ -12,7 +11,7 @@ const fetchUserInfos = async ({ username, password }: UserInfoProps) => {
       'Content-Type': 'application/json',
     },
   };
-  const response = await axios.post(`${API_BASE_URL}/api/login`, data, headers);
+  const response = await apiClient.post(`${API_BASE_URL}/api/login`, data, headers);
   return response.data.data;
 };
 
