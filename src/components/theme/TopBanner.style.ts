@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-
 export const HeroSection = styled.section<{ bgColor: string }>`
   background-color: ${({ bgColor }) => bgColor};
   color: white;
@@ -17,7 +16,7 @@ export const Name = styled.div`
   font-size: 0.875rem;
   font-weight: 700;
   line-height: 1.1875rem;
-  color: rgb(247, 248, 249);
+  color: ${({ theme }) => theme.color.semantic.background.default};
   margin: 0px;
   text-align: left;
 `;
@@ -26,7 +25,7 @@ export const Title = styled.div`
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.6875rem;
-  color: rgb(255, 255, 255);
+  color: ${({ theme }) => theme.color.semantic.background.default};
   margin: 0px;
   text-align: left;
 `;
@@ -35,7 +34,7 @@ export const Description = styled.div`
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.375rem;
-  color: rgb(243, 244, 245);
+  color: ${({ theme }) => theme.color.semantic.background.default};
   margin: 0px;
   text-align: left;
 `;
@@ -46,5 +45,3 @@ export const LoadingWrapper = styled.div`
   align-items: center;
   padding: 80px 0;
 `;
-
-

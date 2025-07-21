@@ -39,7 +39,6 @@ const GiftCategoryList = () => {
           <Item
             key={item.themeId}
             onClick={() => {
-              console.log('클릭됨!', item.themeId);
               navigate(`/theme/${item.themeId}`);
             }}
             style={{ cursor: 'pointer' }}
