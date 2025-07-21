@@ -15,39 +15,39 @@ export default function ThemePage() {
   const [products, setProducts] = useState<ProductInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true); // 더 불러 올 게 있는지
-  const pageRef = useRef(1); // 현재 페이지 번호 저장
   const loader = useRef<HTMLDivElement | null>(null); // 마지막 감지
 
+  const cursorRef = useRef(0);
+
   // 상품 불러오기
-  const fetchProducts = useCallback(
-    async (pageNum: number) => {
-      if (loading || !hasMore) return;
-      setLoading(true);
-      try {
-        if (!themeId) return;
-        const productData = await getThemeProduct(themeId);
-        const newProducts = productData.data.list;
-        pageRef.current = pageNum;
-        setProducts((prev) => [...prev, ...newProducts]);
-        setHasMore(newProducts.length > 0);
-      } catch (error) {
-        if (axios.isAxiosError(error))
-          showErrorToast("상품을 불러오는 데 실패했어요.");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [themeId, hasMore],
-  );
+  const fetchProducts = useCallback(async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    try {
+      if (!themeId) return;
+      const cursor = cursorRef.current;
+      const productData = await getThemeProduct(themeId, cursor);
+      const newProducts = productData.data.list;
+
+      setProducts((prev) => [...prev, ...newProducts]);
+      cursorRef.current += newProducts.length;
+      setHasMore(newProducts.length > 0);
+    } catch (error) {
+      if (axios.isAxiosError(error))
+        showErrorToast("상품을 불러오는 데 실패했어요.");
+    } finally {
+      setLoading(false);
+    }
+  }, [themeId, hasMore]);
 
   // 첫 페이지 상품만 초기 fetch
   useEffect(() => {
     if (!themeId || themeLoading) return;
     setProducts([]);
     setHasMore(true);
-    pageRef.current = 1;
-    fetchProducts(1);
-  }, [themeId, themeLoading, fetchProducts]);
+    cursorRef.current = 0;
+    fetchProducts();
+  }, [themeId]);
 
   // Intersection Observer로 무한 스크롤
   useEffect(() => {
@@ -55,8 +55,7 @@ export default function ThemePage() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loading) {
-          pageRef.current += 1;
-          fetchProducts(pageRef.current);
+          fetchProducts();
         }
       },
       { root: null, rootMargin: "20px", threshold: 1.0 },

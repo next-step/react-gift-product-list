@@ -5,7 +5,13 @@ export const getThemeInfo = async (themeId: string) => {
   return data.data;
 };
 
-export const getThemeProduct = async (themeId: string) => {
-  const product = await baseHttp.get(`/themes/${themeId}/products`);
+export const getThemeProduct = async (
+  themeId: string,
+  cursor = 0,
+  limit = 10,
+) => {
+  const product = await baseHttp.get(`/themes/${themeId}/products`, {
+    params: { cursor, limit },
+  });
   return product.data;
 };
