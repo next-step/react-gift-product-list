@@ -26,7 +26,7 @@ function App() {
     if (userInfoStr) {
       try {
         const userInfo = JSON.parse(userInfoStr);
-        if (userInfo.email || userInfo.name || userInfo.authToken) {
+        if (userInfo.authToken) {
           isLoggedIn = true;
         }
       } catch (e) {
