@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useParams, useNavigate } from "react-router-dom";
 import { useApiRequest } from "@/hooks/useApiRequest";
+import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import type { Product } from "@/types/api_types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -15,6 +16,10 @@ export default function ThemeProductsList() {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
 
+  const handleApiError = useApiErrorHandler({
+    fallbackMessage: "상품 정보를 불러오는데 실패했어요.",
+  });
+
   const [products, setProducts] = useState<Product[]>([]);
   const [cursor, setCursor] = useState<string | null | undefined>(undefined);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -26,6 +31,12 @@ export default function ThemeProductsList() {
     url: `/api/themes/${themeId}/products${cursor ? `?cursor=${cursor}` : ""}`,
     manual: true,
   });
+
+  useEffect(() => {
+    if (status === "error" && error) {
+      handleApiError(error);
+    }
+  }, [status, error, handleApiError]);
 
   const loadingNext = status === "loading";
 

@@ -54,6 +54,7 @@ function App() {
             }
           />
           <Route path="/themes/:themeId" element={<ThemeProductsPage />} />
+          <Route path="/notfound" element={<NotFoundPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>

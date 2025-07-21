@@ -13,10 +13,16 @@ import { HTTP_STATUS } from "@/utils/HTTP_STATUS";
 export default function ThemeProductsPage() {
   const { themeId } = useParams();
   const parsedThemeId = Number(themeId);
+  const navigate = useNavigate();
 
-  if (!parsedThemeId) {
-    return <p>잘못된 경로입니다.</p>;
-  }
+  useEffect(() => {
+    if (!parsedThemeId) {
+      navigate("/notfound");
+    }
+  }, [parsedThemeId, navigate]);
+
+  if (!parsedThemeId) return null;
+
   const {
     data: themeInfo,
     status: themeStatus,
@@ -25,7 +31,6 @@ export default function ThemeProductsPage() {
     url: API_ENDPOINTS.THEME_INFO(parsedThemeId),
   });
 
-  const navigate = useNavigate();
   const handleError = useApiErrorHandler({
     fallbackMessage: "테마 정보를 불러올 수 없습니다.",
     customHandler: (statusCode) => {
