@@ -2,18 +2,10 @@ import styled from "@emotion/styled";
 import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
 import type { CategoryType } from "@/types/CategoryType";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
-import { useCallback } from "react";
 
 const Category = () => {
-  const navigate = useNavigate();
-  const goThemes = useCallback(
-    (themeId: number) => {
-      navigate(`${ROUTE_PATH.THEMES}/${themeId}`);
-    },
-    [navigate],
-  );
   const themes = useFetch<CategoryType[]>("/api/themes");
 
   if (themes.isLoading) {
@@ -34,7 +26,7 @@ const Category = () => {
       <Title>선물 테마</Title>
       <List>
         {themes.data?.map((category) => (
-          <Item key={category.themeId} onClick={() => goThemes(category.themeId)}>
+          <Item key={category.themeId} to={`${ROUTE_PATH.THEMES}/${category.themeId}`}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
           </Item>
@@ -65,7 +57,7 @@ const List = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: ${({ theme }) => theme.spacing.spacing5} ${({ theme }) => theme.spacing.spacing2};
 `;
-const Item = styled.div`
+const Item = styled(Link)`
   width: 100%;
   height: 100;
   display: flex;
@@ -73,7 +65,7 @@ const Item = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  cursor: pointer;
+  text-decoration: none;
 `;
 const Img = styled.img`
   max-width: 3.125rem;

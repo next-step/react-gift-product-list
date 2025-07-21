@@ -4,7 +4,7 @@ import useFetch from "@/hooks/useFetch";
 import type { RankingProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 interface ProductListData {
   list: RankingProductType[];
@@ -15,14 +15,6 @@ interface ProductListData {
 const PRODUCT_LIST_LIMIT = 20;
 
 const ProductList = () => {
-  const navigate = useNavigate();
-  const goOrderPage = useCallback(
-    (itemId: number) => {
-      navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
-    },
-    [navigate],
-  );
-
   const [items, setItems] = useState<RankingProductType[]>([]);
   const [cursor, setCursor] = useState(0);
   const [hasMoreList, setHasMoreList] = useState(true);
@@ -81,7 +73,7 @@ const ProductList = () => {
     <Container>
       <Content>
         {items.map((item) => (
-          <Item key={item.id} onClick={() => goOrderPage(item.id)}>
+          <Item key={item.id} to={`${ROUTE_PATH.ORDER}/${item.id}`}>
             <ItemContent>
               <ItemContentImg src={item.imageURL} alt={item.name} />
               <ItemContentBrand>{item.brandInfo.name}</ItemContentBrand>
@@ -114,9 +106,9 @@ const Content = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.spacing6} ${({ theme }) => theme.spacing.spacing2};
 `;
-const Item = styled.div`
+const Item = styled(Link)`
   width: 100%;
-  cursor: pointer;
+  text-decoration: none;
 `;
 const ItemContent = styled.div`
   width: 100%;

@@ -3,11 +3,11 @@ import styled from "@emotion/styled";
 import Divider from "@/components/common/Divider";
 import { useState } from "react";
 import Button from "@/components/common/Button";
-import { useNavigate } from "react-router-dom";
-import { ROUTE_PATH } from "@/components/routes/routePath";
 import useFetch from "@/hooks/useFetch";
 import Loading from "@/components/common/Loading";
 import type { RankingProductType } from "@/types/RankingProductType";
+import { ROUTE_PATH } from "@/components/routes/routePath";
+import { Link } from "react-router-dom";
 
 interface RankingListProps {
   targetType: string;
@@ -17,16 +17,13 @@ interface RankingListProps {
 const RANKING_LIST_ITEM_VIEW_COUNT = 6;
 
 const RankingList = ({ targetType, rankType }: RankingListProps) => {
-  const navigate = useNavigate();
   const [viewCount, setViewCount] = useState(RANKING_LIST_ITEM_VIEW_COUNT);
   const isCollapsed = viewCount === RANKING_LIST_ITEM_VIEW_COUNT;
   const toggleView = () => {
     const nextViewCount = isCollapsed ? rankingItemMock.length : RANKING_LIST_ITEM_VIEW_COUNT;
     setViewCount(nextViewCount);
   };
-  const goOrderPage = (itemId: number) => {
-    navigate(`${ROUTE_PATH.ORDER}/${itemId}`);
-  };
+
   const rankingListData = useFetch<RankingProductType[]>("/api/products/ranking", {
     params: { targetType, rankType },
     dependency: [targetType, rankType],
@@ -46,7 +43,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
     <Container>
       <Content>
         {rankingListData.data?.slice(0, viewCount).map((item, index) => (
-          <Item key={item.id} onClick={() => goOrderPage(item.id)}>
+          <Item key={item.id} to={`${ROUTE_PATH.ORDER}/${item.id}`}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>
               <ItemContentImg src={item.imageURL} />
@@ -92,10 +89,10 @@ const Content = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.spacing6} ${({ theme }) => theme.spacing.spacing2};
 `;
-const Item = styled.div`
+const Item = styled(Link)`
   width: 100%;
   position: relative;
-  cursor: pointer;
+  text-decoration: none;
 `;
 type RankingAndTheme = {
   ranking: number;
