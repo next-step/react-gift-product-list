@@ -26,9 +26,9 @@ const BehaviorCategory = ({ options, selected, onSelect }: behaviorProps) => {
   return (
     <BehaviorCategoryWrapper>
       {options.map((o) => (
-        <BehaviorTextButton key={o} onClick={()=>onSelect(o)} selected={selected===o}>{o}</BehaviorTextButton>
+        <BehaviorTextButton key={o.label} onClick={()=>onSelect(o.param)} selected={selected===o.param}>{o.label}</BehaviorTextButton>
       ))}
-      
+
     </BehaviorCategoryWrapper>
   );
 };

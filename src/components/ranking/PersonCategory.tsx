@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import type { personProps } from "./types";
 
+
 const PersonCategoryWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -33,8 +34,8 @@ const PersonCategory = ({ options, selected, onSelect }: personProps) => {
   return (
     <PersonCategoryWrapper>
       {options.map((o) => (
-        <PersonBtn key={o.label} onClick={() => onSelect(o.label)}>
-          <PersonImage selected={selected === o.label}>
+        <PersonBtn key={o.label} onClick={() => onSelect(o.param)}>
+          <PersonImage selected={selected === o.param}>
             {o.emoji}
           </PersonImage>
           <p>{o.label}</p>

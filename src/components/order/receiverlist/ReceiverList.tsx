@@ -11,7 +11,7 @@ interface ReceiverListProps {
   receivers: OrderFormData['receivers'];
 }
 const ReceiverList = ({ setIsVisible, receivers }: ReceiverListProps) => {
-  console.log(receivers);
+
   return (
     <SidePadding>
       <Padding3 />
