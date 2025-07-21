@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
+import type { Product } from '@/types/product';
 
 const List = styled.ul`
   display: grid;
@@ -51,24 +52,9 @@ const MoreButton = styled.button`
 
 const DEFAULT_VISIBLE = 6; // 기본으로 보여줄 상품 개수
 
-// Product 타입 정의 (API 응답 구조에 맞게)
-type Product = {
-  id: number;
-  name: string;
-  imageURL: string;
-  price: {
-    basicPrice: number;
-    discountRate: number;
-    sellingPrice: number;
-  };
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
-  targetType: string;
-  rankType: string;
-};
+interface ProductListProps {
+  products?: Product[];
+}
 
 const RankBadge = styled.div<{ rank: number }>`
   position: absolute;
@@ -94,12 +80,18 @@ const RankBadge = styled.div<{ rank: number }>`
   z-index: 2;
 `;
 
-function ProductList() {
+function ProductList({ products: propProducts }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (propProducts) {
+      setProducts(propProducts);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     fetch(`${import.meta.env.VITE_API_URL}/api/products/ranking`)
@@ -119,7 +111,7 @@ function ProductList() {
         setError('데이터를 불러오지 못했습니다.');
         setLoading(false);
       });
-  }, []);
+  }, [propProducts]);
 
   // 더보기/접기 state
   const [visibleCount, setVisibleCount] = useState(DEFAULT_VISIBLE);

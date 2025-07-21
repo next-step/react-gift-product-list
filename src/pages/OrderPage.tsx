@@ -7,7 +7,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchProductSummary } from '@/api/index';
 import { toast } from 'react-toastify';
 import { createOrder } from '@/api/index';
-import type { ReceiverForOrder, OrderData } from '@/types/order';
 
 // OrderPage에서만 사용하는 타입이므로 src/types/order.ts에는 추가하지 않고, 파일 상단에 선언
 export type Receiver = {
@@ -264,7 +263,7 @@ function OrderPage() {
     };
 
     try {
-      const response = await createOrder(orderData, authToken);
+      await createOrder(orderData, authToken);
       // 주문 상세 alert 추가
       alert(
         `주문이 완료되었습니다.\n` +

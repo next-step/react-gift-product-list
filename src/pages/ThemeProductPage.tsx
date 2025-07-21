@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { fetchThemeInfo, fetchThemeProducts } from '@/api/theme';
 import ThemeHeroSection from '@/components/ThemeHeroSection';
 import ProductList from '@/components/ProductList';
@@ -18,7 +18,6 @@ const PageContainer = styled.div`
 
 const ThemeProductPage = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const navigate = useNavigate();
   const [theme, setTheme] = useState<ThemeInfo | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
