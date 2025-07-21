@@ -9,6 +9,7 @@ import { UserProvider } from '@/contexts/UserContext';
 import { ROUTE } from '@/constants/routes';
 import AuthRoute from '@/routes/AuthRoute';
 import PublicRoute from '@/routes/PublicRoute';
+import ThemeProductsPage from '@/pages/ThemeProductsPage';
 
 const App = () => {
   return (
@@ -18,6 +19,8 @@ const App = () => {
           <Route element={<Layout />}>
             {/* 메인페이지 */}
             <Route path={ROUTE.MAIN} element={<MainPage />} />
+
+            <Route path={ROUTE.THEME()} element={<ThemeProductsPage />} />
 
             {/* 로그인 안한 유저만 접근 */}
             <Route

@@ -14,7 +14,7 @@ import { postOrder } from '@/api/order';
 import type { OrderRequest } from '@/types/order';
 import { useUser } from '@/contexts/UserContext';
 import { toast, ToastContainer } from 'react-toastify';
-import { AxiosError } from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 
 const Wrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.spacing4};
@@ -167,10 +167,13 @@ const OrderPage = () => {
         if (!productId) return;
         const data = await fetchProductSummary(Number(productId));
         setProduct(data);
-      } catch (error: unknown) {
-        const err = error as AxiosError<{ data: { message: string } }>;
-        const msg = err.response?.data?.data?.message || '상품 정보를 불러올 수 없습니다.';
-        toast.error(msg);
+      } catch (error) {
+        if (error instanceof axios.AxiosError) {
+          const msg = error.response?.data?.data?.message || '상품 정보를 불러올 수 없습니다.';
+          toast.error(msg);
+        } else {
+          toast.error('오류가 발생했습니다.');
+        }
         navigate(ROUTE.MAIN);
       }
     };
@@ -228,15 +231,18 @@ const OrderPage = () => {
 
       await postOrder(payload);
       navigate(ROUTE.MAIN);
-    } catch (error: unknown) {
-      const err = error as AxiosError<{ data: { message: string } }>;
-      const status = err.response?.status;
-      const msg = err.response?.data?.data?.message || '주문에 실패했습니다.';
+    } catch (error) {
+      if (error instanceof axios.AxiosError) {
+        const status = error.response?.status;
+        const msg = error.response?.data?.data?.message || '주문에 실패했습니다.';
 
-      if (status === 401) {
-        navigate(ROUTE.LOGIN);
+        if (status === HttpStatusCode.Unauthorized) {
+          navigate(ROUTE.LOGIN);
+        } else {
+          toast.error(msg);
+        }
       } else {
-        toast.error(msg);
+        toast.error('오류가 발생했습니다.');
       }
     }
   };

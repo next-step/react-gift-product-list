@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { fetchThemes } from '@/api/theme';
 import type { Theme } from '@/types/theme';
 import Spinner from '@/components/Spinner';
+import { ROUTE } from '@/constants/routes';
+import { useNavigate } from 'react-router-dom';
 
 const SectionWrapper = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing4};
@@ -52,6 +54,7 @@ const CategorySection = () => {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadThemes = async () => {
@@ -80,7 +83,7 @@ const CategorySection = () => {
       <Title>선물 테마</Title>
       <Grid>
         {themes.map(({ themeId, name, image }) => (
-          <Item key={themeId}>
+          <Item key={themeId} onClick={() => navigate(ROUTE.THEME(themeId))}>
             <Image src={image} alt={name} />
             <Label>{name}</Label>
           </Item>

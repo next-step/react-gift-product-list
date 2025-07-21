@@ -21,3 +21,9 @@ export interface ProductSummary {
   price: number;
   imageURL: string;
 }
+
+export interface ProductList {
+  list: Product[];
+  cursor: number;
+  hasMoreList: boolean;
+}
