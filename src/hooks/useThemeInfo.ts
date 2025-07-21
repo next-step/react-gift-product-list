@@ -3,14 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getThemeInfoUrl } from '@/constants/api';
 import { ROUTES } from '@/constants/routes';
-
-export interface ThemeInfo {
-  themeId: number;
-  name: string;
-  title: string;
-  description: string;
-  backgroundColor: string;
-}
+import type { ThemeInfo } from '@/types/theme';
 
 export const useThemeInfo = (themeId: string | undefined) => {
   const navigate = useNavigate();
