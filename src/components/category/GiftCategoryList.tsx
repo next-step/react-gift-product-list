@@ -4,7 +4,7 @@ import { fetchThemes } from '@/api/themesApi';
 import { FadeLoader } from 'react-spinners';
 import { Grid, Item, ImageStyle } from '@/components/category/GiftCategoryGrid';
 import { Wrapper, Title } from '@/components/category/GiftCategory.style';
-
+import { useNavigate } from 'react-router-dom';
 interface Theme {
   themeId: number;
   name: string;
@@ -18,6 +18,7 @@ const LoadingWrapper = styled.div`
 `;
 
 const GiftCategoryList = () => {
+  const navigate = useNavigate();
   const { data: themes, isLoading, hasError } = useApi<Theme[]>(fetchThemes);
 
   if (isLoading) {
@@ -35,7 +36,14 @@ const GiftCategoryList = () => {
       <Title>선물 테마</Title>
       <Grid>
         {themes.map((item) => (
-          <Item key={item.themeId}>
+          <Item
+            key={item.themeId}
+            onClick={() => {
+              console.log('클릭됨!', item.themeId);
+              navigate(`/theme/${item.themeId}`);
+            }}
+            style={{ cursor: 'pointer' }}
+          >
             <ImageStyle src={item.image} alt={item.name} />
             <span>{item.name}</span>
           </Item>

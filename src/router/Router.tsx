@@ -7,6 +7,7 @@ import Login from '@/pages/Login';
 import My from '@/pages/My';
 import NotFound from '@/pages/NotFound';
 import Order from '@/pages/Order';
+import Theme from '@/pages/Theme';
 import { AuthProvider } from '@/context/AuthContext';
 
 export const Router = () => {
@@ -18,6 +19,7 @@ export const Router = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/my" element={<My />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/theme/:themeId" element={<Theme />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <ToastContainer position="top-center" autoClose={2000} />
