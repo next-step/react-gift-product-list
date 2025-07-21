@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useFormContext, useWatch } from "react-hook-form";
 import { messageCards } from "@/mock/messageCards";
@@ -11,11 +12,23 @@ const MessageCardSection = () => {
   const selectedCardId = useWatch({ control, name: "selectedCardId" });
   const message = useWatch({ control, name: "message" });
 
+  useEffect(() => {
+    if (message?.trim() || !selectedCardId) return;
+
+    const defaultCard = messageCards.find(
+      card => String(card.id) === selectedCardId,
+    );
+
+    if (!defaultCard) return;
+
+    setValue("message", defaultCard.defaultTextMessage);
+  }, [message, selectedCardId, setValue]);
+
   const handleSelectCard = (card: MessageCard) => {
-    setValue("selectedCardId", card.id);
+    setValue("selectedCardId", String(card.id));
 
     const isCurrentMessageDefault = messageCards.some(
-      (c) => c.defaultTextMessage === message
+      c => c.defaultTextMessage === message,
     );
 
     if (isCurrentMessageDefault || !message?.trim()) {
@@ -24,12 +37,12 @@ const MessageCardSection = () => {
   };
 
   const selectedCard =
-    messageCards.find((card) => card.id === selectedCardId) ?? messageCards[0];
-
+    messageCards.find(card => String(card.id) === selectedCardId) ??
+    messageCards[0];
   return (
     <Wrapper>
       <ThumbList>
-        {messageCards.map((card) => (
+        {messageCards.map(card => (
           <ThumbButton
             key={card.id}
             onClick={() => handleSelectCard(card)}

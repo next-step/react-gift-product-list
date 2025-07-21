@@ -22,7 +22,8 @@ import { getProductSummary } from "@/api/product";
 import type { ProductSummary } from "@/api/product";
 import { postCreateOrder } from "@/api/orderapi";
 import { useAuth } from "@/contexts/AuthContext";
-import { PATH } from "@/constants/path"; 
+import { PATH } from "@/constants/path";
+import { messageCards } from "@/mock/messageCards";
 
 const OrderPage = () => {
   const navigate = useNavigate();
@@ -43,16 +44,26 @@ const OrderPage = () => {
     defaultValues: {
       senderName: user?.email.split("@")[0] ?? "",
       message: "",
-      selectedCardId: null,
+      selectedCardId: "904",
       receivers: [],
     },
     mode: "onBlur",
   });
-
+  useEffect(() => {
+    const defaultCard = messageCards.find(
+      c => c.id === Number(methods.getValues("selectedCardId")),
+    );
+    if (defaultCard) {
+      methods.setValue("message", defaultCard.defaultTextMessage);
+    }
+  }, [methods]);
   const { handleSubmit, watch, setValue } = methods;
   const receivers = watch("receivers") ?? [];
 
-  const totalQuantity = receivers.reduce((sum, r) => sum + (r.quantity ?? 0), 0);
+  const totalQuantity = receivers.reduce(
+    (sum, r) => sum + (r.quantity ?? 0),
+    0,
+  );
   const totalAmount = (product?.price.sellingPrice ?? 0) * totalQuantity;
 
   const onReceiverComplete = (data: OrderFormValues["receivers"]) => {
@@ -64,17 +75,18 @@ const OrderPage = () => {
 
     if (!token) {
       toast.error("로그인이 필요합니다.");
-      navigate(PATH.LOGIN, { replace: true }); 
+      navigate(PATH.LOGIN, { replace: true });
       return;
     }
 
     try {
       await postCreateOrder(data, product.id, token);
       toast.success("주문이 성공적으로 완료되었습니다!");
-      navigate(PATH.HOME, { replace: true }); 
+      navigate(PATH.HOME, { replace: true });
     } catch (err: any) {
       const msg =
-        err?.response?.data?.data?.message || "주문 요청 중 오류가 발생했습니다.";
+        err?.response?.data?.data?.message ||
+        "주문 요청 중 오류가 발생했습니다.";
       toast.error(msg);
     }
   };
@@ -91,9 +103,10 @@ const OrderPage = () => {
       setProduct(data);
     } catch (err: any) {
       const msg =
-        err?.response?.data?.data?.message || "상품 정보를 불러오지 못했습니다.";
+        err?.response?.data?.data?.message ||
+        "상품 정보를 불러오지 못했습니다.";
       toast.error(msg);
-      navigate(PATH.NOT_FOUND, { replace: true }); 
+      navigate(PATH.NOT_FOUND, { replace: true });
     }
   }, [id, navigate]);
 

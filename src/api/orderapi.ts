@@ -11,8 +11,8 @@ export const postCreateOrder = async (
     {
       productId,
       message: form.message,
-      senderName: form.senderName,
-      selectedCardId: form.selectedCardId,
+      ordererName: form.senderName,
+      messageCardId: String(form.selectedCardId),
       receivers: form.receivers.map((r) => ({
         name: r.name,
         phoneNumber: r.phone,
@@ -21,9 +21,8 @@ export const postCreateOrder = async (
     },
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: token,
       },
     }
   );
 };
-
