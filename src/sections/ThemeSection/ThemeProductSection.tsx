@@ -55,6 +55,13 @@ const Message = styled.p`
   ${({ theme }) => theme.typography.body.body2Regular};
 `;
 
+const EmptyWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+`;
+
 export default function ThemeProductSection({ themeId }: ThemeProductSectionProps) {
     const [products, setProducts] = useState<ThemeProduct[]>([]);
     const [cursor, setCursor] = useState(0);
@@ -130,25 +137,31 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
         };
     }, [loadMoreProducts, hasMore, loading]);
 
+    if (!loading && !error && products.length === 0) {
+        return (
+            <AsyncBoundary loading={loading} error={error}>
+                <Section>
+                    <EmptyWrapper>
+                        <Message>상품이 없습니다.</Message>
+                    </EmptyWrapper>
+                </Section>
+            </AsyncBoundary>
+        );
+    }
+
     return (
         <AsyncBoundary loading={loading} error={error}>
             <Section>
-                {products.length === 0 ? (
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "150px" }}>
-                        <Message>상품이 없습니다.</Message>
-                    </div>
-                ) : (
-                    <Grid>
-                        {products.map((product) => (
-                            <ProductCard key={product.id} onClick={() => navigate(`/order/${product.id}`)}>
-                                <ProductImage src={product.imageURL} alt={product.name} />
-                                <Brand>{product.brandInfo.name}</Brand>
-                                <Name>{product.name}</Name>
-                                <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
-                            </ProductCard>
-                        ))}
-                    </Grid>
-                )}
+                <Grid>
+                    {products.map((product) => (
+                        <ProductCard key={product.id} onClick={() => navigate(`/order/${product.id}`)}>
+                            <ProductImage src={product.imageURL} alt={product.name} />
+                            <Brand>{product.brandInfo.name}</Brand>
+                            <Name>{product.name}</Name>
+                            <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
+                        </ProductCard>
+                    ))}
+                </Grid>
                 <div ref={observerRef} style={{ height: "1px" }} />
             </Section>
         </AsyncBoundary>
