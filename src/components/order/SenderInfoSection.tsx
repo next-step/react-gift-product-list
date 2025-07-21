@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { ErrorMessage, Input } from "@/components/common";
-import { useOrderForm } from "@/contexts/order";
+import { useOrderForm } from "@/hooks/order";
 
 const SenderInfoContainer = styled.div(({ theme }) => ({
   display: "flex",
@@ -35,7 +35,10 @@ const InputWrapper = styled.div(({ theme }) => ({
 }));
 
 export const SenderInfoSection = () => {
-  const { register, errors } = useOrderForm();
+  const {
+    register,
+    formState: { errors },
+  } = useOrderForm();
 
   return (
     <SenderInfoContainer>

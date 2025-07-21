@@ -1,5 +1,5 @@
 import { Button } from "@/components/common";
-import { useOrderCalculation } from "@/contexts/order";
+import { useOrderCalculation } from "@/hooks/order";
 import styled from "@emotion/styled";
 
 interface OrderButtonProps {

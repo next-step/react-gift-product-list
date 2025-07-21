@@ -1,28 +1,29 @@
-import { cardTemplate } from "@/__mock__";
-import { useOrderForm, useOrderState } from "@/contexts/order";
-import type { CardTemplateType } from "@/types";
 import { useEffect } from "react";
+import { useOrderForm } from "@/hooks/order/useOrderForm";
+import { cardTemplate } from "@/__mock__";
+import type { CardTemplateType } from "@/types";
 
 export const useCardTemplate = () => {
-  const { order } = useOrderState();
-  const { setValue } = useOrderForm();
+  const { watch, setValue } = useOrderForm();
+  const currentCardTemplate = watch("cardTemplate");
 
   useEffect(() => {
-    if (!order.cardTemplate) {
+    if (!currentCardTemplate) {
       const defaultTemplate = cardTemplate[0];
-
-      setValue("cardTemplate", defaultTemplate);
-      setValue("message", defaultTemplate?.defaultTextMessage || "");
+      if (defaultTemplate) {
+        setValue("cardTemplate", defaultTemplate);
+        setValue("message", defaultTemplate.defaultTextMessage || "");
+      }
     }
-  }, [setValue, order.cardTemplate]);
+  }, [currentCardTemplate, setValue]);
 
   const setCardTemplate = (template: CardTemplateType) => {
     setValue("cardTemplate", template);
-    setValue("message", template?.defaultTextMessage || "");
+    setValue("message", template.defaultTextMessage || "");
   };
 
   return {
-    cardTemplate: order.cardTemplate,
+    cardTemplate: currentCardTemplate,
     setCardTemplate,
   };
 };

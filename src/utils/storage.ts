@@ -1,12 +1,7 @@
 import { EMAIL_STORAGE_KEY } from "@/constants";
+import { userInfoSchema, type UserInfo } from "@/utils/user-schema";
 
 type TypeGuard<T> = (value: unknown) => value is T;
-
-interface UserInfo {
-  email: string;
-  authToken: string;
-  name: string;
-}
 
 export const setSessionStorageItem = <T>(key: string, value: T) => {
   try {
@@ -53,12 +48,7 @@ export const removeSessionStorageItem = (key: string) => {
 };
 
 const isUserInfo = (value: unknown): value is UserInfo => {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "email" in value &&
-    typeof (value as { email: unknown }).email === "string"
-  );
+  return userInfoSchema.safeParse(value).success;
 };
 
 export const setUserInfo = (userInfo: UserInfo) => {

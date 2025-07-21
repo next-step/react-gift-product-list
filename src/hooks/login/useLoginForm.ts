@@ -3,15 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "react-router-dom";
 import { setUserInfo } from "@/utils/storage";
 import { useRouter } from "@/hooks/common/useRouter";
-import { loginSchema, type LoginFormData } from "@/utils";
-import { useState } from "react";
+import { loginSchema, showToast, type LoginFormData } from "@/utils";
 import { signin } from "@/api/login/signin";
+import { useApiStatus } from "@/hooks/common/useApiStatus";
 
 export const useLoginForm = () => {
   const { navigate, location } = useRouter();
   const [searchParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const { loading: isLoading, error: loginError, execute } = useApiStatus();
 
   const {
     register,
@@ -39,31 +38,30 @@ export const useLoginForm = () => {
   })();
 
   const onSubmit = async (values: LoginFormData) => {
-    setIsLoading(true);
-    setLoginError(null);
-    try {
+    execute(async () => {
       const response = await signin({
         email: values.id,
         password: values.password,
       });
+
       setUserInfo({
         email: response.email,
         authToken: response.authToken,
         name: response.name,
       });
 
-      const previousPage = location.state?.from;
-      const redirectPath = previousPage || searchParams.get("redirect") || "/";
-      navigate(redirectPath);
-    } catch (error) {
-      if (error instanceof Error) {
-        setLoginError(error.message);
-      } else {
-        setLoginError("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
+      return response;
+    })
+      .then(() => {
+        const previousPage = location.state?.from;
+        const redirectPath =
+          previousPage || searchParams.get("redirect") || "/";
+        navigate(redirectPath);
+      })
+      .catch(error => {
+        showToast.error(error.message);
+        console.error("로그인 처리 중 오류 발생:", error);
+      });
   };
 
   return {
