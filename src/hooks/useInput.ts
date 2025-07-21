@@ -8,7 +8,7 @@ import {
   PW_TOO_SHORT,
 } from '@/constants/messages';
 
-export type InputType = 'username' | 'password';
+export type InputType = 'email' | 'password';
 
 function useInput(type: InputType) {
   const [value, setValue] = useState('');
@@ -17,7 +17,7 @@ function useInput(type: InputType) {
 
   const validate = (v: string) => {
     const trimmed = v.trim();
-    if (type === 'username') {
+    if (type === 'email') {
       if (!trimmed) return ID_REQUIRED;
       if (!EMAIL_REGEX.test(trimmed)) return ID_INVALID;
       return '';

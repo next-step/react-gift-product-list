@@ -64,7 +64,7 @@ const ItemBoxTxtPriceLabel = styled.span`
     color: ${({ theme }) => theme.colors.gray.gray700};
 `
 
-function ItemInfoCompo({brandInfo, imageURL, name, price}:any) {
+function ItemInfoCompo({brandName, imageURL, name, price}:any) {
 
     return (
         <ItemInfoWrapper>
@@ -73,7 +73,7 @@ function ItemInfoCompo({brandInfo, imageURL, name, price}:any) {
           <ItemInfoBoxImg src={String(imageURL)} alt={String(name)} />
           <ItemBoxTxtWrapper>
             <ItemBoxTxtTitle>{name}</ItemBoxTxtTitle>
-            <ItemBoxTxtSubTitle>{brandInfo}</ItemBoxTxtSubTitle>
+            <ItemBoxTxtSubTitle>{brandName}</ItemBoxTxtSubTitle>
             <ItemBoxTxtPrice><ItemBoxTxtPriceLabel>상품가 </ItemBoxTxtPriceLabel>{price}원</ItemBoxTxtPrice>
           </ItemBoxTxtWrapper>
         </ItemInfoBox>

@@ -70,7 +70,6 @@ function SenderInputCompo() {
     };
 
     const { register, formState} = useFormContext<OrderFormValues>();
-
     return (
         <SenderInputWrapper>
             <SenderInputTitle>보내는 사람</SenderInputTitle>
