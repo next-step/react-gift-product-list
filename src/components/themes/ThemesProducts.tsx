@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import ThemesItem from "./ThemesItem";
 import { Link } from "react-router";
 import { ROUTE_PATH } from "@/routes/paths";
+import BoxMessage from "../common/BoxMessage";
 
 type ThemesProductsProps = {
   id: string | undefined;
@@ -26,10 +27,11 @@ const ThemesProducts = ({ id }: ThemesProductsProps) => {
   if (!themeProductsData && !isLoading && isError) {
     console.error("Failed to fetch theme products");
   }
+  console.log("themeProductsData", themeProductsData?.list);
 
   return (
     <ProductsSection>
-      {themeProductsData && (
+      {themeProductsData?.list && themeProductsData.list.length > 0 ? (
         <ProductsGrid>
           {themeProductsData.list.map(product => (
             <Link
@@ -40,6 +42,8 @@ const ThemesProducts = ({ id }: ThemesProductsProps) => {
             </Link>
           ))}
         </ProductsGrid>
+      ) : (
+        <BoxMessage message="상품이 없습니다." height="240px" />
       )}
     </ProductsSection>
   );
