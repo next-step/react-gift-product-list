@@ -1,7 +1,9 @@
 import styled from "@emotion/styled"
 import theme from "@/styles/theme"
 import Layout from "./Layout"
-
+import { useFormContext } from "react-hook-form"
+import type { FormData } from "@/pages/OrderPage"
+import { useEffect } from "react"
 interface OrderMessageStyle {
   margin: keyof typeof theme.space
 }
@@ -34,16 +36,26 @@ interface OrderMessageProps {
 
 export const OrderMessage = ({
   placeholder,
-  value,
-  onChange,
+
 }: OrderMessageProps) => {
+  const { setValue } = useFormContext<FormData>()
+  
+  useEffect(() => {
+    if (placeholder) {
+      setValue("message", placeholder)
+    }
+  }, [placeholder, setValue])
+
+  const { register } = useFormContext<FormData>()
+  console.log(placeholder)
+  
   return (
     <Layout paddingLeft="spacing4" paddingRight="spacing4" height="64px">
       <OrderMessageStyle
         margin="spacing2"
         placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
+        {...register("message")}
+
       />
     </Layout>
   )

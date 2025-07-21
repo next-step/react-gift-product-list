@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form"
 import { useNavigate, useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useEffect} from "react"
 import PresentGiverForm from "@/components/PresentForm/PresentGiverForm"
 import CardThumbnail from "./CardThumbnail"
 import OrderLayout from "@/components/OrderLayout"
@@ -10,6 +10,7 @@ import MoreButton from "@/components/MoreButton"
 import Loading from "@/components/PresentTheme/Loading"
 import { toast } from "react-toastify"
 import useProductInfo from "@/hooks/useProductInfo"
+import { useOrder } from "@/hooks/useOrder"
 
 export interface Receiver {
   name: string
@@ -20,13 +21,13 @@ export interface FormData {
   senderName: string
   receivers: Receiver[]
   message?: string
+  messageCardId?: string
 }
 export type FormField = keyof FormData
 
 const OrderPage = () => {
   const { productId } = useParams<{ productId: string }>()
   const navigate = useNavigate()
-  const [message, setMessage] = useState("")
 
   const { product, loading, error } = useProductInfo(productId)
   const storedName = localStorage.getItem("name") ?? ""
@@ -37,6 +38,7 @@ const OrderPage = () => {
       senderName: storedName,
       receivers: [],
       message: "",
+      messageCardId: "",
     },
   })
   useEffect(() => {
@@ -45,10 +47,45 @@ const OrderPage = () => {
       navigate("/", { replace: true })
     }
   }, [error, navigate])
+
+  const { createOrder } = useOrder()
+
+  const handleOrder = async (data: FormData) => {
+    try {
+      const token = localStorage.getItem("authToken")
+      if (!product) return
+
+      await createOrder(
+        {
+          productId: product.id,
+          message: data.message ?? "",
+          messageCardId: data.messageCardId ?? "",
+          ordererName: data.senderName,
+          receivers: data.receivers.map((r) => ({
+            name: r.name,
+            phoneNumber: r.phone,
+            quantity: Number(r.quantity),
+          })),
+        },
+        token || ""
+      )
+      alert(
+        `주문이 완료되었습니다.\n` +
+          `상품명: ${product.name}\n` +
+          `구매 수량: ${totalQuantity}\n` +
+          `발신자 이름: ${data.senderName}\n` +
+          `메시지: ${data.message}`
+      )
+
+    } catch (e) {
+      alert("주문 실패: " + error)
+    }
+  }
+
   if (loading) return <Loading />
   if (!product) return null
   console.log(product)
-  const { handleSubmit, reset, watch } = methods
+  const { handleSubmit,reset,  watch } = methods
 
   const receivers = watch("receivers")
   const totalQuantity = receivers.reduce(
@@ -57,16 +94,11 @@ const OrderPage = () => {
   )
   const totalPrice = totalQuantity * product.price
 
-  const onSubmit = (data: FormData) => {
-    alert(
-      `주문이 완료되었습니다.\n` +
-        `상품명: ${product.name}\n` +
-        `구매 수량: ${totalQuantity}\n` +
-        `발신자 이름: ${data.senderName}\n` +
-        `메시지: ${data.message || "축하해요."}`
-    )
-    reset()
-  }
+  
+const onSubmit = (data: FormData) => {
+  
+  handleOrder(data);
+  reset(); }
   return (
     <FormProvider {...methods}>
       <OrderLayout
@@ -75,7 +107,7 @@ const OrderPage = () => {
         as="form"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <CardThumbnail message={message} setMessage={setMessage} />
+        <CardThumbnail />
 
         <PresentGiverForm />
         <ReceiverForm />

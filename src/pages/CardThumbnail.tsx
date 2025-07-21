@@ -1,5 +1,7 @@
 import GiftCardListLayout from "@/components/GiftCardListLayout"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
+import { useFormContext } from "react-hook-form"
+import type { FormData } from "@/pages/OrderPage"
 import Layout from "@/components/Layout"
 import type { CardTheme } from "@/context/CardContext"
 import { CardContext } from "@/context/CardContext"
@@ -15,7 +17,7 @@ interface CardProps {
 
 const GiftCard = ({ card, selected, onSelect }: CardProps) => {
   return (
-    <GiftCardStyle $selected={selected} onClick={onSelect}>
+    <GiftCardStyle $selected={selected} onClick={onSelect} type="button">
       <img src={card.thumbUrl} alt={card.defaultTextMessage} key={card.id} />
     </GiftCardStyle>
   )
@@ -42,29 +44,36 @@ const GiftCardList = ({ cards, selectedId, onSelect }: ListProps) => {
   )
 }
 
-interface CardThumbnailProps {
-  message: string;
-  setMessage: (msg: string) => void;
-}
-
-const CardThumbnail = ({ message, setMessage }: CardThumbnailProps) => {
+const CardThumbnail = () => {
   const cards = useContext(CardContext)
+  const { setValue, watch } = useFormContext<FormData>()
   const [selectedId, setSelectedId] = useState<number>(cards[0]?.id ?? 0)
+
+  const currentMessage = watch("message")
+  console.log("현재 메시지:", currentMessage)
+
+  useEffect(() => {
+    setValue("messageCardId", String(selectedId), { shouldValidate: true })
+  }, [selectedId, setValue])
+
+  const handleSelectCard = (id: number) => {
+    setSelectedId(id)
+    setValue("messageCardId", String(id), { shouldValidate: true }) 
+  }
+
   const selectedCard = cards.find((c) => c.id === selectedId)!
+  
   return (
     <Layout height="472.5px">
       <GiftCardList
         cards={cards}
         selectedId={selectedId}
-        onSelect={setSelectedId}
+        onSelect={handleSelectCard}
       />
       <PreviewCard card={selectedCard} />
       <Blank height="40px" />
       <OrderMessage
         placeholder={selectedCard.defaultTextMessage}
-        value={message}
-        onChange={setMessage}
-        key="ordermessage"
       />
     </Layout>
   )
