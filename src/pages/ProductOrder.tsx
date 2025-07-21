@@ -53,9 +53,9 @@ const ProductOrder = () => {
               />
               <GiftCardSelector
                 message={message}
-                setMessage={setMessage}
+                onChangeMessage={setMessage}
                 messageCardId={messageCardId}
-                setMessageCardId={setMessageCardId}
+                onChangeMessageCardId={setMessageCardId}
               />
               <SenderInfoSection />
               <ReceiverInfoSection />
