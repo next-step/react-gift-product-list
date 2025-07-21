@@ -2,8 +2,9 @@ import GlobalStyle from '@/styles/GlobalStyle';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
+import ThemePage from '@/pages/ThemePage';
 import NotFoundPage from '@/pages/NotFoundPage';
-import MyPage from './pages/Mypage';
+import MyPage from '@/pages/Mypage';
 import OrderPage from '@/pages/OrderPage';
 import PrivateRoute from '@/routes/PrivateRoute';
 import { ROUTES } from '@/constants/routes';
@@ -18,7 +19,7 @@ function App() {
         <Routes>
           <Route path={ROUTES.HOME} element={<HomePage />} />
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-
+          <Route path={ROUTES.THEME_PATH} element={<ThemePage />} />
           <Route element={<PrivateRoute />}>
             <Route path={ROUTES.MY} element={<MyPage />} />
             <Route path={ROUTES.ORDER_PATH} element={<OrderPage />} />
