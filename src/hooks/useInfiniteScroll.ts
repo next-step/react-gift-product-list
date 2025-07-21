@@ -19,16 +19,23 @@ export const useInfiniteScroll = <T>({
   const [isLoading, setIsLoading] = useState(true);
   const loadingRef = useRef<HTMLDivElement>(null);
 
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+  const loadData = useCallback(async (type: 'initial' | 'more') => {
+    if (type === 'more' && (isLoading || !hasMore)) return;  
     setIsLoading(true);
     
     try {
-      const response = await fetcher(cursor);
-      setItems(prev => [...prev, ...response.list]);
+      const targetCursor = type === 'initial' ? 0 : cursor;
+      const response = await fetcher(targetCursor);
+
+      if (type === 'initial') {
+        setItems(response.list);
+      } else {
+        setItems(prev => [...prev, ...response.list]);
+      }    
       setCursor(response.nextCursor);
       setHasMore(response.hasMore);
     } catch (error) {
+      if (type === 'initial') setItems([]);
       setHasMore(false);
     } finally {
       setIsLoading(false);
@@ -41,7 +48,7 @@ export const useInfiniteScroll = <T>({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          loadMore();
+          loadData('more');
         }
       },
       { threshold: 1.0 }
@@ -49,28 +56,14 @@ export const useInfiniteScroll = <T>({
 
     observer.observe(loadingRef.current);
     return () => observer.disconnect();
-  }, [loadMore]);
+  }, [loadData]);
 
   useEffect(() => {
-    const loadInitial = async () => {
-      setItems([]);
-      setCursor(0);
-      setHasMore(true);
-      setIsLoading(true);
-      try {
-        const response = await fetcher(0);
-        setItems(response.list);
-        setCursor(response.nextCursor);
-        setHasMore(response.hasMore);
-      } catch (error) {
-        setItems([]);
-        setHasMore(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadInitial();
+    setItems([]);
+    setCursor(0);
+    setHasMore(true);
+    setIsLoading(true);
+    loadData('initial');
   }, [fetcher]);
 
   return {
