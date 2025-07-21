@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useThemeProducts } from '@/hooks/useThemeProducts';
 import { RankingItemCard, Loading } from '@/components';
 import type { RankingProduct } from '@/types/api';
 import * as S from './styles';
@@ -10,7 +10,7 @@ interface ThemeProductSectionProps {
 
 const ThemeProductSection = ({ themeId }: ThemeProductSectionProps) => {
   const navigate = useNavigate();
-  const { products, isLoading, hasMore, loadingRef } = useInfiniteScroll({ themeId });
+  const { products, isLoading, hasMore, loadingRef } = useThemeProducts(themeId);
 
   const handleProductClick = (product: RankingProduct) => {
     navigate(`/order/${product.id}`);

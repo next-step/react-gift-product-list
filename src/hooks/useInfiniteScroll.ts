@@ -1,75 +1,69 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getThemeProducts } from '@/lib/api/themes';
-import type { RankingProduct } from '@/types/api';
 
-interface UseInfiniteScrollOptions {
-  themeId: number;
-  limit?: number;
-}
-
-interface UseInfiniteScrollReturn {
-  products: RankingProduct[];
-  isLoading: boolean;
+interface FetchResult<T> {
+  list: T[];
+  nextCursor?: number | null;
   hasMore: boolean;
-  loadingRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export const useInfiniteScroll = ({ 
-  themeId, 
-  limit = 20 
-}: UseInfiniteScrollOptions): UseInfiniteScrollReturn => {
-  const [products, setProducts] = useState<RankingProduct[]>([]);
-  const [cursor, setCursor] = useState(0);
+interface UseInfiniteScrollOptions<T> {
+  fetcher: (cursor?: number | null) => Promise<FetchResult<T>>;
+}
+
+export const useInfiniteScroll = <T>({ 
+  fetcher,
+}: UseInfiniteScrollOptions<T>) => {
+  const [items, setItems] = useState<T[]>([]);
+  const [cursor, setCursor] = useState<number | null | undefined>(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const loadingRef = useRef<HTMLDivElement>(null);
 
   const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore) return;
     setIsLoading(true);
     
     try {
-      const response = await getThemeProducts(themeId, cursor, limit);
-      setProducts(prev => [...prev, ...response.list]);
-      setCursor(response.cursor);
-      setHasMore(response.hasMoreList);
+      const response = await fetcher(cursor);
+      setItems(prev => [...prev, ...response.list]);
+      setCursor(response.nextCursor);
+      setHasMore(response.hasMore);
     } catch (error) {
       setHasMore(false);
     } finally {
       setIsLoading(false);
     }
-  }, [themeId, cursor, limit]);
+  }, [fetcher, cursor, hasMore, isLoading]);
 
   useEffect(() => {
+    if (!loadingRef.current) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore && !isLoading) {
+        if (entry.isIntersecting) {
           loadMore();
         }
       },
       { threshold: 1.0 }
     );
 
-    const element = loadingRef.current;
-    if (element) observer.observe(element);
-
-    return () => {
-      if (element) observer.unobserve(element);
-    };
-  }, [loadMore, hasMore, isLoading]);
+    observer.observe(loadingRef.current);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   useEffect(() => {
     const loadInitial = async () => {
-      setProducts([]);
+      setItems([]);
       setCursor(0);
       setHasMore(true);
       setIsLoading(true);
       try {
-        const response = await getThemeProducts(themeId, 0, limit);
-        setProducts(response.list);
-        setCursor(response.cursor);
-        setHasMore(response.hasMoreList);
+        const response = await fetcher(0);
+        setItems(response.list);
+        setCursor(response.nextCursor);
+        setHasMore(response.hasMore);
       } catch (error) {
-        setProducts([]);
+        setItems([]);
         setHasMore(false);
       } finally {
         setIsLoading(false);
@@ -77,10 +71,10 @@ export const useInfiniteScroll = ({
     };
 
     loadInitial();
-  }, [themeId, limit]);
+  }, [fetcher]);
 
   return {
-    products,
+    items,
     isLoading,
     hasMore,
     loadingRef,
