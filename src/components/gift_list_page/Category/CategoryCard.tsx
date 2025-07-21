@@ -14,6 +14,7 @@ const Card = styled.button`
 
 const Image = styled.img`
   height: 3.1rem;
+  border-radius: 1rem;
 `;
 
 const Name = styled.div`
