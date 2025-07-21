@@ -18,9 +18,10 @@ interface CardProps {
   message: string;
   onMessageChange: (newMsg: string) => void;
   messageError?: string;
+  onCardChange?: (cardId: number) => void;
 }
 
-const Card = ({ message, onMessageChange, messageError }: CardProps) => {
+const Card = ({ message, onMessageChange, messageError, onCardChange }: CardProps) => {
   const defaultCard = MOCK_CARDFORM_LIST[0];
   const [selectedCardId, setSelectedCardId] = useState<number>(defaultCard.id);
 
@@ -29,6 +30,7 @@ const Card = ({ message, onMessageChange, messageError }: CardProps) => {
     const selected = MOCK_CARDFORM_LIST.find((card) => card.id === id);
     if (selected) {
       onMessageChange(selected.defaultTextMessage || '');
+      onCardChange?.(id);
     }
   };
 
