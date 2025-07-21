@@ -1,6 +1,6 @@
 import { useRequestHandler } from "@/hooks/useRequestHandler";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import theme from "@/styles/theme";
@@ -41,11 +41,67 @@ const Theme = () => {
   const [productInfo, setProductInfo] = useState<ThemeProducts | null>(null);
   const navigate = useNavigate();
   const { MAIN } = ROUTE_PATHS;
+  const [productList, setProductList] = useState<ThemeProducts["list"]>([]);
+  const [cursor, setCursor] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !isLoading) {
+          loadProducts(cursor);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [cursor, hasMore, isLoading]);
+
+  const loadProducts = (cursor: number) => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
+    fetchData({
+      fetcher: () =>
+        axios.get(
+          `${import.meta.env.VITE_API_BASE_URL_THEME}/${themeId}/products?cursor=${cursor}&limit=10`
+        ),
+      onSuccess: (data) => {
+        const newProducts = data.data.data.list;
+        setProductList((prev) => [...prev, ...newProducts]);
+
+        if (newProducts.length < 10) {
+          setHasMore(false);
+        } else {
+          setCursor(cursor + newProducts.length);
+        }
+
+        setIsLoading(false);
+      },
+      onError: () => {
+        setIsLoading(false);
+      },
+    });
+  };
 
   useEffect(() => {
     fetchData({
       fetcher: () =>
-        axios.get(`${import.meta.env.VITE_API_BASE_URL_THEME}/${themeId}/info`),
+        axios.get(
+          `${import.meta.env.VITE_API_BASE_URL_THEME}/${themeId}/info?cursor=${cursor}&limit=10`
+        ),
       onSuccess: (data) => {
         setThemeInfo(data.data.data);
       },
@@ -68,6 +124,7 @@ const Theme = () => {
         setProductInfo(data.data.data);
       },
     });
+    loadProducts(0);
   }, [themeId]);
 
   if (!themeInfo || !productInfo) {
@@ -78,8 +135,6 @@ const Theme = () => {
     );
   }
 
-  console.log("productInfo", productInfo);
-
   return (
     <div>
       <div css={themeHeroAreaStyle(themeInfo.backgroundColor)}>
@@ -88,7 +143,7 @@ const Theme = () => {
         <p>{themeInfo.description}</p>
       </div>
       <div css={themeProductListStyle(theme)}>
-        {productInfo.list.map((product) => (
+        {productList.map((product) => (
           <div key={product.id}>
             <img src={product.imageURL} alt={product.name} />
             <h4 css={brandTextStyle(theme)}>{product.brandInfo.name}</h4>
@@ -98,6 +153,7 @@ const Theme = () => {
             </strong>
           </div>
         ))}
+        {hasMore && <div ref={observerRef} style={{ height: "1px" }} />}
       </div>
     </div>
   );
