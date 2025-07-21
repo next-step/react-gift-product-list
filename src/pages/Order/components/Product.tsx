@@ -1,6 +1,7 @@
 import Divider from "@/components/common/Divider";
 import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 import useFetch from "@/hooks/useFetch";
 import type { OrderFormType } from "@/pages/Order/components/Order";
 import type { ProductType } from "@/types/RankingProductType";
@@ -8,13 +9,15 @@ import { showFetchErrorToast } from "@/utils/showFetchToast";
 import styled from "@emotion/styled";
 import { useCallback, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 const Product = () => {
   const { setValue } = useFormContext<OrderFormType>();
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { data, error, isLoading } = useFetch<ProductType>(`api/products/${productId}/summary`);
+  const { data, error, isLoading } = useFetch<ProductType>(
+    generatePath(API_ENDPOINTS.PRODUCT_SUMMARY, { productId: productId ?? null }),
+  );
   const product = useMemo(() => data, [data]);
   const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
   useEffect(() => {

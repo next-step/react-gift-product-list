@@ -2,11 +2,12 @@ import styled from "@emotion/styled";
 import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
 import type { CategoryType } from "@/types/CategoryType";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 
 const Category = () => {
-  const themes = useFetch<CategoryType[]>("/api/themes");
+  const themes = useFetch<CategoryType[]>(API_ENDPOINTS.THEMES);
 
   if (themes.isLoading) {
     return (
@@ -26,7 +27,7 @@ const Category = () => {
       <Title>선물 테마</Title>
       <List>
         {themes.data?.map((category) => (
-          <Item key={category.themeId} to={`${ROUTE_PATH.THEMES}/${category.themeId}`}>
+          <Item key={category.themeId} to={generatePath(ROUTE_PATH.THEMES, { themeId: String(category.themeId) })}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
           </Item>

@@ -1,16 +1,17 @@
 import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 import usePaginationFetch from "@/hooks/usePaginationFetch";
 import type { RankingProductType } from "@/types/RankingProductType";
 import styled from "@emotion/styled";
-import { Link, useParams } from "react-router-dom";
+import { generatePath, Link, useParams } from "react-router-dom";
 
 const PRODUCT_LIST_LIMIT = 20;
 
 const ProductList = () => {
   const { themeId } = useParams();
   const { items, isLoading, hasMoreList, loader } = usePaginationFetch<RankingProductType>(
-    `/api/themes/${themeId}/products`,
+    generatePath(API_ENDPOINTS.THEME_PRODUCTS, { themeId: themeId ?? null }),
     PRODUCT_LIST_LIMIT,
   );
 
@@ -18,7 +19,7 @@ const ProductList = () => {
     <Container>
       <Content>
         {items.map((item) => (
-          <Item key={item.id} to={`${ROUTE_PATH.ORDER}/${item.id}`}>
+          <Item key={item.id} to={generatePath(ROUTE_PATH.ORDER, { productId: String(item.id) })}>
             <ItemContent>
               <ItemContentImg src={item.imageURL} alt={item.name} />
               <ItemContentBrand>{item.brandInfo.name}</ItemContentBrand>

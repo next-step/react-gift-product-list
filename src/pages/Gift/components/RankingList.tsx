@@ -7,7 +7,8 @@ import useFetch from "@/hooks/useFetch";
 import Loading from "@/components/common/Loading";
 import type { RankingProductType } from "@/types/RankingProductType";
 import { ROUTE_PATH } from "@/components/routes/routePath";
-import { Link } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 
 interface RankingListProps {
   targetType: string;
@@ -24,7 +25,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
     setViewCount(nextViewCount);
   };
 
-  const rankingListData = useFetch<RankingProductType[]>("/api/products/ranking", {
+  const rankingListData = useFetch<RankingProductType[]>(API_ENDPOINTS.PRODUCTS_RANKING, {
     params: { targetType, rankType },
     dependency: [targetType, rankType],
   });
@@ -43,7 +44,7 @@ const RankingList = ({ targetType, rankType }: RankingListProps) => {
     <Container>
       <Content>
         {rankingListData.data?.slice(0, viewCount).map((item, index) => (
-          <Item key={item.id} to={`${ROUTE_PATH.ORDER}/${item.id}`}>
+          <Item key={item.id} to={generatePath(ROUTE_PATH.ORDER, { productId: String(item.id) })}>
             <ItemRank ranking={index + 1}>{index + 1}</ItemRank>
             <ItemContent>
               <ItemContentImg src={item.imageURL} />

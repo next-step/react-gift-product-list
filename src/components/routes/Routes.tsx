@@ -12,13 +12,13 @@ const Routes = () => {
   return (
     <RouterRoutes>
       <Route path={ROUTE_PATH.HOME} element={<GiftPage />} />
-      <Route path={ROUTE_PATH.THEMES_ID} element={<ThemesPage />} />
+      <Route path={ROUTE_PATH.THEMES} element={<ThemesPage />} />
       <Route element={<AuthRoute />}>
         <Route path={ROUTE_PATH.LOGIN} element={<LoginPage />} />
       </Route>
       <Route element={<AuthRoute required />}>
         <Route path={ROUTE_PATH.PROFILE} element={<ProfilePage />} />
-        <Route path={ROUTE_PATH.ORDER_ID} element={<OrderPage />} />
+        <Route path={ROUTE_PATH.ORDER} element={<OrderPage />} />
       </Route>
       <Route path={ROUTE_PATH.NOT_FOUND} element={<NotFoundPage />} />
     </RouterRoutes>

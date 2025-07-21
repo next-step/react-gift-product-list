@@ -1,10 +1,11 @@
 import Loading from "@/components/common/Loading";
 import { ROUTE_PATH } from "@/components/routes/routePath";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 import useFetch from "@/hooks/useFetch";
 import { showFetchErrorToast } from "@/utils/showFetchToast";
 import styled from "@emotion/styled";
 import { useCallback, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 interface HeroSectionData {
   themeId: number;
@@ -18,7 +19,9 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const goHome = useCallback(() => navigate(ROUTE_PATH.HOME), [navigate]);
   const { themeId } = useParams();
-  const { data, isLoading, error } = useFetch<HeroSectionData>(`/api/themes/${themeId}/info`);
+  const { data, isLoading, error } = useFetch<HeroSectionData>(
+    generatePath(API_ENDPOINTS.THEME_INFO, { themeId: themeId ?? null }),
+  );
 
   useEffect(() => {
     if (error) {
