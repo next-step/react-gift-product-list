@@ -4,8 +4,8 @@ export const ROUTE_PATH = {
   HOME: "/",
   LOGIN: "/login",
   PROFILE: "/my",
-  ORDER: "/order",
-  ORDER_ID: "/order/:productId",
+  ORDER: "/order/:productId",
+  THEMES: "/themes/:themeId",
   NOT_FOUND: "*",
 } as const;
 

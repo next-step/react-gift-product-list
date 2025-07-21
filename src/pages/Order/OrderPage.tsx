@@ -12,6 +12,7 @@ import { ROUTE_PATH } from "@/components/routes/routePath";
 import { useNavigate } from "react-router-dom";
 import type { ErrorData } from "@/types/FetchErrorData";
 import { showFetchErrorToast, showFetchSuccessToast } from "@/utils/showFetchToast";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 
 interface OrderData {
   success: boolean;
@@ -33,13 +34,16 @@ const OrderPage = () => {
 };
 
 const OrderPageContent = () => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { handleSubmit: createSubmitHandler, getValues } = useFormContext();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const [error, setError] = useState<ErrorData | undefined>(undefined);
-  const { data, fetchData } = useFetch<OrderData, OrderBodyData>("/api/order", { method: "POST", autoFetch: false });
+  const { data, fetchData } = useFetch<OrderData, OrderBodyData>(API_ENDPOINTS.ORDER, {
+    method: "POST",
+    autoFetch: false,
+  });
 
   const navigate = useNavigate();
   const { logout } = useAuth();

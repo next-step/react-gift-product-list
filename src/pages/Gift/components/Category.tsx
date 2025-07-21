@@ -2,9 +2,12 @@ import styled from "@emotion/styled";
 import Loading from "@/components/common/Loading";
 import useFetch from "@/hooks/useFetch";
 import type { CategoryType } from "@/types/CategoryType";
+import { generatePath, Link } from "react-router-dom";
+import { ROUTE_PATH } from "@/components/routes/routePath";
+import API_ENDPOINTS from "@/constants/apiEndpoints";
 
 const Category = () => {
-  const themes = useFetch<CategoryType[]>("/api/themes");
+  const themes = useFetch<CategoryType[]>(API_ENDPOINTS.THEMES);
 
   if (themes.isLoading) {
     return (
@@ -24,7 +27,7 @@ const Category = () => {
       <Title>선물 테마</Title>
       <List>
         {themes.data?.map((category) => (
-          <Item key={category.themeId}>
+          <Item key={category.themeId} to={generatePath(ROUTE_PATH.THEMES, { themeId: String(category.themeId) })}>
             <Img src={category.image} alt={category.name} />
             <Name>{category.name}</Name>
           </Item>
@@ -55,7 +58,7 @@ const List = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: ${({ theme }) => theme.spacing.spacing5} ${({ theme }) => theme.spacing.spacing2};
 `;
-const Item = styled.div`
+const Item = styled(Link)`
   width: 100%;
   height: 100;
   display: flex;
@@ -63,7 +66,7 @@ const Item = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  cursor: pointer;
+  text-decoration: none;
 `;
 const Img = styled.img`
   max-width: 3.125rem;
