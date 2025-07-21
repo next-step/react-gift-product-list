@@ -22,7 +22,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 const OrderCheck = () => {
   const navigate = useNavigate();
-  const { senderNameInput, cardMessage } = useOrder();
+  const { ordererName, message } = useOrder();
 
   const { receivers } = useReceiver();
 
@@ -45,14 +45,14 @@ const OrderCheck = () => {
   const brandName = item?.brandName;
 
   const handleOrder = () => {
-    senderNameInput.validate();
+    ordererName.validate();
 
-    if (!senderNameInput.error) {
+    if (!ordererName.error) {
       alert(`주문이 완료되었습니다. 
         상품명:${name} 
         구매수량: ${total}
-        발신자 이름: ${senderNameInput.value}
-        메세지: ${cardMessage}
+        발신자 이름: ${ordererName.value}
+        메세지: ${message}
         `);
       navigate('/');
     }
