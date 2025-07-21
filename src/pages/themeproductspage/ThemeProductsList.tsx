@@ -3,32 +3,106 @@ import { useParams } from "react-router-dom";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import type { Product } from "@/types/api_types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 type ThemeProductResponse = {
   list: Product[];
+  cursor?: string | null;
+  hasMoreList?: boolean;
 };
 
 export default function ThemeProductsList() {
   const { themeId } = useParams<{ themeId: string }>();
-  const { data, status, error } = useApiRequest<ThemeProductResponse>({
-    url: `/api/themes/${themeId}/products`,
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cursor, setCursor] = useState<string | null | undefined>(undefined);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [initLoading, setInitLoading] = useState<boolean>(true);
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const observerInstance = useRef<IntersectionObserver | null>(null);
+
+  const { data, status, error, refetch } = useApiRequest<ThemeProductResponse>({
+    url: `/api/themes/${themeId}/products${cursor ? `?cursor=${cursor}` : ""}`,
+    manual: true,
   });
 
-  if (status === "loading") return <LoadingSpinner />;
-  if (!data || data.list.length === 0)
+  const loadingNext = status === "loading";
+
+  useEffect(() => {
+    setInitLoading(true);
+    setProducts([]);
+    setCursor(undefined);
+    setHasMore(true);
+    refetch();
+  }, [themeId]);
+
+  useEffect(() => {
+    if (!data) return;
+    setProducts((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+      const filtered = data.list.filter((item) => !existingIds.has(item.id));
+      return [...prev, ...filtered];
+    });
+    setCursor(data.cursor ?? null);
+    setHasMore(data.hasMoreList !== false && !!data.list.length);
+    setInitLoading(false);
+  }, [data]);
+
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const entry = entries[0];
+      if (
+        entry.isIntersecting &&
+        !loadingNext &&
+        hasMore &&
+        !initLoading &&
+        products.length > 0
+      ) {
+        refetch();
+      }
+    },
+    [
+      loadingNext,
+      hasMore,
+      initLoading,
+      products.length,
+      refetch,
+      themeId,
+      cursor,
+    ]
+  );
+
+  useEffect(() => {
+    if (!observerRef.current) return;
+    if (observerInstance.current) observerInstance.current.disconnect();
+    observerInstance.current = new window.IntersectionObserver(handleObserver, {
+      threshold: 0.4,
+    });
+    observerInstance.current.observe(observerRef.current);
+    return () => {
+      observerInstance.current?.disconnect();
+    };
+  }, [handleObserver]);
+
+  if (initLoading) return <LoadingSpinner />;
+  if (products.length === 0)
     return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
 
   return (
-    <List>
-      {data.list.map((product) => (
-        <Card key={product.id}>
-          <Image src={product.imageURL} alt={product.name} />
-          <Name>{product.name}</Name>
-          <Brand>{product.brandInfo.name}</Brand>
-          <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
-        </Card>
-      ))}
-    </List>
+    <>
+      <List>
+        {products.map((product) => (
+          <Card key={product.id}>
+            <Image src={product.imageURL} alt={product.name} />
+            <Name>{product.name}</Name>
+            <Brand>{product.brandInfo.name}</Brand>
+            <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
+          </Card>
+        ))}
+      </List>
+      <ObserverTarget ref={observerRef} />
+      {loadingNext && <LoadingSpinner />}
+    </>
   );
 }
 
@@ -70,4 +144,9 @@ const Price = styled.div`
   font-size: ${({ theme }) => theme.typography.subtitle1Regular.fontSize};
   font-weight: bold;
   margin: 8px 0;
+`;
+
+const ObserverTarget = styled.div`
+  height: 100px;
+  margin-top: 32px;
 `;
