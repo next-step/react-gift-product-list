@@ -1,26 +1,31 @@
 import { fetchThemesInfo } from "@/api/themesInfo";
-import useApiRequest from "@/hooks/useApiRequest";
 import styled from "@emotion/styled";
-import { useCallback } from "react";
+import { useState } from "react";
+import type { ThemesInfo } from "@/types/theme";
+import { useNavigate } from "react-router";
+import { ROUTE_PATH } from "@/routes/paths";
 
 type ThemesInfoProps = {
   id: string | undefined;
 };
 
 const ThemesInfo = ({ id }: ThemesInfoProps) => {
-  const requestFn = useCallback(
-    () => fetchThemesInfo({ themeId: Number(id) }),
-    [id],
+  const navigate = useNavigate();
+  const [themeInfoData, setThemeInfoData] = useState<ThemesInfo | undefined>(
+    undefined,
   );
-  const {
-    data: themeInfoData,
-    isError,
-    isLoading,
-  } = useApiRequest({
-    requestFn,
-  });
 
-  if (!themeInfoData && !isLoading && isError) {
+  fetchThemesInfo({ themeId: Number(id) })
+    .then(data => {
+      setThemeInfoData(data);
+    })
+    .catch(error => {
+      if (error.response?.status === 404) {
+        navigate(ROUTE_PATH.HOME, { replace: true });
+      }
+    });
+
+  if (!themeInfoData) {
     return null;
   }
 
