@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 type Props<T> = {
   fetcher: () => Promise<T>;
   initValue: T;
+  deps: any[]; // 의존성 배열
 };
-export const useFetch = <T>({ fetcher, initValue }: Props<T>) => {
+export const useFetch = <T>({ fetcher, initValue, deps }: Props<T>) => {
   const [data, setData] = useState<T>(initValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
@@ -25,9 +26,8 @@ export const useFetch = <T>({ fetcher, initValue }: Props<T>) => {
 
     fetchData();
 
-    return () => {
-    };
-  }, [fetcher]);
+    return () => {};
+  }, deps);
 
   return { data, isLoading, error };
 };

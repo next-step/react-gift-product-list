@@ -3,7 +3,7 @@ import RankingItem from '../RankingItem';
 import { PaddingLg } from '../../common/Padding';
 import PersonCategory from '../PersonCategory';
 import BehaviorCategory from '../BehaviorCategory';
-import { useCallback, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   type BehaviorFilterLabels,
@@ -33,6 +33,14 @@ const behaviorOptions: { label: BehaviorFilterLabels; param: BehaviorParam }[] =
   { label: '위시로 받은', param: 'MANY_WISH_RECEIVE' },
 ] as const;
 
+ const fetchRankingData = async (personParam: PersonParam, behaviorParam: BehaviorParam) => {
+   return await api
+     .get('http://localhost:3000/api/products/ranking', {
+       params: { targetType: personParam, rankType: behaviorParam },
+     })
+     .then((res) => res.data.data);
+ };
+
 const Ranking = () => {
   const navigator = useNavigate();
   const { user } = useAuth();
@@ -42,8 +50,17 @@ const Ranking = () => {
 
   const queryPersonParams = searchParams.get('targetType') as PersonParam | null;
   const queryBehaviorParam = searchParams.get('rankType') as BehaviorParam | null;
-  const [personParam, setPersonParam] = useState<PersonParam>(queryPersonParams||'ALL');
-  const [behaviorParam, setBehaviorParam] = useState<BehaviorParam>(queryBehaviorParam||'MANY_RECEIVE');
+  const [personParam, setPersonParam] = useState<PersonParam>('ALL');
+  const [behaviorParam, setBehaviorParam] = useState<BehaviorParam>('MANY_RECEIVE');
+  useEffect(() => {
+    if (queryPersonParams) {
+      setPersonParam(queryPersonParams);
+    }
+    if (queryBehaviorParam) {
+      setBehaviorParam(queryBehaviorParam);
+    }
+  }, [queryPersonParams, queryBehaviorParam]);
+
   const handlePersonSelect = (param: PersonParam) => {
     setPersonParam(param);
     searchParams.set('targetType', param);
@@ -61,17 +78,12 @@ const Ranking = () => {
       navigator(ROUTE_PATH.ORDER.replace(':productId', String(id)));
     }
   };
-  const RankingFetcher = useCallback(() => {
-    return api
-      .get('http://localhost:3000/api/products/ranking', {
-        params: { targetType: personParam, rankType: behaviorParam },
-      })
-      .then((res) => res.data.data);
-  }, [personParam, behaviorParam]);
+ 
 
   const { data: products, isLoading: isProductLoading } = useFetch<ProductType[]>({
-    fetcher: RankingFetcher,
+    fetcher: () => fetchRankingData(personParam, behaviorParam),
     initValue: [],
+    deps: [personParam, behaviorParam], //쿼리 파라미터가 바뀔 때마다 fetch를 새로 해줘야하므로!
   });
 
   const visible = showAll ? products : products.slice(0, 6);

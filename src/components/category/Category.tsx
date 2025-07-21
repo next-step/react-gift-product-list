@@ -11,28 +11,24 @@ import { useCallback, useEffect, useState } from 'react';
 import type { CategoryType } from '@/types/category';
 import { useFetch } from '@/hooks/useFetch';
 import api from '@/lib/axiosInstance';
-
+const fetchCategories = async() => {
+  return await api.get('http://localhost:3000/api/themes').then((res) => res.data.data);
+};
 const Category = () => {
-   const fetchCategories = useCallback(() => {
-     return api
-       .get('http://localhost:3000/api/themes')
-       .then((res) => res.data.data);
-   }, []);
+  // ✅ useFetch 훅 사용
+  const {
+    data: category,
+    isLoading,
+    error,
+  } = useFetch<CategoryType[]>({
+    fetcher: fetchCategories,
+    initValue: [],
+    deps:[]
+  });
 
-   // ✅ useFetch 훅 사용
-   const {
-     data: category,
-     isLoading,
-     error,
-   } = useFetch<CategoryType[]>({
-     fetcher: fetchCategories,
-     initValue: [],
-   });
-
-   if (isLoading) return <div>📢 카테고리가 로딩중입니다..</div>;
-   if (error) return <div>❌ 오류 발생: {String(error)}</div>;
-   if (category.length === 0) return <div>📭 선물 테마가 없습니다.</div>;
-
+  if (isLoading) return <div>📢 카테고리가 로딩중입니다..</div>;
+  if (error) return <div>❌ 오류 발생: {String(error)}</div>;
+  if (category.length === 0) return <div>📭 선물 테마가 없습니다.</div>;
 
   return (
     <CategoryWrapper>
@@ -52,7 +48,6 @@ const Category = () => {
             >
               {item.name}
             </p>
-
           </CategoryItem>
         ))}
       </CategoryGrid>
