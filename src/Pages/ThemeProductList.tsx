@@ -133,6 +133,10 @@ const ThemeProductList = () => {
           <SectionContainer>
             {listLoading ? (
               <LoadingSpinner color="#000000" loading={listLoading} size={35} />
+            ) : products?.length === 0 ? (
+              <ErrorMessage>
+                <>상품이 없습니다.</>
+              </ErrorMessage>
             ) : (
               <ProudctList>
                 {(products ?? []).map((product) => (
