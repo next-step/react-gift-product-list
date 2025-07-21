@@ -53,6 +53,13 @@ const OrderPage = () => {
   const handleOrder = async (data: FormData) => {
     try {
       const token = localStorage.getItem("authToken")
+      
+      if (!token) {
+        toast.error("로그인이 필요합니다.")
+        navigate("/login")
+        return
+      }
+
       if (!product) return
 
       await createOrder(
@@ -67,7 +74,7 @@ const OrderPage = () => {
             quantity: Number(r.quantity),
           })),
         },
-        token || ""
+        token 
       )
       alert(
         `주문이 완료되었습니다.\n` +
@@ -77,7 +84,13 @@ const OrderPage = () => {
           `메시지: ${data.message}`
       )
 
-    } catch (e) {
+    } catch (e:any) {
+      if (e?.response?.status === 401) {
+        toast.error("인증이 만료되었습니다. 다시 로그인해주세요.")
+        localStorage.removeItem("authToken") 
+        navigate("/login")
+        return
+      }
       alert("주문 실패: " + error)
     }
   }

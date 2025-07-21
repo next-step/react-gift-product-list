@@ -9,6 +9,7 @@ import GiftCardStyle from "@/components/GiftCardStyle"
 import PreviewCard from "./PreviewCard"
 import Blank from "@/components/Blank"
 import { OrderMessage } from "@/components/OrderMessage"
+
 interface CardProps {
   card: CardTheme
   selected: boolean
