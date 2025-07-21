@@ -14,6 +14,8 @@ export const API_ENDPOINTS = {
   // Theme 관련
   THEMES: {
     LIST: '/api/themes',
+    INFO: (themeId: number) => `/api/themes/${themeId}/info`,
+    PRODUCTS: (themeId: number) => `/api/themes/${themeId}/products`,
   },
 
   // Order 관련
