@@ -37,6 +37,7 @@ const CategoryField = () => {
           {fetchState.data.map((theme) => (
             <CategoryItemCard
               key={theme.themeId}
+              themeId={theme.themeId}
               imageUrl={theme.image}
               title={theme.name}
             />
