@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import MobileLayout from '@/layouts/MobileLayout';
 import NavBar from '@/components/NavBar';
 import ThemeHero from '@/components/theme/ThemeHero';
+import ThemeList from '@/components/theme/ThemeList';
 import useThemeInfo from '@/hooks/useThemeInfo';
 
 const Wrapper = styled.div`
@@ -40,6 +41,8 @@ export default function ThemeListPage() {
           description={themeInfo.description}
           backgroundColor={themeInfo.backgroundColor}
         />
+
+        <ThemeList />
       </Wrapper>
     </MobileLayout>
   );

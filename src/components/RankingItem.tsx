@@ -58,7 +58,7 @@ const Price = styled.p`
   margin-top: ${({ theme }) => theme.spacing.spacing1};
 `;
 
-export default function RankingProductCard({ item, rank }: Props) {
+export default function RankingItem({ item, rank }: Props) {
   const navigate = useNavigate();
   const isTop3 = rank <= 3;
 
