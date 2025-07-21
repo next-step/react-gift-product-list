@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import ThemeProductsList from "@/pages/themeproductspage/ThemeProductsList";
 import { API_ENDPOINTS } from "@/utils/API_ENDPOINTS";
 import type { ThemeInfo, ThemeProductResponse } from "@/types/api_types";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function ThemeProductsPage() {
   const { themeId } = useParams();
@@ -21,7 +22,7 @@ export default function ThemeProductsPage() {
     });
 
   if (themeStatus === "loading" || productStatus === "loading")
-    return <p>로딩 중...</p>;
+    return <LoadingSpinner />;
   if (
     themeStatus === "error" ||
     productStatus === "error" ||
@@ -33,9 +34,9 @@ export default function ThemeProductsPage() {
   return (
     <div>
       <Banner style={{ backgroundColor: themeInfo.backgroundColor }}>
-        <h2>{themeInfo.name}</h2>
-        <h1>{themeInfo.title}</h1>
-        <p>{themeInfo.description}</p>
+        <ThemeInfoName>{themeInfo.name}</ThemeInfoName>
+        <ThemeInfoTitle>{themeInfo.title}</ThemeInfoTitle>
+        <ThemeInfoDes>{themeInfo.description}</ThemeInfoDes>
       </Banner>
       <section>
         <ThemeProductsList products={productData.list} />
@@ -46,17 +47,23 @@ export default function ThemeProductsPage() {
 
 const Banner = styled.div`
   padding: 24px;
-  h2 {
-    font-size: 18px;
-    margin-bottom: 4px;
-    color: white;
-  }
-  h1 {
-    font-size: 24px;
-    margin-bottom: 8px;
-    color: white;
-  }
-  p {
-    color: white;
-  }
+`;
+
+const ThemeInfoName = styled.div`
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin-bottom: 14px;
+  color: white;
+`;
+
+const ThemeInfoTitle = styled.div`
+  font-size: ${({ theme }) => theme.typography.title1Regular.fontSize};
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: white;
+`;
+
+const ThemeInfoDes = styled.div`
+  font-size: ${({ theme }) => theme.typography.subtitle1Regular.fontSize};
+  margin-bottom: 4px;
+  color: white;
 `;

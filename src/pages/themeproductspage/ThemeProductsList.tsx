@@ -1,4 +1,3 @@
-//RisingSection의 리스트 여기에 재사용 가능할듯.
 import styled from "@emotion/styled";
 import type { Product } from "@/types/api_types";
 
@@ -13,10 +12,10 @@ export default function ThemeProductsList({ products }: Props) {
     <List>
       {products.map((product) => (
         <Card key={product.id}>
-          <img src={product.imageURL} alt={product.name} />
-          <h3>{product.name}</h3>
-          <p>{product.brandInfo.name}</p>
-          <p>{product.price.sellingPrice.toLocaleString()}원</p>
+          <Image src={product.imageURL} alt={product.name} />
+          <Name>{product.name}</Name>
+          <Brand>{product.brandInfo.name}</Brand>
+          <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
         </Card>
       ))}
     </List>
@@ -32,22 +31,27 @@ const List = styled.div`
 
 const Card = styled.div`
   overflow: hidden;
-  padding: 12px;
   text-align: center;
+`;
 
-  img {
-    width: 100%;
-    height: auto;
-    border-radius: 30px;
-  }
+const Image = styled.img`
+  width: 100%;
+  height: auto;
+  border-radius: 30px;
+`;
 
-  h3 {
-    font-size: 16px;
-    margin: 8px 0;
-  }
+const Name = styled.div`
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin: 8px 0;
+`;
 
-  p {
-    margin: 4px 0;
-    color: #888;
-  }
+const Brand = styled.div`
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin: 8px 0;
+`;
+
+const Price = styled.div`
+  font-size: ${({ theme }) => theme.typography.subtitle1Regular.fontSize};
+  font-weight: bold;
+  margin: 8px 0;
 `;
