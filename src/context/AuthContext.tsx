@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import api from '@/api/login';
+import apiClient from '@/api/apiClient';
 
 interface User {
   name: string;
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
 
     try {
-      const response = await api.post('/api/login', {
+      const response = await apiClient.post('/api/login', {
         email,
         password,
       });

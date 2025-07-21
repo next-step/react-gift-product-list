@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '@/api/apiClient';
 
 interface Receiver {
   name: string;
@@ -14,19 +14,12 @@ interface OrderRequest {
   receivers: Receiver[];
 }
 
-export const postOrder = async (orderData: OrderRequest) => {
-  const userInfo = sessionStorage.getItem('userInfo');
-  const token = userInfo ? JSON.parse(userInfo).authToken : '';
+export const postOrder = async (orderData: OrderRequest, authToken: string) => {
+  const response = await apiClient.post('/order', orderData, {
+    headers: {
+      Authorization: authToken,
+    },
+  });
 
-  const res = await axios.post(
-    `${import.meta.env.VITE_API_BASE_URL}/api/order`,
-    orderData,
-    {
-      headers: {
-        Authorization: token,
-      },
-    }
-  );
-
-  return res.data;
+  return response.data;
 };

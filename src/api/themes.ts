@@ -1,4 +1,4 @@
-import api from './index';
+import apiClient from '@/api/apiClient';
 
 export interface Category {
   themeId: number;
@@ -7,6 +7,6 @@ export interface Category {
 }
 
 export const fetchThemes = async (): Promise<Category[]> => {
-  const response = await api.get<{ data: Category[] }>('/api/themes');
+  const response = await apiClient.get<{ data: Category[] }>('/api/themes');
   return response.data.data;
 };

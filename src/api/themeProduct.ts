@@ -1,4 +1,4 @@
-import api from './index';
+import apiClient from '@/api/apiClient';
 
 export interface Product {
   id: number;
@@ -27,7 +27,7 @@ export const fetchThemeProducts = async (
   cursor: number = 0,
   limit: number = 10
 ): Promise<ThemeProductsResponse> => {
-  const response = await api.get(`/api/themes/${themeId}/products`, {
+  const response = await apiClient.get(`/api/themes/${themeId}/products`, {
     params: { cursor, limit },
   });
   return response.data.data;

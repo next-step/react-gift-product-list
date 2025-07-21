@@ -1,4 +1,4 @@
-import api from './index';
+import apiClient from '@/api/apiClient';
 
 export interface ThemeInfo {
   title: string;
@@ -10,6 +10,6 @@ export interface ThemeInfo {
 }
 
 export const fetchThemeInfo = async (themeId: string): Promise<ThemeInfo> => {
-  const res = await api.get(`/api/themes/${themeId}/info`);
+  const res = await apiClient.get(`/api/themes/${themeId}/info`);
   return res.data;
 };
