@@ -24,11 +24,11 @@ export default function ThemeList() {
   const { themeId } = useParams();
   const parsedId = Number(themeId);
 
-  const { items, loading, loaderRef } = useInfiniteScroll<Product>((cursor) =>
+  const { items, loading, loaderRef, isInitialLoading } = useInfiniteScroll<Product>((cursor) =>
     fetchThemeProducts(parsedId, cursor),
   );
 
-  if (!loading && items.length === 0) {
+  if (!isInitialLoading && items.length === 0) {
     return <EmptyState>상품이 없습니다.</EmptyState>;
   }
 

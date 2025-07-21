@@ -13,7 +13,6 @@ export default function useApiRequest<T>(fetchFunction: () => Promise<T>, deps: 
         setData(result);
         setHasError(false);
       } catch (err) {
-        console.error('API 요청 에러:', err);
         setHasError(true);
       } finally {
         setIsLoading(false);

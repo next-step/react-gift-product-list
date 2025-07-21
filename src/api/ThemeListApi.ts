@@ -11,8 +11,6 @@ export async function fetchThemeInfo(themeId: number) {
 }
 
 export async function fetchThemeProducts(themeId: number, cursor = 0, limit = 10) {
-  console.log('🔍 Fetch products:', themeId, 'cursor:', cursor);
-
   const res = await fetch(`/api/themes/${themeId}/products?cursor=${cursor}&limit=${limit}`);
 
   if (!res.ok) {
@@ -21,6 +19,5 @@ export async function fetchThemeProducts(themeId: number, cursor = 0, limit = 10
   }
 
   const data = await res.json();
-  console.log('📦 API 응답:', data);
   return data.data;
 }
