@@ -13,13 +13,14 @@ interface LoginResponse {
   };
 }
 
-export const postLogin = (email: string, password: string): Promise<AxiosResponse<LoginResponse>> =>
-  api.post<LoginResponse>('/api/login', { email, password });
-
 interface ProductSummaryResponse {
   data: ProductSummary;
 }
 
-export const getProductSummaryResponse = (productId: number) => {
-  api.get<ProductSummaryResponse>(`/api/products/${productId}/summary`);
+export const postLogin = (email: string, password: string): Promise<AxiosResponse<LoginResponse>> =>
+  api.post<LoginResponse>('/api/login', { email, password });
+
+export const getProductSummary = async (productId: number): Promise<ProductSummary> => {
+  const { data } = await api.get<ProductSummaryResponse>(`/api/products/${productId}/summary`);
+  return data.data;
 };

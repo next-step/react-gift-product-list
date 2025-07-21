@@ -4,11 +4,13 @@ import { Sender } from '@/components/OrderForm/Sender';
 import { Recipient } from '@/components/OrderForm/Recipient';
 import { ProductInfo } from '@/components/OrderForm/ProductInfo';
 import { OrderButton } from '@/components/OrderForm/OrderButton';
-import productData from '@/data/productData';
 import { MOCK_CARDFORM_LIST } from '@/components/OrderForm/mock';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ROUTE_PATH } from '@/routes/Routes';
 import { useForm, FormProvider, Controller, useWatch } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { getProductSummary } from '@/Api/api';
+import { toast } from 'react-toastify';
 
 const Wrapper = styled.section(({ theme }) => ({
   width: '100%',
@@ -38,8 +40,37 @@ const OrderForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const productId = Number(searchParams.get('productId'));
-  const selectedProduct = productId === productData.id ? productData : null;
-  if (!selectedProduct) return <div>존재하지 않는 상품입니다.</div>;
+  const [selectedProduct, setSelectedProduct] = useState<{
+    imageURL: string;
+    name: string;
+    price: { sellingPrice: number };
+    brandInfo: { name: string };
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!productId) {
+      setSelectedProduct(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    getProductSummary(productId)
+      .then((d) => {
+        setSelectedProduct({
+          imageURL: d.imageURL,
+          name: d.name,
+          price: { sellingPrice: d.price },
+          brandInfo: { name: d.brandName },
+        });
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message ?? '상품 정보를 불러오지 못했어요.');
+        navigate(ROUTE_PATH.HOME);
+      })
+      .finally(() => setLoading(false));
+  }, [productId, navigate]);
 
   const methods = useForm<OrderFormValues>({
     defaultValues: {
@@ -57,10 +88,15 @@ const OrderForm = () => {
   } = methods;
 
   const onSubmit = (data: OrderFormValues) => {
+    if (!selectedProduct) {
+      toast.error('상품 정보를 불러오지 못했습니다.');
+      return;
+    }
+    const totalQty = data.recipients.reduce((s, r) => s + r.quantity, 0);
     alert(
       `주문 완료!\n` +
         `상품명: ${selectedProduct.name}\n` +
-        `총 수량: ${data.recipients.reduce((s, r) => s + r.quantity, 0)}\n` +
+        `총 수량: ${totalQty}\n` +
         data.recipients.map((r, i) => `[${i + 1}] ${r.name} (${r.phone}) x${r.quantity}\n`).join('')
     );
     navigate(ROUTE_PATH.HOME);
@@ -68,7 +104,9 @@ const OrderForm = () => {
 
   const recipients = useWatch({ control: methods.control, name: 'recipients' });
   const totalQuantity = recipients.reduce((sum, r) => sum + (r.quantity ?? 0), 0);
-  const totalPrice = selectedProduct.price.sellingPrice * totalQuantity;
+  const totalPrice = selectedProduct?.price.sellingPrice
+    ? selectedProduct.price.sellingPrice * totalQuantity
+    : 0;
 
   return (
     <FormProvider {...methods}>
