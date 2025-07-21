@@ -1,7 +1,7 @@
 import { fetchThemesInfo } from "@/api/themesInfo";
 import styled from "@emotion/styled";
 import { useState } from "react";
-import type { ThemesInfo } from "@/types/theme";
+import type { ThemeInfo } from "@/types/theme";
 import { useNavigate } from "react-router";
 import { ROUTE_PATH } from "@/routes/paths";
 
@@ -11,7 +11,7 @@ type ThemesInfoProps = {
 
 const ThemesInfo = ({ id }: ThemesInfoProps) => {
   const navigate = useNavigate();
-  const [themeInfoData, setThemeInfoData] = useState<ThemesInfo | undefined>(
+  const [themeInfoData, setThemeInfoData] = useState<ThemeInfo | undefined>(
     undefined,
   );
 

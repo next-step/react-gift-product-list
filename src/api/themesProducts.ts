@@ -1,4 +1,4 @@
-import type { ThemesProduct } from "@/types/theme";
+import type { ThemeProduct } from "@/types/theme";
 import { API_PATHS } from "./apiPaths";
 import axiosInstance from "./axiosInstance";
 
@@ -9,7 +9,7 @@ type fetchThemesProductsParams = {
 };
 
 type FetchThemesProductsResult = {
-  list: ThemesProduct[];
+  list: ThemeProduct[];
   cursor: number;
   hasMoreList: boolean;
 };

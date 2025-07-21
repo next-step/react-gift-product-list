@@ -4,7 +4,7 @@ export type Theme = {
   image: string;
 };
 
-export type ThemesInfo = {
+export type ThemeInfo = {
   themeId: number;
   name: string;
   title: string;
@@ -24,10 +24,10 @@ export type BrandInfo = {
   imageURL: string;
 };
 
-export type ThemesProduct = {
+export type ThemeProduct = {
   id: number;
   name: string;
-  price: ThemesProductPrice;
+  price: ProductPrice;
   imageURL: string;
-  brandInfo: ThemesBrandInfo;
+  brandInfo: BrandInfo;
 };

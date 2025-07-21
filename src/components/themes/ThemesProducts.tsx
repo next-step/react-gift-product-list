@@ -6,7 +6,7 @@ import ThemesItem from "./ThemesItem";
 import { Link } from "react-router";
 import { ROUTE_PATH } from "@/routes/paths";
 import BoxMessage from "../common/BoxMessage";
-import type { ThemesProduct } from "@/types/theme";
+import type { ThemeProduct } from "@/types/theme";
 import LoadingSpinner from "../common/LoadingSpinner";
 
 type ThemesProductsProps = {
@@ -14,7 +14,7 @@ type ThemesProductsProps = {
 };
 
 const ThemesProducts = ({ id }: ThemesProductsProps) => {
-  const [items, setItems] = useState<ThemesProduct[]>([]);
+  const [items, setItems] = useState<ThemeProduct[]>([]);
   const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const loader = useRef(null);

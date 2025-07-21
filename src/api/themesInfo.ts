@@ -1,4 +1,4 @@
-import type { ThemesInfo } from "@/types/theme";
+import type { ThemeInfo } from "@/types/theme";
 import { API_PATHS } from "./apiPaths";
 import axiosInstance from "./axiosInstance";
 
@@ -6,7 +6,7 @@ type FetchThemesInfoParams = {
   themeId: number;
 };
 
-type FetchThemesInfoResult = ThemesInfo;
+type FetchThemesInfoResult = ThemeInfo;
 
 export const fetchThemesInfo = async (
   params: FetchThemesInfoParams,

@@ -1,8 +1,8 @@
-import type { ThemesProduct } from "@/types/theme";
+import type { ThemeProduct } from "@/types/theme";
 import styled from "@emotion/styled";
 
 type ThemesItemProps = {
-  product: ThemesProduct;
+  product: ThemeProduct;
 };
 
 const ThemesItem = ({ product }: ThemesItemProps) => {
