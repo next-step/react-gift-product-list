@@ -22,7 +22,7 @@ const ProductList = () => {
   const loader = useRef<HTMLDivElement>(null);
 
   const { themeId } = useParams();
-  const productList = useFetch<ProductListData>(`/api/themes/${themeId}/products`, {
+  const { fetchData } = useFetch<ProductListData>(`/api/themes/${themeId}/products`, {
     autoFetch: false,
   });
 
@@ -31,7 +31,7 @@ const ProductList = () => {
 
     try {
       setIsLoading(true);
-      const response = await productList.fetchData(undefined, undefined, {
+      const response = await fetchData(undefined, undefined, {
         cursor,
         limit: PRODUCT_LIST_LIMIT,
       });
@@ -52,7 +52,7 @@ const ProductList = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [cursor, hasMoreList, isLoading, productList.fetchData]);
+  }, [cursor, hasMoreList, isLoading, fetchData]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
