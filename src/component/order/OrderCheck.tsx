@@ -1,64 +1,74 @@
 import { useOrder } from '@/context/OrderContext';
 import { useReceiver } from '@/context/ReceiverContext';
-import { DefaultComponentDiv, EmptyDiv8h, OrderButton, Price, ProductBox, ProductImage, ProductInfo, ProductName, SideBlankDiv, SubText, SubTitle } from '@/styles/Common.styled'
-import type { ProductItem } from '@/type/product';
+import useFetchFromUrl from '@/hook/useFetchFromUrl';
+import {
+  DefaultComponentDiv,
+  EmptyDiv8h,
+  OrderButton,
+  Price,
+  ProductBox,
+  ProductImage,
+  ProductInfo,
+  ProductName,
+  SideBlankDiv,
+  SubText,
+  SubTitle,
+} from '@/styles/Common.styled';
+import type { ProductItemSummary } from '@/type/product';
+import { useEffect } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 const OrderCheck = () => {
   const navigate = useNavigate();
-  const {
-    senderNameInput,
-    cardMessage,
-  } = useOrder();
+  const { senderNameInput, cardMessage } = useOrder();
 
-  const {
-    receivers
-  } =useReceiver();
+  const { receivers } = useReceiver();
 
   const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const id = query.get('id');
 
+  const productUrl = `http://localhost:3000/api/products/${id}/summary`;
+  const { item, error } = useFetchFromUrl<ProductItemSummary>(productUrl);
+  useEffect(() => {
+    if (error) {
+      toast.error((error as Error).message);
+      navigate('/');
+    }
+  }, [error, navigate]);
+
+  const price = item?.price;
+  const imageUrl = item?.imageURL;
+  const name = item?.name;
+  const brandName = item?.brandName;
 
   const handleOrder = () => {
     senderNameInput.validate();
 
-
-
     if (!senderNameInput.error) {
       alert(`주문이 완료되었습니다. 
-        상품명:${item.name} 
+        상품명:${name} 
         구매수량: ${total}
         발신자 이름: ${senderNameInput.value}
         메세지: ${cardMessage}
-        `
-      );
+        `);
       navigate('/');
     }
   };
 
-
-  const { item } = location.state as { item: ProductItem };
-
-
-  const price = item.price.sellingPrice
-  const imageUrl = item.imageURL
-  const name = item.name
-  const brandName = item.brandInfo.name
-
-
-  const total  = receivers.reduce((acc,receiver) => acc + receiver.count, 0);
+  const total = receivers.reduce((acc, receiver) => acc + receiver.count, 0);
 
   return (
     <DefaultComponentDiv>
+      <ToastContainer />
       <SideBlankDiv>
         <EmptyDiv8h />
         <SubTitle>상품 정보</SubTitle>
         <ProductBox>
-          <ProductImage
-            src={imageUrl}
-            alt={name}
-          />
-          
+          <ProductImage src={imageUrl} alt={name} />
+
           <ProductInfo>
             <ProductName>{name}</ProductName>
             <SubText>{brandName}</SubText>
@@ -67,10 +77,12 @@ const OrderCheck = () => {
             </Price>
           </ProductInfo>
         </ProductBox>
-
       </SideBlankDiv>
 
-      <OrderButton onClick={handleOrder}> {Number(total) * price} 원 주문하기</OrderButton>
+      <OrderButton onClick={handleOrder}>
+        {' '}
+        {Number(total) * (price ?? 0)} 원 주문하기
+      </OrderButton>
     </DefaultComponentDiv>
   );
 };

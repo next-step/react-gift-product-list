@@ -6,7 +6,7 @@ const AUTH_KEY = 'login_user';
 
 type UserInfo = {
   email: string;
-  password: string;
+  name: string;
   authToken: string;
 }
 
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logIn = useCallback(async (email: string, password: string) => {
     try {
       const response = await logInAPI(email, password);
-      setUser(response.data.name)
+      setUser(response.data)
       localStorage.setItem(AUTH_KEY, JSON.stringify(response.data));
     } catch (error) {
       throw new Error(`${(error as Error).message}`);

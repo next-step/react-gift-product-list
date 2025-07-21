@@ -1,6 +1,7 @@
 import useFormInput from "@/hook/useFormInput";
 import { validateName} from "@/utils/validateInput";
 import React, { createContext, useContext, useMemo, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 interface OrderContextType {
     senderNameInput: ReturnType<typeof useFormInput>;
@@ -11,7 +12,8 @@ interface OrderContextType {
 const OrderContext = createContext<OrderContextType | null>(null);
 
 export const OrderContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const senderNameInput = useFormInput(validateName)
+    const {user} = useAuth();
+    const senderNameInput = useFormInput(validateName,user?.name)
     const [cardMessage, setCardMessage] = useState('축하해요.');
 
     const value = useMemo(()=>({

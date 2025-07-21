@@ -82,11 +82,9 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
               <div key={field.id}>
                 {i >= 1 && <Hr1Gray />}
                 <ReceiverOne>
-                  <SubTitle>
                     <ReceiverTitle>
                       받는사람 {i + 1} 
                     </ReceiverTitle>
-                  </SubTitle>
                   <XButton type="button" onClick={() => remove(i)}>
                     X
                   </XButton>

@@ -42,19 +42,19 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
         if (!user) {
             navigate(`/login?redirect=/order?id=${item.id}`);
         } else {
-            navigate(`/order?id=${item.id}`, { state: { item } });
+            navigate(`/order?id=${item.id}`);
         }
     };
 
 
     if (error) return null
 
-    if (loding) return (
+    if (item === null || loding) return (
         <SpinnerWrapper>
             <Spinner />
         </SpinnerWrapper>
     )
-    if (item.length === 0) return (
+    if (!item || item.length === 0) return (
         <CentorAlignDiv240>
             <p>상품이 없습니다</p>
         </CentorAlignDiv240>

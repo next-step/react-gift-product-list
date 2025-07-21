@@ -1,8 +1,8 @@
 import { getFromUrl } from "@/utils/getFromUrl";
 import { useEffect, useState } from "react";
 
-function useFetchFromUrl(url: string) {
-    const [item, setItem] = useState([]);
+function useFetchFromUrl<T = any>(url: string) {
+    const [item, setItem] = useState<T | null >([] as T);
     const [loding, setLoding] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
