@@ -1,17 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import ThemeHero from './ThemeHero';
 import ThemeProductList from './ThemeProductList';
-
-type ThemeInfo = {
-  themeId: number;
-  name: string;
-  title?: string;
-  description?: string;
-  backgroundColor?: string;
-};
+import { fetchThemeInfo, type ThemeInfo } from '../../apis/info';
+import axios from 'axios';
 
 const ThemeProductPage = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -26,11 +19,11 @@ const ThemeProductPage = () => {
       return;
     }
 
-    const fetchThemeInfo = async () => {
+    const loadThemeInfo = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/api/themes/${themeId}/info`);
-        setThemeInfo(response.data.data);
+        const data = await fetchThemeInfo(themeId);
+        setThemeInfo(data);
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
           navigate('/');
@@ -43,7 +36,7 @@ const ThemeProductPage = () => {
       }
     };
 
-    fetchThemeInfo();
+    loadThemeInfo();
   }, [themeId, navigate]);
 
   if (loading) return <div>로딩 중...</div>;
