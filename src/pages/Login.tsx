@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { useContext } from 'react';
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
+import { setAccessToken } from '@/apis/apiClient';
 
 type LoginProps = {
   onLogin: () => void;
@@ -41,6 +42,7 @@ function Login({ onLogin }: LoginProps) {
       localStorage.setItem('email', responseInfo.email);
       localStorage.setItem('name', responseInfo.name);
       localStorage.setItem('authToken', responseInfo.authToken);
+      setAccessToken(responseInfo.authToken);
       setLoginInfo(responseInfo);
       onLogin();
     } catch (err) {

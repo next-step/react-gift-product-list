@@ -7,6 +7,8 @@ import {
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
 import { useContext } from 'react';
 import useLoginForm from '@/hooks/useLoginForm';
+import { setAccessToken } from '@/apis/apiClient';
+
 type MyPageProps = {
   onLogin: () => void;
 };
@@ -23,6 +25,7 @@ function Mypage({ onLogin }: MyPageProps) {
     });
     logOut();
     localStorage.removeItem('userInfo');
+    setAccessToken(null);
     onLogin();
   }
 
