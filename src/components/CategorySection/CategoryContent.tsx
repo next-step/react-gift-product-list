@@ -2,9 +2,12 @@ import styled from '@emotion/styled';
 import { loading } from '@/components/common/Loading';
 import { ERROR_MESSAGES } from '@/constants/validation';
 import { useCategoryThemes } from '@/hooks/useCategoryThemes';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 
 const CategoryContent = () => {
   const { data, pending, error } = useCategoryThemes();
+  const navigate = useNavigate();
 
   if (pending) {
     return (
@@ -25,7 +28,10 @@ const CategoryContent = () => {
   return (
     <Grid>
       {data.map(theme => (
-        <Item key={theme.themeId}>
+        <Item
+          key={theme.themeId}
+          onClick={() => navigate(ROUTES.THEME(theme.themeId))}
+        >
           <CategoryImage src={theme.image} alt={theme.name} />
           <CategoryText>{theme.name}</CategoryText>
         </Item>
