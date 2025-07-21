@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
+import type { AxiosError } from 'axios'
 
 export interface FetchState<T> {
   isLoading: boolean
   isError: boolean
   data: T | null
+  errorStatus?: number // ! 에러 status code (특정 에러 처리용)
 }
 
 export const useFetch = <T>(fetcher: () => Promise<T>, deps: unknown[] = []) => {
@@ -28,10 +30,17 @@ export const useFetch = <T>(fetcher: () => Promise<T>, deps: unknown[] = []) => 
         if (isMounted) {
           setFetchState({ isLoading: false, isError: false, data })
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Fetch error:', error)
+
+        // ! 특정 에러 상태 처리를 위해 추가
+        let errorStatus: number | undefined = undefined
+        if (typeof error === 'object' && error !== null && 'response' in error) {
+          const err = error as AxiosError
+          errorStatus = err.response?.status
+        }
         if (isMounted) {
-          setFetchState({ isLoading: false, isError: true, data: null })
+          setFetchState({ isLoading: false, isError: true, data: null, errorStatus })
         }
       }
     }
