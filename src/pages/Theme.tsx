@@ -5,9 +5,9 @@ import styled from '@emotion/styled';
 import { useState, useEffect} from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api, IsErrorStatus } from '../utils/api'
-// import { Spinner } from '@/components/Spinner';
+import { Spinner } from '@/components/Spinner';
 
-// import HeroSection from '@/components/Theme/HeroSection';
+import HeroSection from '@/components/Theme/HeroSection';
 // import InfiniteScroll from '@/components/Theme/InfiniteScroll';
 
 function Theme() {
@@ -18,8 +18,8 @@ function Theme() {
     return (
         <Layout>
             <NavBar></NavBar>
-            {/* <HeroSection themeId={themeId}/>
-            <InfiniteScroll themeId={themeId}/> */}
+            <HeroSection themeId={themeId}/>
+            {/* <InfiniteScroll themeId={themeId}/> */}
         </Layout>
     );
 }
