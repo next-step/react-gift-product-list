@@ -4,4 +4,5 @@ export const PATH = {
   NOT_FOUND: '*',
   MY_PAGE: '/my',
   ORDER: '/order',
+  THEME_PRODUCTS: '/themes/:themeId',
 };

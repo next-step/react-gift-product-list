@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 
 export const Section = styled.section`
   background-color: ${({ theme }) => theme.colors.semantic.backgroundDefault};
-  padding: ${({ theme }) => theme.spacing.spacing11}
-    ${({ theme }) => theme.spacing.spacing5};
+  padding: ${({ theme }) => theme.spacing.spacing11};
 `;
 
 export const Heading = styled.h2`

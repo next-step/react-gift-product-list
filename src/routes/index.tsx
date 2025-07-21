@@ -8,6 +8,7 @@ import { LoginProvider } from '../contexts/LoginContext';
 import PrivateRoute from '@/components/PrivateRoute/PrivateRoute';
 import MyPage from '@/pages/MyPage';
 import OrderPage from '@/pages/OrderPage';
+import ThemeProductsPage from '@/pages/ThemeProductsPage';
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
         children: [
           { path: PATH.MY_PAGE.slice(1), element: <MyPage /> },
           { path: PATH.ORDER.slice(1) + '/:productId', element: <OrderPage /> },
+          { path: PATH.THEME_PRODUCTS.slice(1), element: <ThemeProductsPage /> },
         ],
       },
       { path: PATH.NOT_FOUND, element: <NotFoundPage /> },
