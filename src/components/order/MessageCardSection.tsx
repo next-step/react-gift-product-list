@@ -13,14 +13,15 @@ const MessageCardSection = () => {
   const message = useWatch({ control, name: "message" });
 
   useEffect(() => {
-    if (!message?.trim() && selectedCardId) {
-      const defaultCard = messageCards.find(
-        card => String(card.id) === selectedCardId,
-      );
-      if (defaultCard) {
-        setValue("message", defaultCard.defaultTextMessage);
-      }
-    }
+    if (message?.trim() || !selectedCardId) return;
+
+    const defaultCard = messageCards.find(
+      card => String(card.id) === selectedCardId,
+    );
+
+    if (!defaultCard) return;
+
+    setValue("message", defaultCard.defaultTextMessage);
   }, [message, selectedCardId, setValue]);
 
   const handleSelectCard = (card: MessageCard) => {
