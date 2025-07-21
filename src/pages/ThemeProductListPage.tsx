@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, generatePath } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { getThemeInfo } from '@/api/themes';
 import type { Theme } from '@/api/types';
-import { ROUTE_HOME } from '@/constants';
+import { ROUTE_HOME, ROUTE_ORDER } from '@/constants';
+import ProductGrid from '@/components/ranking/ProductGrid';
+import { getThemeProducts } from '@/api/themes';
+import type { Product } from '@/api/types';
+import type { ThemeProductsResponse } from '@/api/themes';
 
 const HeroSection = styled.div<{ bg: string }>`
   background: ${(props) => props.bg};
@@ -38,15 +42,17 @@ const ThemeProductListPage: React.FC = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!themeId) return;
     setLoading(true);
-    getThemeInfo(themeId)
-      .then((data) => {
-        setTheme(data);
+    Promise.all([getThemeInfo(themeId), getThemeProducts(themeId)])
+      .then(([themeData, productData]: [Theme, ThemeProductsResponse]) => {
+        setTheme(themeData);
+        setProducts(productData.list);
         setError(null);
       })
       .catch((err) => {
@@ -58,6 +64,14 @@ const ThemeProductListPage: React.FC = () => {
       })
       .finally(() => setLoading(false));
   }, [themeId, navigate]);
+
+  const handleProductClick = (product: Product) => {
+    navigate(
+      generatePath(`${ROUTE_ORDER}/:productId`, {
+        productId: String(product.id),
+      })
+    );
+  };
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
@@ -71,7 +85,12 @@ const ThemeProductListPage: React.FC = () => {
         <HeroTitle>{theme.title}</HeroTitle>
         <HeroDescription>{theme.description}</HeroDescription>
       </HeroSection>
-      {/* 상품 목록 영역(다음 단계) */}
+      {/* 상품 목록 영역 */}
+      <ProductGrid
+        products={products}
+        showMore={true}
+        onProductClick={handleProductClick}
+      />
     </div>
   );
 };
