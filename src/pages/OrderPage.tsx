@@ -8,12 +8,10 @@ import useOrderForm, { type OrderFormValues } from '@/hooks/useOrderForm'
 import RecipientModal from '@/components/RecipientModal'
 import { toast } from 'react-toastify'
 import { useAuth } from '@/contexts/AuthContext'
+import MessageCardSelector from '@/components/MessageCardSelector'
+import RecipientList from '@/components/RecipientList'
 import {
   Container,
-  CardGrid,
-  CardItem,
-  Thumb,
-  Preview,
   ErrorMessage,
   MessageInput,
   InfoSection,
@@ -26,11 +24,6 @@ import {
   Brand,
   Price,
   RecipientHeader,
-  EmptyRecipients,
-  Divider,
-  RecipientTable,
-  RecipientTableHeader,
-  RecipientRow,
   OrderButton,
 } from '@/styles/OrderPage.styles'
 
@@ -128,22 +121,10 @@ export default function OrderPage() {
   return (
     <Layout>
       <Container as="form" onSubmit={handleSubmit(onSubmit)}>
-        <CardGrid>
-          {cardTemplates.map((card) => (
-            <CardItem
-              key={card.id}
-              selected={selected.id === card.id}
-              onClick={() => handleCardSelect(card)}
-            >
-              <Thumb src={card.thumbUrl} alt="카드 썸네일" />
-            </CardItem>
-          ))}
-        </CardGrid>
-
-        <Preview>
-          <img src={selected.imageUrl} alt="선택된 카드" />
-        </Preview>
-
+        <MessageCardSelector
+          selected={selected}
+          onSelect={handleCardSelect}
+        />
         <MessageInput
           {...register('message')}
           placeholder="메시지를 입력해주세요."
@@ -171,34 +152,10 @@ export default function OrderPage() {
               {fields.length === 0 ? '추가' : '수정'}
             </button>
           </RecipientHeader>
-          {fields.length === 0 ? (
-            <EmptyRecipients>
-              <p>
-                받는 사람이 없습니다.
-                <br />
-                받는 사람을 추가해주세요.
-              </p>
-            </EmptyRecipients>
-          ) : (
-            <>
-              <Divider />
-              <RecipientTable>
-                <RecipientTableHeader>
-                  <p>이름</p>
-                  <p>전화번호</p>
-                  <p>수량</p>
-                </RecipientTableHeader>
-                {watch('recipients').map((r, index) => (
-                  <RecipientRow key={fields[index].id}>
-                    <p>{r.name}</p>
-                    <p>{r.phone}</p>
-                    <p>{r.qty}</p>
-                  </RecipientRow>
-                ))}
-              </RecipientTable>
-              <Divider />
-            </>
-          )}
+          <RecipientList
+            recipients={watch('recipients')}
+            fields={fields}
+          />
         </InfoSection>
         {product && (
           <ProductInfo>
