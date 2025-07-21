@@ -8,9 +8,10 @@ import { getThemesDetail, getThemesList } from "@/api/themes";
 import { useFetchData } from "@/hooks/useFetchData";
 import type { BasicGiftProduct } from "@/types/gift";
 import { LoadingSpinner } from "@/components/Common/LoadingSpinner";
-import RankingItem from "@/components/Common/ProductItem";
 import { toast } from "react-toastify";
 import type { ThemeInfo } from "@/types/theme";
+import ProductItem from "@/components/Common/ProductItem";
+import { useAuthContext } from "@/contexts/useAuthContext";
 
 type ThemeProductsResponse = {
   list: BasicGiftProduct[];
@@ -101,6 +102,19 @@ const ThemeProductList = () => {
     };
   }, [hasMore, loadingMore, loadMore]);
 
+  const { user } = useAuthContext();
+  const isLoggedIn = !!user;
+
+  const handleClickItem = (productId: number) => {
+    if (!isLoggedIn) {
+      navigate("/login", {
+        state: { from: { pathname: `/order/${productId}` } },
+      });
+    } else {
+      navigate(`/order/${productId}`);
+    }
+  };
+
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
 
   return (
@@ -122,13 +136,14 @@ const ThemeProductList = () => {
             ) : (
               <ProudctList>
                 {(products ?? []).map((product) => (
-                  <RankingItem
+                  <ProductItem
                     key={product.id}
                     id={product.id}
                     name={product.name}
                     imageURL={product.imageURL}
                     price={product.price}
                     brandInfo={product.brandInfo}
+                    onClick={() => handleClickItem(product.id)}
                   />
                 ))}
               </ProudctList>

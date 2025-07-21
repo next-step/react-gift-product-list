@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import type { BasicGiftProduct } from "@/types/gift";
 
-type RankingItemProps = BasicGiftProduct & {
+type ProductItemProps = BasicGiftProduct & {
   rank?: number;
   highlightCondition?: (rank: number) => boolean;
   onClick?: () => void;
 };
 
-const RankingItem = ({
+const ProductItem = ({
   name,
   imageURL,
   price,
@@ -15,7 +15,7 @@ const RankingItem = ({
   rank,
   highlightCondition = (rank) => rank <= 3,
   onClick,
-}: RankingItemProps) => {
+}: ProductItemProps) => {
   return (
     <ItemWrapper onClick={onClick}>
       <ImageWrapper>
@@ -31,7 +31,7 @@ const RankingItem = ({
   );
 };
 
-export default RankingItem;
+export default ProductItem;
 
 const ItemWrapper = styled.div`
   display: flex;
