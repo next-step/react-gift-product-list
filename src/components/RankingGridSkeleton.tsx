@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
-import { GiftCardSkeleton } from './GiftCardSkeleton';
-
+import type { GiftItem } from '@/types';
+import { GiftCard } from '@/components/GiftCard';
 
 const grid = css`
   display: grid;
@@ -9,10 +9,15 @@ const grid = css`
   padding-bottom: 50px;
 `;
 
-export const RankingGridSkeleton = () => (
+interface Props {
+  items: GiftItem[];
+  onCardClick: (item: GiftItem) => void;
+}
+
+export const RankingGrid = ({ items, onCardClick }: Props) => (
   <div css={grid}>
-    {Array.from({ length: 20 }).map((_, i) => (
-      <GiftCardSkeleton key={i} />
+    {items.map((item, i) => (
+      <GiftCard key={item.id} item={item} rank={i + 1} onCardClick={onCardClick}/>
     ))}
   </div>
 );
