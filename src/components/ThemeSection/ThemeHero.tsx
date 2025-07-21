@@ -1,44 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useThemeInfo } from '@/hooks/useThemeInfo';
 import { ERROR_MESSAGES } from '@/constants/validation';
-import { ROUTES } from '@/constants/routes';
-import { getThemeInfoUrl } from '@/constants/api';
 import { loading } from '@/components/common/Loading';
-
-interface ThemeInfo {
-  themeId: number;
-  name: string;
-  title: string;
-  description: string;
-  backgroundColor: string;
-}
 
 const ThemeHero = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const navigate = useNavigate();
-  const [themeInfo, setThemeInfo] = useState<ThemeInfo | null>(null);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchThemeInfo = async () => {
-      try {
-        const res = await axios.get<{ data: ThemeInfo }>(
-          getThemeInfoUrl(themeId!)
-        );
-        setThemeInfo(res.data.data);
-      } catch (err: any) {
-        if (err.response?.status === 404) {
-          navigate(ROUTES.NOT_FOUND);
-        } else {
-          setError(true);
-        }
-      }
-    };
-
-    fetchThemeInfo();
-  }, [themeId, navigate]);
+  const { themeInfo, error } = useThemeInfo(themeId);
 
   if (error)
     return <ErrorText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</ErrorText>;
