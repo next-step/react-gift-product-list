@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../apiBaseUrl';
+import { API_BASE_URL, apiClient } from '../apiClient';
 import type { ThemeInfo } from '@/page/Home/hooks/useTheme';
 
 interface ThemesResponse {
@@ -7,7 +6,7 @@ interface ThemesResponse {
 }
 
 const fetchTheme = async () => {
-  const response = await axios.get<ThemesResponse>(`${API_BASE_URL}/api/themes`);
+  const response = await apiClient.get<ThemesResponse>(`${API_BASE_URL}/api/themes`);
   return response.data.data;
 };
 
