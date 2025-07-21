@@ -1,0 +1,56 @@
+import { useEffect } from 'react';
+import { getThemeInfo } from '@/lib/api/themes';
+import type { ThemeInfo } from '@/types/api';
+import { useFetchState } from '@/hooks/useFetchState';
+import { Loading, ErrorMessage } from '@/components';
+import * as S from './styles';
+
+interface ThemeHeroSectionProps {
+  themeId?: number;
+}
+
+const ThemeHeroSection = ({ themeId }: ThemeHeroSectionProps) => {
+  const { fetchState, setLoading, setSuccess, setError, reset } = useFetchState<ThemeInfo | null>(null);
+
+  useEffect(() => {
+    if (!themeId) {
+      reset();
+      return;
+    }
+
+    const fetchThemeInfo = async () => {
+      setLoading(true);
+      try {
+        const themeInfo = await getThemeInfo(themeId);
+        setSuccess(themeInfo);
+      } catch (error) {
+        console.error('테마 정보 조회 실패:', error);
+        setError();
+      }
+    };
+
+    fetchThemeInfo();
+  }, [themeId, setLoading, setSuccess, setError, reset]);
+
+  return (
+    <>
+      {fetchState.isLoading ? (
+        <S.ThemeHeroContainer>
+          <Loading height="80px" message="테마 정보를 불러오는 중..." />
+        </S.ThemeHeroContainer>
+      ) : fetchState.isError || !fetchState.data ? (
+        <S.ThemeHeroContainer>
+          <ErrorMessage height="80px" />
+        </S.ThemeHeroContainer>
+      ) : (
+        <S.ThemeHeroContainer backgroundColor={fetchState.data.backgroundColor}>    
+          <S.ThemeName>{fetchState.data.name}</S.ThemeName>
+          <S.ThemeTitle>{fetchState.data.title}</S.ThemeTitle>
+          <S.ThemeDescription>{fetchState.data.description}</S.ThemeDescription>
+        </S.ThemeHeroContainer>
+      )}
+    </>
+  );
+};
+
+export default ThemeHeroSection;
