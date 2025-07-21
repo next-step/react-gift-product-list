@@ -29,10 +29,12 @@ const OrderPage = () => {
   const [message, setMessage] = useState("")
 
   const { product, loading, error } = useProductInfo(productId)
+  const storedName = localStorage.getItem("name") ?? ""
+
   const methods = useForm<FormData>({
     mode: "onChange",
     defaultValues: {
-      senderName: "",
+      senderName: storedName,
       receivers: [],
       message: "",
     },
