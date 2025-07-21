@@ -4,6 +4,14 @@ export interface Theme {
     image: string,
 }
 
+export interface ThemeInfo {
+    themeId: number;
+    name: string;
+    title: string;
+    description: string;
+    backgroundColor: string;
+}
+
 export interface RankingProduct {
     id: number;
     name: string;
