@@ -15,6 +15,8 @@ const containerStyle = (backgroundColor?: string) => css`
   padding: ${theme.spacing[4]};
   border-bottom: 1px solid #eee;
   background-color: ${backgroundColor ?? 'transparent'};
+  margin-top: -${theme.spacing[12]};
+  padding-top: calc(${theme.spacing[3]} + ${theme.spacing[12]});
 `;
 
 const textWrapper = css`
