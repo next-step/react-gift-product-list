@@ -1,13 +1,24 @@
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 type CategoryCardProps = {
   name: string;
   image: string;
+  themeId: number;
 };
 
-export const CategoryCard = ({ name, image }: CategoryCardProps) => {
+export const CategoryCard = ({ name, image, themeId }: CategoryCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(
+      `${ROUTES.THEME_DETAIL_TEMPLATE.replace(":themeId", themeId.toString())}`,
+    );
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <Image src={image} alt={name} />
       <Label>{name}</Label>
     </Card>
@@ -19,6 +30,7 @@ const Card = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  cursor: pointer;
 `;
 
 const Image = styled.img`

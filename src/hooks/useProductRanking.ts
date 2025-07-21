@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import {
   fetchProductRanking,
-  type Product,
   type RankType,
   type TargetType,
 } from "@/api/product";
 import { ERROR_MESSAGES } from "@/constants/messages";
+import type { Product } from "@/types/product";
 
 export const useProductRanking = (
   targetType: TargetType,

@@ -19,6 +19,7 @@ export const CategorySection = () => {
         {themes.map((item) => (
           <CategoryCard
             key={item.themeId}
+            themeId={item.themeId}
             name={item.name}
             image={item.image}
           />
