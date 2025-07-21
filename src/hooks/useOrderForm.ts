@@ -33,6 +33,22 @@ export function useOrderForm(
   const { user } = useAuth()
   const navigate = useNavigate()
 
+  const orderSuccessMessage = (data: FormValues) => {
+    alert(`주문이 완료되었습니다.
+      상품명: ${product.name}
+      구매 수량: ${totalQuantity}
+      발신자 이름: ${data.sender}
+      메시지: ${data.message}`)
+  }
+
+  const orderSuccess = () => {
+    reset()
+    setSelectedCard(cardMock[0])
+    setValue('message', cardMock[0].defaultTextMessage)
+    setFinalReceivers([])
+    navigate('/')
+  }
+
   const onSubmit = async (data: FormValues) => {
     try {
       await axios.post(
@@ -54,26 +70,20 @@ export function useOrderForm(
           },
         }
       )
-      alert(`주문이 완료되었습니다.
-        상품명: ${product.name}
-        구매 수량: ${totalQuantity}
-        발신자 이름: ${data.sender}
-        메시지: ${data.message}`)
-      reset()
-      setSelectedCard(cardMock[0])
-      setValue('message', cardMock[0].defaultTextMessage)
-      setFinalReceivers([])
-      navigate('/')
-    } catch (error: any) {
-      const status = error.reponse?.status
-      const message = error.response?.data.data.message || '주문 실패'
+      orderSuccessMessage(data)
+      orderSuccess()
+    } catch (error) {
+      if (error instanceof axios.AxiosError) {
+        const status = error.response?.status
+        const message = error.response?.data.data.message || '주문 실패'
 
-      if (status === 401) {
-        navigate('/login')
-      } else {
-        toast.error(
-          typeof message === 'string' ? message : '잘못된 요청입니다.'
-        )
+        if (status === axios.HttpStatusCode.Unauthorized) {
+          navigate('/login')
+        } else {
+          toast.error(
+            typeof message === 'string' ? message : '잘못된 요청입니다.'
+          )
+        }
       }
     }
   }

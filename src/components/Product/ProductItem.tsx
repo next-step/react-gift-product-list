@@ -26,7 +26,7 @@ export const ProductItem = memo(function ProductItem({
   return (
     <Wrapper onClick={goOrderPage}>
       <ImageWrapper>
-        <RankBadge rank={rank}>{rank}</RankBadge>
+        {rank !== undefined && <RankBadge rank={rank}>{rank}</RankBadge>}
         <Image src={imageURL} alt={name} />
       </ImageWrapper>
       <Brand>{brandInfo.name}</Brand>
@@ -41,6 +41,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 4px;
   width: 100%;
+  cursor: pointer;
 `
 
 const ImageWrapper = styled.div`

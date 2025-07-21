@@ -61,7 +61,12 @@ export function CategorySection() {
 
       <GridWrapper>
         {themes.map(({ themeId, name, image }) => (
-          <CategoryItem key={themeId} name={name} image={image} />
+          <CategoryItem
+            key={themeId}
+            themeId={themeId}
+            name={name}
+            image={image}
+          />
         ))}
       </GridWrapper>
 

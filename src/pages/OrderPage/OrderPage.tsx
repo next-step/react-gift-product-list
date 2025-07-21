@@ -20,12 +20,14 @@ export function OrderPage() {
           `${import.meta.env.VITE_API_BASE_URL}/api/products/${id}`
         )
         setProduct(response.data.data)
-      } catch (error: any) {
-        const message = error.response?.data.data.message
-        toast.error(
-          typeof message === 'string' ? message : '잘못된 요청입니다.'
-        )
-        navigate('/', { replace: true })
+      } catch (error) {
+        if (error instanceof axios.AxiosError) {
+          const message = error.response?.data.data.message
+          toast.error(
+            typeof message === 'string' ? message : '잘못된 요청입니다.'
+          )
+          navigate('/', { replace: true })
+        }
       }
     }
 

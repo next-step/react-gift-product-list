@@ -7,6 +7,7 @@ import { RequireAuth } from '@/routes/RequireAuth'
 import { OrderPage } from '@/pages/OrderPage/OrderPage'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { ThemePage } from '@/pages/ThemePage'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/order/:id" element={<OrderPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
+        <Route path="/themes/:themeId" element={<ThemePage />} />
       </Routes>
       <ToastContainer position="bottom-center" hideProgressBar />
     </>
