@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import styled from '@emotion/styled';
-
+import { ERROR_MESSAGES } from '@/constants/validation';
 import { ROUTES } from '@/constants/routes';
 import { getThemeInfoUrl } from '@/constants/api';
+import { loading } from '@/components/common/Loading';
 
 interface ThemeInfo {
   themeId: number;
@@ -39,8 +40,9 @@ const ThemeHero = () => {
     fetchThemeInfo();
   }, [themeId, navigate]);
 
-  if (error) return <ErrorText>테마 정보를 불러오지 못했어요.</ErrorText>;
-  if (!themeInfo) return <LoadingText>불러오는 중...</LoadingText>;
+  if (error)
+    return <ErrorText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</ErrorText>;
+  if (!themeInfo) return loading;
 
   return (
     <Section style={{ backgroundColor: themeInfo.backgroundColor }}>
@@ -75,11 +77,6 @@ const Description = styled.p`
   ${({ theme }) => theme.typography.body.body1Regular};
   color: ${({ theme }) => theme.color.gray[0]};
   margin-top: ${({ theme }) => theme.spacing[2]};
-`;
-
-const LoadingText = styled.p`
-  padding: ${({ theme }) => theme.spacing[4]};
-  text-align: center;
 `;
 
 const ErrorText = styled.p`

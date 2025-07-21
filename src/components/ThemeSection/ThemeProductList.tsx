@@ -2,10 +2,11 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import styled from '@emotion/styled';
-
+import { ERROR_MESSAGES } from '@/constants/validation';
 import ProductCard from '@/components/RankingSection/ProductCard';
 import CardGrid from '@/components/common/CardGrid';
 import { getThemeProductsUrl } from '@/constants/api';
+import { loading } from '@/components/common/Loading';
 
 interface Product {
   id: number;
@@ -87,9 +88,10 @@ const ThemeProductList = () => {
     };
   }, [fetchProducts, hasMore, pending]);
 
-  if (error) return <ErrorText>상품 정보를 불러오지 못했어요.</ErrorText>;
+  if (error)
+    return <ErrorText>{ERROR_MESSAGES.FAILED_TO_LOAD_PRODUCTS}</ErrorText>;
   if (!pending && products.length === 0)
-    return <EmptyText>상품이 없습니다.</EmptyText>;
+    return <EmptyText>{ERROR_MESSAGES.NO_PRODUCTS_AVAILABLE}</EmptyText>;
 
   return (
     <Wrapper>
@@ -103,7 +105,7 @@ const ThemeProductList = () => {
           />
         ))}
       </CardGrid>
-      {pending && <LoadingText>상품을 불러오는 중...</LoadingText>}
+      {pending && loading}
       {hasMore && <ObserverTarget ref={observerRef} />}
     </Wrapper>
   );
@@ -113,11 +115,6 @@ export default ThemeProductList;
 
 const Wrapper = styled.div`
   padding: ${({ theme }) => theme.spacing[4]};
-`;
-
-const LoadingText = styled.p`
-  padding: ${({ theme }) => theme.spacing[4]};
-  text-align: center;
 `;
 
 const ErrorText = styled.p`
