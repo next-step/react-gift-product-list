@@ -34,7 +34,7 @@ const ProductGrid = ({
   }
 
   const displayProducts = showMore
-    ? products.slice(0, 21)
+    ? products // 전체 상품
     : products.slice(0, 6);
 
   return (

@@ -33,10 +33,13 @@ export const getThemeInfo = async (
  * themeId로 테마 상품 리스트를 조회합니다.
  */
 export const getThemeProducts = async (
-  themeId: string | number
+  themeId: string | number,
+  cursor?: number
 ): Promise<ThemeProductsResponse> => {
+  const params = cursor !== undefined ? { cursor } : undefined;
   const response = await apiClient.get<{ data: ThemeProductsResponse }>(
-    `/api/themes/${themeId}/products`
+    `/api/themes/${themeId}/products`,
+    { params }
   );
   return response.data.data;
 };

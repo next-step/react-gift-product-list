@@ -8,6 +8,7 @@ import ProductGrid from '@/components/ranking/ProductGrid';
 import { getThemeProducts } from '@/api/themes';
 import type { Product } from '@/api/types';
 import type { ThemeProductsResponse } from '@/api/themes';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 const HeroSection = styled.div<{ bg: string }>`
   background: ${(props) => props.bg};
@@ -43,6 +44,9 @@ const ThemeProductListPage: React.FC = () => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [cursor, setCursor] = useState<number | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,6 +57,8 @@ const ThemeProductListPage: React.FC = () => {
       .then(([themeData, productData]: [Theme, ThemeProductsResponse]) => {
         setTheme(themeData);
         setProducts(productData.list);
+        setCursor(productData.cursor);
+        setHasMore(productData.hasMoreList);
         setError(null);
       })
       .catch((err) => {
@@ -73,6 +79,28 @@ const ThemeProductListPage: React.FC = () => {
     );
   };
 
+  // 추가 상품 로드 함수
+  const fetchMoreProducts = async () => {
+    if (!themeId || !hasMore || isFetchingMore) return;
+    setIsFetchingMore(true);
+    try {
+      const data = await getThemeProducts(themeId, cursor ?? undefined);
+      setProducts((prev) => [...prev, ...data.list]);
+      setCursor(data.cursor);
+      setHasMore(data.hasMoreList);
+    } catch (err) {
+      // 에러 무시(필요시 처리)
+    } finally {
+      setIsFetchingMore(false);
+    }
+  };
+
+  const observerRef = useInfiniteScroll({
+    onIntersect: fetchMoreProducts,
+    enabled: hasMore && !isFetchingMore && !loading,
+    rootMargin: '100px',
+  });
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
   if (!theme) return null;
@@ -91,6 +119,18 @@ const ThemeProductListPage: React.FC = () => {
         showMore={true}
         onProductClick={handleProductClick}
       />
+      {/* 무한 스크롤 관찰용 div */}
+      <div ref={observerRef} style={{ height: 1 }} />
+      {isFetchingMore && (
+        <div style={{ textAlign: 'center', padding: 16 }}>
+          상품을 불러오는 중...
+        </div>
+      )}
+      {!hasMore && !loading && products.length > 0 && (
+        <div style={{ textAlign: 'center', color: '#aaa', padding: 16 }}>
+          마지막 상품입니다
+        </div>
+      )}
     </div>
   );
 };
