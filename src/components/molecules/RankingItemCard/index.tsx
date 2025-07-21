@@ -6,7 +6,7 @@ interface RankingItemCardProps {
   title: string;
   subtitle?: string;
   price?: number;
-  rank: number;
+  rank?: number;
   onClick?: ClickHandler;
 }
 
@@ -15,7 +15,7 @@ const RankingItemCard = (props: RankingItemCardProps) => {
   
   return (
     <S.Card onClick={onClick}>
-      <S.RankBadge rank={rank}>{rank}</S.RankBadge>
+      {rank && <S.RankBadge rank={rank}>{rank}</S.RankBadge>}
       <S.Image src={imageUrl} alt={title} />
       <S.Subtitle>{subtitle}</S.Subtitle>
       <S.ProductName>{title}</S.ProductName>
