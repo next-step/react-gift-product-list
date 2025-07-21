@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { type Product, fetchThemeProducts } from "@/api/theme";
+import { fetchThemeProducts } from "@/api/theme";
 import { ERROR_MESSAGES } from "@/constants/messages";
 import { PAGE_SIZE } from "@/constants/pagination";
+import type { Product } from "@/types/product";
 
 export const useThemeProducts = (themeId: number | undefined) => {
   const [products, setProducts] = useState<Product[]>([]);

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { type Product } from "@/api/theme";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import type { Product } from "@/types/product";
 
 type Props = {
   product: Product;

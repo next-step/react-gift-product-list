@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchProductById } from "@/api/product";
-import type { Product } from "@/api/product";
 import { ERROR_MESSAGES } from "@/constants/messages";
+import type { Product } from "@/types/product";
 
 export const useProductDetail = (productId: number | undefined) => {
   const [product, setProduct] = useState<Product | null>(null);

@@ -1,5 +1,6 @@
 import apiClient from "@/api/apiClient";
 import { PAGE_SIZE } from "@/constants/pagination";
+import type { Product } from "@/types/product";
 
 export type Theme = {
   themeId: number;
@@ -13,22 +14,6 @@ export type ThemeInfo = {
   title: string;
   description: string;
   backgroundColor: string;
-};
-
-export type Product = {
-  id: number;
-  name: string;
-  price: {
-    basicPrice: number;
-    sellingPrice: number;
-    discountRate: number;
-  };
-  imageURL: string;
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
 };
 
 export type ThemeProductResponse = {
