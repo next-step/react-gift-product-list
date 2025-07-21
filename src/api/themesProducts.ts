@@ -17,7 +17,7 @@ type FetchThemesProductsResult = {
 export const fetchThemesProducts = async ({
   themeId,
   cursor = 0,
-  limit = 20,
+  limit = 10,
 }: fetchThemesProductsParams): Promise<FetchThemesProductsResult> => {
   return await axiosInstance.get(API_PATHS.THEMES_PRODUCTS(themeId), {
     params: {
