@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import { GiftCardSkeleton } from './GiftCardSkeleton';
 
-
 const grid = css`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
