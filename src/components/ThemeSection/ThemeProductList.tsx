@@ -92,7 +92,7 @@ const ThemeProductList = () => {
     return <EmptyText>상품이 없습니다.</EmptyText>;
 
   return (
-    <>
+    <Wrapper>
       <CardGrid>
         {products.map((product, index) => (
           <ProductCard
@@ -105,11 +105,15 @@ const ThemeProductList = () => {
       </CardGrid>
       {pending && <LoadingText>상품을 불러오는 중...</LoadingText>}
       {hasMore && <ObserverTarget ref={observerRef} />}
-    </>
+    </Wrapper>
   );
 };
 
 export default ThemeProductList;
+
+const Wrapper = styled.div`
+  padding: ${({ theme }) => theme.spacing[4]};
+`;
 
 const LoadingText = styled.p`
   padding: ${({ theme }) => theme.spacing[4]};

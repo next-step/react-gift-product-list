@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Banner from '@/components/common/Banner';
 import styled from '@emotion/styled';
+
 import { ROUTES } from '@/constants/routes';
 import { getThemeInfoUrl } from '@/constants/api';
 
@@ -19,18 +19,17 @@ const ThemeHero = () => {
   const navigate = useNavigate();
   const [themeInfo, setThemeInfo] = useState<ThemeInfo | null>(null);
   const [error, setError] = useState(false);
-  if (!themeId) return;
 
   useEffect(() => {
     const fetchThemeInfo = async () => {
       try {
         const res = await axios.get<{ data: ThemeInfo }>(
-          getThemeInfoUrl(themeId)
+          getThemeInfoUrl(themeId!)
         );
         setThemeInfo(res.data.data);
       } catch (err: any) {
         if (err.response?.status === 404) {
-          navigate(ROUTES.HOME);
+          navigate(ROUTES.NOT_FOUND);
         } else {
           setError(true);
         }
@@ -44,23 +43,38 @@ const ThemeHero = () => {
   if (!themeInfo) return <LoadingText>불러오는 중...</LoadingText>;
 
   return (
-    <Banner backgroundColor={themeInfo.backgroundColor}>
-      <TopText>{themeInfo.title}</TopText>
-      <BottomText>{themeInfo.description}</BottomText>
-    </Banner>
+    <Section style={{ backgroundColor: themeInfo.backgroundColor }}>
+      <TagText>{themeInfo.name}</TagText>
+      <Title>{themeInfo.title}</Title>
+      {themeInfo.description && (
+        <Description>{themeInfo.description}</Description>
+      )}
+    </Section>
   );
 };
 
 export default ThemeHero;
 
-const TopText = styled.p`
-  ${({ theme }) => theme.typography.label.label2Regular};
-  color: ${({ theme }) => theme.color.gray[700]};
+const Section = styled.section`
+  padding: ${({ theme }) => theme.spacing[6]} ${({ theme }) => theme.spacing[4]};
+  margin-bottom: ${({ theme }) => theme.spacing[6]};
 `;
 
-const BottomText = styled.p`
-  ${({ theme }) => theme.typography.label.label1Bold};
-  color: ${({ theme }) => theme.color.semantic.text.default};
+const TagText = styled.p`
+  ${({ theme }) => theme.typography.subtitle.subtitle2Bold};
+  color: ${({ theme }) => theme.color.gray[0]};
+  margin-bottom: ${({ theme }) => theme.spacing[2]};
+`;
+
+const Title = styled.h5`
+  ${({ theme }) => theme.typography.title.title1Bold};
+  color: ${({ theme }) => theme.color.gray[0]};
+`;
+
+const Description = styled.p`
+  ${({ theme }) => theme.typography.body.body1Regular};
+  color: ${({ theme }) => theme.color.gray[0]};
+  margin-top: ${({ theme }) => theme.spacing[2]};
 `;
 
 const LoadingText = styled.p`
