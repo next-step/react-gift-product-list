@@ -39,24 +39,23 @@ const Theme = () => {
     }
   }, [themeId, navigate]);
 
-const loadProducts = useCallback(
-  async (cursor: number) => {
-    try {
-      const res = await fetchThemeProducts(Number(themeId), cursor);
-      setProducts((prev) => {
-        const ids = new Set(prev.map((p) => p.id));
-        const newItems = res.list.filter((item:ThemeProduct) => !ids.has(item.id));
-        return [...prev, ...newItems];
-      });
-      setCursor(res.cursor);
-      setHasMore(res.hasMoreList);
-    } catch (e) {
-      console.error('상품 조회 실패', e);
-    }
-  },
-  [themeId]
-);
-
+  const loadProducts = useCallback(
+    async (cursor: number) => {
+      try {
+        const res = await fetchThemeProducts(Number(themeId), cursor);
+        setProducts((prev) => {
+          const ids = new Set(prev.map((p) => p.id));
+          const newItems = res.list.filter((item: ThemeProduct) => !ids.has(item.id));
+          return [...prev, ...newItems];
+        });
+        setCursor(res.cursor);
+        setHasMore(res.hasMoreList);
+      } catch (e) {
+        console.error('상품 조회 실패', e);
+      }
+    },
+    [themeId]
+  );
 
   useEffect(() => {
     loadThemeInfo();
@@ -98,16 +97,22 @@ const loadProducts = useCallback(
         <Description>{themeInfo.description}</Description>
       </HeroSection>
 
-      <ProductGrid>
-        {products.map((product, index) => {
-          const isLast = index === products.length - 1;
-          return (
-            <div key={product.id} ref={isLast ? lastItemRef : null}>
-              <ThemeProductCard product={product} />
-            </div>
-          );
-        })}
-      </ProductGrid>
+      {products.length === 0 ? (
+        <p style={{ textAlign: 'center', padding: '40px', fontSize: '16px' }}>
+          상품이 없습니다.
+        </p>
+      ) : (
+        <ProductGrid>
+          {products.map((product, index) => {
+            const isLast = index === products.length - 1;
+            return (
+              <div key={`${product.id}-${index}`} ref={isLast ? lastItemRef : null}>
+                <ThemeProductCard product={product} />
+              </div>
+            );
+          })}
+        </ProductGrid>
+      )}
     </Layout>
   );
 };

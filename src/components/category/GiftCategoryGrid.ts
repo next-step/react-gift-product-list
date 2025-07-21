@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 28px 24px;
   margin-bottom: 10px;
 `;
