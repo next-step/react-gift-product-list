@@ -8,9 +8,10 @@ import { MOCK_CARDFORM_LIST } from '@/components/OrderForm/mock';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ROUTE_PATH } from '@/routes/Routes';
 import { useForm, FormProvider, Controller, useWatch } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getProductSummary } from '@/Api/api';
 import { toast } from 'react-toastify';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const Wrapper = styled.section(({ theme }) => ({
   width: '100%',
@@ -37,6 +38,8 @@ export interface OrderFormValues {
 }
 
 const OrderForm = () => {
+  const auth = useContext(AuthContext);
+  const user = auth?.user ?? null;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const productId = Number(searchParams.get('productId'));
@@ -75,11 +78,19 @@ const OrderForm = () => {
   const methods = useForm<OrderFormValues>({
     defaultValues: {
       message: MOCK_CARDFORM_LIST[0].defaultTextMessage || '',
-      sender: '',
+      sender: user?.name ?? '',
       recipients: [],
     },
     mode: 'onBlur',
   });
+
+  const { setValue } = methods;
+
+  useEffect(() => {
+    if (user?.name) {
+      setValue('sender', user.name, { shouldDirty: false });
+    }
+  }, [user, setValue]);
 
   const {
     handleSubmit,
