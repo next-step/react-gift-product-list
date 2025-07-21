@@ -15,7 +15,7 @@ const RankingItemCard = (props: RankingItemCardProps) => {
   
   return (
     <S.Card onClick={onClick}>
-      {rank && <S.RankBadge rank={rank}>{rank}</S.RankBadge>}
+      {rank != null && <S.RankBadge rank={rank}>{rank}</S.RankBadge>}
       <S.Image src={imageUrl} alt={title} />
       <S.Subtitle>{subtitle}</S.Subtitle>
       <S.ProductName>{title}</S.ProductName>
