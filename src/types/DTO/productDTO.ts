@@ -37,7 +37,6 @@ export type RankItemType = {
 export interface ProductDetailResponseDto {
   data: RankItemType[];
 }
-
 export interface ProductSummaryRequestDTO {
   productId: number;
 }
