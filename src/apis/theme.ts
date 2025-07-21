@@ -2,6 +2,8 @@ import axiosInstance from "./axiosInstance";
 
 export type ThemeID = string;
 
+export const DEFAULT_THEME_PRODUCT_LIMIT = 12;
+
 export interface ThemeInfo {
     themeId: ThemeID;
     name: string;
@@ -40,7 +42,7 @@ export interface GetThemeProductsResponse {
 export async function getThemeProducts(
     themeId: ThemeID,
     cursor = 0,
-    limit = 10
+    limit = DEFAULT_THEME_PRODUCT_LIMIT
 ): Promise<GetThemeProductsResponse> {
     const res = await axiosInstance.get<{ data: GetThemeProductsResponse }>(
         `/api/themes/${themeId}/products`,

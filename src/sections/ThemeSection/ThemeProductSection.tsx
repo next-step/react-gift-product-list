@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
-import { getThemeProducts, type ThemeProduct } from "@/apis/theme";
+import { getThemeProducts, type ThemeProduct, DEFAULT_THEME_PRODUCT_LIMIT } from "@/apis/theme";
 import AsyncBoundary from "@/components/AsyncBoundary";
 import { useNavigate } from "react-router";
 import { useCallback } from "react";
@@ -68,7 +68,7 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
         setLoading(true);
         setError(false);
         try {
-            const res = await getThemeProducts(themeId, 0, 10);
+            const res = await getThemeProducts(themeId, 0, DEFAULT_THEME_PRODUCT_LIMIT);
             setProducts(res.list);
             setCursor(res.cursor);
             setHasMore(res.hasMoreList);
@@ -84,7 +84,7 @@ export default function ThemeProductSection({ themeId }: ThemeProductSectionProp
 
         setLoading(true);
         try {
-            const res = await getThemeProducts(themeId, cursor, 10);
+            const res = await getThemeProducts(themeId, cursor, DEFAULT_THEME_PRODUCT_LIMIT);
             setProducts((prev) => {
                 const merged = [...prev, ...res.list];
                 const uniqueMap = new Map(merged.map((item) => [item.id, item]));
