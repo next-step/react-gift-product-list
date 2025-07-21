@@ -87,7 +87,7 @@ const ThemeProductPage = () => {
     <PageContainer>
       <Header />
       <ThemeHeroSection theme={theme} />
-      <ProductList products={products} />
+      <ProductList products={products} showRank={false} />
       {loading && <div>로딩중...</div>}
       <div ref={observerRef} style={{ height: 1 }} />
       {!hasMore && products.length === 0 && <div>상품이 없습니다.</div>}

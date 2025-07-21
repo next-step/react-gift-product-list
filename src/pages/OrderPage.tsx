@@ -253,11 +253,11 @@ function OrderPage() {
     const orderData = {
       productId: product.id,
       message,
-      messageCardId: String(cards[selectedIdx].id), // string으로 변환
+      messageCardId: String(cards[selectedIdx].id),
       ordererName: sender as string,
       receivers: receivers.map((receiver) => ({
         name: receiver.name,
-        phoneNumber: receiver.phone, // 명세에 맞게 phoneNumber로 전송
+        phoneNumber: receiver.phone,
         quantity: receiver.quantity,
       })),
     };

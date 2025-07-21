@@ -54,6 +54,7 @@ const DEFAULT_VISIBLE = 6; // 기본으로 보여줄 상품 개수
 
 interface ProductListProps {
   products?: Product[];
+  showRank?: boolean;
 }
 
 const RankBadge = styled.div<{ rank: number }>`
@@ -80,7 +81,10 @@ const RankBadge = styled.div<{ rank: number }>`
   z-index: 2;
 `;
 
-function ProductList({ products: propProducts }: ProductListProps) {
+function ProductList({
+  products: propProducts,
+  showRank = true,
+}: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,7 +150,7 @@ function ProductList({ products: propProducts }: ProductListProps) {
                 onClick={() => handleItemClick(p.id)}
                 style={{ cursor: 'pointer' }}
               >
-                <RankBadge rank={idx + 1}>{idx + 1}</RankBadge>
+                {showRank && <RankBadge rank={idx + 1}>{idx + 1}</RankBadge>}
                 <img
                   src={p.imageURL}
                   alt={p.name}
