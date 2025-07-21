@@ -1,4 +1,4 @@
-import fetchOrder from '@/api/order/fetchOrder';
+import { requests } from '@/api/requests';
 import { ROUTES } from '@/routes/routes';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -18,7 +18,7 @@ const postOrderInfo = async ({
   token,
 }: postOrderInfoProps): Promise<boolean> => {
   try {
-    const data = await fetchOrder({ orderData, id, token });
+    const data = await requests.fetchOrder({ orderData, id, token });
     console.log(data);
     return true;
   } catch (error: unknown) {

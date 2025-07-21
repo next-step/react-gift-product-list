@@ -1,4 +1,4 @@
-import fetchSummary from '@/api/products/productId/fetchSummary';
+import { requests } from '@/api/requests';
 import { ROUTES } from '@/routes/routes';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ const useRanking = (id: string) => {
   useEffect(() => {
     const dataFetch = async () => {
       try {
-        const data = await fetchSummary(id);
+        const data = await requests.fetchSummary(id);
         setProductSummaryData(data);
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {

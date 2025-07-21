@@ -1,4 +1,4 @@
-import fetchTheme from '@/api/themes/fetchTheme';
+import { requests } from '@/api/requests';
 import { useEffect, useState } from 'react';
 
 export interface ThemeInfo {
@@ -15,7 +15,7 @@ const useTheme = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchTheme();
+        const data = await requests.fetchTheme();
         setThemes(data);
       } catch (error) {
         setError(true);

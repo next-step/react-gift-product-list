@@ -1,12 +1,17 @@
-import fetchUserInfos from '@/api/login/fetchUserInfos';
+import { requests } from '@/api/requests';
 import { useUserInfo } from '@/contexts/UserInfoContext';
-// import { useUserInfo } from '@/contexts/UserInfoContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 export interface UserInfoProps {
   username: { value: string };
   password: { value: string };
+}
+
+export interface UserInfoData {
+  name: string;
+  email: string;
+  authToken: string;
 }
 
 const useLogin = () => {
@@ -16,7 +21,7 @@ const useLogin = () => {
 
   const postUserInfo = async ({ username, password }: UserInfoProps): Promise<boolean> => {
     try {
-      const data = await fetchUserInfos({ username, password });
+      const data = await requests.fetchUserInfos({ username, password });
       const { name, email, authToken } = data;
       login(name, email, authToken);
       toast(email);

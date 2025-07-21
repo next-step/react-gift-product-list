@@ -1,4 +1,4 @@
-import fetchRanking from '@/api/products/fetchRanking';
+import { requests } from '@/api/requests';
 import type { FilterId, GenerationId } from '@/data/categoryDatas';
 import { useEffect, useState } from 'react';
 
@@ -14,7 +14,7 @@ interface PriceInfo {
   discountRate: number;
 }
 
-interface GiftRankingItem {
+export interface GiftRankingItem {
   id: number;
   name: string;
   price: PriceInfo;
@@ -34,7 +34,7 @@ const useRanking = ({ activeGenerationButton, activeFilterButton }: RankingApiPr
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchRanking({ activeGenerationButton, activeFilterButton });
+        const data = await requests.fetchRanking({ activeGenerationButton, activeFilterButton });
         setRankingDatas(data);
       } catch (error) {
         console.error(error);
