@@ -78,9 +78,11 @@ const ThemesProducts = ({ id }: ThemesProductsProps) => {
         </ProductsGrid>
       )}
       {isLoading && <LoadingSpinner height="40px" />}
-      {items?.length === 0 && !isLoading && !themeProductsData && (
-        <BoxMessage message="상품이 없습니다." height="240px" />
-      )}
+      {items?.length === 0 &&
+        !isLoading &&
+        themeProductsData?.list.length === 0 && (
+          <BoxMessage message="상품이 없습니다." height="240px" />
+        )}
       <div ref={loader} style={{ height: "20px" }} />
     </ProductsSection>
   );
