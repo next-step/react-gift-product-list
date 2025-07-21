@@ -44,3 +44,4 @@ export { default as ReceiverModal } from './organisms/ReceiverModal';
 export { default as ReceiverSection } from './organisms/ReceiverSection';
 export { default as SenderSection } from './organisms/SenderSection';
 export { default as ThemeHeroSection } from './organisms/ThemeHeroSection';
+export { default as ThemeProductSection } from './organisms/ThemeProductSection';

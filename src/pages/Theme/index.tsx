@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { ThemeHeroSection } from '@/components';
+import { ThemeHeroSection, ThemeProductSection } from '@/components';
 import * as S from './styles';
 
 const Theme = () => {
@@ -9,6 +9,7 @@ const Theme = () => {
   return (
     <S.Container>
       <ThemeHeroSection themeId={numericThemeId} />
+      {numericThemeId && <ThemeProductSection themeId={numericThemeId} />}
     </S.Container>
   );
 };
