@@ -36,6 +36,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(userData);
     setStorageItem(USER_INFO_KEY, userData);
     setStorageItem(AUTH_TOKEN_KEY, token);
+
+    console.log('User Info (name, email):', getStorageItem(USER_INFO_KEY));
+    // authToken은 JSON이 아니므로 sessionStorage에서 직접 가져옵니다.
+    console.log('Auth Token:', sessionStorage.getItem(AUTH_TOKEN_KEY));
   };
 
   const logout = () => {
