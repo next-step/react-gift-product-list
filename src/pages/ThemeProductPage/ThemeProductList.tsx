@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import ProductCard from '../Home/components/Shared/RankingCard';
 import { css } from '@emotion/react';
 import theme from '../../styles/theme';
+import { fetchThemeProducts } from '../../apis/product';
 
 type ProductItem = {
   id: number;
@@ -15,6 +15,7 @@ type ProductItem = {
 };
 
 const LIMIT = 10;
+
 const ThemeProductList = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
@@ -38,29 +39,14 @@ const ThemeProductList = () => {
 
     setLoading(true);
     try {
-      const res = await axios.get(`/api/themes/${numericThemeId}/products`, {
-        params: { cursor, limit: LIMIT },
-      });
-      console.log('API response:', res.data);
-
-      const { list, cursor: nextCursor, hasMoreList } = res.data.data;
-
-      if (!list || !Array.isArray(list)) {
-        console.error('list 데이터가 없거나 배열이 아님');
-        setHasMore(false);
-        return;
-      }
-
-      const parsedProducts = list.map((item: any) => ({
-        id: item.id,
-        imageUrl: item.imageURL,
-        name: item.name,
-        price: item.price.sellingPrice,
-        brand: item.brandInfo.name,
-      }));
+      const {
+        products: newProducts,
+        nextCursor,
+        hasMoreList,
+      } = await fetchThemeProducts(numericThemeId, cursor, LIMIT);
 
       setProducts((prev) => {
-        const combined = [...prev, ...parsedProducts];
+        const combined = [...prev, ...newProducts];
         const unique = combined.filter(
           (product, index, self) =>
             index === self.findIndex((p) => p.id === product.id)

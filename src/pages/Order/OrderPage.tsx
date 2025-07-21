@@ -29,7 +29,10 @@ import { cardTemplates } from '../../data/cardTemplates';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserManagement } from '../Login/contexts/UserManagement';
 
-import { fetchProductSummary, type ProductSummary } from '../../apis/products';
+import {
+  fetchProductSummary,
+  type ProductSummary,
+} from '../../apis/product_summary';
 import { postOrder } from '../../apis/orders';
 import axios from 'axios';
 
