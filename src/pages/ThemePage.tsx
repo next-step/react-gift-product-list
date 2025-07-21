@@ -1,25 +1,19 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getThemeInfo, getThemeProduct } from "@/services/theme";
+import { getThemeProduct } from "@/services/theme";
 import styled from "@emotion/styled";
 import axios from "axios";
 import { showErrorToast } from "@/styles/toast";
 import Spacing from "@/components/Spacing";
 import type { ProductInfo } from "@/types/product";
-
-type ThemeInfo = {
-  themeId: number;
-  name: string;
-  image: string;
-  title: string;
-  description: string;
-  backgroundColor: string;
-};
+import { getUserFromSession } from "@/utils/getUserFromStorage";
+import { PATH } from "@/paths";
+import { useFetchTheme } from "./useFetchTheme";
 
 export default function ThemePage() {
   const { themeId } = useParams();
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<ThemeInfo | null>(null);
+  const { theme, loading: themeLoading } = useFetchTheme(themeId);
   const [products, setProducts] = useState<ProductInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true); // 더 불러 올 게 있는지
@@ -27,10 +21,10 @@ export default function ThemePage() {
   const loader = useRef<HTMLDivElement | null>(null); // 마지막 감지
 
   const goToOrder = (itemId: number) => {
-    const userInfo = sessionStorage.getItem("userInfo");
-    if (userInfo) navigate(`/order/${itemId}`);
+    const userInfo = getUserFromSession();
+    if (userInfo) navigate(PATH.toORDER(itemId));
     else
-      navigate("/login", {
+      navigate(PATH.LOGIN, {
         state: { from: `/order/${itemId}` },
       });
   };
@@ -54,32 +48,17 @@ export default function ThemePage() {
         setLoading(false);
       }
     },
-    [themeId, loading, hasMore],
+    [themeId, hasMore],
   );
 
-  // 테마 정보 + 첫 페이지 상품
+  // 첫 페이지 상품만 초기 fetch
   useEffect(() => {
-    const fetchTheme = async () => {
-      setLoading(true);
-      try {
-        if (!themeId) return;
-        const data = await getThemeInfo(themeId);
-        setTheme(data);
-        setProducts([]);
-        setHasMore(true);
-        pageRef.current = 1;
-        await fetchProducts(1);
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 404) {
-          showErrorToast("존재하지 않는 테마입니다.");
-          navigate("/", { replace: true });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTheme();
-  }, [themeId, navigate]);
+    if (!themeId || themeLoading) return;
+    setProducts([]);
+    setHasMore(true);
+    pageRef.current = 1;
+    fetchProducts(1);
+  }, [themeId, themeLoading, fetchProducts]);
 
   // Intersection Observer로 무한 스크롤
   useEffect(() => {
