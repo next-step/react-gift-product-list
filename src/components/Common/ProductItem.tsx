@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import type { BasicGiftProduct } from "@/types/gift";
 
-type RankingItemProps = BasicGiftProduct & {
-  rank: number;
+type ProductItemProps = BasicGiftProduct & {
+  rank?: number;
   highlightCondition?: (rank: number) => boolean;
   onClick?: () => void;
 };
 
-const RankingItem = ({
+const ProductItem = ({
   name,
   imageURL,
   price,
@@ -15,12 +15,14 @@ const RankingItem = ({
   rank,
   highlightCondition = (rank) => rank <= 3,
   onClick,
-}: RankingItemProps) => {
+}: ProductItemProps) => {
   return (
     <ItemWrapper onClick={onClick}>
       <ImageWrapper>
         <ProductImage src={imageURL} alt={name} />
-        <RankBadge isTop={highlightCondition(rank)}>{rank}</RankBadge>
+        {rank !== undefined && (
+          <RankBadge isTop={highlightCondition(rank)}>{rank}</RankBadge>
+        )}
       </ImageWrapper>
       <ItemBrand>{brandInfo.name}</ItemBrand>
       <ItemName>{name}</ItemName>
@@ -29,7 +31,7 @@ const RankingItem = ({
   );
 };
 
-export default RankingItem;
+export default ProductItem;
 
 const ItemWrapper = styled.div`
   display: flex;
@@ -92,8 +94,8 @@ const ItemName = styled.p`
     line-height: ${theme.font.body2Regular.lineHeight};
   `}
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const ItemPrice = styled.p`

@@ -1,6 +1,6 @@
 import TargetCategory from "./TargetCategory";
 import RankingCategory from "./RankingCategory";
-import RankingItem from "./RankingItem";
+import ProductItem from "@/components/Common/ProductItem";
 import styled from "@emotion/styled";
 import { useCallback, useState } from "react";
 import {
@@ -86,7 +86,7 @@ const RankingSection = () => {
         <>
           <RankingGrid>
             {data?.slice(0, RANK_COUNT).map((item, index) => (
-              <RankingItem
+              <ProductItem
                 key={item.id}
                 rank={index + 1}
                 id={item.id}

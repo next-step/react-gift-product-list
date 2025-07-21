@@ -5,6 +5,7 @@ import NotFound from "@/Pages/NotFound";
 import MyPage from "@/Pages/MyPage";
 import LoginProtectedRoute from "@/shared/LoginProtectedRoute";
 import Order from "@/Pages/Order";
+import ThemeProductList from "@/Pages/ThemeProductList";
 
 const Router = () => {
   return (
@@ -27,6 +28,7 @@ const Router = () => {
           </LoginProtectedRoute>
         }
       />
+      <Route path="/themes/:themeId" element={<ThemeProductList />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

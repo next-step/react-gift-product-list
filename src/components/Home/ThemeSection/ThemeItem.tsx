@@ -1,9 +1,12 @@
 import styled from "@emotion/styled";
 import type { ThemeItemType } from "@/types/theme";
 
-const ThemeItem = ({ name, image }: ThemeItemType) => {
+type ThemeItemProps = ThemeItemType & {
+  onClick?: () => void;
+};
+const ThemeItem = ({ name, image, onClick }: ThemeItemProps) => {
   return (
-    <ItemWrapper>
+    <ItemWrapper onClick={onClick}>
       <ItemImage src={image} alt={name} />
       <ItemLabel>{name}</ItemLabel>
     </ItemWrapper>
