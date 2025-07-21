@@ -42,15 +42,19 @@ const ThemeHeroSection = ({ themeId }: ThemeHeroSectionProps) => {
 
   return (
     <>
-      {fetchState.isLoading ? (
+      {fetchState.isLoading && (
         <S.ThemeHeroContainer>
           <Loading height="80px" message="테마 정보를 불러오는 중..." />
         </S.ThemeHeroContainer>
-      ) : fetchState.isError || !fetchState.data ? (
+      )}
+
+      {fetchState.isError && (
         <S.ThemeHeroContainer>
           <ErrorMessage height="80px" />
         </S.ThemeHeroContainer>
-      ) : (
+      )}
+
+      {!fetchState.isLoading && !fetchState.isError && fetchState.data && (
         <S.ThemeHeroContainer backgroundColor={fetchState.data.backgroundColor}>    
           <S.ThemeName>{fetchState.data.name}</S.ThemeName>
           <S.ThemeTitle>{fetchState.data.title}</S.ThemeTitle>
