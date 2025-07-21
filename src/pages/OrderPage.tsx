@@ -1,32 +1,34 @@
 import { FormProvider, useForm } from "react-hook-form"
-import { useParams } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
 import PresentGiverForm from "@/components/PresentForm/PresentGiverForm"
 import CardThumbnail from "./CardThumbnail"
 import OrderLayout from "@/components/OrderLayout"
 import ReceiverForm from "@/components/PresentForm/ReceiverForm"
 import ProductInfoBar from "./ProductInfo"
 import MoreButton from "@/components/MoreButton"
-import mock_present from "@/mock_present"
+import Loading from "@/components/PresentTheme/Loading"
+import { toast } from "react-toastify"
+import useProductInfo from "@/hooks/useProductInfo"
 
 export interface Receiver {
   name: string
   phone: string
   quantity: string
 }
-
 export interface FormData {
   senderName: string
   receivers: Receiver[]
   message?: string
 }
 export type FormField = keyof FormData
-const OrderPage = () => {
-  const [message, setMessage] = useState("")
-  const { id } = useParams<{ id: string }>()
-  const product =
-    mock_present.find((item) => item.id === Number(id)) || mock_present[0]
 
+const OrderPage = () => {
+  const { productId } = useParams<{ productId: string }>()
+  const navigate = useNavigate()
+  const [message, setMessage] = useState("")
+
+  const { product, loading, error } = useProductInfo(productId)
   const methods = useForm<FormData>({
     mode: "onChange",
     defaultValues: {
@@ -35,18 +37,23 @@ const OrderPage = () => {
       message: "",
     },
   })
-
-  const { handleSubmit, reset, watch: watchReceivers, clearErrors } = methods
   useEffect(() => {
-    clearErrors()
-  }, [id, clearErrors])
+    if (error) {
+      toast.error("상품 정보를 불러오지 못했습니다.")
+      navigate("/", { replace: true })
+    }
+  }, [error, navigate])
+  if (loading) return <Loading />
+  if (!product) return null
+  console.log(product)
+  const { handleSubmit, reset, watch } = methods
 
-  const receivers = watchReceivers("receivers")
+  const receivers = watch("receivers")
   const totalQuantity = receivers.reduce(
     (sum, r) => sum + Number(r.quantity || 0),
     0
   )
-  const totalPrice = product.price.sellingPrice * (totalQuantity || 1)
+  const totalPrice = totalQuantity * product.price
 
   const onSubmit = (data: FormData) => {
     alert(
@@ -58,7 +65,6 @@ const OrderPage = () => {
     )
     reset()
   }
-
   return (
     <FormProvider {...methods}>
       <OrderLayout
@@ -68,16 +74,17 @@ const OrderPage = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <CardThumbnail message={message} setMessage={setMessage} />
-        <PresentGiverForm />
 
+        <PresentGiverForm />
         <ReceiverForm />
 
         <ProductInfoBar
           image={product.imageURL}
           name={product.name}
-          brand={product.brandInfo.name}
-          price={product.price.sellingPrice}
+          brand={product.brandName}
+          price={product.price}
         />
+
         <MoreButton
           type="submit"
           background="kakaoYellow"
