@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   StyledImage,
   StyledPresentThemeDiv,
@@ -6,46 +5,11 @@ import {
   StyledPresentThemeItemP,
 } from '@src/components/Home/PresentTheme/Item/StyledPresnetThemeItem';
 import { StyledPresentThemeCommonP } from '@src/components/Home/PresentTheme/StyledPresentThemeCommonP';
-import { ApiClient } from '@src/api/FetchData';
+import { usePresentTheme } from '../../../../hooks/usePresentTheme';
+import type { Theme } from './ThemeType';
 
-interface Theme {
-  themeId: number;
-  name: string;
-  image: string;
-}
-
-interface Themes {
-  data: Theme[];
-}
 const PresentThemeItem = () => {
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [isError, setError] = useState<boolean>(false);
-  const [themes, setThemes] = useState<Themes>({
-    data: [
-      {
-        themeId: 0,
-        name: '',
-        image: 'none',
-      },
-    ],
-  });
-
-  useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        // const response = await axios.get(process.env.VITE_API_BASE_URL + '/themes');
-        const data = await ApiClient('GET', 'themes', null, '');
-        setThemes(data);
-        setError(false);
-      } catch (error) {
-        console.error('Error fetching Theme data:', error);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchThemes();
-  }, [isLoading, isError]);
+  const { themes, isLoading, isError } = usePresentTheme();
 
   if (isLoading) {
     return <div>Loading</div>;

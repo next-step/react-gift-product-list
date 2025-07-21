@@ -16,3 +16,11 @@ export interface Good {
 export interface Goods {
   data: Good[];
 }
+
+export interface GoodSummary {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+}

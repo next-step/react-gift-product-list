@@ -1,3 +1,4 @@
+import { SESSION_KEY_NAME } from '@src/assets/sessionKeyName';
 import {
   StyledSelectFriendBtn,
   StyledSelectFriendBtnPlus,
@@ -8,7 +9,7 @@ import {
 const SelectFriendContainer = () => {
   const makeSelectFrinedMessage = () => {
     const msg = '선물할 친구를 선택해 주세요';
-    const username = sessionStorage.getItem('username');
+    const username = sessionStorage.getItem(SESSION_KEY_NAME.username);
     if (username) {
       return username + '님! ' + msg;
     } else {

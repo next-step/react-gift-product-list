@@ -5,7 +5,6 @@ export const StyledLoginKakoLogo = styled.div`
   margin: ${({ theme }) => theme.spacing.spacing11};
   font-size: 30px;
 `;
-
 export const StyledLoginComponentDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -20,11 +19,6 @@ export const StyledLoginComponentDiv = styled.div`
     width: 100%;
     margin-bottom: ${({ theme }) => theme.spacing.spacing3};
   }
-`;
-export const StyledLoginComponentContainerDiv = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 export const StyledLoginButton = styled.button`
   margin-top: ${({ theme }) => theme.spacing.spacing12};

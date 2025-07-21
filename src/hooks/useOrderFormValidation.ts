@@ -21,7 +21,6 @@ export const useCommonOrderForm = (): BaiscOrderFormHook => {
     sendName: '',
   });
 
-  // 에러 메시지 배열 인덱스: 0: sendName, 1: receiveName, 2: receiveTel, 3: count
   const [commonErrorMsgs, setCommonErrorMsgs] = useState<CommonErrorMsgs>({});
 
   const handleCommonChange = useCallback(

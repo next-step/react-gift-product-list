@@ -1,34 +1,34 @@
 import { apiClient } from '@src/api/FetchData';
-import type { HttpTypes } from '@src/api/HttpType';
-import { BASIC_ENDPOINT } from '@src/assets/endpoints';
-import { PARAMS } from '@src/assets/params';
-import type { Goods } from '@src/types/Goods';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import type { Themes } from '../components/Home/PresentTheme/Item/ThemeType';
+import { BASIC_ENDPOINT } from '@src/assets/endpoints';
+import type { HttpTypes } from '@src/api/HttpType';
 
-export const useRankingItem = () => {
-  const { search } = useLocation();
-  const [goods, setGoods] = useState<Goods | null>(null);
+export const usePresentTheme = () => {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isError, setError] = useState<boolean>(false);
+  const [themes, setThemes] = useState<Themes>({
+    data: [
+      {
+        themeId: 0,
+        name: '',
+        image: 'none',
+      },
+    ],
+  });
 
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    const rankType = params.get(PARAMS.rankType);
-    const targetType = params.get(PARAMS.targetType);
-    const typeUrls = `?targetType=${targetType}&rankType=${rankType}`;
-
     const fetchProductRanking = async () => {
       try {
         const apiRequestData = {
           methods: 'GET' as HttpTypes,
-          requestName: BASIC_ENDPOINT.ranking,
+          requestName: BASIC_ENDPOINT.theme,
           body: {},
-          params: typeUrls,
+          params: '',
           headers: null,
         };
         const data = await apiClient(apiRequestData);
-        setGoods(data);
+        setThemes(data);
         setError(false);
       } catch (error) {
         console.error('Error fetching Product Ranking data:', error);
@@ -38,10 +38,10 @@ export const useRankingItem = () => {
       }
     };
     fetchProductRanking();
-  }, [search]);
+  }, []);
 
   return {
-    goods,
+    themes,
     isLoading,
     isError,
   };

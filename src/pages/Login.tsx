@@ -1,20 +1,21 @@
 import LoginFormContainer from '@components/Login/LoginFormContainer';
 import NavigationBar from '@components/Common/NavigationBar';
-import { useNavigate } from 'react-router-dom';
-import { URLS } from '@assets/urls';
 import StyledTopestDiv from '@src/styles/StyledTopesDiv';
-import { StyledLoginComponentContainerDiv } from '@src/components/Login/StyledLoginFormContainer';
+import styled from '@emotion/styled';
+import { ToastContainer } from 'react-toastify';
 
-const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const handleLoginSuccess = () => {
-    navigate(URLS.home);
-  };
+export const StyledLoginComponentContainerDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const Login = () => {
   return (
     <StyledTopestDiv>
+      <ToastContainer />
       <NavigationBar />
       <StyledLoginComponentContainerDiv>
-        <LoginFormContainer onLoginSuccess={handleLoginSuccess} />
+        <LoginFormContainer />
       </StyledLoginComponentContainerDiv>
     </StyledTopestDiv>
   );
