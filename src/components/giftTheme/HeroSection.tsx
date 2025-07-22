@@ -2,18 +2,14 @@
 import styled from '@emotion/styled';
 import type { ThemeInfo } from '../../types/GiftTheme';
 
-interface HeroSectionProps {
-  themeInfo: ThemeInfo;
-}
-
 const HeroWrapper = styled.div`
   width: 100%;
-  height: 180px;
   background-size: cover;
   background-position: center;
   display: flex;
-  align-items: flex-end;
-  padding: 16px 20px;
+  flex-direction: column;
+  align-items: left;
+  padding: 1.625rem 1rem 1.375rem;
   box-sizing: border-box;
   color: white;
   background-repeat: no-repeat;
@@ -36,6 +32,7 @@ const HeroTitle = styled.h5`
   line-height: ${({ theme }) =>
     theme.typography.title1Bold.lineHeight};
   color: ${({ theme }) => theme.colors.gray00};
+  margin-top: 8px;
 `;
 
 const HeroDescription = styled.p`
@@ -45,10 +42,14 @@ const HeroDescription = styled.p`
   line-height: ${({ theme }) =>
     theme.typography.body1Regular.lineHeight};
   color: ${({ theme }) => theme.colors.gray200};
+  margin-top: 4px;
 `;
 
-export const HeroSection = ({ themeInfo }: HeroSectionProps) => {
-  console.log('afjlskdfj;lsfio', themeInfo);
+export const HeroSection = ({
+  themeInfo,
+}: {
+  themeInfo: ThemeInfo;
+}) => {
   return (
     <HeroWrapper
       style={{ backgroundColor: themeInfo.backgroundColor }}
