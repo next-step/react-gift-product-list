@@ -1,20 +1,38 @@
-import { useInView } from 'react-intersection-observer'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
-export const useInfiniteScroll = (
-  onIntersect: () => void,
+type UseInfiniteScrollParams = {
+  onIntersect: () => void
   enabled: boolean
-) => {
-  const { ref, inView } = useInView({
-    threshold: 0.5,
-    triggerOnce: false,
-  })
+  threshold?: number
+  rootMargin?: string
+}
+
+export const useInfiniteScroll = ({
+  onIntersect,
+  enabled,
+  threshold = 1.0,
+  rootMargin = '0px',
+}: UseInfiniteScrollParams) => {
+  const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (enabled && inView) {
-      onIntersect()
+    if (!enabled || !ref.current) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          onIntersect()
+        }
+      },
+      { threshold, rootMargin }
+    )
+
+    observer.observe(ref.current)
+
+    return () => {
+      observer.disconnect()
     }
-  }, [inView, enabled, onIntersect])
+  }, [onIntersect, enabled, threshold, rootMargin])
 
   return ref
 }

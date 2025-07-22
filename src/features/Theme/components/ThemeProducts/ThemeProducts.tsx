@@ -3,10 +3,11 @@ import Loading from '@/component/Loading/Loading'
 import { useThemeProducts } from '../../hooks/useThemeProducts'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import * as S from './ThemeProducts.styles'
+import type { Product } from '../../types/ThemeTypes'
 
 interface ThemeProductsProps {
   themeId: number
-  onProductSelect: (product: any) => void
+  onProductSelect: (product: Product) => void
 }
 
 const ThemeProducts = ({ themeId, onProductSelect }: ThemeProductsProps) => {
@@ -18,7 +19,12 @@ const ThemeProducts = ({ themeId, onProductSelect }: ThemeProductsProps) => {
     hasMore,
   } = useThemeProducts(themeId)
 
-  const observerRef = useInfiniteScroll(fetchNextPage, hasMore)
+  const observerRef = useInfiniteScroll({
+    onIntersect: fetchNextPage,
+    enabled: hasMore,
+    threshold: 0.5,
+    rootMargin: '100px',
+  })
 
   if (productsError) return <S.ErrorText>{productsError}</S.ErrorText>
   if (productsLoading && products.length === 0) return <Loading />
