@@ -53,22 +53,38 @@ const ThemeProductListPage: React.FC = () => {
   useEffect(() => {
     if (!themeId) return;
     setLoading(true);
-    Promise.all([getThemeInfo(themeId), getThemeProducts(themeId)])
-      .then(([themeData, productData]: [Theme, ThemeProductsResponse]) => {
+    setError(null);
+
+    // theme 정보 호출
+    getThemeInfo(themeId)
+      .then((themeData) => {
         setTheme(themeData);
-        setProducts(productData.list);
-        setCursor(productData.cursor);
-        setHasMore(productData.hasMoreList);
-        setError(null);
       })
       .catch((err) => {
         if (err.response && err.response.status === 404) {
           navigate(ROUTE_HOME, { replace: true });
         } else {
           setError('테마 정보를 불러오지 못했습니다.');
+          console.error(err);
         }
       })
       .finally(() => setLoading(false));
+
+    // 상품 목록 호출
+    getThemeProducts(themeId)
+      .then((productData: ThemeProductsResponse) => {
+        setProducts(productData.list);
+        setCursor(productData.cursor);
+        setHasMore(productData.hasMoreList);
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 404) {
+          navigate(ROUTE_HOME, { replace: true });
+        } else {
+          setError('테마 상품 정보를 불러오지 못했습니다.');
+          console.error(err);
+        }
+      });
   }, [themeId, navigate]);
 
   const handleProductClick = (product: Product) => {
