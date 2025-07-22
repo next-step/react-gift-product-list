@@ -8,8 +8,8 @@ interface UserInfo {
 
 interface Ctx {
   userInfo: UserInfo;
-  login: (name: string, email: string, token: string) => void;
-  logout: () => void;
+  setLoginSession: (name: string, email: string, token: string) => void;
+  setLogoutSession: () => void;
   isLoggedIn: boolean;
 }
 
@@ -32,20 +32,20 @@ export const UserInfoProvider = ({ children }: PropsWithChildren) => {
 
   const isLoggedIn = Boolean(userInfo.email);
 
-  const login = (name: string, email: string, token: string) => {
+  const setLoginSession = (name: string, email: string, token: string) => {
     setUserInfo({ name, email, token });
     sessionStorage.setItem('name', name);
     sessionStorage.setItem('email', email);
     sessionStorage.setItem('token', token);
   };
 
-  const logout = () => {
+  const setLogoutSession = () => {
     setUserInfo({ name: '', email: '', token: '' });
     sessionStorage.clear();
   };
 
   return (
-    <UserInfoContext.Provider value={{ userInfo, login, logout, isLoggedIn }}>
+    <UserInfoContext.Provider value={{ userInfo, setLoginSession, setLogoutSession, isLoggedIn }}>
       {children}
     </UserInfoContext.Provider>
   );

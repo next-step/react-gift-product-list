@@ -51,11 +51,7 @@ const Button = styled.button`
 `;
 
 const LoginPage = () => {
-  // TODO: const { login } = useUserInfo(); 이 코드를 LoginPage 에서 관리할지 useLogin.ts 에서 관리할지 고민중
-  //
-  // const { login } = useUserInfo();
-  // const { postUserInfo, userInfos } = useLogin();
-  const { postUserInfo } = useLogin();
+  const { LoginAndStoreSession } = useLogin();
   const navigate = useNavigate();
   const username = useInput('email');
   const password = useInput('password');
@@ -65,8 +61,7 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!username.isValid || !password.isValid) return;
-    const isSuccess = await postUserInfo({ username, password });
-    // login(userInfos.name, userInfos.email, userInfos.token);
+    const isSuccess = await LoginAndStoreSession({ username, password });
     if (isSuccess) {
       navigate(ROUTES.MY, { replace: true });
     }
