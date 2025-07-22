@@ -2,20 +2,23 @@ import { useApi } from '@/hooks/useApi'
 import type { ThemeInfo } from '../types/ThemeTypes'
 import { api } from '@/lib/axios'
 
-export const useThemeInfo = (themeId: number | null) => {
-  const { data, loading, error } = useApi<ThemeInfo | null>(async () => {
-    if (!themeId) return null
+const fetchThemeInfo = async (themeId: number | null) => {
+  if (!themeId) return null
 
-    try {
-      const res = await api.get(`/themes/${themeId}/info`)
-      return res.data.data
-    } catch (err: any) {
-      if (err.response?.status === 404) {
-        return null
-      }
-      throw err
+  try {
+    const res = await api.get(`/themes/${themeId}/info`)
+    return res.data.data
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      return null
     }
-  }, [themeId])
+    throw err
+  }
+}
+
+export const useThemeInfo = (themeId: number | null) => {
+  const fetcher = () => fetchThemeInfo(themeId)
+  const { data, loading, error } = useApi<ThemeInfo | null>(fetcher, [themeId])
 
   return {
     themeInfo: data,
