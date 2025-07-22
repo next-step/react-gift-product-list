@@ -1,6 +1,6 @@
 import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type ThemeProduct = {
   id: number;
@@ -35,43 +35,43 @@ export const useThemesProductItem = () => {
   const [hasMore, setHasMore] = useState(true);
   const loader = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const loadItem = async () => {
-      const apiReqeustParmas = {
-        methods: 'GET' as HttpTypes,
-        requestName: `themes/${themeId}/products`,
-        body: {},
-        params: `/?cursor=${cursor}`,
-        headers: null,
-      };
-
-      try {
-        const fetchData = await apiClient(apiReqeustParmas);
-        console.log(fetchData);
-        setProducts((prev) => {
-          if (prev) {
-            return {
-              data: {
-                list: [...prev.data.list, ...fetchData.data.list],
-                cursor: fetchData.data.cursor,
-                hasMoreList: fetchData.data.hasMoreList,
-              },
-            };
-          } else {
-            return fetchData;
-          }
-        });
-
-        if (fetchData.data.list.length === 0 || !fetchData.data.hasMoreList) {
-          setHasMore(false);
-        } else {
-          setCursor((prev) => prev + 10);
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
+  const loadItem = useCallback(async () => {
+    if (!hasMore) return;
+    const apiReqeustParmas = {
+      methods: 'GET' as HttpTypes,
+      requestName: `themes/${themeId}/products`,
+      body: {},
+      params: `?cursor=${cursor}`,
+      headers: null,
     };
+    try {
+      const fetchData = await apiClient(apiReqeustParmas);
 
+      setProducts((prev) => {
+        if (prev) {
+          return {
+            data: {
+              list: [...prev.data.list, ...fetchData.data.list],
+              cursor: fetchData.data.cursor,
+              hasMoreList: fetchData.data.hasMoreList,
+            },
+          };
+        } else {
+          return fetchData;
+        }
+      });
+
+      if (fetchData.data.hasMoreList) {
+        setCursor(fetchData.data.cursor);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  }, [cursor, hasMore, themeId]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && hasMore) {
@@ -87,7 +87,10 @@ export const useThemesProductItem = () => {
     return () => {
       if (el) observer.unobserve(el);
     };
-  }, [hasMore, themeId, cursor]);
+  }, [loadItem, hasMore]);
 
-  return { products, loader };
+  return {
+    products,
+    loader,
+  };
 };
