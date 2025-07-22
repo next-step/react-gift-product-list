@@ -17,6 +17,7 @@ interface Ctx {
 
 const UserInfoContext = createContext<Ctx | null>(null);
 const EMPTY_USER_INFO: UserInfoData = { name: '', email: '', authToken: '' };
+const STORAGE_KEY = 'user';
 
 export const useUserInfo = () => {
   const context = useContext(UserInfoContext);
@@ -34,12 +35,12 @@ export const UserInfoProvider = ({ children }: PropsWithChildren) => {
 
   const setLoginSession = (userInfoData: UserInfoData) => {
     setUserInfo(userInfoData);
-    sessionStorage.setItem('user', JSON.stringify(userInfoData));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(userInfoData));
   };
 
   const setLogoutSession = () => {
     setUserInfo(EMPTY_USER_INFO);
-    sessionStorage.setItem('user', JSON.stringify(EMPTY_USER_INFO));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(EMPTY_USER_INFO));
   };
 
   return (
