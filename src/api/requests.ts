@@ -12,6 +12,9 @@ export interface FetchOrderProps {
 interface OrderResponseData {
   success: boolean;
 }
+interface OrderResponseData {
+  success: boolean;
+}
 
 export const requests = {
   fetchUserInfos: ({ username, password }: UserInfoProps): Promise<UserInfoData> => {

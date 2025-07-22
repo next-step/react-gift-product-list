@@ -18,6 +18,7 @@ import ProductInfo from './components/ProductInfo';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import postOrderInfo from './utils/postOrderInfo';
 import { toast } from 'react-toastify';
+import { ROUTES } from '@/routes/routes';
 
 export interface OrderInfoValues {
   message: string;
