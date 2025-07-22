@@ -4,12 +4,14 @@ import ProductCard from '@/components/giftHome/GiftThemes/ProductCard';
 import Text from '@/common/Text';
 import LoadingSpinner from '@/common/LoadingSpinner';
 import useGiftRanking from '@/hooks/useGiftRanking';
+import { type TargetType, type RankType } from '@/hooks/useFetch';
 
-const targetTypes = ['ALL', 'FEMALE', 'MALE', 'TEEN'] as const;
-type TargetType = (typeof targetTypes)[number];
-
-const rankTypes = ['MANY_WISH', 'MANY_RECEIVE', 'MANY_WISH_RECEIVE'] as const;
-type RankType = (typeof rankTypes)[number];
+const targetTypes: TargetType[] = ['ALL', 'FEMALE', 'MALE', 'TEEN'];
+const rankTypes: RankType[] = [
+  'MANY_WISH',
+  'MANY_RECEIVE',
+  'MANY_WISH_RECEIVE',
+];
 
 const targetTypeLabels: Record<TargetType, string> = {
   ALL: '전체',
@@ -30,7 +32,7 @@ const GiftRanking = () => {
   const selectedTarget = (searchParams.get('target') as TargetType) || 'ALL';
   const selectedRank = (searchParams.get('rank') as RankType) || 'MANY_WISH';
 
-  const { products, loading, error } = useGiftRanking({
+  const { products, loading, error, refetch } = useGiftRanking({
     target: selectedTarget,
     rank: selectedRank,
   });
@@ -41,6 +43,10 @@ const GiftRanking = () => {
 
   const updateRankFilter = (rank: RankType) => {
     setSearchParams({ target: selectedTarget, rank });
+  };
+
+  const handleRetry = () => {
+    refetch();
   };
 
   return (
