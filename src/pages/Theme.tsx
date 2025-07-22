@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useThemeInfo } from '@/hooks/useThemeInfo';
 import { useThemeProducts } from '@/hooks/useThemeProducts';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useAuth } from '@/context/AuthContext';
 
 import NavigationBar from '@/common/NavigationBar';
@@ -8,7 +9,6 @@ import ProductCard from '@/common/ProductCard';
 import Text from '@/common/Text';
 
 import styled from '@emotion/styled';
-import { useRef, useCallback } from 'react';
 
 const Theme = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -23,22 +23,11 @@ const Theme = () => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const observer = useRef<IntersectionObserver | null>(null);
-  const lastProductRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (productsLoading) return;
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          loadMore();
-        }
-      });
-
-      if (node) observer.current.observe(node);
-    },
-    [productsLoading, hasMore, loadMore]
-  );
+  const lastProductRef = useIntersectionObserver({
+    onIntersect: loadMore,
+    enabled: !productsLoading && hasMore,
+    rootMargin: '100px',
+  });
 
   if (infoLoading) return <div>로딩 중...</div>;
   if (!themeInfo) return null;
@@ -78,7 +67,6 @@ const Theme = () => {
               };
 
               if (index === products.length - 1) {
-                // 마지막 아이템에 ref 부여해서 관찰
                 return (
                   <div key={product.id} ref={lastProductRef}>
                     <ProductCard
