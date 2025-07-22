@@ -14,7 +14,7 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   redirectAfterLogin: string | null;
-  setRedirectAfterLogin: (path: string | null) => void;
+  onChangeRedirectAfterLogin: (path: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,9 +22,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [redirectAfterLogin, setRedirectAfterLogin] = useState<string | null>(
-    null
-  );
+  const [redirectAfterLogin, onChangeRedirectAfterLogin] = useState<
+    string | null
+  >(null);
 
   const { login: loginHandler, isLoading } = useLogin();
 
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       logout,
       isLoading,
       redirectAfterLogin,
-      setRedirectAfterLogin,
+      onChangeRedirectAfterLogin,
     }),
     [isLoggedIn, user, isLoading, redirectAfterLogin]
   );
