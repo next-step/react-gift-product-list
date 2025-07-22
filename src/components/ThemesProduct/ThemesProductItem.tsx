@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import {
   StyledPresentRankingItemBrandName,
   StyledPresentRankingItemDiv,
@@ -7,11 +6,17 @@ import {
   StyledPresentRankingItemPresentItem,
 } from '@src/components/Home/PresentRanking/Item/StyledPresentRankingItem';
 import StyledTopestDiv from '@src/styles/StyledTopesDiv';
-import { useThemesProduct } from './useThemesProduct';
+import { useThemesProductLabel } from './useThemesProductLabel';
+import {
+  StyledThemesProductGridContainer,
+  StyledThemesProductLabelItem,
+  StyledThemesProductPaddingContainer,
+} from './StyledThemesProductItem';
+import { useThemesProductItem } from './useThemesProductItem';
 
-const ThemesProductLabel = () => {
-  const { label, products } = useThemesProduct();
-
+const ThemesProductItem = () => {
+  const { label } = useThemesProductLabel();
+  const { products, loader } = useThemesProductItem();
   return (
     <StyledTopestDiv>
       <StyledThemesProductLabelItem background={label?.backgroundColor}>
@@ -36,38 +41,11 @@ const ThemesProductLabel = () => {
                 </StyledPresentRankingItemPrasentPrice>
               </StyledPresentRankingItemDiv>
             ))}
+          <div ref={loader}></div>
         </StyledThemesProductGridContainer>
       </StyledThemesProductPaddingContainer>
     </StyledTopestDiv>
   );
 };
 
-export default ThemesProductLabel;
-
-interface ColorProps {
-  background?: string;
-}
-
-const StyledThemesProductLabelItem = styled.div<ColorProps>`
-  background-color: ${({ background }) => background};
-  display: flex;
-  flex-direction: column;
-  height: 100px;
-  justify-content: center;
-
-  p {
-    margin: 3px 10px 0px 10px;
-  }
-`;
-
-const StyledThemesProductPaddingContainer = styled.div`
-  width: 100%;
-  padding: 4px 16px;
-  background-color: white;
-`;
-
-const StyledThemesProductGridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 5px;
-`;
+export default ThemesProductItem;

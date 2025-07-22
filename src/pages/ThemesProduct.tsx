@@ -1,6 +1,6 @@
 import NavigationBar from '@src/components/Common/NavigationBar';
 import StyledTopestDiv from '@src/styles/StyledTopesDiv';
-import ThemesProductLabel from './ThemesProductLabel';
+import ThemesProductLabel from '../components/ThemesProduct/ThemesProductItem';
 
 const ThemesProduct = () => {
   return (
