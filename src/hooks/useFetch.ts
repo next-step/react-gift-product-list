@@ -40,6 +40,7 @@ export const useFetch = <T>({ fetcher, initValue, deps }: Props<T>) => {
         setError(errorInfo);
         setData(initValue);
 
+
       } finally {
         setIsLoading(false);
       }
