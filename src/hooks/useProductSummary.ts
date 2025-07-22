@@ -17,17 +17,19 @@ export interface ProductSummary {
 export const useProductSummary = (id: string | undefined) => {
   const navigate = useNavigate();
 
-  const fetchProduct = useCallback(async () => {
+  const fetchProduct = useCallback(async (): Promise<
+    ProductSummary | undefined
+  > => {
     if (!id) {
       navigate(ROUTES.NOT_FOUND);
-      return null;
+      return undefined;
     }
 
     const res = await fetch(getProductSummaryUrl(id));
 
     if (res.status === 404) {
       navigate(ROUTES.NOT_FOUND);
-      return null;
+      return undefined;
     }
 
     if (!res.ok) {
@@ -35,16 +37,16 @@ export const useProductSummary = (id: string | undefined) => {
         toastId: 'product-load-fail',
       });
       navigate(ROUTES.HOME);
-      return null;
+      return undefined;
     }
 
     const json = await res.json();
     return json.data as ProductSummary;
   }, [id, navigate]);
 
-  const { data: product, pending: isLoading } = useFetch<ProductSummary | null>(
-    fetchProduct
-  );
+  const { data: product, pending: isLoading } = useFetch<
+    ProductSummary | undefined
+  >(fetchProduct);
 
   return { product, isLoading };
 };
