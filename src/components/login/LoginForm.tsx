@@ -7,9 +7,7 @@ import ErrorMessage from "../common/ErrorMessage";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { postLogin } from "@/api/login";
 import useApiRequest from "@/hooks/useApiRequest";
-import type { User } from "@/types/user";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -22,16 +20,18 @@ const LoginForm = () => {
     data: userData,
     isLoading,
     isError,
-    error,
     refetch: postLoginRequest,
-  } = useApiRequest<User, [string, string]>({
+  } = useApiRequest({
     requestFn: postLogin,
     immediate: false,
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    postLoginRequest(emailInput.value, passwordInput.value);
+    postLoginRequest({
+      email: emailInput.value,
+      password: passwordInput.value,
+    });
   };
 
   useEffect(() => {
@@ -46,12 +46,6 @@ const LoginForm = () => {
       navigate(redirectPath || ROUTE_PATH.HOME);
     }
   }, [userData, isLoading, isError, user, location.search, navigate]);
-
-  useEffect(() => {
-    if (isError && !isLoading) {
-      toast.error(error);
-    }
-  }, [isError, isLoading, error]);
 
   return (
     <Form onSubmit={handleSubmit}>

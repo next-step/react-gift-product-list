@@ -23,7 +23,6 @@ const Flex = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.spacing1};
-  cursor: pointer;
 `;
 
 const Img = styled.img`

@@ -15,10 +15,10 @@ type GiftsRenderProps = {
 
 const GiftsRender = ({ selectedTypes }: GiftsRenderProps) => {
   const requestFn = useCallback(() => {
-    return fetchProductsRanking(
-      selectedTypes.targetType,
-      selectedTypes.rankType,
-    );
+    return fetchProductsRanking({
+      targetType: selectedTypes.targetType,
+      rankType: selectedTypes.rankType,
+    });
   }, [selectedTypes]);
   const { data: gifts, isLoading, isError } = useApiRequest({ requestFn });
 

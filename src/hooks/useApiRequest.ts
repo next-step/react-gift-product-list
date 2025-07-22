@@ -1,4 +1,6 @@
+import { ROUTE_PATH } from "@/routes/paths";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 type UseApiRequestProps<TData, TArgs extends unknown[] = []> = {
   requestFn: (...args: TArgs) => Promise<TData>;
@@ -9,10 +11,10 @@ const useApiRequest = <TData = unknown, TArgs extends unknown[] = []>({
   requestFn,
   immediate = true,
 }: UseApiRequestProps<TData, TArgs>) => {
+  const navigate = useNavigate();
   const [data, setData] = useState<TData | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(immediate);
   const [isError, setIsError] = useState(false);
-  const [error, setError] = useState("");
 
   const fetchData = useCallback(
     (...args: TArgs) => {
@@ -22,15 +24,19 @@ const useApiRequest = <TData = unknown, TArgs extends unknown[] = []>({
         .then(response => {
           setData(response);
         })
-        .catch(err => {
+        .catch(error => {
           setIsError(true);
-          setError(err.errorMessage);
+          if (error.response?.status === 401) {
+            navigate(ROUTE_PATH.LOGIN, { replace: true });
+          } else if (error.response?.status === 404) {
+            navigate(ROUTE_PATH.HOME, { replace: true });
+          }
         })
         .finally(() => {
           setIsLoading(false);
         });
     },
-    [requestFn],
+    [requestFn, navigate],
   );
 
   useEffect(() => {
@@ -43,7 +49,6 @@ const useApiRequest = <TData = unknown, TArgs extends unknown[] = []>({
     data,
     isLoading,
     isError,
-    error,
     refetch: fetchData,
   };
 };

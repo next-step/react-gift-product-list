@@ -1,3 +1,4 @@
+import { SESSION_USER_INFO_KEY } from "@/constants/storageKeys";
 import useSessionStorage from "@/hooks/useSessionStorage";
 import React, { createContext, useContext } from "react";
 
@@ -19,7 +20,7 @@ export const UserInfoProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const userInfo = useSessionStorage<UserInfo>("kakaotech/userInfo", {
+  const userInfo = useSessionStorage<UserInfo>(SESSION_USER_INFO_KEY, {
     email: undefined,
     name: undefined,
     authToken: undefined,
