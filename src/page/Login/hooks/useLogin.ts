@@ -27,7 +27,11 @@ const useLogin = () => {
     }
   };
 
+<<<<<<< HEAD
   return { loginAndStoreSession };
+=======
+  return {  LoginAndStoreSession };
+>>>>>>> c38a96a (fix: 함수 네이밍 구체화)
 };
 
 export default useLogin;
