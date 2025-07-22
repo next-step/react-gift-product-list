@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type ValidatorFn = (value: string) => string | null;
 
 function useFormInput(validator: ValidatorFn, initialValue ='') {
   const [value, setValue] = useState(initialValue);
   const [error, setError] = useState<string | null>(' ');
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);

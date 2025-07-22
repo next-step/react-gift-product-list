@@ -1,10 +1,6 @@
+import type { Receiver } from "@/type/order";
 import {createContext, useContext, useState, type ReactNode } from "react";
 
-type Receiver = {
-    name : string,
-    phone : string,
-    count : number
-};
 
 type ReceiverContextType = {
     receivers : Receiver[];

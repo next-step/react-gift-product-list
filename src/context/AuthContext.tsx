@@ -1,39 +1,56 @@
 // src/context/AuthContext.tsx
+import { logInAPI } from '@/utils/logInAPI';
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const AUTH_KEY = 'login_user';
 
+type UserInfo = {
+  email: string;
+  name: string;
+  authToken: string;
+}
+
 type AuthContextType = {
-  user: string | null;
-  logIn: (username: string) => void;
+  user: UserInfo | null;
+  logIn: (email: string, password: string) => void;
   logOut: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(AUTH_KEY);
-    if (saved) setUser(saved);
+    if (saved)
+      try {
+        setUser(JSON.parse(saved));
+      } catch {
+        localStorage.removeItem(AUTH_KEY);
+      }
   }, []);
 
-  const logIn = useCallback((username: string) => {
-    setUser(username);
-    localStorage.setItem(AUTH_KEY, username);
-  },[])
+  const logIn = useCallback(async (email: string, password: string) => {
+    try {
+      const response = await logInAPI(email, password);
+      setUser(response.data)
+      localStorage.setItem(AUTH_KEY, JSON.stringify(response.data));
+    } catch (error) {
+      throw new Error(`${(error as Error).message}`);
+    }
+  }, [])
 
-  const logOut = useCallback (() => {
+  const logOut = useCallback(() => {
     setUser(null);
     localStorage.removeItem(AUTH_KEY);
-  },[])
+  }, [])
 
   const value = useMemo(() => ({
     user,
     logIn,
     logOut
-  }),[user,logIn,logOut])
+  }), [user, logIn, logOut])
 
   return (
     <AuthContext.Provider value={value}>

@@ -4,8 +4,8 @@ import { DefaultComponentDiv, EmptyDiv12h, EmptyDiv24h, EmptyDiv4h, EmptyDiv8h, 
 
 
 const Sender = () => {
-    const { senderNameInput } = useOrder();
-    const { value, onChange, error } = senderNameInput
+    const { ordererName } = useOrder();
+    const { value, onChange, error } = ordererName
     return (
         <DefaultComponentDiv>
             <SideBlankDiv>

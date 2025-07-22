@@ -7,20 +7,21 @@ import { useOrder } from '@/context/OrderContext';
 
 
 const PresentCardSelector= () => {
-  const {cardMessage, setCardMessage} = useOrder()
+  const {message, setMessage,setMessageCardId} = useOrder()
   const [selectedCard, setSelectedCard] = useState(CardTemplete[0]);
 
   return (
     <DefaultComponentDiv>
       <LowSlideDiv>
-        {CardTemplete.map((card, index) => (
+        {CardTemplete.map((card, i) => (
           <CardMiniImg
-            key={index}
+            key={i}
             src={card.thumbUrl}
             alt={card.defaultTextMessage}
             onClick={() => {
+              setMessageCardId(`card${i}`)
               setSelectedCard(card)
-              setCardMessage(card.defaultTextMessage)
+              setMessage(card.defaultTextMessage)
               }
             }
             selected={selectedCard === card}
@@ -43,8 +44,8 @@ const PresentCardSelector= () => {
 
       <SideBlankDiv style={{ marginTop: '16px' }}>
         <CardMessage
-          value={cardMessage}
-          onChange={(e) => setCardMessage(e.target.value)}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
           placeholder="메시지를 입력해주세요."
         />
       </SideBlankDiv>

@@ -15,6 +15,7 @@ import {
 } from '@/styles/Common.styled';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { ButtonSpace, CancleButton, Hr1Gray, ReceiverOne, ReceiverTitle, SubmitButton, XButton } from './ReceiverModal.styled';
+import type { Receiver } from '@/type/order';
 
 type ModalStateProps = {
   isOpen: boolean;
@@ -24,14 +25,9 @@ type ModalStateProps = {
 const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
   const { setReceivers } = useReceiver();
 
-    type ReceiverFormValue = {
-    name: string;
-    phone: string;
-    count: number;
-  };
 
   type FormData = {
-    receiver: ReceiverFormValue[];
+    receiver: Receiver[];
   };
 
 
@@ -43,7 +39,7 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
     getValues
   } = useForm<FormData>({
     defaultValues: {
-      receiver: [{ name: '', phone: '', count: 1 }],
+      receiver: [{ name: '', phoneNumber: '', quantity: 1 }],
     },
   });
 
@@ -72,7 +68,7 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
             <SimpleButton 
               disabled = {fields.length >= 10}
               type="button"
-              onClick={() => append({ name: '', phone: '', count: 1 })}
+              onClick={() => append({ name: '', phoneNumber: '', quantity: 1 })}
             >
               <MiniText>추가하기</MiniText>
             </SimpleButton>
@@ -82,11 +78,9 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
               <div key={field.id}>
                 {i >= 1 && <Hr1Gray />}
                 <ReceiverOne>
-                  <SubTitle>
                     <ReceiverTitle>
                       받는사람 {i + 1} 
                     </ReceiverTitle>
-                  </SubTitle>
                   <XButton type="button" onClick={() => remove(i)}>
                     X
                   </XButton>
@@ -112,14 +106,14 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
                     <SimpleInput
                       type="text"
                       placeholder="전화번호를 입력하세요."
-                      {...register(`receiver.${i}.phone`, {
+                      {...register(`receiver.${i}.phoneNumber`, {
                         required: '전화번호를 입력하세요',
                         pattern: {
                           value: /^010[0-9]{8}$/,
                           message: '올바른 전화번호 형식이 아니에요.',
                         },
                         validate: (value) => {
-                          const phones = getValues('receiver').map((r) => r.phone);
+                          const phones = getValues('receiver').map((r) => r.phoneNumber);
                           const duplicates = phones.filter((phone: string) => phone === value);
                           if (duplicates.length > 1) {
                             return '중복된 전화번호가 있습니다';
@@ -128,8 +122,8 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
                         },
                       })}
                     />
-                    {errors.receiver?.[i]?.phone && (
-                      <ErrorText>{errors.receiver[i].phone?.message}</ErrorText>
+                    {errors.receiver?.[i]?.phoneNumber && (
+                      <ErrorText>{errors.receiver[i].phoneNumber?.message}</ErrorText>
                     )}
                   </Div100p>
                 </LowField>
@@ -140,7 +134,7 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
                     <SimpleInput
                       type="number"
                       min={1}
-                      {...register(`receiver.${i}.count`, {
+                      {...register(`receiver.${i}.quantity`, {
                         required: '',
                         min: {
                           value: 1,
@@ -148,8 +142,8 @@ const ReceiverModal = ({ isOpen, onClose }: ModalStateProps) => {
                         },
                       })}
                     />
-                    {errors.receiver?.[i]?.count && (
-                      <ErrorText>{errors.receiver[i].count?.message}</ErrorText>
+                    {errors.receiver?.[i]?.quantity && (
+                      <ErrorText>{errors.receiver[i].quantity?.message}</ErrorText>
                     )}
                   </Div100p>
                 </LowField>

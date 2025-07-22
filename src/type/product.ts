@@ -13,3 +13,11 @@ export  interface ProductItem {
       imageURL: string;
     };
   }
+
+  export  interface ProductItemSummary {
+    id: 11526198,
+    name: string;
+    brandName: string;
+    price: number
+    imageURL: string;
+}
