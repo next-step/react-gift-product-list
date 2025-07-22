@@ -30,13 +30,13 @@ const PresentItem = ({ isVisible }: { isVisible: boolean }) => {
 
   if (isLoading) {
     return <div>Loading</div>;
-  } else if (isError || goods?.data.length === 0) {
+  } else if (isError || goods?.data?.length === 0) {
     return <StyledPresentRankingItemDiv>상품 없음</StyledPresentRankingItemDiv>;
   } else {
     return (
       <>
         {goods &&
-          goods.data.slice(0, repeatCnt).map((item: Good, index: number) => (
+          goods.data?.slice(0, repeatCnt).map((item: Good, index: number) => (
             <div key={item.id} onClick={() => handleItemClick(item)} style={{ cursor: 'pointer' }}>
               <StyledPresentRankingItemDiv>
                 <StyledPresentRankingNumContainer index={index + 1}>
