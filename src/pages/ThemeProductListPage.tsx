@@ -83,8 +83,6 @@ const ThemeProductListPage = () => {
   }, [themeId]);
 
   if (error) return <div>상품을 불러오는 데 실패했습니다.</div>;
-  if (products.length === 0 && !loading)
-    return <div>등록된 상품이 없습니다.</div>;
 
   return (
     <>
