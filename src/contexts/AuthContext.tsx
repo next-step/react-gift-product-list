@@ -1,3 +1,4 @@
+import axiosInstance from '@apis/axiosInstance';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 interface LoginCredentials {
@@ -8,11 +9,12 @@ interface LoginCredentials {
 export interface User {
   email: string;
   name: string;
+  authToken: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (loginInfo: LoginCredentials) => boolean;
+  login: (loginInfo: LoginCredentials) => Promise<boolean>;
   logout: () => void;
   isInitialized: boolean;
 }
@@ -24,28 +26,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = sessionStorage.getItem('userInfo');
     if (savedUser) setUser(JSON.parse(savedUser));
     setIsInitialized(true);
   }, []);
 
-  const login = ({ email, password }: LoginCredentials): boolean => {
+  const login = async ({
+    email,
+    password,
+  }: LoginCredentials): Promise<boolean> => {
     //임시 검증 로직
-    if (email && password) {
-      const userData: User = {
-        name: email.split('@')[0],
-        email,
-      };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+
+    try {
+      const res = await axiosInstance.post('/login', { email, password });
+
+      const data = res.data.data;
+      console.log(data);
+
+      setUser(data);
+
+      sessionStorage.setItem('userInfo', JSON.stringify(data));
+
       return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('userInfo');
   };
 
   return (

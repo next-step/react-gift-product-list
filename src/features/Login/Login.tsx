@@ -9,6 +9,82 @@ interface LoginButtonProps {
   disabled: boolean;
 }
 
+const Login = () => {
+  const navigate = useNavigate();
+  const {
+    email,
+    setEmail,
+    emailError,
+    validateEmail,
+    password,
+    setPassword,
+    passwordError,
+    validatePassword,
+    isValid,
+  } = useLoginForm();
+
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const { login } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isEmailOk = validateEmail();
+    const isPWOk = validatePassword();
+
+    if (!isEmailOk || !isPWOk) return;
+
+    if (await login({ email, password })) {
+      if (window.history.length > 2) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
+    } else {
+      setLoginError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      console.log(loginError); //임시
+    }
+  };
+
+  return (
+    <Container as="form" onSubmit={handleSubmit}>
+      <Title>kakao</Title>
+      <Input
+        type="email"
+        placeholder="이메일"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        onBlur={() => {
+          setEmailTouched(true);
+          validateEmail();
+        }}
+        hasError={emailTouched && !!emailError}
+      />
+      {emailTouched && emailError && <ErrorText>{emailError}</ErrorText>}
+      <Input
+        type="password"
+        placeholder="비밀번호"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        onBlur={() => {
+          setPasswordTouched(true);
+          validatePassword();
+        }}
+        hasError={passwordTouched && !!passwordError}
+      />
+      {passwordTouched && passwordError && (
+        <ErrorText>{passwordError}</ErrorText>
+      )}
+      <Button type="submit" disabled={!isValid}>
+        로그인
+      </Button>
+    </Container>
+  );
+};
+
+export default Login;
+
 const Container = styled.div(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -81,79 +157,3 @@ const Button = styled.button<LoginButtonProps>(({ theme, disabled }) => ({
       : theme.colors.semantic.kakaoYellowActive,
   },
 }));
-
-const Login = () => {
-  const navigate = useNavigate();
-  const {
-    email,
-    setEmail,
-    emailError,
-    validateEmail,
-    password,
-    setPassword,
-    passwordError,
-    validatePassword,
-    isValid,
-  } = useLoginForm();
-
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const { login } = useAuth();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const isEmailOk = validateEmail();
-    const isPWOk = validatePassword();
-
-    if (!isEmailOk || !isPWOk) return;
-
-    if (login({ email, password })) {
-      if (window.history.length > 2) {
-        navigate(-1);
-      } else {
-        navigate('/');
-      }
-    } else {
-      setLoginError('이메일 또는 비밀번호가 올바르지 않습니다.');
-      console.log(loginError); //임시
-    }
-  };
-
-  return (
-    <Container as="form" onSubmit={handleSubmit}>
-      <Title>kakao</Title>
-      <Input
-        type="email"
-        placeholder="이메일"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onBlur={() => {
-          setEmailTouched(true);
-          validateEmail();
-        }}
-        hasError={emailTouched && !!emailError}
-      />
-      {emailTouched && emailError && <ErrorText>{emailError}</ErrorText>}
-      <Input
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        onBlur={() => {
-          setPasswordTouched(true);
-          validatePassword();
-        }}
-        hasError={passwordTouched && !!passwordError}
-      />
-      {passwordTouched && passwordError && (
-        <ErrorText>{passwordError}</ErrorText>
-      )}
-      <Button type="submit" disabled={!isValid}>
-        로그인
-      </Button>
-    </Container>
-  );
-};
-
-export default Login;

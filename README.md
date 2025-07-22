@@ -19,4 +19,10 @@
 
 ## 구현한 기능
 
+### 로그인 기능
+
+#### api로 로그인 기능 구현
+
+- api를 사용하여 session storage에 authToken과 email, name 저장
+
 ## 리뷰 반영
