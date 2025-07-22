@@ -3,6 +3,7 @@ import Login from '@/pages/Login';
 import MyPage from '@/pages/MyPage';
 import NotFound from '@/pages/NotFound';
 import Order from '@/pages/Order';
+import ThemeProductList from '@/pages/ThemeProductList';
 import { Route, Routes as RouterRoutes } from 'react-router';
 
 export const Routes = () => {
@@ -13,6 +14,7 @@ export const Routes = () => {
       <Route path={ROUTE_PATH.NOT_FOUND} element={<NotFound />} />
       <Route path={ROUTE_PATH.MY_PAGE} element={<MyPage />} />
       <Route path={ROUTE_PATH.ORDER} element={<Order />} />
+      <Route path={ROUTE_PATH.THEME_PRODUCT_LIST} element={<ThemeProductList />} />
     </RouterRoutes>
   );
 };
@@ -23,4 +25,5 @@ export const ROUTE_PATH = {
   NOT_FOUND: '*',
   MY_PAGE: '/Mypage',
   ORDER: '/Order',
+  THEME_PRODUCT_LIST: '/ThemeProductList',
 };

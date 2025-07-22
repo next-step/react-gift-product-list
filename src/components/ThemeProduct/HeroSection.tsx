@@ -7,25 +7,35 @@ const Wrapper = styled.section`
   background-color: rgb(75, 77, 80);
 `;
 
-const Margin = styled.div<{ height: string }>(({ theme, height }) => ({
+const Margin = styled.div<{ height: string }>(({ height }) => ({
   width: '100%',
   height: height,
-  backgroundColor: theme.semanticColors.background.fill,
+  backgroundColor: 'transparent',
 }));
 
-const Text = styled.p<{ variant: keyof TypographyType }>(({ theme, variant }) => ({
-  ...theme.typography[variant],
-  color: theme.colorScale.gray100,
-  margin: '0px',
-  textAlign: 'left',
-}));
+const Text = styled.p<{ variant: keyof TypographyType }>(({ theme, variant }) => {
+  const { size, weight, lineHeight } = theme.typography[variant];
+  return {
+    fontSize: size,
+    fontWeight: weight,
+    lineHeight,
+    color: theme.colorScale.gray100,
+    margin: '0px',
+    textAlign: 'left',
+  };
+});
 
-const Title = styled.h5<{ variant: keyof TypographyType }>(({ theme, variant }) => ({
-  ...theme.typography[variant],
-  color: theme.colorScale.gray00,
-  margin: '0px',
-  textAlign: 'left',
-}));
+const Title = styled.h5<{ variant: keyof TypographyType }>(({ theme, variant }) => {
+  const { size, weight, lineHeight } = theme.typography[variant];
+  return {
+    fontSize: size,
+    fontWeight: weight,
+    lineHeight,
+    color: theme.colorScale.gray00,
+    margin: '0px',
+    textAlign: 'left',
+  };
+});
 
 const HeroSection = () => {
   return (
