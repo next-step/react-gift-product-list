@@ -12,11 +12,11 @@ const Container = styled.div`
 `;
 
 const MyPage = () => {
-  const { userInfo, logout } = useUserInfo();
+  const { userInfo, setLogoutSession } = useUserInfo();
   const navigate = useNavigate();
 
   const onClick = () => {
-    logout();
+    setLogoutSession();
     navigate(ROUTES.LOGIN);
   };
 

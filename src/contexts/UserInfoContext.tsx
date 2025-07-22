@@ -1,19 +1,21 @@
+import type { UserInfoData } from '@/page/Login/hooks/useLogin';
 import { createContext, useContext, useState, type PropsWithChildren } from 'react';
 
 interface UserInfo {
   name: string;
   email: string;
-  token: string;
+  authToken: string;
 }
 
 interface Ctx {
   userInfo: UserInfo;
-  setLoginSession: (name: string, email: string, token: string) => void;
+  setLoginSession: (userInfoData: UserInfoData) => void;
   setLogoutSession: () => void;
   isLoggedIn: boolean;
 }
 
 const UserInfoContext = createContext<Ctx | null>(null);
+const EMPTY_USER_INFO: UserInfoData = { name: '', email: '', authToken: '' };
 
 export const useUserInfo = () => {
   const context = useContext(UserInfoContext);
@@ -24,24 +26,21 @@ export const useUserInfo = () => {
 };
 
 export const UserInfoProvider = ({ children }: PropsWithChildren) => {
-  const [userInfo, setUserInfo] = useState<UserInfo>(() => ({
-    name: sessionStorage.getItem('name') ?? '',
-    email: sessionStorage.getItem('email') ?? '',
-    token: sessionStorage.getItem('token') ?? '',
-  }));
+  const [userInfo, setUserInfo] = useState<UserInfoData>(() => {
+    const saved = sessionStorage.getItem('user');
+    return saved ? JSON.parse(saved) : EMPTY_USER_INFO;
+  });
 
   const isLoggedIn = Boolean(userInfo.email);
 
-  const setLoginSession = (name: string, email: string, token: string) => {
-    setUserInfo({ name, email, token });
-    sessionStorage.setItem('name', name);
-    sessionStorage.setItem('email', email);
-    sessionStorage.setItem('token', token);
+  const setLoginSession = (userInfoData: UserInfoData) => {
+    setUserInfo(userInfoData);
+    sessionStorage.setItem('user', JSON.stringify(userInfoData));
   };
 
   const setLogoutSession = () => {
-    setUserInfo({ name: '', email: '', token: '' });
-    sessionStorage.clear();
+    setUserInfo(EMPTY_USER_INFO);
+    sessionStorage.setItem('user', JSON.stringify(EMPTY_USER_INFO));
   };
 
   return (

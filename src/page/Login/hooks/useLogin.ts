@@ -19,10 +19,9 @@ const useLogin = () => {
 
   const LoginAndStoreSession = async ({ username, password }: UserInfoProps): Promise<boolean> => {
     try {
-      const data = await requests.fetchUserInfos({ username, password });
-      const { name, email, authToken } = data;
-      setLoginSession(name, email, authToken);
-      toast(email);
+      const userInfoData = await requests.fetchUserInfos({ username, password });
+      setLoginSession(userInfoData);
+      toast(userInfoData.email);
       return true;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -37,7 +36,7 @@ const useLogin = () => {
     }
   };
 
-  return {  LoginAndStoreSession };
+  return { LoginAndStoreSession };
 };
 
 export default useLogin;
