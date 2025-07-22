@@ -48,12 +48,7 @@ export default function ThemeProductsList() {
     refetch();
   };
 
-  useEffect(() => {
-    initializeProducts();
-  }, [themeId]);
-
-  useEffect(() => {
-    if (!data) return;
+  const updateProductList = (data: ThemeProductResponse) => {
     setProducts((prev) => {
       const existingIds = new Set(prev.map((item) => item.id));
       const filtered = data.list.filter((item) => !existingIds.has(item.id));
@@ -62,6 +57,15 @@ export default function ThemeProductsList() {
     setCursor(data.cursor ?? null);
     setHasMore(data.hasMoreList !== false && !!data.list.length);
     setInitLoading(false);
+  };
+
+  useEffect(() => {
+    initializeProducts();
+  }, [themeId]);
+
+  useEffect(() => {
+    if (!data) return;
+    updateProductList(data);
   }, [data]);
 
   const handleObserver = useCallback(() => {
