@@ -11,5 +11,5 @@ export interface ThemeInfo {
 
 export const fetchThemeInfo = async (themeId: string): Promise<ThemeInfo> => {
   const res = await apiClient.get(`/api/themes/${themeId}/info`);
-  return res.data;
+  return res.data.data;
 };

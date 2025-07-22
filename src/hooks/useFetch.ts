@@ -51,7 +51,7 @@ export const useFetch = <T = any>(
     } finally {
       setLoading(false);
     }
-  }, [fetchFunction, errorMessage, ...dependencies]);
+  }, [errorMessage, ...dependencies]);
 
   const refetch = useCallback(() => {
     fetchData();
