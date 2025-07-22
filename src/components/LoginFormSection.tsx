@@ -32,9 +32,9 @@ const LoginFormSection = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isEmailOk = email.validate();
-    const isPasswordOk = password.validate();
-    if (!isEmailOk || !isPasswordOk) return;
+    const isValidEmail = email.validate();
+    const isValidPassword = password.validate();
+    if (!isValidEmail || !isValidPassword) return;
 
     try {
       await login({ email: email.value, password: password.value });
