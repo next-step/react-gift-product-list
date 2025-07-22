@@ -8,6 +8,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import { AuthLayout } from "@/pages/auth/AuthLayout";
 import SignInPage from "@/pages/auth/SignInPage";
 import OrderPage from "@/pages/order/OrderPage";
+import ThemeListPage from "@/pages/theme/ThemeListPage";
 
 import { RootLayout } from "@/widgets/layouts";
 
@@ -18,6 +19,7 @@ const router = createRoutesFromElements(
             <Route path="signin" element={<SignInPage />} />
         </Route>
         <Route path="my" element={withAuth(MyPage)} />
+        <Route path="theme/:id" element={<ThemeListPage />} />
         <Route path="order/:id" element={withAuth(OrderPage)} />
         <Route path="*" element={<NotFoundPage />} />
     </Route>,
