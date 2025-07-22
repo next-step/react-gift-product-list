@@ -46,7 +46,7 @@ export const useThemesProductItem = () => {
     };
     try {
       const fetchData = await apiClient(apiReqeustParmas);
-
+      console.log(fetchData);
       setProducts((prev) => {
         if (prev) {
           return {

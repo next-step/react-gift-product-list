@@ -26,7 +26,7 @@ const ThemesProductItem = () => {
       </StyledThemesProductLabelItem>
       <StyledThemesProductPaddingContainer className='padding-container'>
         <StyledThemesProductGridContainer className='theme-grid-container'>
-          {products ? (
+          {products && products.data.list.length !== 0 ? (
             products.data.list.map((item) => (
               <StyledPresentRankingItemDiv key={item.id}>
                 <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
