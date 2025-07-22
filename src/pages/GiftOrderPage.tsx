@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 import { NavigationHeader } from '@/components/shared/layout';
@@ -14,7 +14,8 @@ import { RecipientTable } from '@/components/features/gift-order';
 import { orderSchema } from '@/schemas/giftOrderSchemas';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/contexts/AuthContext';
-import { useFetch } from '@/hooks/useFetch';
+import { useFetch, isFetchError } from '@/hooks/useFetch';
+import { Spinner } from '@/components/shared/ui/Spinner';
 
 type OrderForm = z.infer<typeof orderSchema>;
 
@@ -28,11 +29,16 @@ type ProductSummary = {
 
 export default function GiftOrderPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { productId } = useParams();
   const modalBodyRef = useRef<HTMLDivElement>(null);
-  const { user, logout } = useAuth();
+  const { user, logout, getAuthToken } = useAuth();
 
-  const { data: product, error } = useFetch<ProductSummary>({
+  const {
+    data: product,
+    error,
+    loading,
+  } = useFetch<ProductSummary>({
     baseUrl: import.meta.env.VITE_API_URL,
     path: `/api/products/${productId}/summary`,
     deps: [productId, navigate],
@@ -79,17 +85,18 @@ export default function GiftOrderPage() {
   const onSubmit = (data: OrderForm) => {
     if (!user) {
       logout();
-      toast.error('로그인이 필요합니다. 다시 로그인 해주세요.');
+      toast.error('로그인이 필요합니다.');
       navigate('/login');
       return;
     }
-    const stored = sessionStorage.getItem('userInfo');
-    const token = stored ? JSON.parse(stored).authToken : null;
+
+    const authToken = getAuthToken();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    if (token) {
-      headers['Authorization'] = token;
+
+    if (authToken) {
+      headers.Authorization = authToken;
     }
     orderRefetch({
       headers,
@@ -109,12 +116,22 @@ export default function GiftOrderPage() {
 
   useEffect(() => {
     if (orderError) {
-      if (orderError.message.includes('401')) {
-        toast.error('로그인이 필요합니다');
-        logout();
-        navigate('/login');
+      if (isFetchError(orderError)) {
+        const status = orderError.status;
+
+        if (status === 400) {
+          toast.error('받는 사람이 없습니다');
+        } else if (status === 401) {
+          logout();
+          const currentPath = encodeURIComponent(location.pathname);
+          sessionStorage.setItem('loginError', 'unauthorized');
+          navigate(`/login?redirect=${currentPath}`, { replace: true });
+          return;
+        } else {
+          toast.error(orderError.message);
+        }
       } else {
-        toast.error(orderError.message || '받는 사람이 없습니다');
+        toast.error(orderError.message);
       }
       return;
     }
@@ -147,7 +164,9 @@ export default function GiftOrderPage() {
     setValue('selectedTemplate', template);
   };
 
-  if (error || !product) return <div>상품 정보를 불러올 수 없습니다.</div>;
+  if (loading) return <Spinner />;
+  if (error) return <div>상품 정보를 불러올 수 없습니다.</div>;
+  if (!product) return <div>상품이 없습니다.</div>;
 
   const openModal = () => {
     setIsRecipientModalOpen(true);
