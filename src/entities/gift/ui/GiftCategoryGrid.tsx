@@ -9,11 +9,12 @@ export const GiftCategoryGrid = ({ children }: PropsWithChildren) => {
 export interface GiftCategoryItemProps {
     imgSrc: string;
     label: string;
+    onClick?: () => void;
 }
 
-export const GiftCategoryItem = ({ imgSrc, label }: GiftCategoryItemProps) => {
+export const GiftCategoryItem = ({ imgSrc, label, onClick }: GiftCategoryItemProps) => {
     return (
-        <Styles.GridItem>
+        <Styles.GridItem onClick={onClick}>
             <Styles.ItemImage src={imgSrc} alt={label} />
             <Styles.ItemLabel>{label}</Styles.ItemLabel>
         </Styles.GridItem>
