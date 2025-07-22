@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import { getThemeProductsUrl } from '@/constants/api';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { useFetch } from '@/hooks/useFetch';
 import type { Product } from '@/types/product';
 
 const LIMIT = 10;
@@ -10,49 +10,42 @@ export const useThemeProducts = (themeId: string | undefined) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const fetchProducts = useCallback(async () => {
-    if (!themeId || !hasMore || pending) return;
-    setPending(true);
-    setError(false);
+    if (!themeId) throw new Error('themeId is undefined');
 
-    try {
-      const res = await axios.get<{
-        data: { list: Product[]; hasMoreList: boolean; cursor: number };
-      }>(getThemeProductsUrl(themeId), {
-        params: { cursor, limit: LIMIT },
-      });
+    const res = await fetch(
+      `${getThemeProductsUrl(themeId)}?cursor=${cursor}&limit=${LIMIT}`
+    );
+    if (!res.ok) throw new Error('Failed to fetch theme products');
 
-      const {
-        list: newProducts,
-        hasMoreList,
-        cursor: nextCursor,
-      } = res.data.data;
+    const json = await res.json();
+    return json.data as {
+      list: Product[];
+      hasMoreList: boolean;
+      cursor: number;
+    };
+  }, [themeId, cursor]);
 
-      setProducts(prev => {
-        const merged = [...prev, ...newProducts];
-        const unique = Array.from(new Map(merged.map(p => [p.id, p])).values());
-        return unique;
-      });
-      setHasMore(hasMoreList);
-      setCursor(nextCursor);
-    } catch {
-      setError(true);
-    } finally {
-      setPending(false);
-    }
-  }, [themeId, cursor, hasMore, pending]);
+  const { data, pending, error, refetch } = useFetch(fetchProducts);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    if (!data) return;
+    const { list, hasMoreList, cursor: nextCursor } = data;
+
+    setProducts(prev => {
+      const merged = [...prev, ...list];
+      const unique = Array.from(new Map(merged.map(p => [p.id, p])).values());
+      return unique;
+    });
+    setHasMore(hasMoreList);
+    setCursor(nextCursor);
+  }, [data]);
 
   useIntersectionObserver({
     target: observerRef,
-    onIntersect: fetchProducts,
+    onIntersect: refetch,
     enabled: hasMore && !pending,
   });
 
