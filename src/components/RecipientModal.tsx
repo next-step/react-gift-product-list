@@ -8,6 +8,7 @@ import styled from '@emotion/styled'
 import { spacing } from '@/theme/spacing'
 import { typography } from '@/theme/typography'
 import { colors } from '@/theme/color'
+import { YellowButton, ErrorMessage } from '@/components/common'
 import type { OrderFormValues } from '@/hooks/useOrderForm'
 
 const Backdrop = styled.div`
@@ -49,14 +50,8 @@ const Guide = styled.p`
   color: ${colors.text.sub};
   line-height: 1.4;
 `
-
-const AddButton = styled.button`
+const AddButton = styled(YellowButton)`
   align-self: flex-end;
-  padding: ${spacing.spacing2} ${spacing.spacing4};
-  background: ${colors.brand.kakaoYellow};
-  border: none;
-  border-radius: ${spacing.spacing1};
-  cursor: pointer;
 `
 
 const Row = styled.div`
@@ -100,11 +95,6 @@ const Footer = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: ${spacing.spacing3};
-`
-
-const ErrorText = styled.p`
-  color: ${colors.status.critical};
-  ${typography.body2Regular};
 `
 
 interface RecipientModalProps {
@@ -177,9 +167,9 @@ export default function RecipientModal({
                 {...register(`recipients.${index}.name`)}
               />
               {errors.recipients?.[index]?.name && (
-                <ErrorText>
+                <ErrorMessage>
                   {String(errors.recipients[index]?.name?.message)}
-                </ErrorText>
+                </ErrorMessage>
               )}
             </div>
             <div>
@@ -196,9 +186,9 @@ export default function RecipientModal({
                 })}
               />
               {errors.recipients?.[index]?.phone && (
-                <ErrorText>
+                <ErrorMessage>
                   {String(errors.recipients[index]?.phone?.message)}
-                </ErrorText>
+                </ErrorMessage>
               )}
             </div>
             <div>
@@ -211,14 +201,14 @@ export default function RecipientModal({
                 })}
               />
               {errors.recipients?.[index]?.qty && (
-                <ErrorText>
+                <ErrorMessage>
                   {String(errors.recipients[index]?.qty?.message)}
-                </ErrorText>
+                </ErrorMessage>
               )}
             </div>
           </Row>
         ))}
-        {hasDuplicate && <ErrorText>전화번호가 중복되었습니다.</ErrorText>}
+        {hasDuplicate && <ErrorMessage>전화번호가 중복되었습니다.</ErrorMessage>}
         <Footer>
           <button type="button" onClick={onClose}>
             취소

@@ -4,9 +4,14 @@ import useLoginForm from '@/hooks/useLoginForm'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
+import { useAuth } from '@/contexts/AuthContext'
+import { postLogin } from '@/api/auth'
+import { toast } from 'react-toastify'
+import { ErrorMessage, YellowButton } from '@/components/common'
+import type { UserInfo } from '@/utils/storage'
 
 interface LoginFormSectionProps {
-    onSuccess: (email: string) => void
+  onSuccess?: (info: UserInfo) => void
 }
 
 const Form = styled.form`
@@ -30,53 +35,41 @@ const Input = styled.input`
   }
 `
 
-const ErrorMessage = styled.p`
-  margin: 0 0 ${spacing.spacing3};
-  color: ${colors.status.critical};
-  font-size: ${typography.body2Regular.fontSize};
-  line-height: ${typography.body2Regular.lineHeight};
-`
-
-const Button = styled.button`
+const Button = styled(YellowButton)`
   height: 48px;
-  background-color: ${colors.brand.kakaoYellow};
-  border: none;
-  border-radius: 4px;
-  font-size: ${typography.body1Bold.fontSize};
-  font-weight: ${typography.body1Bold.fontWeight};
-  cursor: pointer;
-  transition: background 0.2s ease;
-
-  &:hover:enabled {
-    background-color: ${colors.brand.kakaoYellowHover};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
 `
 
 export default function LoginFormSection({ onSuccess }: LoginFormSectionProps) {
-    const {
-        email,
-        setEmail,
-        password,
-        setPassword,
-        emailError,
-        passwordError,
-        handleEmailBlur,
-        handlePasswordBlur,
-        isValid,
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    emailError,
+    passwordError,
+    handleEmailBlur,
+    handlePasswordBlur,
+    isValid,
+  } = useLoginForm()
+  const { login } = useAuth()
 
-    } = useLoginForm()
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!isValid) return
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
-        if (!emailError && !passwordError && email && password) {
-            onSuccess(email)
-        }
+    try {
+      const info = await postLogin(email, password)
+      login(info)
+      onSuccess?.(info)
+    } catch (err: any) {
+      const code = err?.statusCode ?? 0
+      if (code >= 400 && code < 500) {
+        toast.error(err.message)
+      } else {
+        toast.error('로그인에 실패했습니다.')
+      }
     }
+  }
 
     return (
         <Form onSubmit={handleSubmit}>

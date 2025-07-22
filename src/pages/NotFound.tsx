@@ -3,6 +3,8 @@ import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
 import { spacing } from '@/theme/spacing'
 import { useNavigate } from 'react-router-dom'
+import { YellowButton } from '@/components/common'
+
 
 const Container = styled.div`
   display: flex;
@@ -20,19 +22,8 @@ const Message = styled.h1`
   line-height: ${typography.title2Bold.lineHeight};
 `
 
-const HomeButton = styled.button`
+const HomeButton = styled(YellowButton)`
   margin-top: ${spacing.spacing6};
-  padding: ${spacing.spacing2} ${spacing.spacing4};
-  background-color: ${colors.brand.kakaoYellow};
-  border: none;
-  border-radius: 4px;
-  font-size: ${typography.body1Bold.fontSize};
-  font-weight: ${typography.body1Bold.fontWeight};
-  cursor: pointer;
-  transition: background 0.2s ease;
-  &:hover {
-    background-color: ${colors.brand.kakaoYellowHover};
-  }
 `
 
 export default function NotFound() {

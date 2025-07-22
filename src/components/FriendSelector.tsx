@@ -76,8 +76,8 @@ const Item = styled.li`
 const FriendSelector = ({ friends, onSelect }: FriendSelectorProps) => {
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState<string | null>(null)
-  const { userEmail } = useAuth()
-  const nickname = userEmail ? userEmail.split('@')[0] : ''
+  const { userInfo } = useAuth()
+  const nickname = userInfo ? userInfo.name : ''
   const handleSelect = (friend: string) => {
     setSelected(friend)
     setOpen(false)
@@ -91,7 +91,7 @@ const FriendSelector = ({ friends, onSelect }: FriendSelectorProps) => {
           <img src={plusIcon} alt="plus" width="16" height="16" />        
         </IconCircle>
         {selected ??
-          (userEmail
+          (userInfo
             ? `${nickname}님! 선물할 친구를 선택해 주세요.`
             : '선물할 친구를 선택해 주세요.')}      </Button>
       {open && (

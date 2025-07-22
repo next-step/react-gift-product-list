@@ -1,5 +1,4 @@
 ﻿import { useNavigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext'
 import styled from '@emotion/styled'
 import { colors } from '@/theme/color'
 import { typography } from '@/theme/typography'
@@ -34,12 +33,10 @@ const Logo = styled.h2`
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useAuth()
   const from = (location.state as { from?: string })?.from ?? '/'
 
 
-  const handleSuccess = (userEmail: string) => {
-    login(userEmail)
+  const handleSuccess = () => {
     navigate(from, { replace: true })
   }
 
