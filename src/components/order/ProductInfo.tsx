@@ -66,7 +66,6 @@ type Props = {
 };
 
 const ProductInfo = ( {product} : Props) => {
-  console.dir(product)
   return (
     <SidePadding>
       <Padding3 />

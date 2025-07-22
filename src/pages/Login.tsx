@@ -6,8 +6,8 @@ import { emailValidator, passwordValidator } from '@/utils/validators';
 import { useAuth } from '@/contexts/AuthContext';
 import { PaddingMd, PaddingSm } from '@/components/common/Padding';
 import usePost from '@/hooks/usePost';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import { FetchLogin } from '@/services/authAPi';
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -67,17 +67,14 @@ const Login = () => {
   const email = useInput({ validator: emailValidator });
   const password = useInput({ validator: passwordValidator });
   const isActivatedBtn = email.isValid && password.isValid;
-  const LoginFetcher = (body, token) => {
-    return axios.post('http://localhost:3000/api/login', body).then((res) => res.data);
-  };
+  
   const {  post } = usePost({
-    fetcher: LoginFetcher,
+    fetcher: FetchLogin,
   });
 
   const handleLoginClick = async () => {
     if (isActivatedBtn) {
       try {
-        console.log(email.value, password.value);
         const loginData = await post({
           email: email.value,
           password: password.value,

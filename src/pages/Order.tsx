@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import Navbar from '@/components/navbar/Navbar';
@@ -19,27 +18,13 @@ import usePost from '@/hooks/usePost';
 import { useAuth } from '@/contexts/AuthContext';
 import type { OrderFormData } from '@/components/order/receiverlist/types';
 import { ROUTE_PATH } from '@/routes/Router';
+import { fetchOrder, fetchProductSummary } from '@/services/orderApi';
 
 type SelectedCard = {
   id: number;
   message: string;
 };
-const fetchProductSummary = (product_id:number) => {
-  return axios
-    .get(`http://localhost:3000/api/products/${product_id}/summary`)
-    .then((res) => res.data.data);
-};
 
-const fetchOrder = async(body, token) => {
-  return axios
-    .post(`http://localhost:3000/api/order`, body, {
-      headers: {
-        Authorization: token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((res) => res.data);
-}
 
 const Order = () => {
   const navigate = useNavigate();
@@ -47,11 +32,9 @@ const Order = () => {
   const { productId } = useParams();
   const product_id = Number(productId);
 
-  // -------------------- ✅ 상태 선언 --------------------
   const [selectedCard, setSelectedCard] = useState<SelectedCard>();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // -------------------- ✅ 폼 관련 --------------------
   const {
     register,
     handleSubmit,
@@ -75,14 +58,19 @@ const Order = () => {
 
   const receivers = watch('receivers');
 
-  // -------------------- ✅ 데이터 패칭 --------------------
   
-  const { data, isLoading } = useFetch({
+  const { data, isLoading , error} = useFetch({
     fetcher: () => fetchProductSummary(product_id),
     initValue: null,
     deps:[productId]
   });
 
+  useEffect(()=>{
+    if(error){
+toast.error("상품 정보를 불러올 수 없습니다. ")
+navigate(ROUTE_PATH.HOME)
+    }
+  }, [error])
   const {
     data: orderData,
     isLoading: isOrderPosting,
@@ -90,12 +78,8 @@ const Order = () => {
     post,
   } = usePost({ fetcher: (body, token) => fetchOrder(body, token) });
 
-  console.log('orderData', orderData);  
-  console.log('orderError', orderError);
 
 
-
-  // -------------------- ✅ useEffect --------------------
   useEffect(() => {
     if (user?.name) {
       reset((prev) => ({
@@ -119,8 +103,6 @@ const Order = () => {
       ordererName: formData.senderName,
       receivers: formData.receivers,
     };
-console.log('formData', formData);
-console.log('body', body);
 
     post(body, user.token)
       .then((res) => {
@@ -129,16 +111,14 @@ console.log('body', body);
       .catch((e) => {
         if (e.response?.status === 401) {
           toast.error('로그인이 필요합니다.');
-          navigate(ROUTE_PATH.LOGIN); // ✅ 로그인 페이지로 이동
+          navigate(ROUTE_PATH.LOGIN); 
         } else {
           toast.error(e.message || '주문 중 오류가 발생했습니다.');
         }
       });
   });
-if (isLoading) return <div>로딩중...(fetch 중)</div>;
-if (!data) return <div>로딩중...(data 없음)</div>;
-if (!user?.name) return <div>로딩중...(user name 없음)</div>;
-  // -------------------- ✅ 가격 계산 --------------------
+if (isLoading||!data||!user?.name) return <div>로딩중...</div>;
+
   const productPrice = data.price;
   const receiversTotalQuantity = receivers.reduce((sum, r) => sum + r.quantity, 0);
   const totalPrice = productPrice * receiversTotalQuantity;
