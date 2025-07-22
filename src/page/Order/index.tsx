@@ -11,14 +11,7 @@ import ProductInfo from './components/ProductInfo';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import postOrderInfo from './utils/postOrderInfo';
 import { toast } from 'react-toastify';
-import { ROUTES } from '@/routes/routes';
-import toLocaleString from '@/utils/toLocaleString';
-import useRanking from './hooks/useRnaking';
-import ProductInfo from './components/ProductInfo';
-import { useUserInfo } from '@/contexts/UserInfoContext';
-import postOrderInfo from './utils/postOrderInfo';
-import { toast } from 'react-toastify';
-import { ROUTES } from '@/routes/routes';
+import { ROUTES } from '@/routes/Routes';
 
 export interface OrderInfoValues {
   message: string;
