@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-type FilterKey = 'all' | 'female' | 'male' | 'teen';
+type FilterKey = 'ALL' | 'FEMALE' | 'MALE' | 'TEEN';
 type TabOption = '받고 싶어한' | '많이 선물한' | '위시로 받은';
 
-const filters: FilterKey[] = ['all', 'female', 'male', 'teen'];
+const filters: FilterKey[] = ['ALL', 'FEMALE', 'MALE', 'TEEN'];
 const tabs: TabOption[] = [
   '받고 싶어한',
   '많이 선물한',
@@ -26,7 +26,7 @@ export const useGiftRankingFilter = () => {
   };
 
   const [selectedFilter, setSelectedFilter] = useState<FilterKey>(
-    () => getStoredValue(LOCAL_FILTER_KEY, filters, 'all')
+    () => getStoredValue(LOCAL_FILTER_KEY, filters, 'ALL')
   );
 
   const [selectedTab, setSelectedTab] = useState<TabOption>(() =>

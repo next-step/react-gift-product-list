@@ -4,4 +4,5 @@ export const ROUTES = {
   NOT_FOUND: '*',
   MY_PAGE: '/my',
   ORDER: (id = ':id') => `/order/${id}`,
+  THEME: (themeId = ':themeId') => `/themes/${themeId}`,
 };

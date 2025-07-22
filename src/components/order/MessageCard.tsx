@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { orderCardTemplates } from '../data/orderCardTemplateMock';
+import { orderCardTemplates } from '../../data/orderCardTemplateMock';
 
 const Wrapper = styled.div`
   padding-bottom: 12px;

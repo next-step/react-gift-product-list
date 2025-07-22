@@ -1,11 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useState } from 'react';
-import { useGiftRanking } from '../hooks/useGiftRanking';
-import type { GiftItem } from '../types/GiftItem';
-import { useGiftRankingFilter } from '../hooks/useGiftRankingFilter';
+import { useGiftRanking } from '../../hooks/useGiftRanking';
+import type { GiftItem } from '../../types/GiftItem';
 
 const Container = styled.div`
   padding: 24px;
@@ -78,8 +77,13 @@ const MoreButton = styled.button`
   background: white;
 `;
 
-export const RankingGrid = () => {
-  const { selectedFilter, selectedTab } = useGiftRankingFilter();
+export const RankingGrid = ({
+  selectedFilter,
+  selectedTab,
+}: {
+  selectedFilter: string;
+  selectedTab: string;
+}) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(6);
