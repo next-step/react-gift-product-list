@@ -4,5 +4,6 @@ export const ROUTE_PATH = {
   MY: "/my",
   ORDER: "/order/:id",
   ERROR: "*",
+  THEME: "/themes/:id",
   GO_BACK: -1,
 } as const;

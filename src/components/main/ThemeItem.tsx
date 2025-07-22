@@ -1,4 +1,3 @@
-import type { CategoryType } from "@/types";
 import styled from "@emotion/styled";
 
 const ThemeItemContainer = styled.div(({ theme }) => ({
@@ -24,10 +23,15 @@ const ThemeItemTitle = styled.p(({ theme }) => ({
   color: `${theme.color.gray[900]}`,
 }));
 
-export const ThemeItem = ({ image, name }: CategoryType) => {
+interface ThemeItemProps {
+  image: string;
+  name: string;
+  onClick: () => void;
+}
+export const ThemeItem = ({ image, name, onClick }: ThemeItemProps) => {
   return (
     <ThemeItemContainer>
-      <ThemeItemImage src={image} alt="테마 이미지" />
+      <ThemeItemImage src={image} alt="테마 이미지" onClick={onClick} />
       <ThemeItemTitle>{name}</ThemeItemTitle>
     </ThemeItemContainer>
   );
