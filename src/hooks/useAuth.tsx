@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { type ReactNode } from 'react';
 import { loginApi } from '@/api/LoginApi';
-import { createStorage } from '@/utils/storage';
+import { useStorageState } from './useStorageState';
 
 interface User {
   authToken: string;
@@ -15,12 +15,10 @@ interface AuthCtx {
   logout: () => void;
 }
 
-const userStorage = createStorage<User>('auth_user');
-
 const AuthContext = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => userStorage.get());
+  const [user, setUser, clearUser] = useStorageState<User | null>('auth_user', null);
 
   const login = async (email: string, password: string) => {
     const res = await loginApi({ email, password });
@@ -30,12 +28,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: res.name,
     };
     setUser(userInfo);
-    userStorage.set(userInfo);
   };
 
   const logout = () => {
-    setUser(null);
-    userStorage.remove();
+    clearUser();
   };
 
   return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
