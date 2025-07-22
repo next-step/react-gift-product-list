@@ -31,7 +31,6 @@ const [error, setError] = useState<ErrorInfo | null>(null);
     
       //axios 에서 발생한 에러이면 response 객체에 안전하게 접근이 가능하다. 
       if (axios.isAxiosError(e)){
-        console.log("에러 안이 어떻게 생겼나 보자", e)
         errorInfo= {
           message: e.response?.data?.data.message || '요청 오류가 발생했어요.',
         status: e.response?.data.data.status,

@@ -7,13 +7,9 @@ import {
   CategoryItem,
   CategoryImage,
 } from './Category.styles';
-import { useCallback, useEffect, useState } from 'react';
 import type { CategoryType } from '@/types/category';
 import { useFetch } from '@/hooks/useFetch';
-import api from '@/lib/axiosInstance';
-const fetchCategories = async() => {
-  return await api.get('http://localhost:3000/api/themes').then((res) => res.data.data);
-};
+import { fetchCategories } from '@/services/themeApi';
 
 const Category = () => {
   const {
