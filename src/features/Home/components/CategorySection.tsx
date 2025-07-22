@@ -1,7 +1,6 @@
-import { fetchThemes } from '@apis/themeApi';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import useFetch from '@hooks/useFetch';
 interface GiftTheme {
   themeId: number;
   name: string;
@@ -9,31 +8,14 @@ interface GiftTheme {
 }
 
 const CategorySection = () => {
-  const [themes, setThemes] = useState<GiftTheme[]>([]);
-  const [hasError, setHasError] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadThemes = async () => {
-      try {
-        const data = await fetchThemes();
-        setThemes(data.data);
-      } catch (error) {
-        console.error('테마를 불러오는 중 오류 발생: ', error);
-        setHasError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadThemes();
-  }, []);
+  const { data: themes, loading, hasError } = useFetch<GiftTheme[]>('/themes');
 
   return (
     <Section>
       <SectionTitle>선물 테마</SectionTitle>
       {loading && <LoadingSpinner />}
 
-      {!loading && !hasError && themes.length > 0 && (
+      {!loading && !hasError && themes && themes.length > 0 && (
         <Grid>
           {themes.map((theme: GiftTheme) => (
             <Item key={theme.themeId}>

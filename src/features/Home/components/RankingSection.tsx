@@ -1,7 +1,7 @@
-import { fetchRankedProducts } from '@apis/rankingApi';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import useFetch from '@hooks/useFetch';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 type TargetType = '전체' | '여성이' | '남성이' | '청소년이';
@@ -66,39 +66,23 @@ const RankingSection = () => {
     ? (rawRank as RankType)
     : '받고 싶어한';
 
-  const updateParam = (key: string, value: string) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set(key, value);
-    setSearchParams(newParams);
-  };
-
   const navigate = useNavigate();
   const handleClick = (item: RankedProduct) => {
     navigate(`/order/${item.id}`);
   };
 
-  const [products, setProducts] = useState<RankedProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  useEffect(() => {
-    const loadRankedProducts = async () => {
-      try {
-        const apiTargetType = Target_MAP[selectedTarget];
-        const apiRankType = Rank_MAP[selectedRank];
+  const { data, loading, hasError } = useFetch<Product[]>(
+    `/products/ranking?targetType=${Target_MAP[selectedTarget]}&rankType=${Rank_MAP[selectedRank]}`
+  );
 
-        const data = await fetchRankedProducts(apiTargetType, apiRankType);
-        const rankedProducts = addRanking(data.data);
-        setProducts(rankedProducts);
-      } catch (error) {
-        console.error('상품 랭킹을 불러오는 중 오류 발생: ', error);
-        setHasError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const products = data ? addRanking(data) : [];
+  console.log(data);
 
-    loadRankedProducts();
-  }, [searchParams]);
+  const updateParam = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set(key, value);
+    setSearchParams(newParams);
+  };
 
   const visibleItems = isExpanded ? products : products.slice(0, 6);
 
