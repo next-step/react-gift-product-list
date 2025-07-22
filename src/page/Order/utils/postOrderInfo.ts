@@ -19,8 +19,7 @@ const postOrderInfo = async ({
 }: postOrderInfoProps): Promise<boolean> => {
   try {
     const data = await requests.fetchOrder({ orderData, id, token });
-    console.log(data);
-    return true;
+    return data.success;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const status = error.response?.data?.data?.statusCode;

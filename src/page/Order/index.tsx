@@ -5,13 +5,13 @@ import SenderInfo from './components/SenderInfo';
 import ReceiverField from './components/ReceiverField';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
-import { ROUTES } from '@/routes/Routes';
 import toLocaleString from '@/utils/toLocaleString';
 import useRanking from './hooks/useRnaking';
 import ProductInfo from './components/ProductInfo';
 import { useUserInfo } from '@/contexts/UserInfoContext';
 import postOrderInfo from './utils/postOrderInfo';
 import { toast } from 'react-toastify';
+import { ROUTES } from '@/routes/routes';
 
 export interface OrderInfoValues {
   message: string;
@@ -37,7 +37,7 @@ const OrderPage = () => {
       return;
     }
 
-    const token = userInfo.token;
+    const token = userInfo.authToken;
     const isSuccess = await postOrderInfo({
       orderData,
       navigate,

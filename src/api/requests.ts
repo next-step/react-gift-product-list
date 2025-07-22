@@ -10,6 +10,9 @@ export interface FetchOrderProps {
   id: string;
   token: string;
 }
+interface OrderResponseData {
+  success: boolean;
+}
 
 export const requests = {
   fetchUserInfos: ({ username, password }: UserInfoProps): Promise<UserInfoData> => {
@@ -19,7 +22,7 @@ export const requests = {
     };
     return apiClient.post('/api/login', data);
   },
-  fetchOrder: ({ orderData, id, token }: FetchOrderProps) => {
+  fetchOrder: ({ orderData, id, token }: FetchOrderProps): Promise<OrderResponseData> => {
     const { message, name, receiverInfos } = orderData;
     const data = {
       productId: Number(id),
