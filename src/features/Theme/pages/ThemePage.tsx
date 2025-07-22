@@ -4,21 +4,20 @@ import { ThemeHero } from '../components/ThemeHero/ThemeHero'
 import { ROUTE_PATH } from '@/routes/Router'
 import Loading from '@/component/Loading/Loading'
 import ThemeProducts from '../components/ThemeProducts/ThemeProducts'
+import type { Product } from '../types/ThemeTypes'
 
 const ThemePage = () => {
-  const { themeId } = useParams()
   const navigate = useNavigate()
-  const themeIdNum = Number(themeId)
 
-  const { themeInfo, loading: infoLoading } = useThemeInfo(
-    Number.isNaN(themeIdNum) ? null : themeIdNum
-  )
+  const { themeId } = useParams<{ themeId: string }>()
+  const themeIdNum = themeId && !isNaN(Number(themeId)) ? Number(themeId) : null
+  const { themeInfo, loading } = useThemeInfo(themeIdNum)
 
-  const handleProductSelect = (product: any) => {
+  const handleProductSelect = (product: Product) => {
     navigate(ROUTE_PATH.ORDER.replace(':productId', String(product.id)))
   }
 
-  if (infoLoading) return <Loading />
+  if (loading) return <Loading />
 
   if (!themeInfo) {
     navigate(ROUTE_PATH.GIFT, { replace: true })
