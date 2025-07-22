@@ -8,17 +8,11 @@ export interface postOrderInfoProps {
   orderData: OrderInfoValues;
   navigate: (path: string) => void;
   id: string;
-  token: string;
 }
 
-const postOrderInfo = async ({
-  orderData,
-  navigate,
-  id,
-  token,
-}: postOrderInfoProps): Promise<boolean> => {
+const postOrderInfo = async ({ orderData, navigate, id }: postOrderInfoProps): Promise<boolean> => {
   try {
-    const data = await requests.fetchOrder({ orderData, id, token });
+    const data = await requests.fetchOrder({ orderData, id });
     return data.success;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

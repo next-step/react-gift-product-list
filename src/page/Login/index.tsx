@@ -4,7 +4,6 @@ import InputField from './components/InputField';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import useLogin from './hooks/useLogin';
-import { useUserInfo } from '@/contexts/UserInfoContext';
 
 const Container = styled.div`
   display: flex;
@@ -58,9 +57,6 @@ const LoginPage = () => {
   const password = useInput('password');
 
   const isButtonActive = username.isValid && password.isValid;
-
-  const { userInfo } = useUserInfo();
-  console.log(userInfo);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

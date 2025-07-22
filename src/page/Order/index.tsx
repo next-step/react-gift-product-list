@@ -37,12 +37,10 @@ const OrderPage = () => {
       return;
     }
 
-    const token = userInfo.authToken;
     const isSuccess = await postOrderInfo({
       orderData,
       navigate,
       id,
-      token,
     });
 
     if (isSuccess) {

@@ -8,7 +8,6 @@ import type { ThemeInfo } from '@/page/Home/hooks/useTheme';
 export interface FetchOrderProps {
   orderData: OrderInfoValues;
   id: string;
-  token: string;
 }
 interface OrderResponseData {
   success: boolean;
@@ -22,7 +21,7 @@ export const requests = {
     };
     return apiClient.post('/api/login', data);
   },
-  fetchOrder: ({ orderData, id, token }: FetchOrderProps): Promise<OrderResponseData> => {
+  fetchOrder: ({ orderData, id }: FetchOrderProps): Promise<OrderResponseData> => {
     const { message, name, receiverInfos } = orderData;
     const data = {
       productId: Number(id),
@@ -31,12 +30,7 @@ export const requests = {
       ordererName: name,
       receivers: receiverInfos,
     };
-    const headers = {
-      headers: {
-        Authorization: `${token}`,
-      },
-    };
-    return apiClient.post('/api/order', data, headers);
+    return apiClient.post('/api/order', data);
   },
   fetchSummary: (id: string): Promise<ProductSummaryData> => {
     return apiClient.get(`/api/products/${id}/summary`);

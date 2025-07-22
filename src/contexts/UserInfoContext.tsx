@@ -1,4 +1,5 @@
 import type { UserInfoData } from '@/page/Login/hooks/useLogin';
+import parseSessionStorage from '@/utils/parseSessionStorage';
 import { createContext, useContext, useState, type PropsWithChildren } from 'react';
 
 interface UserInfo {
@@ -27,8 +28,8 @@ export const useUserInfo = () => {
 
 export const UserInfoProvider = ({ children }: PropsWithChildren) => {
   const [userInfo, setUserInfo] = useState<UserInfoData>(() => {
-    const saved = sessionStorage.getItem('user');
-    return saved ? JSON.parse(saved) : EMPTY_USER_INFO;
+    const parsed = parseSessionStorage();
+    return parsed ? parsed : EMPTY_USER_INFO;
   });
 
   const isLoggedIn = Boolean(userInfo.email);
