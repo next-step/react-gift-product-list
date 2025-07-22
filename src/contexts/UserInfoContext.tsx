@@ -27,10 +27,8 @@ export const useUserInfo = () => {
 };
 
 export const UserInfoProvider = ({ children }: PropsWithChildren) => {
-  const [userInfo, setUserInfo] = useState<UserInfoData>(() => {
-    const parsed = parseSessionStorage();
-    return parsed ? parsed : EMPTY_USER_INFO;
-  });
+  const parsed = parseSessionStorage();
+  const [userInfo, setUserInfo] = useState<UserInfoData>(parsed ? parsed : EMPTY_USER_INFO);
 
   const isLoggedIn = Boolean(userInfo.email);
 
