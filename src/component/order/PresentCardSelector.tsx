@@ -1,5 +1,5 @@
 import { CardTemplete } from '@/mock/CardTemplete';
-import { CentorAlignDiv, DefaultComponentDiv, EmptyDiv40h, EmptyDiv8h, LowSlideDiv, SideBlankDiv } from '@/styles/Common.styled';
+import { CentorAlignDiv, DefaultComponentDiv, EmptyDiv40h, EmptyDiv8h, LowSlideDiv, SideBlankDiv } from '@/styles/CommomStyle/Common.styled';
 import { useState } from 'react'
 import { CardBiGImg, CardBiGImgDiv, CardMessage, CardMiniImg } from './PresentCardSelector.styled';
 import { useOrder } from '@/context/OrderContext';

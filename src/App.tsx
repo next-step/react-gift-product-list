@@ -11,6 +11,7 @@ import Order from './page/Order';
 import ProtectedRoute from './component/ProtectedRoute';
 import { OrderContextProvider } from './context/OrderContext';
 import { ReceiverProvider } from './context/ReceiverContext';
+import Themes from './page/Themes';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               </ReceiverProvider>
             </OrderContextProvider>
           } />
+          <Route path="/Themes/:themeId" element={<Themes />} />
           <Route path="*" element={<Notfound />} />
         </Routes>
       </ThemeProvider>

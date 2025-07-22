@@ -1,21 +1,15 @@
 import { useState } from 'react';
 import {
-    BrandImage,
     LoadMoreButton,
     LoadMoreButtonDiv,
-    Price,
-    ProductCard,
-    ProductGrid,
-    ProductImage,
-    ProductInfo,
 } from './GiftRanking.styled';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import type { ProductItem } from '@/type/product';
-import { Spinner, SpinnerWrapper } from './GiftTheme.styled';
 import type { RankType, TargetType } from '@/type/giftRanking';
-import { CentorAlignDiv240, EmptyDiv16h } from '@/styles/Common.styled';
-import useFetchFromUrl from '@/hook/useFetchFromUrl';
+import { CentorAlignDiv240, EmptyDiv16h, Spinner, SpinnerWrapper } from '@/styles/CommomStyle/Common.styled';
+import { BrandImage, Price, ProductCard, ProductGrid, ProductImage, ProductInfo } from '@/styles/CommomStyle/ProductList';
+import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
 
 const baseRankingUrl = 'http://localhost:3000/api/products/ranking'
 
@@ -31,7 +25,7 @@ const GIFTLENGTH = 6;
 const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
     const RankingUrl = `${baseRankingUrl}?targetType=${targetType}&rankType=${rankType}`
     const [isExpanded, setIsExpanded] = useState(false);
-    const {item ,loding,error} = useFetchFromUrl(RankingUrl);
+    const { item, loding, error } = useFetchFromUrlT<[]>(RankingUrl, []);
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -82,7 +76,7 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
                 {item.length > GIFTLENGTH && (
                     <LoadMoreButton onClick={() => setIsExpanded((prev) => !prev)}>
                         <p>
-                        {isExpanded ? '접기' : '더보기'}
+                            {isExpanded ? '접기' : '더보기'}
                         </p>
                     </LoadMoreButton>
                 )}

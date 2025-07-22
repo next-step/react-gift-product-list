@@ -6,14 +6,14 @@ import {
   Label,
   PeopleFilterButton,
   PeopleGroup,
-  ProductDiv,
   WishFilterButton,
   WishGroup,
 } from './GiftRanking.styled';
 
 import GiftRankingList from './GiftRankingList';
 import { RankFilterOption, RankType, TargetFilterOption, TargetType } from '@/type/giftRanking';
-import {EmptyDiv16h, EmptyDiv20h, Title } from '@/styles/Common.styled';
+import {EmptyDiv16h, EmptyDiv20h, Title } from '@/styles/CommomStyle/Common.styled';
+import { ProductDiv } from '@/styles/CommomStyle/ProductList';
 
 
 const GiftRanking = () => {

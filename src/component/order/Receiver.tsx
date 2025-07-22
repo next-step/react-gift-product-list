@@ -12,7 +12,7 @@ import {
   SimpleButton,
   SubText,
   SubTitle,
-} from '@/styles/Common.styled';
+} from '@/styles/CommomStyle/Common.styled';
 import { useState } from 'react';
 import ReceiverModal from './ReceiverModal';
 import { useReceiver } from '@/context/ReceiverContext';

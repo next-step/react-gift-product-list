@@ -12,7 +12,7 @@ import {
   SimpleInput,
   SubText,
   SubTitle,
-} from '@/styles/Common.styled';
+} from '@/styles/CommomStyle/Common.styled';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { ButtonSpace, CancleButton, Hr1Gray, ReceiverOne, ReceiverTitle, SubmitButton, XButton } from './ReceiverModal.styled';
 import type { Receiver } from '@/type/order';

@@ -13,7 +13,7 @@ import {
 } from './Login.styled';
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { EmptyDiv16h, EmptyDiv48h } from '../styles/Common.styled';
+import { EmptyDiv16h, EmptyDiv48h } from '../styles/CommomStyle/Common.styled';
 import { toast, ToastContainer } from 'react-toastify';
 
 const Login = () => {

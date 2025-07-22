@@ -14,7 +14,7 @@ import {
   SideBlankDiv,
   SubText,
   SubTitle,
-} from '@/styles/Common.styled';
+} from '@/styles/CommomStyle/Common.styled';
 import type { ProductItemSummary } from '@/type/product';
 import { orderAPI } from '@/utils/orderApi';
 import { useEffect } from 'react';
