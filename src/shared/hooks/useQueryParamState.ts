@@ -14,7 +14,7 @@ export const useQueryParamState = <T extends string = string>(
         return true;
     };
 
-    const currentValue = isValidValue(paramValue) ? (paramValue as T) : (defaultValue ?? null);
+    const currentValue = isValidValue(paramValue) ? paramValue : (defaultValue ?? null);
 
     const setValue = (newValue: T) => {
         const newParams = new URLSearchParams(searchParams);
