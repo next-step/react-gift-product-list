@@ -14,8 +14,8 @@ import api from '@/lib/axiosInstance';
 const fetchCategories = async() => {
   return await api.get('http://localhost:3000/api/themes').then((res) => res.data.data);
 };
+
 const Category = () => {
-  // ✅ useFetch 훅 사용
   const {
     data: category,
     isLoading,
@@ -25,7 +25,9 @@ const Category = () => {
     initValue: [],
     deps:[]
   });
-
+const handleClickCategory = (categoryId: number) => {
+  console.log(`Selected category ID: ${categoryId}`);
+};
   if (isLoading) return <div>📢 카테고리가 로딩중입니다..</div>;
   if (error) return <div>❌ 오류 발생: {String(error)}</div>;
   if (category.length === 0) return <div>📭 선물 테마가 없습니다.</div>;
@@ -37,7 +39,7 @@ const Category = () => {
       </CategoryHeader>
       <CategoryGrid>
         {category.map((item) => (
-          <CategoryItem key={item.themeId}>
+          <CategoryItem onClick={() => handleClickCategory(item.themeId)} key={item.themeId}>
             <CategoryImage src={item.image} alt={item.name} />
             <p
               css={css`
