@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const StyledPresentRankingItemBrandName = styled.p`
-  color: ${({ theme }) => theme.sementicPalette.textDisabled};
+  color: ${({ theme }) => theme.palette.gray600};
   padding: ${({ theme }) => theme.spacing.spacing1};
 `;
 export const StyledPresentRankingItemDiv = styled.div`

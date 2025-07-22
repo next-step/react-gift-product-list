@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 const StyledTopestDiv = styled.div`
   background-color: ${({ theme }) => theme.palette.gray500};
+  box-sizing: border-box;
   width: 720px;
 
   .title1Bold {
@@ -87,6 +88,9 @@ const StyledTopestDiv = styled.div`
   }
   .background-kakaoyellow {
     background-color: ${({ theme }) => theme.sementicPalette.kakaoYellow};
+  }
+  .color-white {
+    color: white;
   }
 `;
 

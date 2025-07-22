@@ -1,6 +1,13 @@
 import styled from '@emotion/styled';
 import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
+import {
+  StyledPresentRankingItemBrandName,
+  StyledPresentRankingItemDiv,
+  StyledPresentRankingItemImage,
+  StyledPresentRankingItemPrasentPrice,
+  StyledPresentRankingItemPresentItem,
+} from '@src/components/Home/PresentRanking/Item/StyledPresentRankingItem';
 import StyledTopestDiv from '@src/styles/StyledTopesDiv';
 import { useEffect, useState } from 'react';
 
@@ -59,7 +66,7 @@ const ThemesProductLabel = () => {
       }
     };
     reqeustLabel();
-  }, [label, themeId]);
+  }, [themeId]);
 
   useEffect(() => {
     const reqeustThemeItem = async () => {
@@ -79,24 +86,34 @@ const ThemesProductLabel = () => {
       }
     };
     reqeustThemeItem();
-  }, [products, themeId]);
+  }, [themeId]);
 
   return (
     <StyledTopestDiv>
       <StyledThemesProductLabelItem background={label?.backgroundColor}>
-        <p>{label && label.name}</p>
-        <p>{label && label.title}</p>
-        <p>{label && label.description}</p>
+        <p className='label1Reuglar color-white'>{label && label.name}</p>
+        <p className='title2Bold color-white'>{label && label.title}</p>
+        <p className='title2Regular color-white'>{label && label.description}</p>
       </StyledThemesProductLabelItem>
-      {products &&
-        products.data.list.map((item) => (
-          <div key={item.id}>
-            <img src={item.imageURL} alt='사진 없음' />
-            <p>{item.brandInfo.name}</p>
-            <p>{item.name}</p>
-            <p>{item.price.sellingPrice}</p>
-          </div>
-        ))}
+      <StyledThemesProductPaddingContainer>
+        <StyledThemesProductGridContainer>
+          {products &&
+            products.data.list.map((item) => (
+              <StyledPresentRankingItemDiv>
+                <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
+                <StyledPresentRankingItemBrandName className='brand_name'>
+                  {item.brandInfo.name}
+                </StyledPresentRankingItemBrandName>
+                <StyledPresentRankingItemPresentItem className='goods_name'>
+                  {item.name}
+                </StyledPresentRankingItemPresentItem>
+                <StyledPresentRankingItemPrasentPrice className='goods_price'>
+                  {item.price.sellingPrice.toLocaleString()} 원
+                </StyledPresentRankingItemPrasentPrice>
+              </StyledPresentRankingItemDiv>
+            ))}
+        </StyledThemesProductGridContainer>
+      </StyledThemesProductPaddingContainer>
     </StyledTopestDiv>
   );
 };
@@ -109,4 +126,24 @@ interface ColorProps {
 
 const StyledThemesProductLabelItem = styled.div<ColorProps>`
   background-color: ${({ background }) => background};
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+  justify-content: center;
+
+  p {
+    margin: 3px 10px 0px 10px;
+  }
+`;
+
+const StyledThemesProductPaddingContainer = styled.div`
+  width: 100%;
+  padding: 4px 16px;
+  background-color: white;
+`;
+
+const StyledThemesProductGridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 5px;
 `;
