@@ -2,7 +2,7 @@ import cardTemplate from '@data/cardTemplate.json';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import MessageInput from './MessageInput';
-import type { FormSectionProps } from '@pages/GiftOrderPage';
+import type { FormSectionProps } from '@features/GiftOrderPage/GiftOrderPage';
 import ErrorText from '@components/common/ErrorText';
 
 interface CardTemplate {

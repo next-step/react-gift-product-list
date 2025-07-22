@@ -1,8 +1,8 @@
 import Divider from '@components/common/Divider';
-import CardSelector from '@components/GifrOrderPage/CardSelector';
-import OrderButton from '@components/GifrOrderPage/OrderButton';
-import ProductSummary from '@components/GifrOrderPage/ProductSummary';
-import SenderForm from '@components/GifrOrderPage/SenderForm';
+import CardSelector from '@features/GiftOrderPage/components/CardSelector';
+import OrderButton from '@features/GiftOrderPage/components/OrderButton';
+import ProductSummary from '@features/GiftOrderPage/components/ProductSummary';
+import SenderForm from '@features/GiftOrderPage/components/SenderForm';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   type MultiOrderFormData,
@@ -19,8 +19,8 @@ import {
   type UseFormRegister,
   type UseFormSetValue,
 } from 'react-hook-form';
-import ReceiveList from '@components/GifrOrderPage/ReceiveList';
-import ReceiveModal from '@components/GifrOrderPage/ReceiveModal';
+import ReceiveList from '@features/GiftOrderPage/components/ReceiveList';
+import ReceiveModal from '@features/GiftOrderPage/components/ReceiveModal';
 import { useModal } from '@contexts/ModalContext';
 import { useState } from 'react';
 

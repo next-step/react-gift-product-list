@@ -19,6 +19,7 @@ export default defineConfig({
       '@contexts': path.resolve(__dirname, 'src/contexts'),
       '@schemas': path.resolve(__dirname, 'src/schemas'),
       '@apis': path.resolve(__dirname, 'src/apis'),
+      '@features': path.resolve(__dirname, 'src/features'),
     },
   },
 });
