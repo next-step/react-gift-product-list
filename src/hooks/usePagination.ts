@@ -10,6 +10,14 @@ interface UsePaginationOptions<T> {
   deps?: unknown[]
 }
 
+interface PaginationState<T> {
+  list: T[]
+  cursor: number
+  hasMore: boolean
+  isLoading: boolean
+  isError: boolean
+}
+
 // * 페이지네이션 커스텀 훅
 export function usePagination<T>({
   fetcher,
@@ -17,30 +25,33 @@ export function usePagination<T>({
   limit = 10,
   deps = [],
 }: UsePaginationOptions<T>) {
-  const [list, setList] = useState<T[]>([])
-  const [cursor, setCursor] = useState(initialCursor)
-  const [hasMore, setHasMore] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
+  const [paginationState, setPaginationState] = useState<PaginationState<T>>({
+    list: [],
+    cursor: initialCursor,
+    hasMore: true,
+    isLoading: false,
+    isError: false,
+  })
 
   // * fetchMore가 항상 최신 cursor를 사용하기위해
-  const cursorRef = useRef(cursor)
-  cursorRef.current = cursor
+  const cursorRef = useRef(initialCursor)
+  cursorRef.current = paginationState.cursor
 
   // * 최초/더보기 fetch
   const fetchMore = useCallback(
     async (reset = false) => {
-      setIsLoading(true)
-      setIsError(false)
+      setPaginationState((prev) => ({ ...prev, isLoading: true, isError: false }))
       try {
         const res = await fetcher(reset ? initialCursor : cursorRef.current, limit)
-        setList((prev) => (reset ? res.list : [...prev, ...res.list]))
-        setCursor(res.cursor)
-        setHasMore(res.hasMoreList)
+        setPaginationState((prev) => ({
+          list: reset ? res.list : [...prev.list, ...res.list],
+          cursor: res.cursor,
+          hasMore: res.hasMoreList,
+          isLoading: false,
+          isError: false,
+        }))
       } catch {
-        setIsError(true)
-      } finally {
-        setIsLoading(false)
+        setPaginationState((prev) => ({ ...prev, isLoading: false, isError: true }))
       }
     },
     [fetcher, initialCursor, limit, ...deps],
@@ -48,18 +59,18 @@ export function usePagination<T>({
 
   // * 초기화 및 첫 fetch
   const resetAndFetch = useCallback(() => {
-    setList([])
-    setCursor(initialCursor)
-    setHasMore(true)
+    setPaginationState({
+      list: [],
+      cursor: initialCursor,
+      hasMore: true,
+      isLoading: false,
+      isError: false,
+    })
     fetchMore(true)
   }, [fetchMore, initialCursor])
 
   return {
-    list,
-    cursor,
-    hasMore,
-    isLoading,
-    isError,
+    ...paginationState,
     fetchMore,
     resetAndFetch,
   }
