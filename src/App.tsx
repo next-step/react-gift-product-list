@@ -23,7 +23,7 @@ function App() {
         <AppContainer>
           <Navigation />
           <AppRouter />
-          <div id="receiverModal"></div>
+          <div id="receiverModal" />
           <ToastContainer />
         </AppContainer>
       </UserInfoProvider>

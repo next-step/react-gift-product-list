@@ -32,7 +32,7 @@ const OrderPage = () => {
 
   const onSubmit = async () => {
     if (!id) return;
-    if (orderData.receiverInfos.length <= 0) {
+    if (orderData.receiverInfos.length === 0) {
       toast('받는 사람이 없습니다');
       return;
     }

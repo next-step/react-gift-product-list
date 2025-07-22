@@ -51,7 +51,7 @@ const Button = styled.button`
 `;
 
 const LoginPage = () => {
-  const { LoginAndStoreSession } = useLogin();
+  const { loginAndStoreSession } = useLogin();
   const navigate = useNavigate();
   const username = useInput('email');
   const password = useInput('password');
@@ -61,7 +61,7 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!username.isValid || !password.isValid) return;
-    const isSuccess = await LoginAndStoreSession({ username, password });
+    const isSuccess = await loginAndStoreSession({ username, password });
     if (isSuccess) {
       navigate(ROUTES.MY, { replace: true });
     }

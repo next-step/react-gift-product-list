@@ -16,7 +16,7 @@ export interface UserInfoData {
 const useLogin = () => {
   const { setLoginSession } = useUserInfo();
 
-  const LoginAndStoreSession = async ({ username, password }: UserInfoProps): Promise<boolean> => {
+  const loginAndStoreSession = async ({ username, password }: UserInfoProps): Promise<boolean> => {
     try {
       const userInfoData = await requests.fetchUserInfos({ username, password });
       setLoginSession(userInfoData);
@@ -27,7 +27,7 @@ const useLogin = () => {
     }
   };
 
-  return { LoginAndStoreSession };
+  return { loginAndStoreSession };
 };
 
 export default useLogin;
