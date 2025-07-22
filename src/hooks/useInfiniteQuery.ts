@@ -31,7 +31,12 @@ function useInfiniteQuery<TRes, TItem, TParams>({
   });
 
   useEffect(() => {
-    if (data && !isLoading && !isError) {
+    if (
+      data &&
+      !isLoading &&
+      !isError &&
+      (!getHasMore(data) || cursor !== getCursor(data))
+    ) {
       setItems(prev => [...prev, ...getList(data)]);
       setCursor(getCursor(data));
       setHasMore(getHasMore(data));
