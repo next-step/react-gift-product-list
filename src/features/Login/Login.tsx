@@ -1,9 +1,11 @@
 import ErrorText from '@components/common/ErrorText';
 import { useAuth } from '@contexts/AuthContext';
 import styled from '@emotion/styled';
-import { useLoginForm } from '@hooks/useLoginForm';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginSchema, type LoginFormData } from '@schemas/loginSchema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface LoginButtonProps {
   disabled: boolean;
@@ -11,31 +13,20 @@ interface LoginButtonProps {
 
 const Login = () => {
   const navigate = useNavigate();
-  const {
-    email,
-    setEmail,
-    emailError,
-    validateEmail,
-    password,
-    setPassword,
-    passwordError,
-    validatePassword,
-    isValid,
-  } = useLoginForm();
-
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
   const [loginError, setLoginError] = useState('');
   const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const isEmailOk = validateEmail();
-    const isPWOk = validatePassword();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onTouched',
+  });
 
-    if (!isEmailOk || !isPWOk) return;
-
-    if (await login({ email, password })) {
+  const onSubmit = async (data: LoginFormData) => {
+    if (await login(data)) {
       if (window.history.length > 2) {
         navigate(-1);
       } else {
@@ -43,39 +34,29 @@ const Login = () => {
       }
     } else {
       setLoginError('이메일 또는 비밀번호가 올바르지 않습니다.');
-      console.log(loginError); //임시
+      console.log(loginError); //useAuth의 login에서 toast로 처리하고 있긴 하지만 임시로 사용하였습니다.
     }
   };
 
   return (
-    <Container as="form" onSubmit={handleSubmit}>
+    <Container onSubmit={handleSubmit(onSubmit)}>
       <Title>kakao</Title>
       <Input
         type="email"
         placeholder="이메일"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onBlur={() => {
-          setEmailTouched(true);
-          validateEmail();
-        }}
-        hasError={emailTouched && !!emailError}
+        {...register('email')}
+        hasError={!!errors.email}
       />
-      {emailTouched && emailError && <ErrorText>{emailError}</ErrorText>}
+      {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+
       <Input
         type="password"
         placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        onBlur={() => {
-          setPasswordTouched(true);
-          validatePassword();
-        }}
-        hasError={passwordTouched && !!passwordError}
+        {...register('password')}
+        hasError={!!errors.password}
       />
-      {passwordTouched && passwordError && (
-        <ErrorText>{passwordError}</ErrorText>
-      )}
+      {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
+
       <Button type="submit" disabled={!isValid}>
         로그인
       </Button>
@@ -85,7 +66,7 @@ const Login = () => {
 
 export default Login;
 
-const Container = styled.div(({ theme }) => ({
+const Container = styled.form(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
