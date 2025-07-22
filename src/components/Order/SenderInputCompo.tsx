@@ -6,13 +6,16 @@ const SenderInputWrapper = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing.spacing5};
   padding-left: ${({ theme }) => theme.spacing.spacing4};
   padding-right: ${({ theme }) => theme.spacing.spacing4};
-  border-bottom: ${({ theme }) => theme.spacing.spacing2} solid ${({ theme }) => theme.colors.gray.gray200}; 
+  border-bottom: ${({ theme }) => theme.spacing.spacing2} solid
+    ${({ theme }) => theme.colors.gray.gray200};
 `;
 
 const SenderInputTitle = styled.h2`
   font-size: ${({ theme }) => theme.typography.subtitle.subtitle1Bold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.subtitle.subtitle1Bold.fontWeight};
-  line-height: ${({ theme }) => theme.typography.subtitle.subtitle1Bold.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.subtitle.subtitle1Bold.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.subtitle.subtitle1Bold.lineHeight};
   margin-bottom: ${({ theme }) => theme.spacing.spacing3};
 `;
 
@@ -29,57 +32,70 @@ const SenderInput = styled.input`
 
   &::placeholder {
     font-size: ${({ theme }) => theme.typography.body.body1Regular.fontSize};
-    font-weight: ${({ theme }) => theme.typography.body.body1Regular.fontWeight};
-    line-height: ${({ theme }) => theme.typography.body.body1Regular.lineHeight};
+    font-weight: ${({ theme }) =>
+      theme.typography.body.body1Regular.fontWeight};
+    line-height: ${({ theme }) =>
+      theme.typography.body.body1Regular.lineHeight};
     color: ${({ theme }) => theme.colors.gray.gray600};
   }
 
-  padding: ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing2}
+    ${({ theme }) => theme.spacing.spacing3};
 `;
 
 const SenderInputInfoTxt = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label2Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.label.label2Regular.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label2Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.label.label2Regular.lineHeight};
   color: ${({ theme }) => theme.colors.gray.gray600};
   padding: 4px 8px;
-`
+`;
 
 const SenderInputErrorTxt = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label2Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.label.label2Regular.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label2Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.label.label2Regular.lineHeight};
   padding: ${({ theme }) => theme.spacing.spacing2};
   color: ${({ theme }) => theme.colors.red.red700};
   width: 95%;
 `;
 
 function SenderInputCompo() {
-    type OrderFormValues = {
-        selectedId: number;
-        message: string;
-        senderName: string;
-        receivers: Receiver[];
-        allPrice: number;
-    };
+  type OrderFormValues = {
+    selectedId: number;
+    message: string;
+    senderName: string;
+    receivers: Receiver[];
+    allPrice: number;
+  };
 
-    type Receiver = {
-        name: string;
-        phone: string;
-        count: number;
-    };
+  type Receiver = {
+    name: string;
+    phone: string;
+    count: number;
+  };
 
-    const { register, formState} = useFormContext<OrderFormValues>();
-    return (
-        <SenderInputWrapper>
-            <SenderInputTitle>보내는 사람</SenderInputTitle>
-            <SenderInput
-                placeholder="이름을 입력하세요."
-                {...register('senderName', { required: true })}
-            ></SenderInput>
-            {formState.errors.senderName ? <SenderInputErrorTxt>이름을 입력해주세요.</SenderInputErrorTxt> : <SenderInputInfoTxt>* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.</SenderInputInfoTxt>}
-        </SenderInputWrapper>
-    );
+  const { register, formState } = useFormContext<OrderFormValues>();
+  return (
+    <SenderInputWrapper>
+      <SenderInputTitle>보내는 사람</SenderInputTitle>
+      <SenderInput
+        placeholder="이름을 입력하세요."
+        {...register('senderName', { required: true })}
+      ></SenderInput>
+      {formState.errors.senderName ? (
+        <SenderInputErrorTxt>이름을 입력해주세요.</SenderInputErrorTxt>
+      ) : (
+        <SenderInputInfoTxt>
+          * 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.
+        </SenderInputInfoTxt>
+      )}
+    </SenderInputWrapper>
+  );
 }
 
 export default SenderInputCompo;

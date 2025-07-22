@@ -9,11 +9,12 @@ const CardViewWrapper = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing.spacing9};
   padding-left: ${({ theme }) => theme.spacing.spacing3};
   padding-right: ${({ theme }) => theme.spacing.spacing3};
-  border-bottom: ${({ theme }) => theme.spacing.spacing2} solid ${({ theme }) => theme.colors.gray.gray200}; 
+  border-bottom: ${({ theme }) => theme.spacing.spacing2} solid
+    ${({ theme }) => theme.colors.gray.gray200};
 
   display: flex;
   flex-direction: column;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -34,7 +35,8 @@ const CardViewTxt = styled.textarea`
     outline: none;
     border: 1px solid ${({ theme }) => theme.colors.gray.gray700};
   }
-  padding: ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing2}
+    ${({ theme }) => theme.spacing.spacing3};
 
   font-size: ${({ theme }) => theme.typography.body.body1Regular.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.body1Regular.fontWeight};
@@ -45,40 +47,46 @@ const CardViewTxt = styled.textarea`
 
 const CardViewTxtErrorTxt = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label2Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.label.label2Regular.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label2Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.label.label2Regular.lineHeight};
   padding: ${({ theme }) => theme.spacing.spacing2};
   color: ${({ theme }) => theme.colors.red.red700};
   width: 95%;
-`
+`;
 
 function CardView() {
-    type OrderFormValues = {
-        selectedId: number;
-        message: string;
-        senderName: string;
-        receivers: Receiver[];
-        allPrice: number;
-    };
+  type OrderFormValues = {
+    selectedId: number;
+    message: string;
+    senderName: string;
+    receivers: Receiver[];
+    allPrice: number;
+  };
 
-    type Receiver = {
-        name: string;
-        phone: string;
-        count: number;
-    };
+  type Receiver = {
+    name: string;
+    phone: string;
+    count: number;
+  };
 
-    const { watch, register, formState} = useFormContext<OrderFormValues>();
-    return (
-        <CardViewWrapper>
-            <CardViewImg src={orderCard.find(c => c.id === watch('selectedId'))?.imageUrl} alt={orderCard.find(c => c.id === watch('selectedId'))?.defaultTextMessage}></CardViewImg>
-            <CardViewTxt
-                {...register('message', { required: true })}
-            >
-            </CardViewTxt>
-            {formState.errors.message && <CardViewTxtErrorTxt>메시지를 입력 해주세요.</CardViewTxtErrorTxt>}
-
-        </CardViewWrapper>
-    );
+  const { watch, register, formState } = useFormContext<OrderFormValues>();
+  return (
+    <CardViewWrapper>
+      <CardViewImg
+        src={orderCard.find((c) => c.id === watch('selectedId'))?.imageUrl}
+        alt={
+          orderCard.find((c) => c.id === watch('selectedId'))
+            ?.defaultTextMessage
+        }
+      ></CardViewImg>
+      <CardViewTxt {...register('message', { required: true })}></CardViewTxt>
+      {formState.errors.message && (
+        <CardViewTxtErrorTxt>메시지를 입력 해주세요.</CardViewTxtErrorTxt>
+      )}
+    </CardViewWrapper>
+  );
 }
 
 export default CardView;

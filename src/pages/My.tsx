@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useUser from '@/hooks/useUser';
 
 function My() {
-  const {getName, getEmail, doLogout} = useUser();
+  const { getName, getEmail, doLogout } = useUser();
   const userName = getName();
   const userEmail = getEmail();
   const navigate = useNavigate();

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { EMAIL_REGEX } from '@/utils/regex';
 import {
@@ -41,8 +40,7 @@ function useInput(type: InputType) {
 
   const isValid = error === '' && value.trim() !== '';
 
-  return { value, error, onChange, onBlur, isValid ,touched };
+  return { value, error, onChange, onBlur, isValid, touched };
 }
 
 export default useInput;
-

@@ -4,8 +4,7 @@ import Layout from '@/components/Layout';
 import styled from '@emotion/styled';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-
-import { useState, useMemo, useEffect} from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 
@@ -19,7 +18,7 @@ import Modal from '@/components/Order/Modal';
 import { ToastContainer, toast } from 'react-toastify';
 import useUser from '@/hooks/useUser';
 
-import { api, IsErrorStatus} from '../utils/api'
+import { api, IsErrorStatus } from '../utils/api';
 // 주문 버튼 시작
 const OrderBtnWrapper = styled.div`
   width: 100%;
@@ -27,13 +26,13 @@ const OrderBtnWrapper = styled.div`
 
   position: sticky;
   bottom: 0;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
 
   z-index: 10;
-`
+`;
 
 const OrderButton = styled.button`
   width: 100%;
@@ -45,8 +44,6 @@ const OrderButton = styled.button`
   font-weight: ${({ theme }) => theme.typography.body.body1Bold.fontWeight};
   line-height: ${({ theme }) => theme.typography.body.body1Bold.lineHeight};
   cursor: pointer;
-
-  
 `;
 
 const Spinner = styled.div`
@@ -58,13 +55,17 @@ const Spinner = styled.div`
   animation: spin 0.8s linear infinite;
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
 function Order() {
-  const { getName, getAuthToken } = useUser();// 운동하고와서 여기서 이름꺼네서 폼에넣자
+  const { getName, getAuthToken } = useUser(); // 운동하고와서 여기서 이름꺼네서 폼에넣자
   const userName = getName();
 
   const navigate = useNavigate();
@@ -87,10 +88,12 @@ function Order() {
 
   const DEFAULT_CARD_ID = 904;
   const defaultMessage = useMemo(() => {
-    return orderCard.find((c) => c.id === DEFAULT_CARD_ID)?.defaultTextMessage || '';
+    return (
+      orderCard.find((c) => c.id === DEFAULT_CARD_ID)?.defaultTextMessage || ''
+    );
   }, []);
   // register는 필드를 useForm에 등록할때 사용
-  // control은 useFieldArray 랑 연결할때 
+  // control은 useFieldArray 랑 연결할때
   // handleSubmit은 폼 제출 처리할때(최종 전송할때 감싸서 사용
   // erros는 formState안에 있는 객체로 각 필드들의 에러 상태를 가지고있음
   // watch는 특정 필드의 현재 값을 구독해서 상태를 실시간으로 확인 가능
@@ -119,7 +122,7 @@ function Order() {
   // useForm의 defaultValues에 선언한 필드 이름과 맞춰줌
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'receivers'
+    name: 'receivers',
   });
 
   // 이전 페이지에서 상품정보 받아오는 코드
@@ -133,12 +136,11 @@ function Order() {
 
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     const fetchRanking = async () => {
       try {
         const response = await api.get(`/products/${id}/summary`);
-  
+
         setBrandName(response.data.data.brandName);
         setImageURL(response.data.data.imageURL);
         setItemName(response.data.data.name);
@@ -146,7 +148,11 @@ function Order() {
 
         setIsLoading(false);
       } catch (error: any) {
-        IsErrorStatus(error,'서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요',navigate) && navigate('/');
+        IsErrorStatus(
+          error,
+          '서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요',
+          navigate,
+        ) && navigate('/');
       }
     };
 
@@ -157,7 +163,10 @@ function Order() {
   // 최종 주문 핸들러
   function handleOrderClick() {
     const receivers = watch('receivers');
-    const totalCount = receivers.reduce((sum, receivers) => sum + Number(receivers.count || 0), 0);
+    const totalCount = receivers.reduce(
+      (sum, receivers) => sum + Number(receivers.count || 0),
+      0,
+    );
 
     const fetchSubmit = async () => {
       try {
@@ -167,22 +176,28 @@ function Order() {
           quantity: Number(receiver.count),
         }));
 
-        const response = await api.post('/order',{
-          'productId': Number(id),
-          'message': watch('message'),
-          'messageCardId': String(watch('selectedId')),
-          'ordererName': watch('senderName'),
-          'receivers': receivers,
-        },{
-          headers: {
-            Authorization: getAuthToken(),
-          }
-        });
+        const response = await api.post(
+          '/order',
+          {
+            productId: Number(id),
+            message: watch('message'),
+            messageCardId: String(watch('selectedId')),
+            ordererName: watch('senderName'),
+            receivers: receivers,
+          },
+          {
+            headers: {
+              Authorization: getAuthToken(),
+            },
+          },
+        );
 
-        alert(`주문이 완료되었습니다.\n상품명: ${name}\n구매 수량: ${totalCount}\n발신자 이름: ${watch('senderName')}\n메시지: ${watch('message')}`);
+        alert(
+          `주문이 완료되었습니다.\n상품명: ${name}\n구매 수량: ${totalCount}\n발신자 이름: ${watch('senderName')}\n메시지: ${watch('message')}`,
+        );
         navigate('/');
       } catch (error: any) {
-        IsErrorStatus(error,'입력값을 다시 확인해주세요',navigate);
+        IsErrorStatus(error, '입력값을 다시 확인해주세요', navigate);
       }
     };
 
@@ -190,10 +205,11 @@ function Order() {
   }
 
   return (
-
     <Layout>
       <NavBar></NavBar>
-      {isLoading ? <Spinner /> : (
+      {isLoading ? (
+        <Spinner />
+      ) : (
         <FormProvider {...methods}>
           {/* 슬라이딩 카드 */}
           <SlidingCardSelector />
@@ -204,7 +220,12 @@ function Order() {
           {/* 받는사람 */}
           <ReceiverInputCompo setModalToggle={setModalToggle} fields={fields} />
           {/* 상품 정보 */}
-          <ItemInfoCompo brandName={brandName} imageURL={imageURL} name={name} price={price} />
+          <ItemInfoCompo
+            brandName={brandName}
+            imageURL={imageURL}
+            name={name}
+            price={price}
+          />
           {/* 주문 버튼 */}
           <OrderBtnWrapper>
             <OrderButton onClick={handleSubmit(handleOrderClick)}>
@@ -212,14 +233,19 @@ function Order() {
             </OrderButton>
           </OrderBtnWrapper>
           {/* --------------모달-------------- */}
-          <Modal modalToggle={modalToggle} fields={fields} remove={remove} append={append} setModalToggle={setModalToggle} price={price} />
-        </FormProvider>)}
+          <Modal
+            modalToggle={modalToggle}
+            fields={fields}
+            remove={remove}
+            append={append}
+            setModalToggle={setModalToggle}
+            price={price}
+          />
+        </FormProvider>
+      )}
       <ToastContainer />
     </Layout>
   );
 }
 
 export default Order;
-
-
-

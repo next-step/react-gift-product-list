@@ -28,9 +28,12 @@ const NotFoundTitle = styled.p`
 `;
 
 const NotFoundSubTitle = styled.p`
-  font-size: ${({ theme }) => theme.typography.subtitle.subtitle1Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.subtitle.subtitle1Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.subtitle.subtitle1Regular.lineHeight};
+  font-size: ${({ theme }) =>
+    theme.typography.subtitle.subtitle1Regular.fontSize};
+  font-weight: ${({ theme }) =>
+    theme.typography.subtitle.subtitle1Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.subtitle.subtitle1Regular.lineHeight};
   color: ${({ theme }) => theme.colors.gray.gray700};
   margin-top: ${({ theme }) => theme.spacing.spacing3};
 `;
@@ -41,29 +44,27 @@ const NotFoundBtn = styled.button`
   margin-top: ${({ theme }) => theme.spacing.spacing8};
   background-color: ${({ theme }) => theme.colors.brand.kakaoYellow};
   border: none;
-  
+
   font-size: ${({ theme }) => theme.typography.body.body1Regular.fontSize};
-  font-weight: ${({ theme }) =>
-    theme.typography.body.body1Regular.fontWeight};
-  line-height: ${({ theme }) =>
-    theme.typography.body.body1Regular.lineHeight};
+  font-weight: ${({ theme }) => theme.typography.body.body1Regular.fontWeight};
+  line-height: ${({ theme }) => theme.typography.body.body1Regular.lineHeight};
 `;
 
 function NotFound() {
   const navigate = useNavigate();
 
   return (
-      <Layout>
-        <NavBar></NavBar>
-        <NotFoundWrapper>
-          <NotFoundImg src="https://gift-s.kakaocdn.net/dn/gift/webapp/images/m640/img_not_found.png"></NotFoundImg>
-          <NotFoundTitle>잘못된 접근입니다.</NotFoundTitle>
-          <NotFoundSubTitle>
-            찾으시는 페이지가 존재하지 않습니다.
-          </NotFoundSubTitle>
-          <NotFoundBtn onClick={() => navigate('/')}>홈으로</NotFoundBtn>
-        </NotFoundWrapper>
-      </Layout>
+    <Layout>
+      <NavBar></NavBar>
+      <NotFoundWrapper>
+        <NotFoundImg src="https://gift-s.kakaocdn.net/dn/gift/webapp/images/m640/img_not_found.png"></NotFoundImg>
+        <NotFoundTitle>잘못된 접근입니다.</NotFoundTitle>
+        <NotFoundSubTitle>
+          찾으시는 페이지가 존재하지 않습니다.
+        </NotFoundSubTitle>
+        <NotFoundBtn onClick={() => navigate('/')}>홈으로</NotFoundBtn>
+      </NotFoundWrapper>
+    </Layout>
   );
 }
 export default NotFound;

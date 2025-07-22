@@ -11,8 +11,10 @@ const PromoBannerWrapper = styled.div`
 
 const PromoBannerTitle = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label2Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.label.label2Regular.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label2Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.label.label2Regular.lineHeight};
   color: ${({ theme }) => theme.colors.gray.gray700};
 `;
 
@@ -24,12 +26,9 @@ const PromoBannerSubTitle = styled.p`
 `;
 
 function PromoBanner() {
-
   return (
     <PromoBannerWrapper>
-      <PromoBannerTitle>
-        카카오테크 캠퍼스 3기여러분
-      </PromoBannerTitle>
+      <PromoBannerTitle>카카오테크 캠퍼스 3기여러분</PromoBannerTitle>
       <PromoBannerSubTitle>
         프론트엔드 2단계 과제 화이팅! 🎉
       </PromoBannerSubTitle>
