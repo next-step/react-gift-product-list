@@ -5,6 +5,7 @@ import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import type { Product } from "@/types/api_types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useEffect, useRef, useState, useCallback } from "react";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 
 type ThemeProductResponse = {
   list: Product[];
@@ -25,7 +26,6 @@ export default function ThemeProductsList() {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [initLoading, setInitLoading] = useState<boolean>(true);
   const observerRef = useRef<HTMLDivElement | null>(null);
-  const observerInstance = useRef<IntersectionObserver | null>(null);
 
   const { data, status, error, refetch } = useApiRequest<ThemeProductResponse>({
     url: `/api/themes/${themeId}/products${cursor ? `?cursor=${cursor}` : ""}`,
@@ -64,41 +64,16 @@ export default function ThemeProductsList() {
     setInitLoading(false);
   }, [data]);
 
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const entry = entries[0];
-      if (
-        entry.isIntersecting &&
-        !loadingNext &&
-        hasMore &&
-        !initLoading &&
-        products.length > 0
-      ) {
-        refetch();
-      }
-    },
-    [
-      loadingNext,
-      hasMore,
-      initLoading,
-      products.length,
-      refetch,
-      themeId,
-      cursor,
-    ]
-  );
+  const handleObserver = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
-  useEffect(() => {
-    if (!observerRef.current) return;
-    if (observerInstance.current) observerInstance.current.disconnect();
-    observerInstance.current = new window.IntersectionObserver(handleObserver, {
-      threshold: 0.4,
-    });
-    observerInstance.current.observe(observerRef.current);
-    return () => {
-      observerInstance.current?.disconnect();
-    };
-  }, [handleObserver]);
+  useInfiniteScroll({
+    targetRef: observerRef,
+    onIntersect: handleObserver,
+    enabled: hasMore && !loadingNext && !initLoading && products.length > 0,
+    threshold: 0.4,
+  });
 
   const handleItemClick = (id: number) => {
     navigate(`/order/${id}`);
