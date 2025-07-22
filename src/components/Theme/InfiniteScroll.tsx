@@ -122,8 +122,8 @@ function InfiniteScroll({ themeId }: { themeId: string }) {
 
 
         // item클릭시 해당 item정보들을 url query로들고 Order페이지로 가는 핸들러
-        const handleItemClick = (brandInfo: any, id: any, imageURL: any, name: any, price: any) => {
-            const query = new URLSearchParams({ brandInfo: brandInfo.name, id: id.toString(), imageURL, name, price: price.basicPrice, }).toString();
+        const handleItemClick = (id: number) => {
+            const query = new URLSearchParams({ id: id.toString()}).toString();
 
             navigate(`/order?${query}`);
         }
@@ -136,11 +136,7 @@ function InfiniteScroll({ themeId }: { themeId: string }) {
                         key={item.id}
                         onClick={() =>
                             handleItemClick(
-                                item.brandInfo,
                                 item.id,
-                                item.imageURL,
-                                item.name,
-                                item.price,
                             )
                         }
                     >
