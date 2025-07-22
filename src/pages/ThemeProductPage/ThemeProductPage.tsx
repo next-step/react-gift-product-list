@@ -12,15 +12,14 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { THEME_PRODUCTS_API_MESSAGE } from "./constants/apiMessage";
 import type { ThemeInfo } from "@/types/ThemeInfo";
-import { useEffect, useRef, useState } from "react";
-import type { ThemeProduct } from "@/types/ThemeProducts";
+import { useRef, useState } from "react";
 import ThemeProductsGrid from "./ThemeProductsGrid";
+import useInfiniteScroll from "./hooks/useInfiniteScroll";
 import { OBSERVER_OPTIONS } from "./constants/observer";
 
 function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
   const loader = useRef<HTMLDivElement>(null);
   const [cursor, setCursor] = useState<number>(0);
-  const [themeProducts, setThemeProducts] = useState<ThemeProduct[]>([]);
 
   const { data, isLoading: isThemeProductsLoading } = useFetch({
     fetchFn: () => getThemeProducts(Number(themeInfo.themeId), cursor),
@@ -30,33 +29,15 @@ function ThemeProductsContent({ themeInfo }: { themeInfo: ThemeInfo }) {
     deps: [cursor],
   });
 
-  useEffect(() => {
-    if (data) {
-      setThemeProducts((prev) => [...prev, ...data.list]);
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && data?.hasMoreList) {
-          setCursor((prev) => prev + data?.list.length);
-        }
-      },
-      {
-        threshold: OBSERVER_OPTIONS.THRESHOLD,
-      }
-    );
-
-    const el = loader.current;
-    if (el) {
-      observer.observe(el);
-    }
-
-    return () => {
-      if (el) {
-        observer.unobserve(el);
-      }
-    };
-  }, [isThemeProductsLoading, data?.hasMoreList]);
+  const { themeProducts } = useInfiniteScroll({
+    data: data ?? { list: [], cursor: 0, hasMoreList: false },
+    isLoading: isThemeProductsLoading,
+    loaderRef: loader,
+    setCursor,
+    observerOptions: {
+      threshold: OBSERVER_OPTIONS.THRESHOLD,
+    },
+  });
 
   return (
     <>
