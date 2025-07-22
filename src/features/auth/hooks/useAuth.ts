@@ -1,26 +1,29 @@
 import { useAuthContext } from "@/features/auth/context/AuthContext";
 
 export const useAuth = () => {
-    const { authState, setAuthState } = useAuthContext();
+    const { userInfo, setUserInfo, authToken, setAuthToken } = useAuthContext();
 
-    const signIn = (nickname: string, email: string) => {
-        setAuthState({
+    const signIn = async (email: string, token: string) => {
+        setUserInfo({
             isAuthenticated: true,
-            nickname,
+            nickname: email.split("@")[0],
             email,
         });
+        setAuthToken(token);
     };
 
     const signOut = () => {
-        setAuthState({
+        setUserInfo({
             isAuthenticated: false,
             nickname: undefined,
             email: undefined,
         });
+        setAuthToken(null);
     };
 
     return {
-        ...authState,
+        ...userInfo,
+        authToken,
         signIn,
         signOut,
     };

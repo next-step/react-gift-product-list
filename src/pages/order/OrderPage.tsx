@@ -2,12 +2,15 @@ import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { cardTemplates } from "@/features/order/constants/cardTemplate";
 import {
     ReceiverContextProvider,
     useReceiverContext,
 } from "@/features/order/contexts/ReceiverContext";
 import { useOrder } from "@/features/order/hooks/useOrder";
+import { useCreateOrder } from "@/features/order/services/createOrder";
+import { useProductSummaryByProductId } from "@/features/order/services/getProductSummaryByProductId";
 import { LetterCard } from "@/features/order/ui/LetterCard";
 import { ProductInfo } from "@/features/order/ui/ProductInfo";
 import { ReceiverList } from "@/features/order/ui/ReceiverList";
@@ -20,45 +23,24 @@ import withProviders from "@/shared/helpers/withProviders";
 import { useModal } from "@/shared/hooks/useModal";
 import { Button } from "@/shared/ui";
 import { Input } from "@/shared/ui/Input";
+import { Spinner } from "@/shared/ui/Spinner";
 import { TextArea } from "@/shared/ui/TextArea";
 
 import { VerticalSpacing } from "@/widgets/layouts/Spacing.styled";
 
 import * as Styles from "./OrderPage.styled";
 
-const product = {
-    id: 123,
-    name: "BBQ 양념치킨+크림치즈볼+콜라1.25L",
-    imgSrc: "https://st.kakaocdn.net/product/gift/product/20231030175450_53e90ee9708f45ffa45b3f7b4bc01c7c.jpg",
-    price: {
-        basicPrice: 29000,
-        discountRate: 0,
-        sellingPrice: 29000,
-    },
-    brandInfo: {
-        id: 2088,
-        name: "BBQ",
-        imageURL:
-            "https://st.kakaocdn.net/product/gift/gift_brand/20220216170226_38ba26d8eedf450683200d6730757204.png",
-    },
-};
-
-/**
- * container-presenter 패턴을 사용해서 최상위 컴포넌트를 container컴포넌트로 두고
- * 하위 컴포넌트로 props 를 넘겨주는 방식으로 했는데, 각 섹션별로 추상화하는게 좋을지 고민됨
- *
- * @example
- * <LetterCardSection/>
- * <LetterCardPreviewSection/>
- * <SenderFieldGroup/>
- * <ReceiverFieldGroup/>
- * <ProductInfoSection/>
- */
 function OrderPage() {
-    const modal = useModal();
-    const { receivers } = useReceiverContext();
-
     const { id } = useParams();
+
+    const modal = useModal();
+    const { nickname } = useAuth();
+    const {
+        receivers: { receivers },
+    } = useReceiverContext();
+    const { orderRefs, validationErrors, submit: validate } = useOrder();
+    const { isPending, data: product } = useProductSummaryByProductId(Number(id));
+    const { request: createOrder } = useCreateOrder();
 
     const [selectedLetterCardId, setSelectedLetterCardId] = useState<number>(cardTemplates[0].id);
 
@@ -68,17 +50,22 @@ function OrderPage() {
     );
 
     const totalQuantity = useMemo(() => {
-        return receivers.receivers.reduce((total, receiver) => total + receiver.quantity, 0);
-    }, [receivers.receivers]);
-
-    const totalPrice = useMemo(() => {
-        return product.price.sellingPrice * (totalQuantity || 0);
-    }, [totalQuantity]);
-
-    const { orderRefs, submit, validationErrors } = useOrder();
+        return receivers.reduce((total, receiver) => total + receiver.quantity, 0);
+    }, [receivers]);
 
     const onSubmitButtonClick = () => {
-        console.log(submit());
+        validate();
+        createOrder({
+            productId: Number(id),
+            messageCardId: String(letterCard?.id),
+            message: String(orderRefs.message.current?.value),
+            ordererName: String(orderRefs.senderName.current?.value),
+            receivers: receivers.map((receiver) => ({
+                name: receiver.receiverName,
+                phoneNumber: receiver.phoneNumber,
+                quantity: receiver.quantity,
+            })),
+        });
     };
 
     if (!id) return <NotFoundPage />;
@@ -125,6 +112,7 @@ function OrderPage() {
                     ref={orderRefs.senderName}
                     placeholder="이름을 입력하세요."
                     error={validationErrors.senderName}
+                    defaultValue={nickname}
                 />
             </Styles.FieldSet>
 
@@ -140,7 +128,7 @@ function OrderPage() {
                         height="35px"
                         onClick={() => modal.open(<ReceiverModal />)}
                     >
-                        {receivers.receivers.length !== 0 ? "수정" : "추가"}
+                        {receivers.length !== 0 ? "수정" : "추가"}
                     </Button>
                 </Styles.ReceiverLabel>
 
@@ -153,19 +141,23 @@ function OrderPage() {
 
             <Styles.FieldSet>
                 <Styles.Legend>상품 정보</Styles.Legend>
-                <ProductInfo
-                    imgSrc={product.imgSrc}
-                    productName={product.name}
-                    brandName={product.brandInfo.name}
-                    price={product.price.sellingPrice}
-                />
+                {isPending || !product ? (
+                    <Spinner />
+                ) : (
+                    <ProductInfo
+                        imgSrc={product.imageURL}
+                        productName={product.name}
+                        brandName={product.brandName}
+                        price={product.price}
+                    />
+                )}
             </Styles.FieldSet>
 
             <VerticalSpacing size="60px" />
 
             {createPortal(
                 <Styles.OrderButton onClick={() => onSubmitButtonClick()}>
-                    {totalPrice.toLocaleString()}원 주문하기
+                    {product && (product.price * totalQuantity).toLocaleString()}원 주문하기
                 </Styles.OrderButton>,
                 document.body as HTMLElement,
             )}

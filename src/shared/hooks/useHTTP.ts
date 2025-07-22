@@ -1,42 +1,47 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 export type UseHttpOptions<Req, Res> = {
     apiFunction: (requestBody?: Req) => Promise<Res>;
-    sendOnMount?: boolean;
+    onError?: (error: unknown) => void;
+    requestOnMount?: boolean;
 };
 
 export const useHTTP = <Req = unknown, Res = unknown>({
     apiFunction,
-    sendOnMount = false,
+    requestOnMount = false,
+    onError,
 }: UseHttpOptions<Req, Res>) => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [data, setData] = useState<Res | null>(null);
     const [error, setError] = useState<unknown>(null);
 
-    const send = useCallback(
-        async (requestBody?: Req) => {
-            setIsPending(true);
-            setError(null);
+    const onErrorRef = useRef(onError);
+    const apiFunctionRef = useRef(apiFunction);
 
-            try {
-                const result = await apiFunction.call(null, requestBody!);
-                setData(result);
-                return result;
-            } catch (err) {
-                setError(err);
-                throw err;
-            } finally {
-                setIsPending(false);
-            }
-        },
-        [apiFunction],
-    );
+    const request = useCallback(async (requestBody?: Req) => {
+        setIsPending(true);
+        setError(null);
+
+        try {
+            const result = await apiFunctionRef.current(requestBody);
+            setData(result);
+            return result;
+        } catch (err) {
+            const onError = onErrorRef.current;
+            setError(err);
+            if (!onError) throw err;
+            else onError(err);
+            return null;
+        } finally {
+            setIsPending(false);
+        }
+    }, []);
 
     useEffect(() => {
-        if (sendOnMount) {
-            send();
+        if (requestOnMount) {
+            request();
         }
-    }, [sendOnMount, send]);
+    }, [requestOnMount, request]);
 
-    return { isPending, data, error, send };
+    return { isPending, data, error, request };
 };

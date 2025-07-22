@@ -1,32 +1,43 @@
 import { createContext, useContext } from "react";
 
+import { AUTH_TOKEN_STORAGE_KEY } from "@/features/auth/utils/getStoredAuthToken";
+
 import { useLocalStorageState, type SerializableRecord } from "@/shared/hooks/useLocalStorageState";
 
-export interface AuthContextValue extends SerializableRecord {
+export interface UserInfo extends SerializableRecord {
     isAuthenticated: boolean;
     nickname?: string;
     email?: string;
 }
 
-export const AUTH_STORAGE_KEY = "auth";
+export const USER_INFO_STORAGE_KEY = "userInfo";
 
 export const AuthContext = createContext<{
-    authState: AuthContextValue;
-    setAuthState: React.Dispatch<React.SetStateAction<AuthContextValue>>;
+    userInfo: UserInfo;
+    setUserInfo: (value: UserInfo) => void;
+    authToken: string | null;
+    setAuthToken: (value: string | null) => void;
 } | null>(null);
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-    const [authState, setAuthState] = useLocalStorageState<AuthContextValue>(AUTH_STORAGE_KEY, {
+    const [userInfo, setUserInfo] = useLocalStorageState<UserInfo>(USER_INFO_STORAGE_KEY, {
         isAuthenticated: false,
         nickname: undefined,
         email: undefined,
     });
 
+    const [authToken, setAuthToken] = useLocalStorageState<string | null>(
+        AUTH_TOKEN_STORAGE_KEY,
+        null,
+    );
+
     return (
         <AuthContext.Provider
             value={{
-                authState,
-                setAuthState,
+                userInfo,
+                setUserInfo,
+                authToken,
+                setAuthToken,
             }}
         >
             {children}

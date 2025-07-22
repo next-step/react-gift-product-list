@@ -6,7 +6,15 @@ export const useQueryParamState = <T extends string = string>(
 ): [T | null, (newValue: T) => void] => {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const currentValue = (searchParams.get(key) as T) ?? defaultValue ?? null;
+    const paramValue = searchParams.get(key);
+
+    // 타입가드 함수: paramValue가 T 타입에 해당하는지 확인
+    const isValidValue = (value: unknown): value is T => {
+        if (typeof defaultValue === "string") return typeof value === "string";
+        return true;
+    };
+
+    const currentValue = isValidValue(paramValue) ? paramValue : (defaultValue ?? null);
 
     const setValue = (newValue: T) => {
         const newParams = new URLSearchParams(searchParams);

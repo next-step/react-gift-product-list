@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { GiftCard, GiftCardGrid } from "@/entities/gift/ui";
 
@@ -8,6 +9,8 @@ import { Button } from "@/shared/ui";
 import { Spinner } from "@/shared/ui/Spinner.styled";
 
 export const RankingGifts = () => {
+    const navigate = useNavigate();
+
     const [showAll, setShowAll] = useState<boolean>(false);
     const { isPending, data } = useRankingGifts();
 
@@ -39,6 +42,7 @@ export const RankingGifts = () => {
                             imageURL={gift.imageURL}
                             price={gift.price}
                             brandInfo={gift.brandInfo}
+                            onClick={() => navigate(`/order/${gift.id}`)}
                         />
                     );
                 })}
