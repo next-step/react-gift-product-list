@@ -1,6 +1,28 @@
 import ErrorText from '@components/common/ErrorText';
 import styled from '@emotion/styled';
-import type { FormSectionProps } from '@features/GiftOrderPage/GiftOrderPage';
+import type { MultiOrderFormData } from '@schemas/orderSchema';
+import { useFormContext } from 'react-hook-form';
+
+const SenderForm = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<MultiOrderFormData>();
+  return (
+    <Wrapper>
+      <Label>보내는 사람</Label>
+      <Input
+        type="text"
+        placeholder="이름을 입력하세요"
+        {...register('sender')}
+      />
+      <Notice>* 실제 선물 발송 시 발신자 이름으로 발송됩니다.</Notice>
+      {errors.sender && <ErrorText>{errors.sender.message}</ErrorText>}
+    </Wrapper>
+  );
+};
+
+export default SenderForm;
 
 const Wrapper = styled.div(({ theme }) => ({
   marginTop: theme.spacing.spacing5,
@@ -28,20 +50,3 @@ const Notice = styled.div(({ theme }) => ({
   ...theme.typography.subtitle2Regular,
   color: theme.colors.semantic.textSub,
 }));
-
-const SenderForm = ({ register, errors }: FormSectionProps) => {
-  return (
-    <Wrapper>
-      <Label>보내는 사람</Label>
-      <Input
-        type="text"
-        placeholder="이름을 입력하세요"
-        {...register('sender')}
-      />
-      <Notice>* 실제 선물 발송 시 발신자 이름으로 발송됩니다.</Notice>
-      {errors.sender && <ErrorText>{errors.sender.message}</ErrorText>}
-    </Wrapper>
-  );
-};
-
-export default SenderForm;

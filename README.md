@@ -34,4 +34,12 @@
 
 - zod와 react-hook-form 이용하여 리팩토링
 
+### 주문하기 기능
+
+#### GiftOrderPage 리팩토링
+
+- alert 추가(추후 toast로 통일 예정)
+- Provider 리팩토링
+- 모달과 GiftOrderPage의 응집도 높이기 위해 코드 수정
+
 ## 리뷰 반영

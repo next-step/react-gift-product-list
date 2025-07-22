@@ -2,8 +2,9 @@ import cardTemplate from '@data/cardTemplate.json';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import MessageInput from './MessageInput';
-import type { FormSectionProps } from '@features/GiftOrderPage/GiftOrderPage';
 import ErrorText from '@components/common/ErrorText';
+import { useFormContext } from 'react-hook-form';
+import type { MultiOrderFormData } from '@schemas/orderSchema';
 
 interface CardTemplate {
   id: number;
@@ -11,6 +12,43 @@ interface CardTemplate {
   imageUrl: string;
   defaultTextMessage: string;
 }
+
+const CardSelector = () => {
+  const defaultCard = cardTemplate[0];
+  const [selectedCard, setSelectedCard] = useState(defaultCard.imageUrl);
+
+  const {
+    register,
+    formState: { errors },
+    setValue,
+  } = useFormContext<MultiOrderFormData>();
+
+  const handleCardSelect = (card: CardTemplate) => {
+    setSelectedCard(card.imageUrl);
+    setValue?.('message', card.defaultTextMessage);
+  };
+
+  return (
+    <Wrapper>
+      <ThumbnailList>
+        {cardTemplate.map((card: CardTemplate) => (
+          <Thumbnail
+            key={card.id}
+            src={card.thumbUrl}
+            alt={`card-${card.id}`}
+            selected={selectedCard === card.imageUrl}
+            onClick={() => handleCardSelect(card)}
+          />
+        ))}
+      </ThumbnailList>
+      <SelectedImage src={selectedCard} alt="선택된 카드" />
+      <MessageInput register={register} />
+      {errors.message && <ErrorText>{errors.message.message}</ErrorText>}
+    </Wrapper>
+  );
+};
+
+export default CardSelector;
 
 const Wrapper = styled.div(({ theme }) => ({
   display: 'flex',
@@ -42,34 +80,3 @@ const SelectedImage = styled.img(({ theme }) => ({
   borderRadius: theme.spacing.spacing4,
   boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
 }));
-
-const CardSelector = ({ register, errors, setValue }: FormSectionProps) => {
-  const defaultCard = cardTemplate[0];
-  const [selectedCard, setSelectedCard] = useState(defaultCard.imageUrl);
-
-  const handleCardSelect = (card: CardTemplate) => {
-    setSelectedCard(card.imageUrl);
-    setValue?.('message', card.defaultTextMessage);
-  };
-
-  return (
-    <Wrapper>
-      <ThumbnailList>
-        {cardTemplate.map((card: CardTemplate) => (
-          <Thumbnail
-            key={card.id}
-            src={card.thumbUrl}
-            alt={`card-${card.id}`}
-            selected={selectedCard === card.imageUrl}
-            onClick={() => handleCardSelect(card)}
-          />
-        ))}
-      </ThumbnailList>
-      <SelectedImage src={selectedCard} alt="선택된 카드" />
-      <MessageInput register={register} />
-      {errors.message && <ErrorText>{errors.message.message}</ErrorText>}
-    </Wrapper>
-  );
-};
-
-export default CardSelector;

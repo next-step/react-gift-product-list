@@ -12,7 +12,6 @@ import cardTemplate from '@data/cardTemplate.json';
 
 import {
   FormProvider,
-  useFieldArray,
   useForm,
   type FieldErrors,
   type SubmitHandler,
@@ -60,20 +59,7 @@ const GiftOrderPage = () => {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    control,
-    formState: { errors },
-    trigger,
-    getValues,
-  } = methods;
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'recipients',
-  });
+  const { handleSubmit, setValue, watch } = methods;
 
   const onSubmit: SubmitHandler<MultiOrderFormData> = (data) => {
     console.log(data);
@@ -95,7 +81,9 @@ const GiftOrderPage = () => {
   } = useModal();
 
   const openReceiveModal = () => {
-    setPrevRecipients(watch('recipients') ?? []);
+    const currentRecipients = watch('recipients') ?? [];
+    const deepCopied = JSON.parse(JSON.stringify(currentRecipients));
+    setPrevRecipients(deepCopied);
     openModal();
   };
 
@@ -104,53 +92,34 @@ const GiftOrderPage = () => {
     closeModal();
   };
 
-  const handleComplete = async () => {
-    const recipents = getValues('recipients') ?? [];
-    if (recipents.length === 0) {
-      closeModal();
-      return;
+  const onInvalid = (errors: FieldErrors<MultiOrderFormData>) => {
+    if (errors.recipients) {
+      if ('message' in errors.recipients) {
+        alert(errors.recipients.message);
+      } else if (
+        'root' in errors.recipients &&
+        errors.recipients.root?.message
+      ) {
+        alert(errors.recipients.root.message);
+      }
     }
-
-    const valid = await trigger('recipients'); //검증이 일어나지 않은 필드도 검사하기 위해 사용
-    if (!valid) {
-      alert('받는 사람 정보를 정확히 입력해주세요.');
-      return;
-    }
-
-    const phones = recipents.map((recipent) => recipent.phone);
-    const phoneSet = new Set(phones);
-    if (phoneSet.size !== phones.length) {
-      alert('전화번호가 중복된 사람이 있습니다.');
-      return;
-    }
-    closeModal();
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardSelector register={register} errors={errors} setValue={setValue} />
-        <Divider />
-        <SenderForm register={register} errors={errors} />
-        <Divider />
-        <ReceiveList onOpen={openReceiveModal} control={control} />
-        <Divider />
-        <ProductSummary />
-        <OrderButton price={totalPrice} />
-      </form>
-      {isReceiveModalOpen && (
-        <FormProvider {...methods}>
-          <ReceiveModal
-            register={register}
-            errors={errors}
-            fields={fields}
-            append={append}
-            remove={remove}
-            onClose={closeReceiveModal}
-            onComplete={handleComplete}
-          />
-        </FormProvider>
-      )}
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
+          <CardSelector />
+          <Divider />
+          <SenderForm />
+          <Divider />
+          <ReceiveList onOpen={openReceiveModal} />
+          <Divider />
+          <ProductSummary />
+          <OrderButton price={totalPrice} />
+        </form>
+        {isReceiveModalOpen && <ReceiveModal onClose={closeReceiveModal} />}
+      </FormProvider>
     </>
   );
 };
