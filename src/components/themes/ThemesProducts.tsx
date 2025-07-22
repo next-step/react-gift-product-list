@@ -1,65 +1,36 @@
 import styled from "@emotion/styled";
 import { fetchThemesProducts } from "@/api/themesProducts";
-import useApiRequest from "@/hooks/useApiRequest";
-import { useCallback, useEffect, useRef, useState } from "react";
 import ThemesItem from "./ThemesItem";
 import { Link } from "react-router";
 import { ROUTE_PATH } from "@/routes/paths";
 import BoxMessage from "../common/BoxMessage";
 import type { ThemeProduct } from "@/types/theme";
 import LoadingSpinner from "../common/LoadingSpinner";
+import useInfiniteQuery from "@/hooks/useInfiniteQuery";
+import type {
+  fetchThemesProductsParams,
+  FetchThemesProductsResult,
+} from "@/api/themesProducts";
 
 type ThemesProductsProps = {
   id: string | undefined;
 };
 
 const ThemesProducts = ({ id }: ThemesProductsProps) => {
-  const [items, setItems] = useState<ThemeProduct[]>([]);
-  const [cursor, setCursor] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const loader = useRef(null);
-
-  const requestFn = useCallback(
-    () => fetchThemesProducts({ themeId: Number(id), cursor, limit: 20 }),
-    [id, cursor],
-  );
-  const {
-    data: themeProductsData,
-    isError,
-    isLoading,
-    refetch,
-  } = useApiRequest({
-    requestFn,
-    immediate: false,
+  const { items, isLoading, isError, loaderRef } = useInfiniteQuery<
+    FetchThemesProductsResult,
+    ThemeProduct,
+    fetchThemesProductsParams
+  >({
+    fetcher: ({ themeId, cursor, limit }) =>
+      fetchThemesProducts({ themeId, cursor, limit }),
+    initialParams: { themeId: Number(id), cursor: 0, limit: 20 },
+    getList: res => res.list,
+    getCursor: res => res.cursor,
+    getHasMore: res => res.hasMoreList,
   });
 
-  useEffect(() => {
-    if (themeProductsData && !isLoading && !isError) {
-      setItems(prev => [...prev, ...themeProductsData.list]);
-      setCursor(themeProductsData.cursor);
-      setHasMore(themeProductsData.hasMoreList);
-    }
-  }, [themeProductsData, isLoading, isError]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore) {
-          refetch();
-        }
-      },
-      { threshold: 1.0 },
-    );
-
-    const el = loader.current;
-    if (el) observer.observe(el);
-
-    return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, [loader, hasMore, refetch]);
-
-  if (!themeProductsData && !isLoading && isError) {
+  if (!items && !isLoading && isError) {
     return null;
   }
 
@@ -78,12 +49,10 @@ const ThemesProducts = ({ id }: ThemesProductsProps) => {
         </ProductsGrid>
       )}
       {isLoading && <LoadingSpinner height="40px" />}
-      {items?.length === 0 &&
-        !isLoading &&
-        themeProductsData?.list.length === 0 && (
-          <BoxMessage message="상품이 없습니다." height="240px" />
-        )}
-      <div ref={loader} style={{ height: "20px" }} />
+      {items?.length === 0 && !isLoading && (
+        <BoxMessage message="상품이 없습니다." height="240px" />
+      )}
+      <div ref={loaderRef} style={{ height: "20px" }} />
     </ProductsSection>
   );
 };

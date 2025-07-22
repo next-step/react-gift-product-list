@@ -2,13 +2,13 @@ import type { ThemeProduct } from "@/types/theme";
 import { API_PATHS } from "./apiPaths";
 import axiosInstance from "./axiosInstance";
 
-type fetchThemesProductsParams = {
+export type fetchThemesProductsParams = {
   themeId: number;
   cursor?: number;
   limit?: number;
 };
 
-type FetchThemesProductsResult = {
+export type FetchThemesProductsResult = {
   list: ThemeProduct[];
   cursor: number;
   hasMoreList: boolean;
