@@ -9,14 +9,9 @@ import { useEffect, useState } from "react";
 import type { Receiver } from "@/types/order";
 import { orderProduct, productSummary } from "@/services/order";
 import { showErrorToast } from "@/styles/toast";
-import { STORAGE_KEY } from "@/constants/storage";
 import type { Product } from "@/types/product";
-
-function isAxiosError(
-  error: unknown,
-): error is { response?: { status?: number } } {
-  return typeof error === "object" && error !== null && "isAxiosError" in error;
-}
+import axios from "axios";
+import { getUserFromSession } from "@/utils/getUserFromStorage";
 
 export default function OrderPage() {
   const navigate = useNavigate();
@@ -35,15 +30,9 @@ export default function OrderPage() {
         const data = await productSummary(itemId);
         setProduct(data);
       } catch (error: unknown) {
-        if (isAxiosError(error)) {
-          if (
-            error.response?.status &&
-            error.response.status >= 400 &&
-            error.response.status < 500
-          ) {
-            showErrorToast("상품 정보를 불러올 수 없습니다.");
-            navigate("/gift", { replace: true });
-          }
+        if (axios.isAxiosError(error)) {
+          showErrorToast("상품 정보를 불러올 수 없습니다.");
+          navigate("/gift", { replace: true });
         }
       }
     };
@@ -52,12 +41,10 @@ export default function OrderPage() {
   }, [itemId, navigate]);
 
   useEffect(() => {
-    const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+    const userInfo = getUserFromSession();
     if (!userInfo) return;
 
-    const user = JSON.parse(userInfo);
-    const name = user.name || "";
-    console.log("로그인 유저 이름:", name);
+    const name = userInfo.name || "";
     sender.setValue(name);
   }, []);
 
@@ -84,14 +71,13 @@ export default function OrderPage() {
     }
 
     try {
-      const userInfo = sessionStorage.getItem(STORAGE_KEY.USER_INFO);
+      const userInfo = getUserFromSession();
       if (!userInfo) {
         navigate("/login");
         return;
       }
 
-      const user = JSON.parse(userInfo);
-      const authToken = user.authToken;
+      const authToken = userInfo.authToken;
 
       if (!authToken) {
         showErrorToast("로그인이 필요합니다.");
@@ -123,7 +109,7 @@ export default function OrderPage() {
 
       navigate("/");
     } catch (error: unknown) {
-      if (isAxiosError(error)) {
+      if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           showErrorToast("로그인이 필요합니다.");
           navigate("/login");

@@ -1,19 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import Spacing from "@/components/Spacing";
-import { useLoginForm } from "./useLoginForm";
+import { useLoginForm } from "../hooks/useLoginForm";
 import { css, type Theme } from "@emotion/react";
 import { auth } from "@/services/auth";
 import { STORAGE_KEY } from "@/constants/storage";
 import { showErrorToast } from "@/styles/toast";
 import { REGEX } from "@/constants/regex";
 import { ERROR_MESSAGE } from "@/constants/messages";
-
-function isAxiosError(
-  error: unknown,
-): error is { response?: { status?: number } } {
-  return typeof error === "object" && error !== null && "isAxiosError" in error;
-}
+import axios from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -57,15 +52,8 @@ export default function LoginPage() {
 
       navigate(from, { replace: true });
     } catch (error: unknown) {
-      if (isAxiosError(error)) {
-        if (
-          error.response &&
-          typeof error.response.status === "number" &&
-          error.response.status >= 400 &&
-          error.response.status < 500
-        ) {
-          showErrorToast("올바른 이메일 형식이 아닙니다.");
-        }
+      if (axios.isAxiosError(error)) {
+        showErrorToast("올바른 이메일 형식이 아닙니다.");
       }
     }
   };
