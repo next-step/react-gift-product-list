@@ -78,14 +78,14 @@ function InfiniteScroll({ themeId }: { themeId: string }) {
     const [hasMore, setHasMore] = useState(true);
     const loader = useRef(null);
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [isEmpty, setIsEmpty] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const observer = new IntersectionObserver(
           ([entry]) => {
-            if (entry.isIntersecting && hasMore) {
+            if (entry.isIntersecting && !isLoading && hasMore) {
               loadMore();
             }
           },
@@ -98,29 +98,25 @@ function InfiniteScroll({ themeId }: { themeId: string }) {
         return () => {
           if (el) observer.unobserve(el);
         };
-      }, [loader, hasMore]);
+      }, [isLoading, hasMore]);
 
       const loadMore = async () => {
+        if (!hasMore) return;
+        setIsLoading(true);
         try {
             const response = await api.get(`/themes/${themeId}/products?cursor=${cursor}&limit=${20}`); // limit은 한번에 불러올 아이템 갯수를 정하고 cursor는 인덱스임 그러니까 계속 불러올때마다 20씩 증가시켜줘야함
-            setIsLoading(false);
-            console.log(response);
+            const { list, cursor: nextCursor, hasMoreList } = response.data.data;
 
-            setInfiItem(prev => [...prev, ...response.data.data.list]);
-
-            setCursor(response.data.data.cursor);            
-            console.log(response.data.data.cursor);
-
-            setHasMore(response.data.data.hasMoreList);
-            console.log(response.data.data.hasMoreList);
+            setInfiItem(prev => [...prev, ...list]);
+            setCursor(nextCursor);            
+            setHasMore(hasMoreList);
             if(response.data.data.list.length === 0) {
                 setIsEmpty(true);
             }
         } catch (error) {
-            setIsLoading(false);
             IsErrorStatus(error, '', navigate);    
         } finally {
-            setIsLoading(true);
+            setIsLoading(false);
         }
     };
 
