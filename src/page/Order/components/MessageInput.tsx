@@ -16,7 +16,7 @@ const MessageInput = () => {
         {...register(`message`, {
           required: { value: true, message: '메시지를 입력해주세요.' },
         })}
-      ></Textarea>
+      />
       {errors.message && <ErrorMessage>{errors.message.message}</ErrorMessage>}
     </MessageInputContainer>
   );
