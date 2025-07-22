@@ -1,4 +1,6 @@
 import apiClient from '@/api/apiClient';
+import { createStorage } from '@/utils/creaateStorage';
+import { withError } from '@/utils/withError';
 
 interface LoginRequest {
   email: string;
@@ -10,26 +12,21 @@ interface LoginResponse {
   userName: string;
 }
 
-export const login = async (
-  credentials: LoginRequest
-): Promise<LoginResponse> => {
-  try {
-    const response = await apiClient.post<LoginResponse>(
-      '/auth/login',
-      credentials
-    );
+const userInfoStorage = createStorage<LoginResponse>('userInfo');
 
-    const userInfo = {
-      authToken: response.data.authToken,
-      userName: response.data.userName,
-    };
-    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-
-    return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      sessionStorage.removeItem('userInfo');
-    }
-    throw error;
-  }
+const rawLogin = async (credentials: LoginRequest): Promise<LoginResponse> => {
+  const response = await apiClient.post<LoginResponse>(
+    '/auth/login',
+    credentials
+  );
+  return response.data;
 };
+
+export const login = withError(rawLogin, {
+  onSuccess: userInfoStorage.set,
+  onError: (error) => {
+    if ((error as any)?.response?.status === 401) {
+      userInfoStorage.clear();
+    }
+  },
+});
