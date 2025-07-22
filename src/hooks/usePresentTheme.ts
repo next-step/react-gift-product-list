@@ -3,10 +3,8 @@ import { useEffect, useState } from 'react';
 import type { Themes } from '../components/Home/PresentTheme/Item/ThemeType';
 import { BASIC_ENDPOINT } from '@src/assets/endpoints';
 import type { HttpTypes } from '@src/api/HttpType';
-import { useNavigate } from 'react-router-dom';
 
 export const usePresentTheme = () => {
-  const naviate = useNavigate();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isError, setError] = useState<boolean>(false);
   const [themes, setThemes] = useState<Themes>({

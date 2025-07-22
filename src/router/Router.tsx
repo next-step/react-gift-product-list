@@ -5,6 +5,7 @@ import NotFound from '@pages/NotFound';
 import { URLS } from '@assets/urls';
 import MyPage from '@pages/MyPage';
 import Order from '@pages/Order';
+import ThemesProduct from '@src/pages/ThemesProduct';
 
 const Router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const Router = createBrowserRouter([
   {
     path: URLS.mypage,
     element: <MyPage />,
+  },
+  {
+    path: URLS.themes,
+    element: <ThemesProduct />,
   },
   { path: URLS.order, element: <Order /> },
   {

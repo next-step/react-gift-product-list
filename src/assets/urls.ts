@@ -3,4 +3,5 @@ export const URLS = {
   home: '/',
   mypage: '/my',
   order: '/order',
+  themes: '/themes/*',
 };
