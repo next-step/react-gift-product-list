@@ -6,6 +6,11 @@ import { useFetch } from '@/hooks/useFetch';
 import { useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { useEffect, useState } from 'react';
+import { fetchthemeInfo, fetchThemeProducts } from '@/services/themeApi';
+import { type ErrorInfo } from '@/types/error';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_PATH } from '@/routes/Router';
 
 const Header = styled.section`
   width: 100%;
@@ -41,25 +46,11 @@ const Image = styled.img`
   background-color: rgb(243, 244, 245);
 `;
 
-const fetchthemeInfo = async (themeId: number) => {
-  return await axios
-    .get(`http://localhost:3000/api/themes/${themeId}/info`)
-    .then((res) => res.data.data);
-};
-const fetchThemeProducts = async (themeId: number, cursor: number, limit: number) => {
-  return await axios
-    .get(`http://localhost:3000/api/themes/${themeId}/products`, {
-      params: {
-        cursor,
-        limit,
-      },
-    })
-    .then((res) => res.data.data);
-};
 
 const Theme = () => {
   const { themeId } = useParams();
   const themeIdNumber = Number(themeId);
+  const navigate =useNavigate()
 
   const { ref, inView } = useInView({
     threshold: 0.5,
@@ -75,10 +66,8 @@ const Theme = () => {
 
     if (inView) {
       setIsFetching(true);
-      console.log('요소가 화면에 보입니다!');
       fetchThemeProducts(themeIdNumber, cursor, LIMIT)
         .then((data) => {
-          console.log(data);
           setProducts((prev) => [...prev, ...data.list]);
           setCursor(data.cursor);
           setHasNext(data.hasMoreList);
@@ -99,6 +88,16 @@ const Theme = () => {
     initValue: null,
     deps: [themeIdNumber],
   });
+useEffect(()=>{
+  if(error){
+    const statusCode = error?.statusCode;
+if(statusCode&& statusCode===404){
+  toast.error("선물 테마 정보를 받아올 수 없어요..")
+  navigate(ROUTE_PATH.HOME)
+
+}
+  }
+})
 
   console.dir(products);
   if (isLoading || !themeData) return <div>로딩중...</div>;
@@ -128,8 +127,8 @@ const Theme = () => {
             </Card>
           ))}
         </GridWrapper>
+        {/* 감시대상 */}
         <div ref={ref} style={{ height: '1px' }} />
-        {/* 감시 대상 요소 */}
       </ListContainer>
     </div>
   );

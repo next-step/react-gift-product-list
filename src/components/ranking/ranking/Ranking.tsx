@@ -3,7 +3,7 @@ import RankingItem from '../RankingItem';
 import { PaddingLg } from '../../common/Padding';
 import PersonCategory from '../PersonCategory';
 import BehaviorCategory from '../BehaviorCategory';
-import { use, useCallback, useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   type BehaviorFilterLabels,
@@ -75,7 +75,7 @@ const Ranking = () => {
   const { data: products, isLoading: isProductLoading } = useFetch<ProductType[]>({
     fetcher: () => fetchRankingData(personParam, behaviorParam),
     initValue: [],
-    deps: [personParam, behaviorParam], //쿼리 파라미터가 바뀔 때마다 fetch를 새로 해줘야하므로!
+    deps: [personParam, behaviorParam], 
   });
 
   const visible = showAll ? products : products.slice(0, 6);
