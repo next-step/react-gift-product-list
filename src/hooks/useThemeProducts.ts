@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getThemeProductsUrl } from '@/constants/api';
+import { getThemeProductsUrl } from '@/hooks/constants/api';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useFetch } from '@/hooks/useFetch';
 import type { Product } from '@/types/product';

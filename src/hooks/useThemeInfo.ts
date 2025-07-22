@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getThemeInfoUrl } from '@/constants/api';
+import { getThemeInfoUrl } from '@/hooks/constants/api';
 import { ROUTES } from '@/constants/routes';
 import { useFetch } from '@/hooks/useFetch';
 import type { ThemeInfo } from '@/types/theme';

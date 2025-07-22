@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import axios from 'axios';
-import { LOGIN_API_URL, SESSION_STORAGE_KEY } from '@/constants/api';
+import { LOGIN_API_URL, SESSION_STORAGE_KEY } from '@/hooks/constants/api';
 
 type User = {
   email: string;

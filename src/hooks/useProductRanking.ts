@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Product } from '@/types/product';
-import { PRODUCT_RANKING_API_URL } from '@/constants/api';
+import { PRODUCT_RANKING_API_URL } from '@/hooks/constants/api';
 
 interface UseProductRankingResult {
   data: Product[] | null;

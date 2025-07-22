@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getProductSummaryUrl } from '@/constants/api';
+import { getProductSummaryUrl } from '@/hooks/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
 import { ROUTES } from '@/constants/routes';
 import { useFetch } from '@/hooks/useFetch';

@@ -15,7 +15,7 @@ import { FormProvider } from 'react-hook-form';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import type { OrderFormValues } from '@/types/order';
 import { loading } from '@/components/common/Loading';
-import { ORDER_API_URL } from '@/constants/api';
+import { ORDER_API_URL } from '@/hooks/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
 import { useProductSummary } from '@/hooks/useProductSummary';
 import { hasAxiosErrorStatus } from '@/utils/error';
