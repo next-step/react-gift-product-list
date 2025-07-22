@@ -2,14 +2,16 @@ import type { ErrorInfo } from '@/types/error';
 import axios from 'axios';
 import { useState } from 'react';
 
+
 type Props = {
   fetcher: (body: any, token?: string) => Promise<any>;
 };
 
+
 const usePost = ({ fetcher }: Props) => {
-  //💚제네릭 표현 정리하기
   const [data, setData] = useState(null);
   const [error, setError] = useState<ErrorInfo | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   // 왜 useEffect를 쓰지 않고 함수로 만들어서 반환하느냐
   // useFetch 에서는 마운트 시나 [] 안의 상태가 바뀔 때마다 자동으로 호출됨!
@@ -37,6 +39,7 @@ const usePost = ({ fetcher }: Props) => {
       }
       setError(errorInfo);
       throw errorInfo; // 이걸 안 던지면 posr 함수 호출 한 쪽에서 에러가 난 줄 모름
+
       //이렇게 던져야지만 try catch로 잡을 수 있다!
     } finally {
       setIsLoading(false);
@@ -45,3 +48,4 @@ const usePost = ({ fetcher }: Props) => {
   return { data, error, isLoading, post };
 };
 export default usePost;
+

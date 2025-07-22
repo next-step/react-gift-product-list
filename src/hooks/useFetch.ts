@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 import { useEffect, useState } from 'react';
 import type { ErrorInfo } from '@/types/error';
 type Props<T> = {
@@ -20,6 +19,7 @@ export const useFetch = <T>({ fetcher, initValue, deps }: Props<T>) => {
         setData(result); 
       } catch (e) {
         let errorInfo: ErrorInfo= { message: '알 수 없는 오류 발생' };
+
 
         //axios 에서 발생한 에러이면 response 객체에 안전하게 접근이 가능하다.
         if (axios.isAxiosError(e)) {
