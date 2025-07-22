@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
@@ -16,51 +15,16 @@ import { FormProvider } from 'react-hook-form';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import type { OrderFormValues } from '@/types/order';
 import { loading } from '@/components/common/Loading';
-import type { ProductSummary } from '@/types/product';
-import { ORDER_API_PATH, getProductSummaryPath } from '@/constants/api';
+import { ORDER_API_URL } from '@/hooks/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
-
-const getProductSummaryUrl = (id: string) =>
-  `${import.meta.env.VITE_API_BASE_URL}${getProductSummaryPath(id)}`;
-
-const ORDER_API_URL = `${import.meta.env.VITE_API_BASE_URL}${ORDER_API_PATH}`;
-
-const isAxiosErrorWithStatus = (
-  err: unknown,
-  status: number
-): err is { response: { status: number } } =>
-  typeof err === 'object' &&
-  err !== null &&
-  'response' in err &&
-  typeof (err as any).response?.status === 'number' &&
-  (err as any).response.status === status;
+import { useProductSummary } from '@/hooks/useProductSummary';
+import { hasAxiosErrorStatus } from '@/utils/error';
 
 const OrderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [product, setProduct] = useState<ProductSummary | undefined>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await axios.get<{ data: ProductSummary }>(
-          getProductSummaryUrl(id!)
-        );
-        setProduct(res.data.data);
-      } catch {
-        toast.error(ERROR_MESSAGES.LOAD_PRODUCT_FAIL, {
-          toastId: 'product-load-fail',
-        });
-        navigate(ROUTES.HOME);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (id) fetchProduct();
-  }, [id, navigate]);
+  const { product, isLoading } = useProductSummary(id);
 
   const {
     methods,
@@ -109,7 +73,7 @@ const OrderPage = () => {
       );
       navigate(ROUTES.HOME);
     } catch (err: unknown) {
-      if (isAxiosErrorWithStatus(err, 401)) {
+      if (hasAxiosErrorStatus(err, 401)) {
         toast.error(ERROR_MESSAGES.LOGIN_REQUIRED);
         navigate(ROUTES.LOGIN, {
           state: {
@@ -141,7 +105,7 @@ const OrderPage = () => {
             <MessageInput />
             <SenderForm />
             <ReceiverForm />
-            <ProductInfo product={product} />
+            <ProductInfo {...product} />
             <OrderSubmitButton amount={totalPrice} />
           </Form>
         </FormProvider>

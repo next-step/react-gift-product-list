@@ -1,21 +1,15 @@
 import styled from '@emotion/styled';
 import { loading } from '@/components/common/Loading';
 import { ERROR_MESSAGES } from '@/constants/validation';
-import type { Category } from '@/types/category';
+import { useCategoryThemes } from '@/hooks/useCategoryThemes';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 
-interface Props {
-  themes: {
-    data: Category[] | null;
-    pending: boolean;
-    error: boolean;
-  };
-}
+const CategoryContent = () => {
+  const { data, pending, error } = useCategoryThemes();
+  const navigate = useNavigate();
 
-const GRID_MIN_HEIGHT = 250;
-const CATEGORY_IMAGE_SIZE = 50;
-
-const CategoryContent = ({ themes }: Props) => {
-  if (themes.pending) {
+  if (pending) {
     return (
       <Grid>
         <LoadingWrapper>{loading}</LoadingWrapper>
@@ -23,18 +17,21 @@ const CategoryContent = ({ themes }: Props) => {
     );
   }
 
-  if (themes.error) {
+  if (error) {
     return <EmptyText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</EmptyText>;
   }
 
-  if (!themes.data || themes.data.length === 0) {
+  if (!data || data.length === 0) {
     return <EmptyText>{ERROR_MESSAGES.NO_THEMES_AVAILABLE}</EmptyText>;
   }
 
   return (
     <Grid>
-      {themes.data.map(theme => (
-        <Item key={theme.themeId}>
+      {data.map(theme => (
+        <Item
+          key={theme.themeId}
+          onClick={() => navigate(ROUTES.THEME(theme.themeId))}
+        >
           <CategoryImage src={theme.image} alt={theme.name} />
           <CategoryText>{theme.name}</CategoryText>
         </Item>
@@ -49,7 +46,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: ${({ theme }) => `${theme.spacing[5]} ${theme.spacing[1]}`};
-  min-height: ${GRID_MIN_HEIGHT}px;
+  min-height: 250px;
 `;
 
 const LoadingWrapper = styled.div`
@@ -79,8 +76,8 @@ const Item = styled.div`
 `;
 
 const CategoryImage = styled.img`
-  width: ${CATEGORY_IMAGE_SIZE}px;
-  height: ${CATEGORY_IMAGE_SIZE}px;
+  width: 50px;
+  height: 50px;
   border-radius: 40%;
   object-fit: cover;
 `;

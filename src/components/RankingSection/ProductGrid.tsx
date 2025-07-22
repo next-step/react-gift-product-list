@@ -6,7 +6,7 @@ const ProductGrid = ({ products }: { products: Product[] }) => {
   return (
     <CardGrid columns={3}>
       {products.map((product, index) => (
-        <ProductCard key={product.id} product={product} rank={index + 1} />
+        <ProductCard key={product.id} {...product} rank={index + 1} />
       ))}
     </CardGrid>
   );
