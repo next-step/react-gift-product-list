@@ -4,14 +4,15 @@ import PromoBanner from './PromoBanner';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import { api } from '../../utils/api'
+import { api } from '../../utils/api';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const GiftCategorySelectorStyle = styled.div`
   width: auto;
   height: auto;
-  padding: ${({ theme }) => theme.spacing.spacing8} ${({ theme }) => theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing8}
+    ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const GiftCategorySelectorTitle = styled.h2`
@@ -23,10 +24,10 @@ const GiftCategorySelectorTitle = styled.h2`
 const GiftCategorySelectorItemBoxWrapper = styled.div`
   width: 100%;
   height: 300px;
-  display:flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 const Spinner = styled.div`
   border: 4px solid #f3f3f3;
   border-top: 4px solid #333;
@@ -36,17 +37,21 @@ const Spinner = styled.div`
   animation: spin 0.8s linear infinite;
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
-`
+`;
 
 const GiftCategorySelectorItemBoxGrid = styled.div`
   width: auto;
   height: auto;
   margin-top: ${({ theme }) => theme.spacing.spacing5};
   margin-bottom: ${({ theme }) => theme.spacing.spacing10};
-  
+
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   row-gap: ${({ theme }) => theme.spacing.spacing5};
@@ -111,15 +116,20 @@ function GiftCategorySelectorItemBox() {
   }
 
   const handleThemeClick = (themeId: number) => {
-    const query = new URLSearchParams({ themeId: themeId.toString()}).toString();
+    const query = new URLSearchParams({
+      themeId: themeId.toString(),
+    }).toString();
 
     navigate(`/theme?${query}`);
-  }
-  
+  };
+
   return (
     <GiftCategorySelectorItemBoxGrid>
       {themes.map((item) => (
-        <GiftCategorySelectorItemWrapper key={item.themeId} onClick={() => handleThemeClick(item.themeId)}>
+        <GiftCategorySelectorItemWrapper
+          key={item.themeId}
+          onClick={() => handleThemeClick(item.themeId)}
+        >
           <GiftCategorySelectorItemImg
             src={item.image}
             alt={item.name}
@@ -127,13 +137,13 @@ function GiftCategorySelectorItemBox() {
           <GiftCategorySelectorItemText>
             {item.name}
           </GiftCategorySelectorItemText>
-        </GiftCategorySelectorItemWrapper>))}
+        </GiftCategorySelectorItemWrapper>
+      ))}
     </GiftCategorySelectorItemBoxGrid>
   );
 }
 
 function GiftCategorySelector() {
-
   return (
     <GiftCategorySelectorStyle>
       <GiftCategorySelectorTitle>선물 테마</GiftCategorySelectorTitle>

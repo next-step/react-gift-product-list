@@ -6,7 +6,8 @@ import RealtimeRankItemWrapper from './RealtimeRankItemWrapper';
 const RealtimeRankWrapper = styled.div`
   width: auto;
   height: auto;
-  padding: ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing2}
+    ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const RealtimeRankTitle = styled.h2`
@@ -19,7 +20,8 @@ const RealtimeRankTitle = styled.h2`
 const UserGroupSelectorWrapper = styled.div`
   width: auto;
   height: auto;
-  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing2};
+  padding: ${({ theme }) => theme.spacing.spacing4}
+    ${({ theme }) => theme.spacing.spacing2};
 
   display: flex;
   justify-content: space-between;
@@ -40,9 +42,11 @@ const UserGroupSelectorBtn = styled.button<{ isSelected?: boolean }>`
   height: ${({ theme }) => theme.spacing.spacing11};
   border: none;
   border-radius: 16px;
-  color: ${({ theme, isSelected }) => isSelected ? theme.colors.gray.gray00 : theme.colors.blue.blue400};
-  background-color: ${({ theme, isSelected }) => isSelected ? theme.colors.blue.blue700 : theme.colors.blue.blue100};
-  
+  color: ${({ theme, isSelected }) =>
+    isSelected ? theme.colors.gray.gray00 : theme.colors.blue.blue400};
+  background-color: ${({ theme, isSelected }) =>
+    isSelected ? theme.colors.blue.blue700 : theme.colors.blue.blue100};
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,7 +61,8 @@ const UserGroupSelectorTxt = styled.p<{ isSelected?: boolean }>`
   font-size: ${({ theme }) => theme.typography.label.label1Bold.fontSize};
   font-weight: ${({ theme }) => theme.typography.label.label1Bold.fontWeight};
   line-height: ${({ theme }) => theme.typography.label.label1Bold.lineHeight};
-  color: ${({ theme, isSelected }) => isSelected ? theme.colors.blue.blue700 : theme.colors.gray.gray700};
+  color: ${({ theme, isSelected }) =>
+    isSelected ? theme.colors.blue.blue700 : theme.colors.gray.gray700};
   margin-top: 5px;
 `;
 
@@ -65,7 +70,8 @@ const UserGroupSelectorTxt = styled.p<{ isSelected?: boolean }>`
 const RankingTypeSelectorWrapper = styled.div`
   width: auto;
   height: auto;
-  padding: ${({ theme }) => theme.spacing.spacing3} ${({ theme }) => theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing3}
+    ${({ theme }) => theme.spacing.spacing4};
   border: 1px solid ${({ theme }) => theme.colors.blue.blue200};
   background-color: ${({ theme }) => theme.colors.blue.blue100};
   border-radius: 7px;
@@ -79,7 +85,8 @@ const RankingTypeSelectorBtn = styled.div<{ isSelected?: boolean }>`
   font-size: ${({ theme }) => theme.typography.label.label1Bold.fontSize};
   font-weight: ${({ theme }) => theme.typography.label.label1Bold.fontWeight};
   line-height: ${({ theme }) => theme.typography.label.label1Bold.lineHeight};
-  color: ${({ theme, isSelected }) => isSelected ? theme.colors.blue.blue700 : theme.colors.blue.blue500};
+  color: ${({ theme, isSelected }) =>
+    isSelected ? theme.colors.blue.blue700 : theme.colors.blue.blue500};
   cursor: pointer;
 `;
 
@@ -119,13 +126,13 @@ function RealtimeGiftRank() {
   const handleGroupClick = (group: string) => {
     setSelectedGroup(group);
     sessionStorage.setItem('selectedGroup', group);
-  }
+  };
 
   // 타입 클릭시 state와 sessionStorage에 저장하는 핸들러
   const handleTypeClick = (type: string) => {
     setSelectedType(type);
     sessionStorage.setItem('selectedType', type);
-  }
+  };
 
   return (
     <RealtimeRankWrapper>
@@ -133,7 +140,10 @@ function RealtimeGiftRank() {
       {/* 첫 번째 selector */}
       <UserGroupSelectorWrapper>
         {userGroupMock.map(({ key, group, emoji, label }) => (
-          <UserGroupSelectorItemWrapper key={key} onClick={() => handleGroupClick(group)} >
+          <UserGroupSelectorItemWrapper
+            key={key}
+            onClick={() => handleGroupClick(group)}
+          >
             <UserGroupSelectorBtn isSelected={selectedGroup === group}>
               {emoji}
             </UserGroupSelectorBtn>
@@ -150,14 +160,18 @@ function RealtimeGiftRank() {
           <RankingTypeSelectorBtn
             key={key}
             onClick={() => handleTypeClick(type)}
-            isSelected={selectedType === type}>
+            isSelected={selectedType === type}
+          >
             {label}
           </RankingTypeSelectorBtn>
         ))}
       </RankingTypeSelectorWrapper>
 
       {/* 아이템 리스트 */}
-      <RealtimeRankItemWrapper selectedGroup={selectedGroup} selectedType={selectedType}/>
+      <RealtimeRankItemWrapper
+        selectedGroup={selectedGroup}
+        selectedType={selectedType}
+      />
     </RealtimeRankWrapper>
   );
 }

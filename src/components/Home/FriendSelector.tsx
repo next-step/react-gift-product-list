@@ -5,14 +5,16 @@ import useUser from '@/hooks/useUser';
 const FriendSelectorWrapper = styled.div`
   width: auto;
   height: auto;
-  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing4}
+    ${({ theme }) => theme.spacing.spacing3};
   background-color: ${({ theme }) => theme.colors.gray.gray200};
 `;
 
 const FriendSelectorBox = styled.div`
   width: auto;
   height: auto;
-  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing4}
+    ${({ theme }) => theme.spacing.spacing4};
   background-color: ${({ theme }) => theme.colors.gray.gray00};
   border-radius: 16px;
   cursor: pointer;
@@ -48,7 +50,19 @@ function FriendSelector() {
     <FriendSelectorWrapper>
       <FriendSelectorBox>
         <FriendSelectorBtn>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2a3038" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-plus" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#2a3038"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="lucide lucide-plus"
+            aria-hidden="true"
+          >
             <path d="M5 12h14"></path>
             <path d="M12 5v14"></path>
           </svg>

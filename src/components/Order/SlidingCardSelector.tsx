@@ -24,47 +24,45 @@ const SlidingCard = styled.img<{ isActive: boolean }>`
   cursor: pointer;
 `;
 
-
-
 function SlidingCardSelector() {
-    type OrderFormValues = {
-        selectedId: number;
-        message: string;
-        senderName: string;
-        receivers: Receiver[];
-        allPrice: number;
-      };
+  type OrderFormValues = {
+    selectedId: number;
+    message: string;
+    senderName: string;
+    receivers: Receiver[];
+    allPrice: number;
+  };
 
-    type Receiver = {
-        name: string;
-        phone: string;
-        count: number;
-      };
-      
-    const {setValue, clearErrors, watch} = useFormContext<OrderFormValues>();
+  type Receiver = {
+    name: string;
+    phone: string;
+    count: number;
+  };
 
-    function handleCardClick(id: number) {
-        setValue('selectedId', id);
-        const selectedCard = orderCard.find((c) => c.id === id);
-        if (selectedCard) {
-          setValue('message', selectedCard?.defaultTextMessage);
-          clearErrors('message');
-        }
-      }
+  const { setValue, clearErrors, watch } = useFormContext<OrderFormValues>();
 
-    return (
-        <SlidingCardSelectorWrapper>
-        {orderCard.map((item) => (
-          <SlidingCard
-            key={item.id}
-            src={item.thumbUrl}
-            alt={item.defaultTextMessage}
-            onClick={() => handleCardClick(item.id)}
-            isActive={watch('selectedId') === item.id}
-          ></SlidingCard>
-        ))}
-      </SlidingCardSelectorWrapper>
-    );
+  function handleCardClick(id: number) {
+    setValue('selectedId', id);
+    const selectedCard = orderCard.find((c) => c.id === id);
+    if (selectedCard) {
+      setValue('message', selectedCard?.defaultTextMessage);
+      clearErrors('message');
+    }
+  }
+
+  return (
+    <SlidingCardSelectorWrapper>
+      {orderCard.map((item) => (
+        <SlidingCard
+          key={item.id}
+          src={item.thumbUrl}
+          alt={item.defaultTextMessage}
+          onClick={() => handleCardClick(item.id)}
+          isActive={watch('selectedId') === item.id}
+        ></SlidingCard>
+      ))}
+    </SlidingCardSelectorWrapper>
+  );
 }
 
 export default SlidingCardSelector;

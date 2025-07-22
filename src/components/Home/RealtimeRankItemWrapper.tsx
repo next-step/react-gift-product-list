@@ -3,13 +3,13 @@ import axios from 'axios';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
-import { api } from '../../utils/api'
+import { api } from '../../utils/api';
 // Item 영역 시작
 const RealtimeRankItemWrapperStyle = styled.div`
   width: 100%;
   height: auto;
 
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -25,8 +25,8 @@ const RealtimeRankItemGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   row-gap: ${({ theme }) => theme.spacing.spacing5};
   column-gap: ${({ theme }) => theme.spacing.spacing3};
-  justify-items: center; 
-`
+  justify-items: center;
+`;
 
 const RealtimeRankItem = styled.div`
   width: auto;
@@ -49,8 +49,10 @@ const RealtimeItemImg = styled.img`
 
 const RealtimeItemTxt = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label1Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.label.label1Regular.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label1Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.label.label1Regular.lineHeight};
   color: ${({ theme }) => theme.colors.gray.gray600};
 
   padding-top: ${({ theme }) => theme.spacing.spacing2};
@@ -58,8 +60,10 @@ const RealtimeItemTxt = styled.p`
 
 const RealtimeItemSubTxt = styled.p`
   font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label.label1Regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.label.label1Regular.lineHeight};
+  font-weight: ${({ theme }) =>
+    theme.typography.label.label1Regular.fontWeight};
+  line-height: ${({ theme }) =>
+    theme.typography.label.label1Regular.lineHeight};
   color: ${({ theme }) => theme.colors.gray.gray1000};
 
   padding-bottom: ${({ theme }) => theme.spacing.spacing2};
@@ -86,7 +90,7 @@ const ExtraBtnWrapper = styled.div`
 const ExtraBtn = styled.button`
   width: 480px;
   height: ${({ theme }) => theme.spacing.spacing11};
-  
+
   background-color: ${({ theme }) => theme.colors.background.default};
   border: 1px solid ${({ theme }) => theme.colors.gray.gray400};
   border-radius: 5px;
@@ -103,7 +107,7 @@ const SpinnerWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const Spinner = styled.div`
   border: 4px solid #f3f3f3;
@@ -114,115 +118,140 @@ const Spinner = styled.div`
   animation: spin 0.8s linear infinite;
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
 const ErrorMessageWrapper = styled.div`
-    width: auto;
-    height: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+  width: auto;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
-const ErrorMessage = styled.p`
-    
-`
-function RealtimeRankItemWrapper({ selectedGroup, selectedType }: { selectedGroup: string; selectedType: string }) {
-    const [ranking, setRanking] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(false);
+const ErrorMessage = styled.p``;
+function RealtimeRankItemWrapper({
+  selectedGroup,
+  selectedType,
+}: {
+  selectedGroup: string;
+  selectedType: string;
+}) {
+  const [ranking, setRanking] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    // 그룹과 타입state가 바뀔때마다 axios로 데이터 요청후 그에맞는 state 세팅
-    useEffect(() => {
-        const fetchRanking = async () => {
+  // 그룹과 타입state가 바뀔때마다 axios로 데이터 요청후 그에맞는 state 세팅
+  useEffect(() => {
+    const fetchRanking = async () => {
+      setIsLoading(true);
+      try {
+        const response = await api.get(
+          `/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`,
+        );
+        setRanking(response.data.data);
+        setIsError(false);
+      } catch (error) {
+        console.error('Error fetching ranking data:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-            setIsLoading(true);
-            try {
-                const response = await api.get(`/products/ranking?targetType=${selectedGroup}&rankType=${selectedType}`);
-                setRanking(response.data.data);
-                setIsError(false);
-            } catch (error) {
-                console.error('Error fetching ranking data:', error);
-                setIsError(true);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    fetchRanking();
+  }, [selectedGroup, selectedType]);
 
-        fetchRanking();
-    }, [selectedGroup, selectedType]);
+  // 더보기버튼 클릭시 state를 반전해주는 핸들러
+  const handleCollapsedClick = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
-    // 더보기버튼 클릭시 state를 반전해주는 핸들러
-    const handleCollapsedClick = () => {
-        setIsCollapsed(!isCollapsed);
-    }
+  // item클릭시 해당 item정보들을 url query로들고 Order페이지로 가는 핸들러
+  const handleItemClick = (
+    brandInfo: any,
+    id: any,
+    imageURL: any,
+    name: any,
+    price: any,
+  ) => {
+    const query = new URLSearchParams({
+      brandInfo: brandInfo.name,
+      id: id.toString(),
+      imageURL,
+      name,
+      price: price.basicPrice,
+    }).toString();
 
-    // item클릭시 해당 item정보들을 url query로들고 Order페이지로 가는 핸들러
-    const handleItemClick = (brandInfo: any, id: any, imageURL: any, name: any, price: any) => {
-        const query = new URLSearchParams({ brandInfo: brandInfo.name, id: id.toString(), imageURL, name, price: price.basicPrice, }).toString();
+    navigate(`/order?${query}`);
+  };
 
-        navigate(`/order?${query}`);
-    }
-
-    if (isLoading) {
-        return <SpinnerWrapper>
-            <Spinner />
-        </SpinnerWrapper>
-    }
-
-    if (isError || ranking.length === 0) {
-        return <ErrorMessageWrapper>
-            <ErrorMessage>상품이 없습니다</ErrorMessage>
-        </ErrorMessageWrapper>
-
-    }
-
+  if (isLoading) {
     return (
-        <RealtimeRankItemWrapperStyle>
-            <RealtimeRankItemGrid>{(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
-                <RealtimeRankItem
-                    key={item.id}
-                    onClick={() =>
-                        handleItemClick(
-                            item.brandInfo,
-                            item.id,
-                            item.imageURL,
-                            item.name,
-                            item.price,
-                        )
-                    }
-                >
-                    <RealtimeItemImg
-                        src={item.imageURL}
-                        alt={item.name}
-                    >
-                    </RealtimeItemImg>
-                    <RealtimeItemTxt>{item.brandInfo.name}</RealtimeItemTxt>
-                    <RealtimeItemSubTxt>{item.brandInfo.name}</RealtimeItemSubTxt>
-                    <RealtimeItemPriceTxt>
-                        {item.price.sellingPrice} 원
-                    </RealtimeItemPriceTxt>
-                </RealtimeRankItem>
-            ))}</RealtimeRankItemGrid>
-
-            {/* 더보기 접기 버튼 */}
-            <ExtraBtnWrapper>
-                <ExtraBtn
-                    onClick={() => {
-                        handleCollapsedClick();
-                    }}
-                >
-                    {isCollapsed ? '접기' : '더보기'}
-                </ExtraBtn>
-            </ExtraBtnWrapper>
-        </RealtimeRankItemWrapperStyle>
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
     );
+  }
+
+  if (isError || ranking.length === 0) {
+    return (
+      <ErrorMessageWrapper>
+        <ErrorMessage>상품이 없습니다</ErrorMessage>
+      </ErrorMessageWrapper>
+    );
+  }
+
+  return (
+    <RealtimeRankItemWrapperStyle>
+      <RealtimeRankItemGrid>
+        {(isCollapsed ? ranking : ranking.slice(0, 6)).map((item) => (
+          <RealtimeRankItem
+            key={item.id}
+            onClick={() =>
+              handleItemClick(
+                item.brandInfo,
+                item.id,
+                item.imageURL,
+                item.name,
+                item.price,
+              )
+            }
+          >
+            <RealtimeItemImg
+              src={item.imageURL}
+              alt={item.name}
+            ></RealtimeItemImg>
+            <RealtimeItemTxt>{item.brandInfo.name}</RealtimeItemTxt>
+            <RealtimeItemSubTxt>{item.brandInfo.name}</RealtimeItemSubTxt>
+            <RealtimeItemPriceTxt>
+              {item.price.sellingPrice} 원
+            </RealtimeItemPriceTxt>
+          </RealtimeRankItem>
+        ))}
+      </RealtimeRankItemGrid>
+
+      {/* 더보기 접기 버튼 */}
+      <ExtraBtnWrapper>
+        <ExtraBtn
+          onClick={() => {
+            handleCollapsedClick();
+          }}
+        >
+          {isCollapsed ? '접기' : '더보기'}
+        </ExtraBtn>
+      </ExtraBtnWrapper>
+    </RealtimeRankItemWrapperStyle>
+  );
 }
 
 export default RealtimeRankItemWrapper;
