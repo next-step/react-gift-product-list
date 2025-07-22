@@ -2,13 +2,15 @@ import styled from '@emotion/styled'
 import { Link, useNavigate } from 'react-router-dom'
 import { ChevronLeft, UserRound } from 'lucide-react'
 import { useAuth } from '@/contexts/auth'
-import { theme } from '@/styles/theme'
 import { ROUTE_PATH } from '@/Router'
+import { useTheme } from '@emotion/react'
 
 // * 네비게이션 컴포넌트
 export const Nav = () => {
   const navigate = useNavigate()
   const { isLogin } = useAuth()
+
+  const theme = useTheme()
 
   return (
     <Navigation>
@@ -48,7 +50,7 @@ const Navigation = styled.nav`
 
   margin: 0 auto;
 
-  background-color: ${theme.colors.gray.gray00};
+  background-color: ${({ theme }) => theme.colors.gray.gray00};
 
   display: flex;
   align-items: center;

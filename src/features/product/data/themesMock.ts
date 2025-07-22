@@ -1,4 +1,4 @@
-export const categoryMock = [
+export const themesMock = [
   {
     themeId: 3715,
     name: '생일',

@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 import { Controller, type Control } from 'react-hook-form'
 import type { CardData, OrderFormData } from '@/features/order/schema'
 import { ORDER_FORM_PLACEHOLDER } from '@/features/order/data'
-import { theme } from '@/styles/theme'
 import { typographyInput } from '@/styles/typography'
 import { Typography } from '@/components/ui'
 
@@ -63,62 +62,58 @@ export const OrderCardSection = ({
 
 // * 섹션 컨테이너 : section 시맨틱 태그
 const SectionContainer = styled.section`
-  width: 100%;
-  height: fit-content;
-
-  padding-top: ${theme.spacing.spacing3};
-  padding-bottom: ${theme.spacing.spacing8};
-
-  background-color: ${theme.semanticColors.background.default};
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: ${theme.spacing.spacing5};
+  ${({ theme }) => `
+    width: 100%;
+    height: fit-content;
+    padding-top: ${theme.spacing.spacing3};
+    padding-bottom: ${theme.spacing.spacing8};
+    background-color: ${theme.semanticColors.background.default};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.spacing.spacing5};
+  `}
 `
 
 // * 카드 리스트
 const CardList = styled.div`
-  width: 100%;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: ${theme.spacing.spacing1};
-
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  gap: ${theme.spacing.spacing1};
-
-  /* 양끝 흐려짐 디자인 */
-  mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 1) 2.5%,
-    rgba(0, 0, 0, 1) 97.5%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 1) 2.5%,
-    rgba(0, 0, 0, 1) 97.5%,
-    rgba(0, 0, 0, 0) 100%
-  );
-
-  /* 스크롤 바 스타일 상시 표시 */
-  &::-webkit-scrollbar {
-    height: 0.6rem;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: ${theme.colors.gray.gray500};
-    border-radius: ${theme.spacing.spacing2};
-  }
-  &::-webkit-scrollbar-track {
-    background-color: ${theme.semanticColors.background.fill};
-  }
+  ${({ theme }) => `
+    width: 100%;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: ${theme.spacing.spacing1};
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: ${theme.spacing.spacing1};
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 2.5%,
+      rgba(0, 0, 0, 1) 97.5%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 2.5%,
+      rgba(0, 0, 0, 1) 97.5%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    &::-webkit-scrollbar {
+      height: 0.6rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: ${theme.colors.gray.gray500};
+      border-radius: ${theme.spacing.spacing2};
+    }
+    &::-webkit-scrollbar-track {
+      background-color: ${theme.semanticColors.background.fill};
+    }
+  `}
 `
 
 // * 카드 썸네일
@@ -130,7 +125,7 @@ const CardThumbnail = styled.div<{ isSelected: boolean }>`
   overflow: hidden;
 
   border: 3px solid ${({ isSelected }) => (isSelected ? 'black' : 'transparent')};
-  border-radius: ${theme.spacing.spacing2};
+  border-radius: ${({ theme }) => theme.spacing.spacing2};
 
   display: flex;
   align-items: center;
@@ -139,10 +134,10 @@ const CardThumbnail = styled.div<{ isSelected: boolean }>`
 
   /* 양 끝 흐려짐으로 인한 안보임 방지 */
   &:first-child {
-    margin-left: ${theme.spacing.spacing4};
+    margin-left: ${({ theme }) => theme.spacing.spacing4};
   }
   &:last-child {
-    margin-right: ${theme.spacing.spacing4};
+    margin-right: ${({ theme }) => theme.spacing.spacing4};
   }
 `
 
@@ -160,7 +155,7 @@ const SelectedCard = styled.div`
 
   box-shadow: rgba(0, 0, 0, 0.2) 0px 39px 20px -30px;
 
-  border-radius: ${theme.spacing.spacing3};
+  border-radius: ${({ theme }) => theme.spacing.spacing3};
 `
 
 // * 선택된 카드 이미지
@@ -174,7 +169,7 @@ const MessageContainer = styled.div`
   width: 95%;
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.spacing1};
+  gap: ${({ theme }) => theme.spacing.spacing1};
 `
 
 // * 카드 메시지 영역
@@ -182,21 +177,25 @@ const CardMessageArea = styled.textarea<{ hasError: boolean }>`
   width: 100%;
   min-height: 3.875rem;
 
-  padding: ${theme.spacing.spacing2} ${theme.spacing.spacing3};
-  margin-top: ${theme.spacing.spacing3};
+  padding: ${({ theme }) => `${theme.spacing.spacing2} ${theme.spacing.spacing3}`};
+  margin-top: ${({ theme }) => theme.spacing.spacing3};
   border: 1px solid
     ${({ hasError }) =>
-      hasError ? theme.semanticColors.status.critical : theme.semanticColors.border.default};
-  border-radius: ${theme.spacing.spacing2};
+      hasError
+        ? ({ theme }) => theme.semanticColors.status.critical
+        : ({ theme }) => theme.semanticColors.border.default};
+  border-radius: ${({ theme }) => theme.spacing.spacing2};
 
   &:focus {
     outline: none;
     border-color: ${({ hasError }) =>
-      hasError ? theme.semanticColors.status.critical : theme.colors.gray.gray400};
+      hasError
+        ? ({ theme }) => theme.semanticColors.status.critical
+        : ({ theme }) => theme.colors.gray.gray400};
   }
 
   &::placeholder {
-    color: ${theme.semanticColors.text.placeholder};
+    color: ${({ theme }) => theme.semanticColors.text.placeholder};
   }
 
   transition: border-color 200ms;
@@ -206,6 +205,6 @@ const CardMessageArea = styled.textarea<{ hasError: boolean }>`
 
 // * 에러 메시지
 const ErrorMessage = styled(Typography)`
-  color: ${theme.semanticColors.status.critical};
-  margin-left: ${theme.spacing.spacing2};
+  color: ${({ theme }) => theme.semanticColors.status.critical};
+  margin-left: ${({ theme }) => theme.spacing.spacing2};
 `

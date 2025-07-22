@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom'
 import { TrendFilter } from './TrendFilter'
 import { ProductItem } from './ProductItem'
 import { Button, Loading, Typography } from '@/components/ui'
-import { theme } from '@/styles/theme'
 import { useFetch } from '@/hooks/useFetch'
 import { fetchProductRankList } from '@/api/services/product'
 import {
@@ -15,12 +14,14 @@ import {
   type Product,
 } from '@/api/types/product'
 import { PRODUCT_UI_CONSTANTS } from '@/features/product/constants'
+import { useTheme } from '@emotion/react'
 
 // * 초기 보여줄 상품 개수
 const INITIAL_SHOW_COUNT = PRODUCT_UI_CONSTANTS.INITIAL_SHOW_COUNT
 
 // * 실시간 급상승 컴포넌트
 export const Trend = () => {
+  const theme = useTheme()
   const [searchParams, setSearchParams] = useSearchParams()
   const [showAll, setShowAll] = useState(false)
 
@@ -153,13 +154,13 @@ const Container = styled.section`
   width: 100%;
   height: fit-content;
 
-  padding: ${theme.spacing.spacing5};
+  padding: ${({ theme }) => theme.spacing.spacing5};
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: ${theme.spacing.spacing5};
+  gap: ${({ theme }) => theme.spacing.spacing5};
 `
 
 // * 실시간 급상승 상품 컨테이너
@@ -170,8 +171,8 @@ const ProductContainer = styled.div`
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: ${theme.spacing.spacing2};
-  row-gap: ${theme.spacing.spacing5};
+  column-gap: ${({ theme }) => theme.spacing.spacing2};
+  row-gap: ${({ theme }) => theme.spacing.spacing5};
 `
 
 // * 더보기 버튼 컨테이너
@@ -180,7 +181,7 @@ const MoreButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: ${theme.spacing.spacing4};
+  margin-top: ${({ theme }) => theme.spacing.spacing4};
 `
 
 // * 로딩 컨테이너
@@ -195,5 +196,5 @@ const LoadingContainer = styled.div`
 
 // * 빈 목록 메시지
 const EmptyMsg = styled(Typography)`
-  color: ${theme.semanticColors.text.sub};
+  color: ${({ theme }) => theme.semanticColors.text.sub};
 `

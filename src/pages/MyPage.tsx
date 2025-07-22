@@ -1,7 +1,6 @@
 import { Button, PageContainer, Typography } from '@/components/ui'
 import { useAuth } from '@/contexts/auth'
 import { ROUTE_PATH } from '@/Router'
-import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
 import { useNavigate } from 'react-router-dom'
 
@@ -32,18 +31,18 @@ export const MyPage = () => {
 export default MyPage
 
 const MyPageContainer = styled(PageContainer)`
-  padding-left: ${theme.spacing.spacing4};
+  padding-left: ${({ theme }) => theme.spacing.spacing4};
   justify-content: start;
   align-items: start;
 `
 
 const Title = styled(Typography)`
-  margin-top: ${theme.spacing.spacing8};
-  margin-bottom: ${theme.spacing.spacing2};
+  margin-top: ${({ theme }) => theme.spacing.spacing8};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing2};
 `
 
 const Text = styled(Typography)``
 
 const LogoutButton = styled(Button)`
-  margin-top: ${theme.spacing.spacing6};
+  margin-top: ${({ theme }) => theme.spacing.spacing6};
 `

@@ -3,7 +3,6 @@ import { Button, PageContainer, typographyMixin } from '@/components/ui'
 import { useAuth } from '@/contexts/auth'
 import { LOGIN_CONTENT, loginSchema, type LoginFormData } from '@/features/user'
 import { ROUTE_PATH } from '@/Router'
-import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
@@ -74,7 +73,7 @@ export const Login = () => {
         />
         {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
 
-        <div css={{ height: `${theme.spacing.spacing12}` }} />
+        <SpacingDiv />
         <Button type="submit" variant="kakao" size="medium" disabled={!isValid}>
           로그인
         </Button>
@@ -88,7 +87,7 @@ const LogoImg = styled.img`
   width: 88px;
   height: 88px;
 
-  margin-bottom: ${theme.spacing.spacing1};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing1};
 `
 
 // * 로그인 폼
@@ -107,22 +106,23 @@ const LoginForm = styled.form`
 const Input = styled.input<{ hasError?: boolean }>`
   width: 100%;
 
-  margin-top: ${theme.spacing.spacing4};
-  margin-bottom: ${theme.spacing.spacing1};
-  padding: ${theme.spacing.spacing2} 0;
+  margin-top: ${({ theme }) => theme.spacing.spacing4};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing1};
+  padding: ${({ theme }) => theme.spacing.spacing2} 0;
 
   ${typographyMixin('subtitle1Regular')}
 
-  border-bottom: 1px solid ${({ hasError }) =>
+  border-bottom: 1px solid
+    ${({ theme, hasError }) =>
     hasError ? theme.semanticColors.status.critical : theme.colors.gray.gray400};
 
   &::placeholder {
-    color: ${theme.colors.gray.gray600};
+    color: ${({ theme }) => theme.colors.gray.gray600};
   }
 
   &:focus {
     border-bottom: 1px solid
-      ${({ hasError }) =>
+      ${({ theme, hasError }) =>
         hasError ? theme.semanticColors.status.critical : theme.colors.gray.gray800};
   }
 
@@ -136,7 +136,12 @@ const ErrorText = styled.p`
   text-align: left;
   width: 100%;
 
-  color: ${theme.semanticColors.status.critical};
+  color: ${({ theme }) => theme.semanticColors.status.critical};
+`
+
+// * 버튼 위 여백
+const SpacingDiv = styled.div`
+  height: ${({ theme }) => theme.spacing.spacing12};
 `
 
 export default Login

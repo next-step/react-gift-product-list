@@ -21,19 +21,28 @@
 
 ## STEP 2
 
-- 로그인 기능
-  - [x] `/login api` 를 사용하여 로그인 기능을 완성하기
-  - [x] 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage에 저장하고 활용하기
-  - [x] 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주기. ( [react-toastify](https://www.npmjs.com/package/react-toastify) 라이브러리 사용)
+- 로그인 기능 구현 (API)
+- 주문하기 기능 구현 (API)
 
-- 주문하기 기능
-  - [x] `/products/:productId/summary` api를 사용하여 제품 정보를 가져오기
-  - [x] 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결시키기
-  - [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채우기
-  - [x] `/order` api를 사용하여 주문하기 기능을 완성하기
-  - [x] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작하도록 구현하기
-  - [x] 주문하기 API에서 401 에러가 발생하면 로그인 페이지로 연결시키기
+## STEP 3
+
+### 목표
+
+- `Intersection Observer API`를 사용하여 페이지네이션을 구현
+- 참고 URL을 참고하여 테마 상품 목록 페이지를 구현
+- axios외에 별도의 fetch 관련 라이브러리를 사용하지 않고 구현
+- Suspense, ErrorBoundary 사용하지 않기
+
+### 요구사항
+
+- 테마 상품 목록 페이지
+  - [x] 선물하기 홈 > 선물 테마 섹션의 아이템을 클릭하면 테마 상품 목록 페이지로 연결
+  - [x] `/api/themes/:themeId/info` API를 사용하여 선물 테마 섹션의 히어로 영역을 구현
+  - [x] 만약 테마 정보를 가져오는 API가 404 에러가 발생하면 선물하기 홈 페이지로 연결
+  - [x] `/api/themes/:themeId/products` API를 사용하여 상품 리스트를 구현
+  - [x] 무한 스크롤 기능을 구현
+  - [x] 상품 리스트가 없으면 빈 페이지를 보여주기
 
 - [x] 본인만의 기준으로 일관된 코드 작성
 - [x] 기능 단위로 나누어 커밋
-- [x] 재사용을 고려하여 API 구현
+- [x] 재사용을 고려하여 컴포넌트, 비즈니스 로직을 구현

@@ -1,4 +1,3 @@
-import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
 import type { ReactNode } from 'react'
 
@@ -22,9 +21,9 @@ const Container = styled.main`
   min-height: 100vh;
 
   margin: 0 auto;
-  padding-top: ${theme.spacing.spacing11};
+  padding-top: ${({ theme }) => theme.spacing.spacing11};
 
-  background-color: ${theme.semanticColors.background.default};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
 
   display: flex;
   flex-direction: column;

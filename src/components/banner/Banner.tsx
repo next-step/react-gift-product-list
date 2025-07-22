@@ -1,5 +1,4 @@
 import { BANNER_CONTENT } from '@/config'
-import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
 import { typographyMixin } from '@/components/ui'
 
@@ -20,9 +19,9 @@ const Container = styled.section`
   width: 100%;
   height: fit-content;
 
-  padding: ${theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing4};
 
-  background-color: ${theme.semanticColors.background.default};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
 
   display: flex;
   flex-direction: column;
@@ -35,11 +34,11 @@ const SubContainer = styled.div`
   width: 100%;
   height: fit-content;
 
-  padding: ${theme.spacing.spacing4} ${theme.spacing.spacing5};
-  background-color: ${theme.semanticColors.brand.kakaoYellow};
+  padding: ${({ theme }) => `${theme.spacing.spacing4} ${theme.spacing.spacing5}`};
+  background-color: ${({ theme }) => theme.semanticColors.brand.kakaoYellow};
 
   border: none;
-  border-radius: ${theme.spacing.spacing4};
+  border-radius: ${({ theme }) => theme.spacing.spacing4};
 
   ${typographyMixin('body2Regular')}
 
@@ -50,14 +49,14 @@ const SubContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: ${theme.spacing.spacing1};
+  gap: ${({ theme }) => theme.spacing.spacing1};
 `
 
 // * 기타 배너 서브 타이틀
 const SubBannerTitle = styled.span`
   ${typographyMixin('label2Regular')}
 
-  color: ${theme.semanticColors.text.sub};
+  color: ${({ theme }) => theme.semanticColors.text.sub};
 `
 
 // * 기타 배너 타이틀

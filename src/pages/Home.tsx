@@ -1,5 +1,5 @@
 import { Banner } from '@/components/banner/Banner'
-import { Category } from '@/components/category/Category'
+import { ThemesSection } from '@/features/themes'
 import { Friends } from '@/components/friends/Friends'
 import { PageContainer } from '@/components/ui'
 import { Trend } from '@/features/product/components'
@@ -10,8 +10,8 @@ export const Home = () => {
     <HomeContainer>
       {/* 선물할 친구 섹션 */}
       <Friends />
-      {/* 카테고리 섹션 */}
-      <Category />
+      {/* 테마(Themes) 섹션 */}
+      <ThemesSection />
       {/* 기타 배너 섹션 */}
       <Banner />
       {/* 실시간 급상승 섹션 */}

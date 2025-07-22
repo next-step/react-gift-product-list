@@ -1,13 +1,15 @@
 import { useAuth } from '@/contexts/auth'
-import { theme } from '@/styles/theme'
 import styled from '@emotion/styled'
 import { Plus } from 'lucide-react'
 import { typographyMixin } from '@/components/ui'
+import { useTheme } from '@emotion/react'
 
 // * 선물할 친구 섹션
 export const Friends = () => {
   // * 전역으로 관리되는 유저 정보 가져오기
   const { user, isLogin } = useAuth()
+
+  const theme = useTheme()
 
   return (
     <Container>
@@ -30,9 +32,9 @@ const Container = styled.section`
   width: 100%;
   height: fit-content;
 
-  padding: ${theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing4};
 
-  background-color: ${theme.semanticColors.background.disabled};
+  background-color: ${({ theme }) => theme.semanticColors.background.disabled};
 
   display: flex;
   flex-direction: column;
@@ -45,11 +47,11 @@ const AddFriendButton = styled.button`
   width: 100%;
   height: fit-content;
 
-  padding: ${theme.spacing.spacing4};
-  background-color: ${theme.semanticColors.background.default};
+  padding: ${({ theme }) => theme.spacing.spacing4};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
 
   border: none;
-  border-radius: ${theme.spacing.spacing4};
+  border-radius: ${({ theme }) => theme.spacing.spacing4};
 
   ${typographyMixin('body2Regular')}
 
@@ -59,10 +61,10 @@ const AddFriendButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: ${theme.spacing.spacing3};
+  gap: ${({ theme }) => theme.spacing.spacing3};
 
   &:hover {
-    background-color: ${theme.colors.gray.gray100};
+    background-color: ${({ theme }) => theme.colors.gray.gray100};
   }
 `
 
@@ -71,10 +73,11 @@ const AddFriendButtonIconContainer = styled.div`
   width: 44px;
   height: 44px;
 
-  background-color: ${theme.semanticColors.brand.kakaoYellow};
+  background-color: ${({ theme }) => theme.semanticColors.brand.kakaoYellow};
+  color: ${({ theme }) => theme.colors.gray.gray900};
 
   border: none;
-  border-radius: ${theme.spacing.spacing4};
+  border-radius: ${({ theme }) => theme.spacing.spacing4};
 
   display: flex;
   align-items: center;

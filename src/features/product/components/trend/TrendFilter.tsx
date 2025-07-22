@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 
 import { FilterItems, RankItems } from '../../data/filterList'
-import { theme } from '@/styles/theme'
 import { typographyMixin } from '@/components/ui'
 import type { RankType, TargetType } from '@/api/types/product'
 
@@ -48,7 +47,7 @@ const FilterContainer = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.spacing4};
+  gap: ${({ theme }) => theme.spacing.spacing4};
 `
 
 // * 필터 그룹 컨테이너
@@ -58,24 +57,24 @@ const FilterGroupContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: ${theme.spacing.spacing2};
+  gap: ${({ theme }) => theme.spacing.spacing2};
   flex-wrap: wrap;
 `
 
 // * 필터 그룹 컨테이너
 const RankGroupContainer = styled.div`
   width: 100%;
-  padding: ${theme.spacing.spacing3} ${theme.spacing.spacing3};
+  padding: ${({ theme }) => `${theme.spacing.spacing3} ${theme.spacing.spacing3}`};
 
-  background-color: ${theme.colors.blue.blue100};
-  border: 1px solid ${theme.colors.blue.blue200};
-  border-radius: ${theme.spacing.spacing2};
+  background-color: ${({ theme }) => theme.colors.blue.blue100};
+  border: 1px solid ${({ theme }) => theme.colors.blue.blue200};
+  border-radius: ${({ theme }) => theme.spacing.spacing2};
 
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: ${theme.spacing.spacing2};
+  gap: ${({ theme }) => theme.spacing.spacing2};
   flex-wrap: wrap;
 `
 
@@ -93,7 +92,7 @@ const FilterButton = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: ${theme.spacing.spacing2};
+  gap: ${({ theme }) => theme.spacing.spacing2};
 `
 
 // * 랭크 필터 버튼
@@ -116,7 +115,7 @@ const RankButton = styled.button`
 const FilterButtonText = styled.span<{ isSelected: boolean }>`
   ${typographyMixin('body2Regular')}
 
-  ${({ isSelected }) =>
+  ${({ isSelected, theme }) =>
     isSelected
       ? `
         color: ${theme.colors.blue.blue700};
@@ -131,7 +130,7 @@ const FilterButtonText = styled.span<{ isSelected: boolean }>`
 const RankButtonText = styled.span<{ isSelected: boolean }>`
   ${typographyMixin('body2Regular')}
 
-  ${({ isSelected }) =>
+  ${({ isSelected, theme }) =>
     isSelected
       ? `
         color: ${theme.colors.blue.blue700};
@@ -147,7 +146,7 @@ const FilterButtonIcon = styled.span<{ isSelected: boolean }>`
   width: 44px;
   height: 44px;
 
-  border-radius: ${theme.spacing.spacing4};
+  border-radius: ${({ theme }) => theme.spacing.spacing4};
 
   ${typographyMixin('body2Bold')}
 
@@ -157,7 +156,7 @@ const FilterButtonIcon = styled.span<{ isSelected: boolean }>`
 
   transition: all 0.2s ease;
 
-  ${({ isSelected }) =>
+  ${({ isSelected, theme }) =>
     isSelected
       ? `
         background-color: ${theme.colors.blue.blue700};

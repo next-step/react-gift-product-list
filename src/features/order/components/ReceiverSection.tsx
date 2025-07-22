@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 import { ReceiverAddModal } from './Receiver/ReceiverAddModal'
 import { ReceiverTable } from './Receiver/ReceiverTable'
 import { useOrderForm } from '@/contexts/order'
-import { theme } from '@/styles/theme'
 import { Button, Typography } from '@/components/ui'
 
 export const ReceiverSection = () => {
@@ -35,9 +34,9 @@ export const ReceiverSection = () => {
 // * 섹션 컨테이너
 const SectionContainer = styled.section`
   width: 100%;
-  padding: ${theme.spacing.spacing4} ${theme.spacing.spacing4};
-  background-color: ${theme.semanticColors.background.default};
-  border-bottom: 1px solid ${theme.semanticColors.border.default};
+  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing4};
+  background-color: ${({ theme }) => theme.semanticColors.background.default};
+  border-bottom: 1px solid ${({ theme }) => theme.semanticColors.border.default};
 
   display: flex;
   flex-direction: column;
@@ -45,7 +44,7 @@ const SectionContainer = styled.section`
 
 // * 섹션 제목
 const SectionHeader = styled.div`
-  margin-bottom: ${theme.spacing.spacing4};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
 
   display: flex;
   flex-direction: row;
@@ -54,9 +53,11 @@ const SectionHeader = styled.div`
 `
 
 // * 섹션 제목
-const SectionTitle = styled(Typography)``
+const SectionTitle = styled(Typography)`
+  color: ${({ theme }) => theme.semanticColors.text.default};
+`
 
 // * 추가 버튼
 const AddButton = styled(Button)`
-  padding: ${theme.spacing.spacing2} ${theme.spacing.spacing4};
+  padding: ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing4};
 `
