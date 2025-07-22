@@ -15,8 +15,9 @@ export const products = [
       imageURL:
         'https://st.kakaocdn.net/product/gift/gift_brand/20220216170226_38ba26d8eedf450683200d6730757204.png',
     },
-    targetType: 'ALL', // 추가: 'ALL', 'FEMALE', 'MALE', 'TEENAGER' 중 하나
-    rankType: 'MANY_WISH', // 추가: 'MANY_WISH', 'MANY_GIFT', 'MANY_RECEIVE' 중 하나
+    targetType: 'ALL',
+    rankType: 'MANY_WISH',
+    themeIds: [3715, 3714], // 생일, 맛있는선물
   },
   {
     id: 2,
@@ -36,6 +37,7 @@ export const products = [
     },
     targetType: 'FEMALE',
     rankType: 'MANY_GIFT',
+    themeIds: [3713], // 직장동료
   },
   {
     id: 3,
@@ -55,6 +57,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3712, 3715], // 연인, 생일
   },
   {
     id: 4,
@@ -74,6 +77,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3714], // 맛있는선물
   },
   {
     id: 5,
@@ -93,6 +97,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3713], // 직장동료
   },
   {
     id: 6,
@@ -112,6 +117,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3712], // 연인
   },
   {
     id: 7,
@@ -131,6 +137,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3715], // 생일
   },
   {
     id: 8,
@@ -150,6 +157,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3714], // 맛있는선물
   },
   {
     id: 9,
@@ -169,6 +177,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3713], // 직장동료
   },
   {
     id: 10,
@@ -188,6 +197,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3712], // 연인
   },
   {
     id: 11,
@@ -207,6 +217,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3715], // 생일
   },
   {
     id: 12,
@@ -226,6 +237,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3714], // 맛있는선물
   },
   {
     id: 13,
@@ -245,6 +257,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3713], // 직장동료
   },
   {
     id: 14,
@@ -264,6 +277,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3712], // 연인
   },
   {
     id: 15,
@@ -283,6 +297,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3715], // 생일
   },
   {
     id: 16,
@@ -302,6 +317,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3714], // 맛있는선물
   },
   {
     id: 17,
@@ -321,6 +337,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3713], // 직장동료
   },
   {
     id: 18,
@@ -340,6 +357,7 @@ export const products = [
     },
     targetType: 'MALE',
     rankType: 'MANY_RECEIVE',
+    themeIds: [3712], // 연인
   },
   // ...이런 식으로 상품을 더 추가
 ];

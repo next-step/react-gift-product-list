@@ -4,6 +4,7 @@ import LoginPage from '@/pages/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import MyPage from '@/pages/MyPage';
 import OrderPage from '@/pages/OrderPage';
+import ThemeProductPage from '@/pages/ThemeProductPage';
 import { ROUTE_PATH } from '@/constants/routes';
 
 export const router = createBrowserRouter([
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
   {
     path: '/order/:productId',
     element: <OrderPage />,
+  },
+  {
+    path: '/themes/:themeId',
+    element: <ThemeProductPage />,
   },
   {
     path: '*',

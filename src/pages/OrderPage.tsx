@@ -8,6 +8,21 @@ import { fetchProductSummary } from '@/api/index';
 import { toast } from 'react-toastify';
 import { createOrder } from '@/api/index';
 
+// OrderPage에서만 사용하는 타입이므로 src/types/order.ts에는 추가하지 않고, 파일 상단에 선언
+export type Receiver = {
+  name: string;
+  phone: string;
+  quantity: number;
+};
+
+export type ProductSummary = {
+  id: number;
+  name: string;
+  brandName: string;
+  price: number;
+  imageURL: string;
+};
+
 const cards = orderCardTemplates;
 
 const Container = styled.div`
@@ -175,20 +190,6 @@ function OrderPage() {
   const navigate = useNavigate();
   const [product, setProduct] = useState<ProductSummary | null>(null);
 
-  type Receiver = {
-    name: string;
-    phone: string;
-    quantity: number;
-  };
-
-  type ProductSummary = {
-    id: number;
-    name: string;
-    brandName: string;
-    price: number;
-    imageURL: string;
-  };
-
   const [receivers, setReceivers] = useState<Receiver[]>([]);
 
   const [messageError, setMessageError] = useState('');
@@ -202,7 +203,7 @@ function OrderPage() {
     async function getProduct() {
       try {
         const res = await fetchProductSummary(Number(productId));
-        setProduct(res.data.data); // 실제 상품 정보는 res.data.data에 있음!
+        setProduct(res.data.data);
       } catch (error: any) {
         toast.error(
           error.response?.data?.message || '상품 정보를 불러올 수 없습니다.',
@@ -248,33 +249,32 @@ function OrderPage() {
     const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
     const authToken = userInfo.authToken;
 
-    console.log('전체 userInfo:', userInfo);
-    console.log('authToken 값:', authToken);
-
     // receivers 배열의 필드명을 API 스펙에 맞게 변환
     const orderData = {
       productId: product.id,
       message,
-      messageCardId: cards[selectedIdx].id,
-      ordererName: sender,
+      messageCardId: String(cards[selectedIdx].id),
+      ordererName: sender as string,
       receivers: receivers.map((receiver) => ({
         name: receiver.name,
-        phoneNumber: receiver.phone, // phone → phoneNumber로 변환
+        phoneNumber: receiver.phone,
         quantity: receiver.quantity,
       })),
     };
 
-    console.log('전송할 주문 데이터:', orderData);
-    console.log('authToken:', authToken);
-
     try {
-      const response = await createOrder(orderData, authToken);
-      console.log('주문 성공:', response);
+      await createOrder(orderData, authToken);
+      // 주문 상세 alert 추가
+      alert(
+        `주문이 완료되었습니다.\n` +
+          `상품명: ${product.name}\n` +
+          `구매 수량: ${totalQuantity}\n` +
+          `발신자 이름: ${sender}\n` +
+          `메시지: ${message}`,
+      );
       toast.success('주문이 완료되었습니다!');
       navigate('/');
     } catch (error: any) {
-      console.error('주문 에러 상세:', error.response?.data);
-
       if (error.response?.status === 401) {
         toast.error('로그인이 필요합니다.');
         navigate('/login');

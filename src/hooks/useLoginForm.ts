@@ -76,7 +76,7 @@ function useLoginForm({ onSuccess }: UseLoginFormProps) {
         });
         console.log('로그인 응답: ', res);
         // 실제 데이터는 res.data에 있음!
-        const { email, name, authToken } = res.data;
+        const { email, name, authToken } = res.data.data;
         login({ email, name, authToken });
         onSuccess();
       } catch (error) {

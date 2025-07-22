@@ -294,7 +294,7 @@ const ReceiverModal = ({
                   />
                   {errors.receivers?.[idx]?.name && (
                     <ErrorMessage>
-                      {errors.receivers[idx].name.message}
+                      {errors.receivers?.[idx]?.name?.message}
                     </ErrorMessage>
                   )}
                 </div>
@@ -334,7 +334,7 @@ const ReceiverModal = ({
                   />
                   {errors.receivers?.[idx]?.phone && (
                     <ErrorMessage>
-                      {errors.receivers[idx].phone.message}
+                      {errors.receivers?.[idx]?.phone?.message}
                     </ErrorMessage>
                   )}
                 </div>
@@ -355,7 +355,7 @@ const ReceiverModal = ({
                 />
                 {errors.receivers?.[idx]?.quantity && (
                   <ErrorMessage>
-                    {errors.receivers[idx].quantity.message}
+                    {errors.receivers?.[idx]?.quantity?.message}
                   </ErrorMessage>
                 )}
               </FormRow>
