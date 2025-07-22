@@ -22,7 +22,16 @@
   - [x] /products/:productId/summary api를 사용하여 제품 정보 가져오기
   - [x] 제품 정보 API에서 4XX에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결
   - [x] 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채워놓기
-  - [ ] /order api를 사용하여 주문하기 기능을 완성
-  - [ ] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작
-  - [ ] 주문하기 API에서 401에러가 발생하면 로그인 페이지로 연결
+  - [x] /order api를 사용하여 주문하기 기능을 완성
+  - [x] 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작
+  - [x] 주문하기 API에서 401에러가 발생하면 로그인 페이지로 연결
 
+## 3단계 과제 진행 요구사항
+
+- 테마 상품 목록 페이지
+  - [x] 선물하기 홈 > 선물 테마 섹션의 아이템을 클릭함면 테마 상품 목록 페이지로 연결됨
+  - [x] /api/themes/:themeId/info API를 사용하여 선물 테마 섹션의 히어로 영역 구현
+  - [x] 테마 정보를 가져오는 API가 404에러가 발생하면 선물하기 홈 페이지로 연결
+  - [x] /api/themes/:themeId/products API를 사용하여 상품 리스트 구현
+  - [x] 무한 스크롤 기능 구현
+  - [x] 상품 리스트가 없으면 빈 페이지 보여주기

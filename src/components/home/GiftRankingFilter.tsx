@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
-import { theme } from '../styles/theme';
-import { IconFilterItem } from './common/IconFilterItem';
+import { theme } from '../../styles/theme';
+import { IconFilterItem } from '../common/IconFilterItem';
 import { RankingGrid } from './RankingGrid';
-import { useGiftRankingFilter } from '../hooks/useGiftRankingFilter';
+import { useGiftRankingFilter } from '../../hooks/useGiftRankingFilter';
 
 const filters = [
-  { key: 'all', label: '전체', icon: 'ALL' },
-  { key: 'female', label: '여성', icon: '👩' },
-  { key: 'male', label: '남성', icon: '👨' },
-  { key: 'teen', label: '청소년', icon: '🧒' },
+  { key: 'ALL', label: '전체', icon: 'ALL' },
+  { key: 'FEMALE', label: '여성', icon: '👩' },
+  { key: 'MALE', label: '남성', icon: '👨' },
+  { key: 'TEEN', label: '청소년', icon: '🧒' },
 ] as const;
 
 type FilterKey = (typeof filters)[number]['key'];
@@ -102,7 +102,10 @@ export default function GiftRankingFilter() {
           </TabButton>
         ))}
       </TabBar>
-      <RankingGrid />
+      <RankingGrid
+        selectedFilter={selectedFilter}
+        selectedTab={selectedTab}
+      />
     </Container>
   );
 }

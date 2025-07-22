@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchGiftThemes } from '../api/giftTheme';
-import type { GiftTheme } from '../types/GiftTheme';
+import { type GiftTheme } from '../types/GiftTheme';
 
 export const useGiftThemes = () => {
   const [data, setData] = useState<GiftTheme[] | null>(null);
@@ -11,7 +11,6 @@ export const useGiftThemes = () => {
     const getThemes = async () => {
       setLoading(true);
       setError(null);
-
       try {
         const res = await fetchGiftThemes();
         console.log('useGiftThemes select res:', res);

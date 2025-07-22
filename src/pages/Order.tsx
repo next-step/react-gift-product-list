@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Header } from '../components/common/Header';
-import MessageCard from '../components/MessageCard';
+import MessageCard from '../components/order/MessageCard';
 import styled from '@emotion/styled';
 import { orderCardTemplates } from '../data/orderCardTemplateMock';
 import ReceiverModal, {
   type Receiver,
-} from '../components/ReceiverModal';
+} from '../components/order/ReceiverModal';
 import { useReceiverForm } from '../hooks/useReceiverForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGiftProductById } from '../hooks/useGiftProductById';

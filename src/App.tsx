@@ -12,6 +12,7 @@ import Order from './pages/Order';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ROUTES } from './constants/routes';
+import ThemeProductListPage from './pages/ThemeProductListPage';
 
 const containerStyle = css`
   max-width: 720px;
@@ -41,6 +42,10 @@ const App = () => {
               />
               <Route path={ROUTES.MY_PAGE} element={<MyPage />} />
               <Route path={ROUTES.ORDER()} element={<Order />} />
+              <Route
+                path={ROUTES.THEME()}
+                element={<ThemeProductListPage />}
+              />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

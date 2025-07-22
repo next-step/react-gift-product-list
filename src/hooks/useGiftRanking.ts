@@ -18,7 +18,6 @@ export const useGiftRanking = (filter: string, tab: string) => {
           `${BASE_URL}/api/products/ranking?filter=${filter}&tab=${tab}`
         );
         if (!res.ok) throw new Error('데이터 불러오기 실패');
-
         const json = await res.json();
         setData(json.data);
       } catch (err: any) {

@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled';
-import { useGiftThemes } from '../hooks/useGiftThemes';
-import type { GiftTheme } from '../types/GiftTheme';
+import { useGiftThemes } from '../../hooks/useGiftThemes';
+import type { GiftTheme } from '../../types/GiftTheme';
+import { useNavigate } from 'react-router-dom';
 
 const Title = styled.h3`
   font-size: ${({ theme }) => theme.typography.title1Bold};
@@ -44,6 +45,7 @@ const Label = styled.span`
 
 export const GiftThemeGrid = () => {
   const { data, loading, error } = useGiftThemes();
+  const navigate = useNavigate();
 
   if (loading) return <p>로딩 중...</p>;
   if (error || !data || data.length === 0) return null;
@@ -53,7 +55,10 @@ export const GiftThemeGrid = () => {
       <Title>선물 테마</Title>
       <GridWrapper>
         {data.map((theme: GiftTheme) => (
-          <ThemeItem key={theme.themeId}>
+          <ThemeItem
+            key={theme.themeId}
+            onClick={() => navigate(`/themes/${theme.themeId}`)}
+          >
             <Icon src={theme.image} alt={theme.name} />
             <Label>{theme.name}</Label>
           </ThemeItem>
