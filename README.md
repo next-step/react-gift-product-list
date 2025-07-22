@@ -6,3 +6,9 @@
 - 선물 테마 리스트에 무한 스크롤 기능을 구현했습니다.
 - 선물 테마 리스트의 상품 카드를 클릭하면 해당 상품의 주문 페이지로 이동하는 로직을 추가했습니다.
 - 선물 테마 리스트에서의 api요청에 대한 기본적인 에러핸들링 로직 구현했습니다.
+
+## 3단계 과제 피드백 적용 내용
+
+- ThemeProductList.tsx 파일의 상태 초기화 로직을 initializeProducts() 함수로 관리합니다.
+- ThemeProductList.tsx 파일의 상태 업데이트 로직을 updateProductList() 함수로 관리합니다.
+- ThemeProductList.tsx 파일의 무한스크롤 로직을 useInfiniteScroll 커스텀훅으로 분리했습니다.
