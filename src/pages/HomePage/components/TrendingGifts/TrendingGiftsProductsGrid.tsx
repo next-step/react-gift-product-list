@@ -4,9 +4,9 @@ import {
   TRENDING_GIFTS_EMPTY_MESSAGES,
   TRENDING_GIFTS_LABELS,
 } from "./constants/labels";
-import ProductCard from "../../../../components/ProductCard/ProductCard";
+import ProductCard from "@/components/ProductCard/ProductCard";
 import { MoreInfo, MoreInfoWrapper } from "./TrendingGifts.styles";
-import { PRODUCT_GRID_TYPES } from "../../../../components/ProductCard/types/productGridTypes";
+import { PRODUCT_GRID_TYPES } from "@/components/ProductCard/types/productGridTypes";
 import EmptyProductContainer from "@/components/ProductCard/EmptyProductContainer";
 
 const ProductGridContainer = styled.div`
