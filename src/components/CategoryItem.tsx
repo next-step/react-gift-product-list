@@ -1,11 +1,5 @@
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
-
-interface CategoryItemProps {
-  name: string;
-  image: string;
-  themeId: number;
-}
+import { useGoToTheme } from '@/hooks/useGoTo';
 
 const ItemWrapper = styled.li`
   display: flex;
@@ -26,15 +20,17 @@ const ItemName = styled.span`
   color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
-export default function CategoryItem({ name, image, themeId }: CategoryItemProps) {
-  const navigate = useNavigate();
+interface CategoryItemProps {
+  name: string;
+  image: string;
+  themeId: number;
+}
 
-  const handleClick = () => {
-    navigate(`/themes/${themeId}`);
-  };
+export default function CategoryItem({ name, image, themeId }: CategoryItemProps) {
+  const goToTheme = useGoToTheme();
 
   return (
-    <ItemWrapper onClick={handleClick}>
+    <ItemWrapper onClick={() => goToTheme(themeId)}>
       <ItemImage src={image} alt={name} />
       <ItemName>{name}</ItemName>
     </ItemWrapper>

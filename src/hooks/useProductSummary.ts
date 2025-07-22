@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useGoToHome } from './useGoTo';
 import useApiRequest from './useApiRequest';
 import { fetchProduct } from '@/api/ProductApi';
 import type { ProductSummary } from '@/types/Product';
 import useToastOnError from './useToastOnError';
 
 export function useProductSummary(productId: string | undefined) {
-  const navigate = useNavigate();
+  const goToHome = useGoToHome();
 
   const {
     data: product,
@@ -17,7 +17,7 @@ export function useProductSummary(productId: string | undefined) {
     error: hasError,
     id: 'fetch-product-error',
     message: '상품 정보를 불러올 수 없습니다.',
-    onError: () => navigate('/'),
+    onError: goToHome,
   });
 
   return { product, loading: isLoading };
