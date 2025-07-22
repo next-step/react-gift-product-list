@@ -125,7 +125,7 @@ export default function GiftRanking() {
   const [tab, setTab] = useState(initType);
   const [collapsed, setCollapsed] = useState(true);
 
-  const { products, isLoading, hasError } = useGiftRanking(filter, tab);
+  const { products, loading, error } = useGiftRanking(filter, tab);
 
   const updateParams = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -171,9 +171,9 @@ export default function GiftRanking() {
       </TabRow>
 
       {/* 상품 목록 */}
-      {isLoading ? (
+      {loading ? (
         <Loading>{spinner}</Loading>
-      ) : hasError ? (
+      ) : error ? (
         <p>상품 목록을 불러오는 데 실패했습니다.</p>
       ) : (products ?? []).length === 0 ? (
         <p>상품 목록이 없습니다.</p>

@@ -21,8 +21,6 @@ export default function useToastOnError({
       toast.error(message, { toastId: id });
     }
 
-    if (onError) {
-      onError();
-    }
+    onError?.();
   }, [error, id, message, onError]);
 }

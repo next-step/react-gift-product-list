@@ -5,25 +5,25 @@ export default function useApiRequest<T, Args extends any[]>(
   args: Args,
 ) {
   const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setLoading(true);
         const result = await requestFn(...args);
         setData(result);
-        setHasError(false);
+        setError(false);
       } catch (err) {
-        setHasError(true);
+        setError(true);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [requestFn, ...args]);
 
-  return { data, isLoading, hasError };
+  return { data, loading, error };
 }

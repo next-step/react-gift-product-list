@@ -11,7 +11,7 @@ export function useInfiniteScroll<T>(fetchFunc: (cursor: number) => Promise<Infi
   const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true); // 최초 데이터 로딩 여부
 
   const fetchMore = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -27,14 +27,15 @@ export function useInfiniteScroll<T>(fetchFunc: (cursor: number) => Promise<Infi
       setHasMore(false);
     } finally {
       setLoading(false);
-      setIsInitialLoading(false);
+      setInitialLoading(false);
     }
   }, [cursor, fetchFunc, hasMore, loading]);
 
   return {
     items,
+    cursor,
     loading,
-    isInitialLoading,
+    initialLoading,
     hasMore,
     fetchMore,
   };

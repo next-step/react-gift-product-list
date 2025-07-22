@@ -19,15 +19,15 @@ export default function ThemeListPage() {
   const parsedId = Number(themeId);
   const navigate = useNavigate();
 
-  const { data: themeInfo, isLoading, hasError } = useThemeInfo(parsedId);
+  const { data: themeInfo, loading, error } = useThemeInfo(parsedId);
 
   useEffect(() => {
-    if (hasError) {
+    if (error) {
       navigate('/');
     }
-  }, [hasError, navigate]);
+  }, [error, navigate]);
 
-  if (isLoading) return <p>loading</p>;
+  if (loading) return <p>loading</p>;
   if (!themeInfo) return null;
 
   return (

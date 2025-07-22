@@ -9,16 +9,16 @@ export function useProductSummary(productId: string | undefined) {
 
   const {
     data: product,
-    isLoading,
-    hasError,
+    loading,
+    error,
   } = useApiRequest<ProductSummary, [string]>(fetchProduct, [productId!]);
 
   useToastOnError({
-    error: hasError,
+    error: error,
     id: 'fetch-product-error',
     message: '상품 정보를 불러올 수 없습니다.',
     onError: goToHome,
   });
 
-  return { product, loading: isLoading };
+  return { product, loading };
 }

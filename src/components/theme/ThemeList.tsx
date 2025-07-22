@@ -25,7 +25,7 @@ export default function ThemeList() {
   const { themeId } = useParams();
   const parsedId = Number(themeId);
 
-  const { items, loading, fetchMore, isInitialLoading, hasMore } = useInfiniteScroll<Product>(
+  const { items, loading, initialLoading, fetchMore, hasMore } = useInfiniteScroll<Product>(
     (cursor) => fetchThemeProducts(parsedId, cursor),
   );
 
@@ -34,7 +34,7 @@ export default function ThemeList() {
     disconnectCondition: !hasMore,
   });
 
-  if (!isInitialLoading && items.length === 0) {
+  if (!initialLoading && items.length === 0) {
     return <EmptyState>상품이 없습니다.</EmptyState>;
   }
 
