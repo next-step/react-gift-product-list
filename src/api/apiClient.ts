@@ -1,6 +1,7 @@
-import parseSessionStorage from '@/utils/parseSessionStorage';
+import parseUserFromSessionStorage from '@/utils/parseUserFromSessionStorage';
 import axios, { AxiosError, type AxiosInstance } from 'axios';
 import handleError from './handleError';
+import { STORAGE_KEY } from '@/contexts/UserInfoContext';
 
 export interface ApiSuccess<T> {
   data: T;
@@ -17,7 +18,7 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   config => {
     if (config.url?.includes('/api/order')) {
-      const token = parseSessionStorage().authToken;
+      const token = parseUserFromSessionStorage(STORAGE_KEY).authToken;
       if (token) {
         config.headers.Authorization = `${token}`;
       }

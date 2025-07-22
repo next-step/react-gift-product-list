@@ -1,5 +1,5 @@
 import type { UserInfoData } from '@/page/Login/hooks/useLogin';
-import parseSessionStorage from '@/utils/parseSessionStorage';
+import parseUserFromSessionStorage from '@/utils/parseUserFromSessionStorage';
 import { createContext, useContext, useState, type PropsWithChildren } from 'react';
 
 interface UserInfo {
@@ -17,7 +17,7 @@ interface Ctx {
 
 const UserInfoContext = createContext<Ctx | null>(null);
 const EMPTY_USER_INFO: UserInfoData = { name: '', email: '', authToken: '' };
-const STORAGE_KEY = 'user';
+export const STORAGE_KEY = 'user';
 
 export const useUserInfo = () => {
   const context = useContext(UserInfoContext);
@@ -28,7 +28,7 @@ export const useUserInfo = () => {
 };
 
 export const UserInfoProvider = ({ children }: PropsWithChildren) => {
-  const parsed = parseSessionStorage();
+  const parsed = parseUserFromSessionStorage(STORAGE_KEY);
   const [userInfo, setUserInfo] = useState<UserInfoData>(parsed ? parsed : EMPTY_USER_INFO);
 
   const isLoggedIn = Boolean(userInfo.email);
