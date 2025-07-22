@@ -1,17 +1,23 @@
 import styled from '@emotion/styled';
-
 import { useFieldArray, useForm } from 'react-hook-form';
 import type { OrderInfoValues } from '..';
 import ReceiverInfo from './ReceiverInfo';
+import { createPortal } from 'react-dom';
 
 interface ReceiverInfoProps {
+  isModalOpen: boolean;
   onClose: () => void;
   handleChange: (value: OrderInfoValues['receiverInfos']) => void;
   receiverInfos: OrderInfoValues['receiverInfos'];
 }
 const MAX_LENGTH = 10;
 
-const ReceiverModal = ({ onClose, handleChange, receiverInfos }: ReceiverInfoProps) => {
+const ReceiverModal = ({
+  isModalOpen,
+  onClose,
+  handleChange,
+  receiverInfos,
+}: ReceiverInfoProps) => {
   const receiverInfosForm = useForm<OrderInfoValues>({
     defaultValues: {
       receiverInfos: receiverInfos,
@@ -32,7 +38,11 @@ const ReceiverModal = ({ onClose, handleChange, receiverInfos }: ReceiverInfoPro
     }
   };
 
-  return (
+  if (!isModalOpen) {
+    return null;
+  }
+
+  return createPortal(
     <ModalBackGround>
       <ModalWrapper>
         <ModalContainer>
@@ -80,7 +90,8 @@ const ReceiverModal = ({ onClose, handleChange, receiverInfos }: ReceiverInfoPro
           </form>
         </ModalContainer>
       </ModalWrapper>
-    </ModalBackGround>
+    </ModalBackGround>,
+    document.getElementById('receiverModal') as HTMLElement
   );
 };
 export default ReceiverModal;

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import ReceiverModal from './ReceiverModal';
 import { useFormContext } from 'react-hook-form';
-import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import ReceiverInfoArray from './ReceiverInfoArray';
 import type { OrderInfoValues } from '..';
@@ -39,15 +38,12 @@ const ReceiverField = () => {
           )}
         </MainArea>
       </Container>
-      {isModalOpen &&
-        createPortal(
-          <ReceiverModal
-            onClose={() => setIsModalOpen(false)}
-            handleChange={handleChange}
-            receiverInfos={receiverInfos}
-          />,
-          document.getElementById('receiverModal') as HTMLElement
-        )}
+      <ReceiverModal
+        isModalOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        handleChange={handleChange}
+        receiverInfos={receiverInfos}
+      />
     </>
   );
 };
