@@ -1,5 +1,5 @@
 import { Spinner } from '@/components/Spinner';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api, IsErrorStatus } from '../../utils/api'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
@@ -73,69 +73,97 @@ const RealtimeItemPriceTxt = styled.p`
 `;
 
 function InfiniteScroll({ themeId }: { themeId: string }) {
+    const [infiItem, setInfiItem] = useState([]);
+    const [cursor, setCursor] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const loader = useRef(null);
+
     const [isLoading, setIsLoading] = useState(true);
-    const [infiItem, setInfiItem] = useState();
     const [isEmpty, setIsEmpty] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchThemeHero = async () => {
-            try {
-                const response = await api.get(`/themes/${themeId}/products`);
-                setInfiItem(response.data.data.list);
-                setIsLoading(false);
-                // console.log(infiItem);
-                console.log(response.data.data.list);
-                if(response.data.data.list.length === 0) {
-                    setIsEmpty(true);
-                }
-            } catch (error) {
-                setIsLoading(false);
-                IsErrorStatus(error, '', navigate);    
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting && hasMore) {
+              loadMore();
             }
+          },
+          { threshold: 1.0 }
+        );
+    
+        const el = loader.current;
+        if (el) observer.observe(el);
+    
+        return () => {
+          if (el) observer.unobserve(el);
         };
+      }, [loader, hasMore]);
 
-        fetchThemeHero();
-    }, [themeId]);
+      const loadMore = async () => {
+        try {
+            const response = await api.get(`/themes/${themeId}/products?cursor=${cursor}&limit=${20}`); // limit은 한번에 불러올 아이템 갯수를 정하고 cursor는 인덱스임 그러니까 계속 불러올때마다 20씩 증가시켜줘야함
+            setIsLoading(false);
+            console.log(response);
 
-    // item클릭시 해당 item정보들을 url query로들고 Order페이지로 가는 핸들러
-    const handleItemClick = (brandInfo: any, id: any, imageURL: any, name: any, price: any) => {
-        const query = new URLSearchParams({ brandInfo: brandInfo.name, id: id.toString(), imageURL, name, price: price.basicPrice, }).toString();
+            setInfiItem(prev => [...prev, ...response.data.data.list]);
 
-        navigate(`/order?${query}`);
-    }
+            setCursor(response.data.data.cursor);            
+            console.log(response.data.data.cursor);
 
-    if (isLoading) return <Spinner />;
-    if (isEmpty) return <h1>상품이 없습니다</h1>;
-    return (
-        <RealtimeRankItemWrapperStyle>
-            <RealtimeRankItemGrid>{infiItem.map((item) => (
-                <RealtimeRankItem
-                    key={item.id}
-                    onClick={() =>
-                        handleItemClick(
-                            item.brandInfo,
-                            item.id,
-                            item.imageURL,
-                            item.name,
-                            item.price,
-                        )
-                    }
-                >
-                    <RealtimeItemImg
-                        src={item.imageURL}
-                        alt={item.name}
+            setHasMore(response.data.data.hasMoreList);
+            console.log(response.data.data.hasMoreList);
+            if(response.data.data.list.length === 0) {
+                setIsEmpty(true);
+            }
+        } catch (error) {
+            setIsLoading(false);
+            IsErrorStatus(error, '', navigate);    
+        } finally {
+            setIsLoading(true);
+        }
+    };
+
+
+        // item클릭시 해당 item정보들을 url query로들고 Order페이지로 가는 핸들러
+        const handleItemClick = (brandInfo: any, id: any, imageURL: any, name: any, price: any) => {
+            const query = new URLSearchParams({ brandInfo: brandInfo.name, id: id.toString(), imageURL, name, price: price.basicPrice, }).toString();
+
+            navigate(`/order?${query}`);
+        }
+
+        if (isEmpty) return <h1>상품이 없습니다</h1>;
+        return (
+            <RealtimeRankItemWrapperStyle>
+                <RealtimeRankItemGrid>{infiItem.map((item) => (
+                    <RealtimeRankItem
+                        key={item.id}
+                        onClick={() =>
+                            handleItemClick(
+                                item.brandInfo,
+                                item.id,
+                                item.imageURL,
+                                item.name,
+                                item.price,
+                            )
+                        }
                     >
-                    </RealtimeItemImg>
-                    <RealtimeItemTxt>{item.brandInfo.name}</RealtimeItemTxt>
-                    <RealtimeItemSubTxt>{item.brandInfo.name}</RealtimeItemSubTxt>
-                    <RealtimeItemPriceTxt>
-                        {item.price.sellingPrice} 원
-                    </RealtimeItemPriceTxt>
-                </RealtimeRankItem>
-            ))}</RealtimeRankItemGrid>
-        </RealtimeRankItemWrapperStyle>
-    );
-}
+                        <RealtimeItemImg
+                            src={item.imageURL}
+                            alt={item.name}
+                        >
+                        </RealtimeItemImg>
+                        <RealtimeItemTxt>{item.brandInfo.name}</RealtimeItemTxt>
+                        <RealtimeItemSubTxt>{item.brandInfo.name}</RealtimeItemSubTxt>
+                        <RealtimeItemPriceTxt>
+                            {item.price.sellingPrice} 원
+                        </RealtimeItemPriceTxt>
+                    </RealtimeRankItem>
+                ))}</RealtimeRankItemGrid>
+                {isLoading && <Spinner />}
+                <div ref={loader} style={{ height: '20px' }} />
+            </RealtimeRankItemWrapperStyle>
+        );
+    }
 
 export default InfiniteScroll;
