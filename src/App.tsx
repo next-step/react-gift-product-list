@@ -8,13 +8,21 @@ import {
 import { MobileLayout } from '@/components/layout';
 import { NavigationBar } from '@/components/navigation';
 import { PrivateRoute } from '@/components/common';
-import { HomePage, LoginPage, MyPage, OrderPage, NotFoundPage } from '@/pages';
+import {
+  HomePage,
+  LoginPage,
+  MyPage,
+  OrderPage,
+  NotFoundPage,
+  ThemeProductListPage,
+} from '@/pages';
 import {
   ROUTE_HOME,
   ROUTE_LOGIN,
   ROUTE_MY,
   ROUTE_ORDER,
   ROUTE_NOT_FOUND,
+  ROUTE_THEME_PRODUCTS,
 } from '@/constants';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -40,39 +48,11 @@ function App() {
   const navigate = useNavigate();
 
   const getNavigationConfig = () => {
-    switch (location.pathname) {
-      case ROUTE_HOME:
-        return {
-          title: '선물하기',
-          showBackButton: true,
-          showProfileButton: true,
-        };
-      case ROUTE_LOGIN:
-        return {
-          title: '로그인',
-          showBackButton: true,
-          showProfileButton: false,
-        };
-      case ROUTE_MY:
-        return {
-          title: '마이페이지',
-          showBackButton: true,
-          showProfileButton: false,
-        };
-      default:
-        if (location.pathname.startsWith(ROUTE_ORDER)) {
-          return {
-            title: '선물하기',
-            showBackButton: true,
-            showProfileButton: false,
-          };
-        }
-        return {
-          title: 'Page Not Found',
-          showBackButton: true,
-          showProfileButton: false,
-        };
-    }
+    return {
+      title: '선물하기',
+      showBackButton: true,
+      showProfileButton: true,
+    };
   };
 
   const navConfig = getNavigationConfig();
@@ -118,6 +98,7 @@ function App() {
             }
           />
         </Route>
+        <Route path={ROUTE_THEME_PRODUCTS} element={<ThemeProductListPage />} />
         <Route path={ROUTE_NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
       <ToastContainer />

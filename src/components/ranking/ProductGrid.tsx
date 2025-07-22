@@ -11,8 +11,9 @@ interface ProductGridProps {
 const GridContainer = styled.div<{ showMore: boolean }>`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: ${(props) =>
-    props.showMore ? 'repeat(7, 1fr)' : 'repeat(2, 1fr)'};
+  /* grid-template-rows: ${(props) =>
+    props.showMore ? 'repeat(7, 1fr)' : 'repeat(2, 1fr)'}; */
+  grid-auto-rows: 1fr;
   gap: ${(props) => props.theme.spacing.spacing4};
   margin-bottom: ${(props) => props.theme.spacing.spacing4};
 `;
@@ -34,7 +35,7 @@ const ProductGrid = ({
   }
 
   const displayProducts = showMore
-    ? products.slice(0, 21)
+    ? products // 전체 상품
     : products.slice(0, 6);
 
   return (

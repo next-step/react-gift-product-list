@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
 );
 
 export async function loginApi(email: string, password: string) {
-  const response = await axios.post(`${baseURL}/api/login`, {
+  const response = await apiClient.post('/api/login', {
     email,
     password,
   });
@@ -44,8 +44,7 @@ export async function loginApi(email: string, password: string) {
 }
 
 export async function postOrder(orderData: any, authToken: string) {
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-  const response = await axios.post(`${baseURL}/api/order`, orderData, {
+  const response = await apiClient.post('/api/order', orderData, {
     headers: {
       Authorization: authToken,
     },

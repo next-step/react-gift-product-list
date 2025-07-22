@@ -3,6 +3,9 @@ export interface Theme {
   themeId: number;
   name: string;
   image: string;
+  title: string;
+  description: string;
+  backgroundColor: string;
 }
 
 export interface ThemeResponse {
