@@ -1,30 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useGoToHome } from './useGoTo';
+import useApiRequest from './useApiRequest';
 import { fetchProduct } from '@/api/ProductApi';
 import type { ProductSummary } from '@/types/Product';
+import useToastOnError from './useToastOnError';
 
 export function useProductSummary(productId: string | undefined) {
-  const [product, setProduct] = useState<ProductSummary | null>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const goToHome = useGoToHome();
 
-  useEffect(() => {
-    if (!productId) return;
+  const {
+    data: product,
+    loading,
+    error,
+  } = useApiRequest<ProductSummary, [string]>(fetchProduct, [productId!]);
 
-    fetchProduct(productId)
-      .then(setProduct)
-      .catch((err) => {
-        const toastId = 'fetch-product-error';
-        if (!toast.isActive(toastId)) {
-          toast.error(err.message || '상품 정보를 불러올 수 없습니다.', {
-            toastId,
-          });
-        }
-        navigate('/');
-      })
-      .finally(() => setLoading(false));
-  }, [productId, navigate]);
+  useToastOnError({
+    error: error,
+    id: 'fetch-product-error',
+    message: '상품 정보를 불러올 수 없습니다.',
+    onError: goToHome,
+  });
 
   return { product, loading };
 }

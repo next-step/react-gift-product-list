@@ -1,9 +1,5 @@
 import styled from '@emotion/styled';
-
-interface CategoryItemProps {
-  name: string;
-  image: string;
-}
+import { useGoToTheme } from '@/hooks/useGoTo';
 
 const ItemWrapper = styled.li`
   display: flex;
@@ -24,9 +20,17 @@ const ItemName = styled.span`
   color: ${({ theme }) => theme.colors.semantic.textDefault};
 `;
 
-export default function CategoryItem({ name, image }: CategoryItemProps) {
+interface CategoryItemProps {
+  name: string;
+  image: string;
+  themeId: number;
+}
+
+export default function CategoryItem({ name, image, themeId }: CategoryItemProps) {
+  const goToTheme = useGoToTheme();
+
   return (
-    <ItemWrapper>
+    <ItemWrapper onClick={() => goToTheme(themeId)}>
       <ItemImage src={image} alt={name} />
       <ItemName>{name}</ItemName>
     </ItemWrapper>

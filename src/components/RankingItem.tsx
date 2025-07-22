@@ -1,11 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useGoToOrder } from '@/hooks/useGoTo';
 import type { Product } from '@/types/Product';
-
-interface Props {
-  item: Product;
-  rank: number;
-}
 
 const Card = styled.li`
   display: flex;
@@ -58,16 +53,17 @@ const Price = styled.p`
   margin-top: ${({ theme }) => theme.spacing.spacing1};
 `;
 
-export default function RankingProductCard({ item, rank }: Props) {
-  const navigate = useNavigate();
+interface Props {
+  item: Product;
+  rank: number;
+}
+
+export default function RankingItem({ item, rank }: Props) {
+  const goToOrder = useGoToOrder();
   const isTop3 = rank <= 3;
 
-  const handleClick = () => {
-    navigate(`/order/${item.id}`);
-  };
-
   return (
-    <Card onClick={handleClick}>
+    <Card onClick={() => goToOrder(item.id)}>
       <ItemImage>
         <img src={item.imageURL} alt={item.name} />
         <RankBadge top3={isTop3}>{rank}</RankBadge>

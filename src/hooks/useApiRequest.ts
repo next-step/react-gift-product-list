@@ -1,27 +1,29 @@
 import { useState, useEffect } from 'react';
 
-export default function useApiRequest<T>(fetchFunction: () => Promise<T>, deps: any[] = []) {
+export default function useApiRequest<T, Args extends any[]>(
+  requestFn: (...args: Args) => Promise<T>,
+  args: Args,
+) {
   const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        const result = await fetchFunction();
+        setLoading(true);
+        const result = await requestFn(...args);
         setData(result);
-        setHasError(false);
+        setError(false);
       } catch (err) {
-        console.error('API 요청 에러:', err);
-        setHasError(true);
+        setError(true);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, deps);
+  }, [requestFn, ...args]);
 
-  return { data, isLoading, hasError };
+  return { data, loading, error };
 }

@@ -30,9 +30,9 @@ const Loading = styled.p`
 `;
 
 export default function GiftTheme() {
-  const { themes, isLoading, hasError } = useGiftTheme();
+  const { themes, loading, error } = useGiftTheme();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Wrapper>
         <Title>선물 테마</Title>
@@ -41,7 +41,7 @@ export default function GiftTheme() {
     );
   }
 
-  if (hasError || (themes ?? []).length === 0) {
+  if (error || (themes ?? []).length === 0) {
     return null;
   }
 
@@ -50,7 +50,7 @@ export default function GiftTheme() {
       <Title>선물 테마</Title>
       <Grid>
         {(themes ?? []).map(({ themeId, name, image }) => (
-          <CategoryItem key={themeId} name={name} image={image} />
+          <CategoryItem key={themeId} themeId={themeId} name={name} image={image} />
         ))}
       </Grid>
     </Wrapper>

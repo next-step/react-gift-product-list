@@ -6,6 +6,7 @@ import LoginPage from '@/pages/LoginPage';
 import MyPage from './pages/MyPage';
 import NotFoundPage from './pages/NotFoundPage';
 import OrderPage from './pages/OrderPage';
+import ThemeListPage from './pages/ThemeListPage';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,7 @@ export const router = createBrowserRouter(
           </RequireAuth>
         }
       />
+      <Route path="/themes/:themeId" element={<ThemeListPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </>,
   ),
