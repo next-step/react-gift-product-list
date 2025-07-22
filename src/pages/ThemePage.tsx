@@ -47,7 +47,7 @@ export default function ThemePage() {
     setHasMore(true);
     cursorRef.current = 0;
     fetchProducts();
-  }, [themeId]);
+  }, [themeId, themeLoading]);
 
   // Intersection Observer로 무한 스크롤
   useEffect(() => {
