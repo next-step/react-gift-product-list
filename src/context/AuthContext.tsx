@@ -21,11 +21,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { user, isLoggedIn, setUser, setIsLoggedIn } = useAuthUser();
+  const { user, isLoggedIn, setUser, setIsLoggedIn, storage } = useAuthUser();
   const [redirectAfterLogin, onChangeRedirectAfterLogin] = useState<
     string | null
   >(null);
-
   const { login: loginHandler, isLoading } = useLogin();
 
   const login = async (email: string, password: string) => {
@@ -35,10 +34,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (user) => {
         setUser(user);
         setIsLoggedIn(true);
+        storage.set(user);
       },
       () => {
         setUser(null);
         setIsLoggedIn(false);
+        storage.clear();
       }
     );
   };
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
-    sessionStorage.removeItem('userInfo');
+    storage.clear();
   };
 
   const value = useMemo(

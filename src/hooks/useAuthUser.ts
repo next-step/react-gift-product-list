@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { createStorage } from '@/utils/creaateStorage';
 
 interface User {
   name: string;
   email: string;
 }
+
+const storage = createStorage<{ name: string; email: string }>('userInfo');
 
 export const useAuthUser = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -11,23 +14,20 @@ export const useAuthUser = () => {
 
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem('userInfo');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.name && parsed?.email) {
-          setUser({ name: parsed.name, email: parsed.email });
-          setIsLoggedIn(true);
-        } else {
-          throw new Error('Invalid session user');
-        }
+      const stored = storage.get();
+      if (stored && stored.name && stored.email) {
+        setUser({ name: stored.name, email: stored.email });
+        setIsLoggedIn(true);
+      } else {
+        throw new Error('Invalid session user');
       }
     } catch (error) {
       console.error(error);
-      sessionStorage.removeItem('userInfo');
+      storage.clear();
       setUser(null);
       setIsLoggedIn(false);
     }
   }, []);
 
-  return { user, isLoggedIn, setUser, setIsLoggedIn };
+  return { user, isLoggedIn, setUser, setIsLoggedIn, storage };
 };
