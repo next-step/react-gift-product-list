@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useLogin } from '@/hooks/useLogin';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 interface User {
   name: string;
@@ -20,31 +21,12 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, isLoggedIn, setUser, setIsLoggedIn } = useAuthUser();
   const [redirectAfterLogin, onChangeRedirectAfterLogin] = useState<
     string | null
   >(null);
 
   const { login: loginHandler, isLoading } = useLogin();
-
-  useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem('userInfo');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.name && parsed?.email) {
-          setUser({ name: parsed.name, email: parsed.email });
-          setIsLoggedIn(true);
-        } else {
-          throw new Error('Invalid session user');
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      sessionStorage.removeItem('userInfo');
-    }
-  }, []);
 
   const login = async (email: string, password: string) => {
     return loginHandler(
