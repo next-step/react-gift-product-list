@@ -1,13 +1,13 @@
 import Layout from '@components/Layout/Layout';
-import GiftOrderPage from '@pages/GiftOrderPage';
-import Home from '@pages/Home';
-import Login from '@pages/Login';
-import MyPage from '@pages/MyPage';
-import NotFound from '@pages/NotFound';
+import Login from '@features/Login/Login';
+import MyPage from '@features/MyPage/MyPage';
+import NotFound from '@features/NotFound/NotFound';
 import GlobalStyle from '@styles/GlobalStyles';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import LoginGuard from './LoginGuard';
+import Home from '@features/Home/Home';
+import GiftOrderPage from '@features/GiftOrderPage/GiftOrderPage';
 
 const Router = () => {
   return (

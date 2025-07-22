@@ -1,6 +1,6 @@
 import ErrorText from '@components/common/ErrorText';
 import styled from '@emotion/styled';
-import type { FormSectionProps } from '@pages/GiftOrderPage';
+import type { FormSectionProps } from '@features/GiftOrderPage/GiftOrderPage';
 
 const Wrapper = styled.div(({ theme }) => ({
   marginTop: theme.spacing.spacing5,
