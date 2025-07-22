@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface InfiniteResponse<T> {
   list: T[];
@@ -13,10 +13,7 @@ export function useInfiniteScroll<T>(fetchFunc: (cursor: number) => Promise<Infi
   const [loading, setLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  const loadMore = useCallback(async () => {
+  const fetchMore = useCallback(async () => {
     if (loading || !hasMore) return;
 
     setLoading(true);
@@ -34,31 +31,11 @@ export function useInfiniteScroll<T>(fetchFunc: (cursor: number) => Promise<Infi
     }
   }, [cursor, fetchFunc, hasMore, loading]);
 
-  useEffect(() => {
-    if (!loaderRef.current || !hasMore) return;
-
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        loadMore();
-      }
-    });
-
-    observerRef.current.observe(loaderRef.current);
-
-    return () => {
-      observerRef.current?.disconnect();
-    };
-  }, [loadMore, hasMore]);
-
   return {
     items,
     loading,
-    loaderRef,
-    cursor,
     isInitialLoading,
+    hasMore,
+    fetchMore,
   };
 }
