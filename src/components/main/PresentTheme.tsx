@@ -1,5 +1,6 @@
 import { LoadingSpinner } from "@/components/common";
 import { ThemeItem } from "@/components/main";
+import { useRouter } from "@/hooks/common/useRouter";
 import { useGetThemeData } from "@/hooks/themes/useGetThemeData";
 import styled from "@emotion/styled";
 
@@ -40,7 +41,7 @@ const PresentSectionGridContainer = styled.div(({ theme }) => ({
 
 export const PresentTheme = () => {
   const { themes, loading, error, isEmpty } = useGetThemeData();
-
+  const { goThemePage } = useRouter();
   const renderContent = () => {
     if (loading) {
       return <LoadingSpinner />;
@@ -53,7 +54,11 @@ export const PresentTheme = () => {
     return (
       <PresentSectionGridContainer>
         {themes.map(theme => (
-          <ThemeItem key={theme.themeId} {...theme} />
+          <ThemeItem
+            key={theme.themeId}
+            {...theme}
+            onClick={() => goThemePage(theme.themeId)}
+          />
         ))}
       </PresentSectionGridContainer>
     );
