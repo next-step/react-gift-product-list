@@ -29,7 +29,6 @@ type ThemeProducts = {
 export const useThemesProductItem = () => {
   const urlArray = new URL(window.location.href).pathname.split('/');
   const themeId = urlArray[urlArray.length - 1];
-  console.log(themeId);
 
   const [products, setProducts] = useState<ThemeProducts | null>(null);
   const [cursor, setCursor] = useState(0);
@@ -37,7 +36,7 @@ export const useThemesProductItem = () => {
   const loader = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const loadItem = async (isMore: boolean) => {
+    const loadItem = async () => {
       const apiReqeustParmas = {
         methods: 'GET' as HttpTypes,
         requestName: `themes/${themeId}/products`,
@@ -48,9 +47,9 @@ export const useThemesProductItem = () => {
 
       try {
         const fetchData = await apiClient(apiReqeustParmas);
-
+        console.log(fetchData);
         setProducts((prev) => {
-          if (isMore && prev) {
+          if (prev) {
             return {
               data: {
                 list: [...prev.data.list, ...fetchData.data.list],
@@ -76,7 +75,7 @@ export const useThemesProductItem = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && hasMore) {
-          loadItem(true);
+          loadItem();
         }
       },
       { threshold: 1.0 }
