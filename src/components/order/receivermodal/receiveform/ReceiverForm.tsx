@@ -60,8 +60,8 @@ const ReceiverForm = ({ register, index, error, handleClose }: ReceiverFormProps
         <Label>전화번호</Label>
         <InputWrapper>
           <Input
-            type="text"
-            {...register(`receivers.${index}.phone`, {
+            type="tel"
+            {...register(`receivers.${index}.phoneNumber`, {
               required: '전화번호를 반드시 입력하세요.',
               validate: phoneValidator,
             })}

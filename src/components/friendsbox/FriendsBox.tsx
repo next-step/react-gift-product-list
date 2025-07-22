@@ -45,7 +45,7 @@ const FriendsBox = () => {
         <PlusBox>
          <img src={plusIcon} alt="" />
         </PlusBox>
-        <ButtonText>{user.isLoggedIn? <span>{user.username}님, </span>:""}선물할 친구를 선택해 주세요.</ButtonText>
+        <ButtonText>{user.isLoggedIn? <span>{user.name}님, </span>:""}선물할 친구를 선택해 주세요.</ButtonText>
       </Button>
     </Wrapper>
   );

@@ -1,10 +1,13 @@
-import Navbar from "./../components/navbar/Navbar";
-import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
-import useInput from "@/hooks/useInput";
-import { emailValidator, passwordValidator } from "@/utils/validators";
-import { useAuth } from "@/contexts/AuthContext";
+import Navbar from './../components/navbar/Navbar';
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+import useInput from '@/hooks/useInput';
+import { emailValidator, passwordValidator } from '@/utils/validators';
+import { useAuth } from '@/contexts/AuthContext';
 import { PaddingMd, PaddingSm } from '@/components/common/Padding';
+import usePost from '@/hooks/usePost';
+import { toast } from 'react-toastify';
+import { FetchLogin } from '@/services/authAPi';
 
 const LoginWrapper = styled.div`
   display: flex;
@@ -63,18 +66,38 @@ const Login = () => {
   const { setUser } = useAuth();
   const email = useInput({ validator: emailValidator });
   const password = useInput({ validator: passwordValidator });
-  const username = email.value.split("@")[0];
   const isActivatedBtn = email.isValid && password.isValid;
+  
+  const {  post } = usePost({
+    fetcher: FetchLogin,
+  });
 
-  const handleLoginClick = () => {
+  const handleLoginClick = async () => {
+
     if (isActivatedBtn) {
-      password.reset();
-      const userData = { username: username, isLoggedIn: true };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify({ username: username, isLoggedIn: true }));
-      navigate('/');
+      try {
+        const loginData = await post({
+          email: email.value,
+          password: password.value,
+        });
+        const { authToken, email: useremail, name } = loginData;
+        const userInfo = {
+          token: authToken,
+          email:useremail,
+          name,
+          isLoggedIn: true,
+        };
+        password.reset();
+        setUser(userInfo);
+        localStorage.setItem('user', JSON.stringify(userInfo));
+toast.success("로그인이 완료되었습니다.") 
+       navigate('/');
+      } catch (e) {
+        alert(e.message);
+      }
     }
   };
+
   return (
     <div>
       <Navbar />

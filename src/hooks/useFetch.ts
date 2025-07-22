@@ -1,3 +1,6 @@
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 import { useEffect, useState } from 'react';
 type Props<T> = {
   fetcher: () => Promise<T>;
@@ -14,11 +17,30 @@ export const useFetch = <T>({ fetcher, initValue, deps }: Props<T>) => {
       setIsLoading(true);
       try {
         const result = await fetcher(); // fetcher()는 이미 Promise<T>를 리턴
-
         setData(result); // 여기서 result는 이미 data야
-      } catch (err) {
-        setError(err);
+      } catch (e) {
+        let errorInfo: ErrorInfo = { message: '알 수 없는 오류 발생' };
+
+        //axios 에서 발생한 에러이면 response 객체에 안전하게 접근이 가능하다.
+        if (axios.isAxiosError(e)) {
+          errorInfo = {
+            message: e.response?.data?.data.message || '요청 오류가 발생했어요.',
+            status: e.response?.data.data.status,
+            statusCode: e.response?.data.data.statusCode,
+
+          };
+          if (errorInfo.statusCode && errorInfo.statusCode >= 400 && errorInfo.statusCode < 500) {
+            console.error(`${errorInfo.message}`); 
+          }
+
+          //일단 js 런타임 에러!  e.message는 Error 객체의 기본 메시지
+        } else if (e instanceof Error) {
+          errorInfo = { message: e.message };
+        }
+        setError(errorInfo);
         setData(initValue);
+
+
       } finally {
         setIsLoading(false);
       }

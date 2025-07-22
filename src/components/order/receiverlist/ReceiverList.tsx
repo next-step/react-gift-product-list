@@ -30,7 +30,7 @@ const ReceiverList = ({ setIsVisible, receivers }: ReceiverListProps) => {
           </ListHeader>
 
           {receivers.map((receiver) => (
-            <ListBody>
+            <ListBody key={receiver.phone}>
               <ListText>{receiver.name}</ListText>
               <ListText>{receiver.phone}</ListText>
               <ListText>{receiver.quantity}</ListText>

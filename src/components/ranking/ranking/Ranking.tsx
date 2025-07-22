@@ -16,8 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import type { ProductType } from '@/types/product';
 import { RankingProducts, RankingTitle, RankingWrapper, ShowMoreBtn } from './Ranking.styles';
 import { useFetch } from '@/hooks/useFetch';
-import api from '@/lib/axiosInstance';
-// import api from '@/lib/axiosInstance';
+import { fetchRankingData } from '@/services/rankingApi';
 
 //필터 옵션
 const personFilterOptions: { label: PersonFilterLabels; emoji: string; param: PersonParam }[] = [
@@ -33,13 +32,6 @@ const behaviorOptions: { label: BehaviorFilterLabels; param: BehaviorParam }[] =
   { label: '위시로 받은', param: 'MANY_WISH_RECEIVE' },
 ] as const;
 
- const fetchRankingData = async (personParam: PersonParam, behaviorParam: BehaviorParam) => {
-   return await api
-     .get('http://localhost:3000/api/products/ranking', {
-       params: { targetType: personParam, rankType: behaviorParam },
-     })
-     .then((res) => res.data.data);
- };
 
 const Ranking = () => {
   const navigator = useNavigate();

@@ -1,7 +1,9 @@
 import { createContext,  useContext,  useEffect, useState, type ReactNode } from "react";
 
 interface User {
-  username: string;
+  token: string;
+  email: string;
+  name: string;
   isLoggedIn: boolean;
 }
  export interface AuthContextType {
@@ -12,8 +14,12 @@ export const AuthContext = createContext<AuthContextType|null>(null);
 
 
 export default function AuthProvider({ children }:{children:ReactNode}) {
-  const [user, setUser] = useState({ username: "", isLoggedIn: false });
-  // const [loading, setLoading] = useState(true);
+const [user, setUser] = useState<User>({
+  token: '',
+  email: '',
+  name: '',
+  isLoggedIn: false,
+});  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");

@@ -1,8 +1,10 @@
-import GlobalStyles from "@/styles/GlobalStyles";
-import { ThemeProvider } from "@emotion/react";
-import { theme } from "./styles/theme/index";
-import Container from "./styles/Container.tsx/Container";
-import {AppRouter} from './routes/Router';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import GlobalStyles from '@/styles/GlobalStyles';
+import { ThemeProvider } from '@emotion/react';
+import { theme } from './styles/theme/index';
+import Container from './styles/Container.tsx/Container';
+import { AppRouter } from './routes/Router';
 import AuthProvider from './contexts/AuthContext';
 
 function App() {
@@ -11,7 +13,9 @@ function App() {
       <ThemeProvider theme={theme}>
         <Container>
           <GlobalStyles />
-          <AppRouter/>
+          <ToastContainer />
+
+          <AppRouter />
         </Container>
       </ThemeProvider>
     </AuthProvider>
