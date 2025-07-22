@@ -51,14 +51,14 @@ export const OrderPage = () => {
         const res = await fetch(`/api/products/${productId}/summary`)
         if (!res.ok) {
           toast.error('존재하지 않는 상품입니다.')
-          navigate(PATHS.HOME)
+          setTimeout(() => navigate(PATHS.HOME), 0);
           return
         }
         const data = await res.json()
         setProduct(data.data)
       } catch (err) {
         toast.error('상품 정보 요청 중 오류 발생')
-        navigate(PATHS.HOME)
+        setTimeout(() => navigate(PATHS.HOME), 0);
       }
     }
 
@@ -97,13 +97,23 @@ export const OrderPage = () => {
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
 
-    const authToken = localStorage.getItem('authToken')
+    const storedUserInfo = localStorage.getItem('userInfo')
+    let authHeader = ''
+    if (storedUserInfo) {
+      const userInfo = JSON.parse(storedUserInfo)
+      if (userInfo.authToken) {
+        authHeader =
+          userInfo.authToken === 'dummy-token'
+            ? userInfo.authToken
+            : `Bearer ${userInfo.authToken}`
+      }
+    }
     try {
       const res = await fetch('/api/order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
+          Authorization: authHeader,
         },
         body: JSON.stringify({
           productId: Number(productId),
@@ -112,20 +122,22 @@ export const OrderPage = () => {
           message,
           receivers: recipients.map((r) => ({
             name: r.name,
-            phoneNumber: String(r.phone), 
+            phoneNumber: String(r.phone),
             quantity: r.quantity,
           })),
         }),
       })
-      
-      if (res.status === 401) {
-        toast.error('로그인이 필요합니다.')
-        navigate(PATHS.LOGIN)
-        return
-      }
-
       if (!res.ok) {
         const text = await res.text()
+
+        console.error('응답:', res.status)
+
+        if (res.status === 401) {
+          toast.error('로그인이 필요합니다.')
+          setTimeout(() => navigate(PATHS.LOGIN), 0);
+          return
+        }
+
         toast.error(`주문 실패: ${text}`)
         return
       }

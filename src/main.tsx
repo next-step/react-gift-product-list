@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Root from './Root'
 import './index.css'
-
+import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, Global } from '@emotion/react'
 import { theme } from './styles/theme'
 import { globalReset } from './styles/reset'
