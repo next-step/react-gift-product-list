@@ -25,4 +25,9 @@
 
 - api를 사용하여 session storage에 authToken과 email, name 저장
 
+#### toast를 이용하여 400번대 에러 처리
+
+- 로그인 성공시 성공 메시지 출력
+- 에러 발생시 에러 상황 출력
+
 ## 리뷰 반영

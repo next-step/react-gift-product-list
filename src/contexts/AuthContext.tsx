@@ -1,5 +1,7 @@
 import axiosInstance from '@apis/axiosInstance';
+import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface LoginCredentials {
   email: string;
@@ -46,10 +48,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(data);
 
       sessionStorage.setItem('userInfo', JSON.stringify(data));
-
+      toast.success('로그인 성공');
       return true;
     } catch (error) {
-      console.log(error);
+      console.log('로그인 실패', error);
+
+      if (axios.isAxiosError(error) && error.response) {
+        const statusCode = error.response.status;
+        const errorMessage =
+          error.response.data?.data?.message ||
+          '알 수 없는 에러가 발생했습니다.';
+
+        if (statusCode >= 400 && statusCode < 500) {
+          toast.error(errorMessage);
+        } else {
+          toast.error('서버 오류 또는 네트워크 문제 발생');
+        }
+      } else {
+        toast.error('예상치 못한 오류가 발생했습니다.');
+      }
+
       return false;
     }
   };
