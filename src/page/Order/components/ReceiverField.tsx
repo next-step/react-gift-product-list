@@ -46,7 +46,7 @@ const ReceiverField = () => {
             handleChange={handleChange}
             receiverInfos={receiverInfos}
           />,
-          document.body
+          document.getElementById('receiverModal') as HTMLElement
         )}
     </>
   );
