@@ -40,12 +40,16 @@ export default function ThemeProductsList() {
 
   const loadingNext = status === "loading";
 
-  useEffect(() => {
+  const initializeProducts = () => {
     setInitLoading(true);
     setProducts([]);
     setCursor(undefined);
     setHasMore(true);
     refetch();
+  };
+
+  useEffect(() => {
+    initializeProducts();
   }, [themeId]);
 
   useEffect(() => {
