@@ -1,13 +1,17 @@
-import type { AxiosError } from 'axios';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const handleError = (error: AxiosError) => {
-  if (!error.response) {
-    toast.error('네트워크 연결을 확인해 주세요.');
+interface ErrorBody {
+  data: { message: string; status: string; statusCode: number };
+}
+
+const handleError = (error: unknown) => {
+  if (!axios.isAxiosError<ErrorBody>(error)) {
+    toast('네트워크 오류가 발생했습니다.');
     return;
   }
-
-  const { status, data } = error.response;
+  const status = error.response?.status;
+  const message = error.response?.data.data.message ?? '알 수 없는 오류가 발생했습니다.';
 
   switch (status) {
     case 400:
@@ -15,7 +19,7 @@ const handleError = (error: AxiosError) => {
     case 403:
     case 404:
     case 409:
-      toast(data.data.message);
+      toast(message);
       break;
     case 500:
       toast('서버 내부 오류 (INTERNAL_SERVER_ERROR)');
@@ -25,4 +29,5 @@ const handleError = (error: AxiosError) => {
       break;
   }
 };
+
 export default handleError;
