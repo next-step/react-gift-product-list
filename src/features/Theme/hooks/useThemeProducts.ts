@@ -15,7 +15,7 @@ export const useThemeProducts = (themeId: number | null, limit = 10) => {
   const [hasMore, setHasMore] = useState(true)
 
   const fetcher = useCallback(async () => {
-    if (!themeId) return { list: [], cursor: 0, hasMoreList: false }
+    if (!themeId) return null
 
     const res = await api.get(`/themes/${themeId}/products`, {
       params: { cursor, limit },
@@ -23,13 +23,18 @@ export const useThemeProducts = (themeId: number | null, limit = 10) => {
     return res.data.data as ThemeProductResponse
   }, [themeId, cursor, limit])
 
-  const { data, loading, error } = useApi<ThemeProductResponse>(fetcher, [
+  const { data, loading, error } = useApi<ThemeProductResponse | null>(
     fetcher,
-  ])
+    [fetcher]
+  )
 
   useEffect(() => {
     if (data) {
-      setProducts((prev) => [...prev, ...data.list])
+      setProducts((prev) => {
+        const alreadyExist = new Set(prev.map((p) => p.id))
+        const newItems = data.list.filter((item) => !alreadyExist.has(item.id))
+        return [...prev, ...newItems]
+      })
       setCursor(data.cursor)
       setHasMore(data.hasMoreList)
     }
@@ -37,7 +42,7 @@ export const useThemeProducts = (themeId: number | null, limit = 10) => {
 
   const fetchNextPage = useCallback(() => {
     if (loading || !hasMore) return
-    setCursor((prev) => prev)
+    setCursor((prev) => prev + limit)
   }, [loading, hasMore])
 
   useEffect(() => {
