@@ -1,35 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { getThemeInfoUrl } from '@/constants/api';
 import { ROUTES } from '@/constants/routes';
+import { useFetch } from '@/hooks/useFetch';
 import type { ThemeInfo } from '@/types/theme';
 
 export const useThemeInfo = (themeId: string | undefined) => {
   const navigate = useNavigate();
-  const [themeInfo, setThemeInfo] = useState<ThemeInfo | null>(null);
-  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!themeId) return;
+  const fetchThemeInfo = useCallback(async () => {
+    if (!themeId) throw new Error('themeId is undefined');
 
-    const fetchThemeInfo = async () => {
-      try {
-        const res = await axios.get<{ data: ThemeInfo }>(
-          getThemeInfoUrl(themeId)
-        );
-        setThemeInfo(res.data.data);
-      } catch (err: any) {
-        if (err.response?.status === 404) {
-          navigate(ROUTES.NOT_FOUND);
-        } else {
-          setError(true);
-        }
-      }
-    };
+    const res = await fetch(getThemeInfoUrl(themeId));
+    if (res.status === 404) {
+      navigate(ROUTES.NOT_FOUND);
+      throw new Error('404 Not Found');
+    }
+    if (!res.ok) {
+      throw new Error('Theme info fetch failed');
+    }
 
-    fetchThemeInfo();
+    const json = await res.json();
+    return json.data as ThemeInfo;
   }, [themeId, navigate]);
 
-  return { themeInfo, error };
+  const { data, error } = useFetch<ThemeInfo>(fetchThemeInfo);
+
+  return { data, error };
 };

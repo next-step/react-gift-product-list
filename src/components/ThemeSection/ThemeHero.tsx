@@ -6,7 +6,7 @@ import { loading } from '@/components/common/Loading';
 
 const ThemeHero = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const { themeInfo, error } = useThemeInfo(themeId);
+  const { data: themeInfo, error } = useThemeInfo(themeId);
 
   if (error)
     return <ErrorText>{ERROR_MESSAGES.FAILED_TO_LOAD_THEMES}</ErrorText>;

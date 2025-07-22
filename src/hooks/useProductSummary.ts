@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getProductSummaryUrl } from '@/constants/api';
 import { ERROR_MESSAGES } from '@/constants/validation';
-import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import { toast } from 'react-toastify';
+import { useFetch } from '@/hooks/useFetch';
 
 export interface ProductSummary {
   id: number;
@@ -15,31 +14,26 @@ export interface ProductSummary {
 }
 
 export const useProductSummary = (id: string | undefined) => {
-  const [product, setProduct] = useState<ProductSummary | undefined>();
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!id) return;
+  const fetchProduct = async () => {
+    if (!id) throw new Error('Product ID is undefined');
 
-    const fetchProduct = async () => {
-      try {
-        const res = await axios.get<{ data: ProductSummary }>(
-          getProductSummaryUrl(id)
-        );
-        setProduct(res.data.data);
-      } catch {
-        toast.error(ERROR_MESSAGES.LOAD_PRODUCT_FAIL, {
-          toastId: 'product-load-fail',
-        });
-        navigate(ROUTES.HOME);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    try {
+      const res = await fetch(getProductSummaryUrl(id));
+      const json = await res.json();
+      return json.data as ProductSummary;
+    } catch (err) {
+      toast.error(ERROR_MESSAGES.LOAD_PRODUCT_FAIL, {
+        toastId: 'product-load-fail',
+      });
+      navigate(ROUTES.HOME);
+      throw err;
+    }
+  };
 
-    fetchProduct();
-  }, [id, navigate]);
+  const { data: product, pending: isLoading } =
+    useFetch<ProductSummary>(fetchProduct);
 
   return { product, isLoading };
 };

@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { getThemeProductsUrl } from '@/constants/api';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import type { Product } from '@/types/product';
 
 const LIMIT = 10;
@@ -17,6 +18,7 @@ export const useThemeProducts = (themeId: string | undefined) => {
     if (!themeId || !hasMore || pending) return;
     setPending(true);
     setError(false);
+
     try {
       const res = await axios.get<{
         data: { list: Product[]; hasMoreList: boolean; cursor: number };
@@ -48,25 +50,11 @@ export const useThemeProducts = (themeId: string | undefined) => {
     fetchProducts();
   }, [fetchProducts]);
 
-  useEffect(() => {
-    if (!hasMore || pending) return;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          fetchProducts();
-        }
-      },
-      { threshold: 1 }
-    );
-
-    const el = observerRef.current;
-    if (el) observer.observe(el);
-
-    return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, [fetchProducts, hasMore, pending]);
+  useIntersectionObserver({
+    target: observerRef,
+    onIntersect: fetchProducts,
+    enabled: hasMore && !pending,
+  });
 
   return {
     products,
