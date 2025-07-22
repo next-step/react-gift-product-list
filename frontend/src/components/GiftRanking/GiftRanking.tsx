@@ -17,7 +17,7 @@ import {
   targetTypeMap,
   TOTAL_GIFT_COUNT,
 } from '@/constants/RankingConstants';
-import RankingCard from '@/components/Common/RankingCard/RankingCard';
+import CardList from '@/components/Common/CardItem/CardList.tsx';
 import useLocalStorageState from '@/hooks/useLocalStorageState.ts';
 import { useNavigate } from 'react-router-dom';
 import useFetchRanking from '@/hooks/fetch/useFetchRanking.ts';
@@ -78,7 +78,7 @@ export default function GiftRanking() {
         <>
           <Grid>
             {ranking.slice(0, showCount).map((item, index) => (
-              <RankingCard
+              <CardList
                 key={item.name + index}
                 rank={index + 1}
                 image={item.imageURL}

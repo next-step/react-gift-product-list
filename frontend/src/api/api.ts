@@ -16,3 +16,7 @@ export const LOGIN_URL = `${BASE_URL}${ENDPOINTS.LOGIN}`;
 export const ORDER_URL = `${BASE_URL}${ENDPOINTS.ORDER}`;
 
 export const PRODUCT_SUMMARY_URL = (id: number) => `${BASE_URL}/products/${id}/summary`;
+
+export const THEMES_INFO = (themesId: number) => `${BASE_URL}/themes/${themesId}/info`;
+
+export const THEMES_PRODUCTS = (themesId: number) => `${BASE_URL}/themes/${themesId}/products`;

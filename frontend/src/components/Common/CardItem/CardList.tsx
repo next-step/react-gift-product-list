@@ -6,10 +6,10 @@ import {
   ProductImage,
   ProductName,
   RankBadge,
-} from '@/components/Common/RankingCard/RankingCard.styles';
+} from '@/components/Common/CardItem/CardList.styles.ts';
 
 interface Props {
-  rank: number;
+  rank?: number;
   image: string;
   name: string;
   price: string;
@@ -17,11 +17,11 @@ interface Props {
   onClick?: () => void;
 }
 
-export default function RankingCard({ rank, image, name, price, brand, onClick }: Props) {
+export default function CardList({ rank, image, name, price, brand, onClick }: Props) {
   return (
     <Card onClick={onClick}>
       <ImageWrapper>
-        <RankBadge rank={rank}>{rank}</RankBadge>
+        {rank && <RankBadge rank={rank}>{rank}</RankBadge>}
         <ProductImage src={image} alt={name} />
       </ImageWrapper>
       <BrandName>{brand}</BrandName>

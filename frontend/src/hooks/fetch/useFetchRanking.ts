@@ -1,7 +1,8 @@
+
 import { RANKING_URL } from '@/api/api.ts';
 import useFetchData from '@/hooks/fetch/useFetchData.ts';
 
-interface Product {
+export interface Product {
   id: string | number;
   name: string;
   price: {
