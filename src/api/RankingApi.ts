@@ -20,7 +20,7 @@ export const fetchRanking = async (gender: string, type: string) => {
     rankType,
   });
 
-  const res = await fetch(`/api/products/ranking?${params.toString()}`);
+  const res = await fetch(`/api/products/ranking?${params}`);
   if (!res.ok) throw new Error('랭킹 불러오기 실패');
 
   const data = await res.json();
