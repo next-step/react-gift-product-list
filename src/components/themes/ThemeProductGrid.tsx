@@ -68,7 +68,7 @@ interface ThemeProductGridProps {
 }
 
 export const ThemeProductGrid = ({ themeId }: ThemeProductGridProps) => {
-  const { products, loading, hasMore, ref } = useGetThemeProducts(themeId, 20);
+  const { products, loading, hasMore, ref } = useGetThemeProducts(themeId);
   const { goOrderPage } = useRouter();
 
   if (loading && products.length === 0) {
@@ -80,9 +80,9 @@ export const ThemeProductGrid = ({ themeId }: ThemeProductGridProps) => {
 
   return (
     <ThemeProductGridContainer>
-      {products.map((product, index) => (
+      {products.map(product => (
         <ThemeProductGridItem
-          key={`${product.id}+${product.name}+${index}`}
+          key={product.id}
           onClick={() => goOrderPage(product.id)}
         >
           <ThemeProductImageContainer

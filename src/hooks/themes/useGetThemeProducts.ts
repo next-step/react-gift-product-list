@@ -27,28 +27,31 @@ export const useGetThemeProducts = (
   const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
-  const { data, loading, error, execute } =
-    useApiStatus<ThemeProductResponseBody>();
+  const { loading, error, execute } = useApiStatus<ThemeProductResponseBody>();
 
   const fetchProducts = useCallback(
     async (currentCursor: number, isRefresh: boolean = false) => {
-      return execute(() =>
-        getThemeProducts({
-          themeId,
-          cursor: currentCursor,
-          limit,
-        }),
-      ).then(() => {
-        if (data) {
+      try {
+        await execute(async () => {
+          const response = await getThemeProducts({
+            themeId,
+            cursor: currentCursor,
+            limit,
+          });
+
           setProducts(prev =>
-            isRefresh ? data.list : [...prev, ...data.list],
+            isRefresh ? response.list : [...prev, ...response.list],
           );
-          setCursor(data.cursor);
-          setHasMore(data.hasMoreList);
-        }
-      });
+          setCursor(response.cursor);
+          setHasMore(response.hasMoreList);
+
+          return response;
+        });
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
     },
-    [execute, themeId, limit, data],
+    [execute, themeId, limit],
   );
 
   const fetchNextPage = useCallback(async () => {
@@ -72,14 +75,6 @@ export const useGetThemeProducts = (
   useEffect(() => {
     fetchProducts(0, true);
   }, [themeId]);
-
-  useEffect(() => {
-    if (data) {
-      setProducts(prev => (cursor === 0 ? data.list : [...prev, ...data.list]));
-      setCursor(data.cursor);
-      setHasMore(data.hasMoreList);
-    }
-  }, [data]);
 
   return {
     products,
