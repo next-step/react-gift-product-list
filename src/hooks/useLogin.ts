@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import apiClient from '@/api/apiClient';
+import { useMutation } from '@/hooks/useMutation';
 
 interface User {
   name: string;
@@ -39,52 +38,45 @@ const getErrorMessage = (error: any): string => {
 };
 
 export const useLogin = () => {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const login = async (
-    email: string,
-    password: string,
-    onSuccess: (user: { name: string; email: string }) => void,
-    onFailure: () => void
-  ) => {
-    setIsLoading(true);
-
-    try {
-      const response = await apiClient.post('/api/login', { email, password });
-      const { data } = response.data;
-
-      if (!isValidUser(data)) {
+  const { mutate, isLoading } = useMutation(
+    async ({ email, password }: { email: string; password: string }) => {
+      const response = await apiClient.post<any>('/api/login', {
+        email,
+        password,
+      });
+      if (!isValidUser(response.data.data)) {
         throw new Error('Invalid user data');
       }
+      return response.data.data as User;
+    },
+    {
+      onSuccess: (user) => {
+        sessionStorage.setItem(
+          'userInfo',
+          JSON.stringify({
+            name: user.name,
+            email: user.email,
+            authToken: user.authToken,
+          })
+        );
+        toast.success(`${user.name}님, 환영합니다!`);
+      },
+      onError: (error: any) => {
+        const errorMessage = getErrorMessage(error);
+        const stored = sessionStorage.getItem('userInfo');
 
-      const { name, email: userEmail, authToken } = data;
-
-      sessionStorage.setItem(
-        'userInfo',
-        JSON.stringify({ name, email: userEmail, authToken })
-      );
-
-      toast.success(`${name}님, 환영합니다!`);
-      onSuccess({ name, email: userEmail });
-      navigate('/');
-    } catch (error: any) {
-      console.error('Login failed:', error);
-      const errorMessage = getErrorMessage(error);
-
-      const stored = sessionStorage.getItem('userInfo');
-      if (error.response?.status === 401 && stored) {
-        toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
-        sessionStorage.removeItem('userInfo');
-        onFailure();
-      } else {
-        toast.error(errorMessage);
-      }
-
-      throw error;
-    } finally {
-      setIsLoading(false);
+        if (error.response?.status === 401 && stored) {
+          toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+          sessionStorage.removeItem('userInfo');
+        } else {
+          toast.error(errorMessage);
+        }
+      },
     }
+  );
+
+  const login = async (email: string, password: string) => {
+    return await mutate({ email, password });
   };
 
   return { login, isLoading };

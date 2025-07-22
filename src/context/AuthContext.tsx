@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLogin } from '@/hooks/useLogin';
 import { useAuthUser } from '@/hooks/useAuthUser';
 
@@ -26,22 +27,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     string | null
   >(null);
   const { login: loginHandler, isLoading } = useLogin();
+  const navigate = useNavigate();
 
   const login = async (email: string, password: string) => {
-    return loginHandler(
-      email,
-      password,
-      (user) => {
-        setUser(user);
+    try {
+      const loggedInUser = await loginHandler(email, password);
+      if (loggedInUser) {
+        setUser({ name: loggedInUser.name, email: loggedInUser.email });
         setIsLoggedIn(true);
-        storage.set(user);
-      },
-      () => {
-        setUser(null);
-        setIsLoggedIn(false);
-        storage.clear();
+        storage.set(loggedInUser);
+        navigate(redirectAfterLogin || '/');
+        onChangeRedirectAfterLogin(null);
       }
-    );
+    } catch (error) {
+      setUser(null);
+      setIsLoggedIn(false);
+      storage.clear();
+    }
   };
 
   const logout = () => {
