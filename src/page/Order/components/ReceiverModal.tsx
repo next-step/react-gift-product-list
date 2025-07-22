@@ -94,25 +94,12 @@ const ReceiverModal = ({
   handleChange,
   receiverInfos,
 }: ReceiverInfoProps) => {
-  const receiverInfosForm = useForm<OrderInfoValues>({
-    defaultValues: {
-      receiverInfos: receiverInfos,
-    },
+  const { receiverInfosForm, receiverInfoArray, onSubmit } = useModal({
+    receiverInfos,
+    handleChange,
+    onClose,
   });
-
-  const { fields, append, remove } = useFieldArray({
-    control: receiverInfosForm.control,
-    name: 'receiverInfos',
-  });
-
-  const onSubmit = async () => {
-    const isValid = await receiverInfosForm.trigger();
-    if (isValid) {
-      const receiverInfos = receiverInfosForm.getValues('receiverInfos');
-      handleChange(receiverInfos);
-      onClose();
-    }
-  };
+  const { fields, append, remove } = receiverInfoArray;
 
   if (!isModalOpen) {
     return null;
@@ -122,10 +109,7 @@ const ReceiverModal = ({
     <ModalBackGround>
       <ModalWrapper>
         <ModalContainer>
-          <form
-            // onSubmit={receiverInfosForm.handleSubmit(onSubmit)}
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}
-          >
+          <form style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
             <InfoArea>
               <TitleText>받는사람</TitleText>
               <DetailInfoText>

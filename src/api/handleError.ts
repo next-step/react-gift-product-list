@@ -29,8 +29,4 @@ const handleError = (error: unknown) => {
       break;
   }
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> b9d649e (refactor: handleError로 공통 에러 처리)
 export default handleError;
