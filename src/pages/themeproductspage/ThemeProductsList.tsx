@@ -1,27 +1,115 @@
-//RisingSection의 리스트 여기에 재사용 가능할듯.
 import styled from "@emotion/styled";
+import { useParams, useNavigate } from "react-router-dom";
+import { useApiRequest } from "@/hooks/useApiRequest";
+import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import type { Product } from "@/types/api_types";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useEffect, useRef, useState, useCallback } from "react";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 
-type Props = {
-  products: Product[];
+type ThemeProductResponse = {
+  list: Product[];
+  cursor?: string | null;
+  hasMoreList?: boolean;
 };
 
-export default function ThemeProductsList({ products }: Props) {
-  if (products.length === 0) return <p>상품이 없습니다.</p>;
+export default function ThemeProductsList() {
+  const { themeId } = useParams<{ themeId: string }>();
+  const navigate = useNavigate();
+
+  const handleApiError = useApiErrorHandler({
+    fallbackMessage: "상품 정보를 불러오는데 실패했어요.",
+  });
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cursor, setCursor] = useState<string | null | undefined>(undefined);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [initLoading, setInitLoading] = useState<boolean>(true);
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  const { data, status, error, refetch } = useApiRequest<ThemeProductResponse>({
+    url: `/api/themes/${themeId}/products${cursor ? `?cursor=${cursor}` : ""}`,
+    manual: true,
+  });
+
+  useEffect(() => {
+    if (status === "error" && error) {
+      handleApiError(error);
+    }
+  }, [status, error, handleApiError]);
+
+  const loadingNext = status === "loading";
+
+  const initializeProducts = () => {
+    setInitLoading(true);
+    setProducts([]);
+    setCursor(undefined);
+    setHasMore(true);
+    refetch();
+  };
+
+  const updateProductList = (data: ThemeProductResponse) => {
+    setProducts((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+      const filtered = data.list.filter((item) => !existingIds.has(item.id));
+      return [...prev, ...filtered];
+    });
+    setCursor(data.cursor ?? null);
+    setHasMore(data.hasMoreList !== false && !!data.list.length);
+    setInitLoading(false);
+  };
+
+  useEffect(() => {
+    initializeProducts();
+  }, [themeId]);
+
+  useEffect(() => {
+    if (!data) return;
+    updateProductList(data);
+  }, [data]);
+
+  const handleObserver = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  useInfiniteScroll({
+    targetRef: observerRef,
+    onIntersect: handleObserver,
+    enabled: hasMore && !loadingNext && !initLoading && products.length > 0,
+    threshold: 0.4,
+  });
+
+  const handleItemClick = (id: number) => {
+    navigate(`/order/${id}`);
+  };
+
+  if (initLoading) return <LoadingSpinner />;
+  if (products.length === 0)
+    return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
 
   return (
-    <List>
-      {products.map((product) => (
-        <Card key={product.id}>
-          <img src={product.imageURL} alt={product.name} />
-          <h3>{product.name}</h3>
-          <p>{product.brandInfo.name}</p>
-          <p>{product.price.sellingPrice.toLocaleString()}원</p>
-        </Card>
-      ))}
-    </List>
+    <>
+      <List>
+        {products.map((product) => (
+          <Card key={product.id} onClick={() => handleItemClick(product.id)}>
+            <Image src={product.imageURL} alt={product.name} />
+            <Name>{product.name}</Name>
+            <Brand>{product.brandInfo.name}</Brand>
+            <Price>{product.price.sellingPrice.toLocaleString()}원</Price>
+          </Card>
+        ))}
+      </List>
+      <ObserverTarget ref={observerRef} />
+      {loadingNext && <LoadingSpinner />}
+    </>
   );
 }
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin-top: 50px;
+`;
 
 const List = styled.div`
   display: grid;
@@ -32,22 +120,33 @@ const List = styled.div`
 
 const Card = styled.div`
   overflow: hidden;
-  padding: 12px;
   text-align: center;
+  cursor: pointer;
+`;
 
-  img {
-    width: 100%;
-    height: auto;
-    border-radius: 30px;
-  }
+const Image = styled.img`
+  width: 100%;
+  height: auto;
+  border-radius: 30px;
+`;
 
-  h3 {
-    font-size: 16px;
-    margin: 8px 0;
-  }
+const Name = styled.div`
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin: 8px 0;
+`;
 
-  p {
-    margin: 4px 0;
-    color: #888;
-  }
+const Brand = styled.div`
+  font-size: ${({ theme }) => theme.typography.body2Regular.fontSize};
+  margin: 8px 0;
+`;
+
+const Price = styled.div`
+  font-size: ${({ theme }) => theme.typography.subtitle1Regular.fontSize};
+  font-weight: bold;
+  margin: 8px 0;
+`;
+
+const ObserverTarget = styled.div`
+  height: 100px;
+  margin-top: 32px;
 `;
