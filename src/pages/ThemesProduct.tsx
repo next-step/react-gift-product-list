@@ -9,3 +9,5 @@ const ThemesProduct = () => {
     </StyledTopestDiv>
   );
 };
+
+export default ThemesProduct;

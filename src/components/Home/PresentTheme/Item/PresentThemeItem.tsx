@@ -22,10 +22,12 @@ const PresentThemeItem = () => {
         <StyledPresentThemeDiv>
           {themes &&
             themes.data?.map((item: Theme) => (
-              <StyledPresentThemeItemDiv key={item.themeId} className='border'>
-                <StyledImage src={item.image} alt={item.name} />
-                <StyledPresentThemeItemP>{item.name}</StyledPresentThemeItemP>
-              </StyledPresentThemeItemDiv>
+              <a href={'/themes/' + item.themeId} key={item.themeId}>
+                <StyledPresentThemeItemDiv className='border'>
+                  <StyledImage src={item.image} alt={item.name} />
+                  <StyledPresentThemeItemP>{item.name}</StyledPresentThemeItemP>
+                </StyledPresentThemeItemDiv>
+              </a>
             ))}
         </StyledPresentThemeDiv>
       </>
