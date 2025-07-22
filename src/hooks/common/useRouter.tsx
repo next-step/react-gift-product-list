@@ -20,7 +20,12 @@ export const useRouter = () => {
     },
     [navigate],
   );
-
+  const goThemePage = useCallback(
+    (id: number) => {
+      navigate(ROUTE_PATH.THEME.replace(":id", id.toString()));
+    },
+    [navigate],
+  );
   const goLoginPage = useCallback(
     ({ redirect }: { redirect?: boolean }) => {
       if (redirect) {
@@ -42,6 +47,7 @@ export const useRouter = () => {
     goHomePage,
     goBack,
     goOrderPage,
+    goThemePage,
     goLoginPage,
     goMyPage,
   };
