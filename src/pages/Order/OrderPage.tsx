@@ -29,8 +29,12 @@ import { cardTemplates } from '../../data/cardTemplates';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserManagement } from '../Login/contexts/UserManagement';
 
-import { fetchProductSummary, type ProductSummary } from '../../apis/products';
+import {
+  fetchProductSummary,
+  type ProductSummary,
+} from '../../apis/product_summary';
 import { postOrder } from '../../apis/orders';
+import axios from 'axios';
 
 const OrderPage = () => {
   const theme = useTheme();
@@ -115,14 +119,21 @@ const OrderPage = () => {
         `주문이 완료되었습니다.\n상품명: ${product.name}\n총 구매 수량: ${totalQuantity}\n발신자 이름: ${data.senderName}\n메시지: ${data.message}\n받는 사람 수: ${receivers.length}`
       );
       navigate('/');
-    } catch (error: any) {
-      if (error.message === 'Unauthorized') {
-        toast.error('로그인이 필요합니다.');
-        navigate('/login');
-        return;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || '주문에 실패했습니다.';
+
+        if (status === 401) {
+          toast.error('로그인이 필요합니다.');
+          navigate('/login');
+        } else {
+          toast.error(message);
+        }
+      } else {
+        console.error('주문 실패 에러:', error);
+        toast.error('알 수 없는 에러가 발생했습니다.');
       }
-      console.error('주문 실패 에러:', error);
-      toast.error(error.message || '주문에 실패했습니다.');
     }
   };
 

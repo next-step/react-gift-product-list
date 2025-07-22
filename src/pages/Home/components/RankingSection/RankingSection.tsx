@@ -77,12 +77,12 @@ const RankingSection = () => {
   const toggleExpanded = () => setIsExpanded((prev) => !prev);
 
   const handleCardClick = (itemId: number) => {
-  if (user) {
-    navigate(`/order/${itemId}`);
-  } else {
-    navigate(`/login?redirect=/order/${itemId}`);
-  }
-};
+    if (user) {
+      navigate(`/order/${itemId}`);
+    } else {
+      navigate(`/login?redirect=/order/${itemId}`);
+    }
+  };
 
   return (
     <section css={sectionWrapper}>
@@ -131,11 +131,11 @@ const RankingSection = () => {
               <div key={item.id} onClick={() => handleCardClick(item.id)}>
                 <RankingCard
                   rank={i + 1}
-                  imageURL={item.imageURL}
-                  brand={item.brandInfo.name}
+                  imageUrl={item.imageURL}
                   name={item.name}
+                  brand={item.brandInfo.name}
                   price={item.price.sellingPrice}
-                  theme={theme}
+                  onClick={() => handleCardClick(item.id)}
                 />
               </div>
             ))}

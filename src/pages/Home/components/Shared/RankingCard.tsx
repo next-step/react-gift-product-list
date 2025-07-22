@@ -1,71 +1,82 @@
 /** @jsxImportSource @emotion/react */
-import { css, type Theme as ThemeType } from '@emotion/react';
+import { css } from '@emotion/react';
 
-type RankingCardProps = {
-  rank: number;
-  imageURL: string;
-  brand: string;
+type ProductCardProps = {
+  imageUrl: string;
   name: string;
-  price: number;
-  theme: ThemeType;
+  brand: string;
+  price?: number;
+  rank?: number;
+  onClick?: () => void;
 };
 
-const RankingCard = ({ rank, imageURL, brand, name, price, theme }: RankingCardProps) => {
+const ProductCard = ({
+  imageUrl,
+  name,
+  brand,
+  price,
+  rank,
+  onClick,
+}: ProductCardProps) => {
   return (
-    <div css={card(theme)}>
-      <div css={rankBadge(theme, rank)}>{rank}</div>
-      <img src={imageURL} alt={name} css={image(theme)} />
-      <p css={brandStyle(theme)}>{brand}</p>
-      <p css={nameStyle(theme)}>{name}</p>
-      <p css={priceStyle(theme)}>{price.toLocaleString()}원</p>
+    <div css={cardStyle} onClick={onClick}>
+      {typeof rank === 'number' && <div css={rankBadgeStyle(rank)}>{rank}</div>}
+      <img src={imageUrl} alt={name} css={imageStyle} />
+      <div css={brandStyle}>{brand}</div>
+      <div css={nameStyle}>{name}</div>
+      {typeof price === 'number' && (
+        <div css={priceStyle}>{price.toLocaleString()}원</div>
+      )}
     </div>
   );
 };
 
-const card = (theme: ThemeType) => css`
-  background-color: #fff;
-  border-radius: ${theme.spacing[2]};
-  overflow: hidden;
+export default ProductCard;
+
+const cardStyle = css`
   position: relative;
   text-align: center;
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+  cursor: pointer;
 `;
 
-const rankBadge = (theme: ThemeType, rank: number) => css`
+const rankBadgeStyle = (rank: number) => css`
   position: absolute;
-  top: ${theme.spacing[2]};
-  left: ${theme.spacing[2]};
-  background-color: ${rank <= 3 ? theme.color.red.red700 : theme.color.gray.gray600};
-  color: #fff;
+  top: 8px;
+  left: 8px;
+  background-color: ${rank <= 3 ? '#d32f2f' : '#888'};
+  color: white;
   border-radius: 50%;
-  width: ${theme.spacing[6]};
-  height: ${theme.spacing[6]};
-  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const image = (theme: ThemeType) => css`
+const imageStyle = css`
   width: 100%;
-  border-radius: ${theme.spacing[2]};
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 `;
 
-const brandStyle = (theme: ThemeType) => css`
+const brandStyle = css`
   font-size: 12px;
-  margin-top: ${theme.spacing[2]};
   color: #666;
+  margin-top: 6px;
 `;
 
-const nameStyle = (theme: ThemeType) => css`
+const nameStyle = css`
   font-size: 14px;
   font-weight: 500;
-  margin-top: ${theme.spacing[1]};
+  margin-top: 2px;
 `;
 
-const priceStyle = (theme: ThemeType) => css`
+const priceStyle = css`
   font-size: 14px;
   font-weight: 700;
-  margin-top: ${theme.spacing[1]};
+  margin-top: 4px;
 `;
-
-export default RankingCard;

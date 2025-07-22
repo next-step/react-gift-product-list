@@ -43,15 +43,20 @@ const NavBar = () => {
 export default NavBar;
 
 const navStyle = css`
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
   max-width: 720px;
   height: ${theme.spacing[12]};
-  margin: 0 auto;
   padding: 0 ${theme.spacing[4]};
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid ${theme.color.gray.gray200};
   background-color: #fff;
+  z-index: 1000;
 `;
 
 const iconButtonStyle = css`
