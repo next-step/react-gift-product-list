@@ -1,5 +1,5 @@
 import { requests } from '@/api/requests';
-import { ROUTES } from '@/routes/routes';
+import { ROUTES } from '@/routes/Routes';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
