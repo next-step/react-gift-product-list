@@ -4,25 +4,25 @@ import useFetch from '@hooks/useFetch';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-type TargetType = '전체' | '여성이' | '남성이' | '청소년이';
-type RankType = '받고 싶어한' | '많이 선물한' | '위시로 받은';
-
-const TargetS: TargetType[] = ['전체', '여성이', '남성이', '청소년이'];
-const RankS: RankType[] = ['받고 싶어한', '많이 선물한', '위시로 받은'];
-
-const Target_MAP: Record<TargetType, string> = {
+const Target_MAP = {
   전체: 'ALL',
   여성이: 'FEMALE',
   남성이: 'MALE',
   청소년이: 'TEEN',
-};
+} as const;
 
 // 탭 (랭킹 타입)
-const Rank_MAP: Record<RankType, string> = {
+const Rank_MAP = {
   '받고 싶어한': 'MANY_WISH',
   '많이 선물한': 'MANY_RECEIVE',
   '위시로 받은': 'MANY_WISH_RECEIVE',
-};
+} as const;
+
+type TargetType = keyof typeof Target_MAP;
+type RankType = keyof typeof Rank_MAP;
+
+const TargetS = Object.keys(Target_MAP) as TargetType[];
+const RankS = Object.keys(Rank_MAP) as RankType[];
 
 interface Product {
   id: number;
@@ -66,9 +66,10 @@ const RankingSection = () => {
     ? (rawRank as RankType)
     : '받고 싶어한';
 
-  const navigate = useNavigate();
-  const handleClick = (item: RankedProduct) => {
-    navigate(`/order/${item.id}`);
+  const updateParam = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set(key, value);
+    setSearchParams(newParams);
   };
 
   const { data, loading, hasError } = useFetch<Product[]>(
@@ -76,15 +77,14 @@ const RankingSection = () => {
   );
 
   const products = data ? addRanking(data) : [];
-  console.log(data);
 
-  const updateParam = (key: string, value: string) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set(key, value);
-    setSearchParams(newParams);
-  };
-
+  //더보기 버튼 로직
   const visibleItems = isExpanded ? products : products.slice(0, 6);
+
+  const navigate = useNavigate();
+  const handleClick = (item: RankedProduct) => {
+    navigate(`/order/${item.id}`);
+  };
 
   return (
     <Section>

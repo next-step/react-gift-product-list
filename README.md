@@ -67,3 +67,7 @@
 
 - 공통부분을 추상화
 - 기존에 사용하던 fetchRankedProducts, fetchTheme은 일단 임시로 사용 중단
+
+### TYPE 정의 수정
+
+- MAP을 통해 타입을 정의하는 방식으로 변경
