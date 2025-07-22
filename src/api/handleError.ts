@@ -29,4 +29,5 @@ const handleError = (error: unknown) => {
       break;
   }
 };
+
 export default handleError;
