@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
 import { useEffect, useState } from 'react';
@@ -11,6 +12,8 @@ type ThemeLabel = {
 };
 
 const ThemesProductLabel = () => {
+  const urlArray = new URL(window.location.href).pathname.split('/');
+  const themeId = urlArray[urlArray.length - 1];
   const [label, setLabel] = useState<ThemeLabel | null>(null);
   //const [products, setProducts] = useState(null);
 
@@ -18,7 +21,7 @@ const ThemesProductLabel = () => {
     const reqeustLabel = async () => {
       const apiReqeustParmas = {
         methods: 'GET' as HttpTypes,
-        requestName: 'themes/2920/info',
+        requestName: `themes/${themeId}/info`,
         body: {},
         params: '',
         headers: null,
@@ -35,12 +38,20 @@ const ThemesProductLabel = () => {
   }, []);
 
   return (
-    <div>
+    <StyledThemesProductLabelItem background={label?.backgroundColor}>
       <p>{label && label.name}</p>
       <p>{label && label.title}</p>
       <p>{label && label.description}</p>
-    </div>
+    </StyledThemesProductLabelItem>
   );
 };
 
 export default ThemesProductLabel;
+
+interface ColorProps {
+  background?: string;
+}
+
+const StyledThemesProductLabelItem = styled.div<ColorProps>`
+  background-color: ${({ background }) => background};
+`;
