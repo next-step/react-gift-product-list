@@ -1,6 +1,6 @@
 import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type ThemeProduct = {
   id: number;
@@ -31,7 +31,7 @@ export const useThemesProductItem = () => {
   const themeId = urlArray[urlArray.length - 1];
 
   const [products, setProducts] = useState<ThemeProducts | null>(null);
-  const [page, setPage] = useState(1);
+  const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const loader = useRef<HTMLDivElement | null>(null);
 
@@ -41,7 +41,7 @@ export const useThemesProductItem = () => {
         methods: 'GET' as HttpTypes,
         requestName: `themes/${themeId}/products`,
         body: {},
-        params: '',
+        params: `/?cursor=${cursor}`,
         headers: null,
       };
 
@@ -65,7 +65,7 @@ export const useThemesProductItem = () => {
         if (fetchData.data.list.length === 0 || !fetchData.data.hasMoreList) {
           setHasMore(false);
         } else {
-          setPage((prev) => prev + 1);
+          setCursor((prev) => prev + 10);
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -87,7 +87,7 @@ export const useThemesProductItem = () => {
     return () => {
       if (el) observer.unobserve(el);
     };
-  }, [hasMore, themeId]);
+  }, [hasMore, themeId, cursor]);
 
   return { products, loader };
 };

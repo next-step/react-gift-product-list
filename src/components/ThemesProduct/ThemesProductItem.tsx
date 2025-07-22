@@ -28,7 +28,7 @@ const ThemesProductItem = () => {
         <StyledThemesProductGridContainer>
           {products &&
             products.data.list.map((item) => (
-              <StyledPresentRankingItemDiv>
+              <StyledPresentRankingItemDiv key={item.id}>
                 <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
                 <StyledPresentRankingItemBrandName className='brand_name'>
                   {item.brandInfo.name}
