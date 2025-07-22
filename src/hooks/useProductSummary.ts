@@ -11,7 +11,7 @@ export function useProductSummary(productId: string | undefined) {
     data: product,
     isLoading,
     hasError,
-  } = useApiRequest<ProductSummary>(() => fetchProduct(productId!), [productId]);
+  } = useApiRequest<ProductSummary, [string]>(fetchProduct, [productId!]);
 
   useToastOnError({
     error: hasError,
