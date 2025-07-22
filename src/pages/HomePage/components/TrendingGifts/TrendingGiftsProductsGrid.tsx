@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
-import ProductCard from "../ProductCard/ProductCard";
-import { MoreInfo, MoreInfoWrapper } from "../TrendingGifts.styles";
 import {
   TRENDING_GIFTS_EMPTY_MESSAGES,
   TRENDING_GIFTS_LABELS,
-} from "../constants/labels";
+} from "./constants/labels";
+import ProductCard from "@/components/ProductCard/ProductCard";
+import { MoreInfo, MoreInfoWrapper } from "./TrendingGifts.styles";
+import { PRODUCT_GRID_TYPES } from "@/components/ProductCard/types/productGridTypes";
+import EmptyProductContainer from "@/components/ProductCard/EmptyProductContainer";
 
 const ProductGridContainer = styled.div`
   width: 95%;
@@ -15,34 +17,14 @@ const ProductGridContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing[4]};
 `;
 
-const EmptyProductContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 125px;
-  margin-bottom: 125px;
-`;
-
-const EmptyProductText = styled.p`
-  font-size: ${({ theme }) => theme.typography.label.label1Regular.fontSize};
-  font-weight: ${({ theme }) =>
-    theme.typography.label.label1Regular.fontWeight};
-`;
-
-interface ProductGridPropsType {
+interface ProductsGridPropsType {
   products: TrendingGiftsType[];
 }
 
-function ProductGrid({ products }: ProductGridPropsType) {
+function TrendingGiftsProductsGrid({ products }: ProductsGridPropsType) {
   if (products.length === 0)
     return (
-      <EmptyProductContainer>
-        <EmptyProductText>
-          {TRENDING_GIFTS_EMPTY_MESSAGES.NO_PRODUCT}
-        </EmptyProductText>
-      </EmptyProductContainer>
+      <EmptyProductContainer label={TRENDING_GIFTS_EMPTY_MESSAGES.NO_PRODUCT} />
     );
 
   return (
@@ -57,6 +39,7 @@ function ProductGrid({ products }: ProductGridPropsType) {
             brandName={product.brandInfo.name}
             sellingPrice={product.price.sellingPrice}
             index={idx}
+            type={PRODUCT_GRID_TYPES.TRENDING_GIFTS}
           />
         ))}
       </ProductGridContainer>
@@ -67,4 +50,4 @@ function ProductGrid({ products }: ProductGridPropsType) {
   );
 }
 
-export default ProductGrid;
+export default TrendingGiftsProductsGrid;

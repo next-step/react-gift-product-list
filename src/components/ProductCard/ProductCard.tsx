@@ -11,6 +11,10 @@ import {
 } from "./ProductCard.styles";
 import { useAuth } from "@/contexts/AuthContext";
 import { ROUTES } from "@/constants/routes";
+import {
+  PRODUCT_GRID_TYPES,
+  type ProductGridType,
+} from "./types/productGridTypes";
 
 export interface ProductCardPropsType {
   id: number;
@@ -19,6 +23,7 @@ export interface ProductCardPropsType {
   brandName: string;
   sellingPrice: number;
   index: number;
+  type: ProductGridType;
 }
 
 function ProductCard({
@@ -28,6 +33,7 @@ function ProductCard({
   brandName,
   sellingPrice,
   index,
+  type,
 }: ProductCardPropsType) {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
@@ -44,7 +50,9 @@ function ProductCard({
 
   return (
     <ProductCardContainer onClick={handleClick}>
-      <RankBadge isTopThree={index < 3}>{index + 1}</RankBadge>
+      {type === PRODUCT_GRID_TYPES.TRENDING_GIFTS && (
+        <RankBadge isTopThree={index < 3}>{index + 1}</RankBadge>
+      )}
       <ProductImage src={imageURL} alt={name} />
       <ProductInfo>
         <BrandName>{brandName}</BrandName>

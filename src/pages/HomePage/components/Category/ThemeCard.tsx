@@ -1,4 +1,6 @@
+import { ROUTES } from "@/constants/routes";
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 const ThemeCardContainer = styled.div`
   display: flex;
@@ -28,9 +30,23 @@ const ThemeName = styled.p`
     theme.typography.label.label2Regular.fontWeight};
 `;
 
-function ThemeCard({ name, image }: { name: string; image: string }) {
+function ThemeCard({
+  themeId,
+  name,
+  image,
+}: {
+  themeId: number;
+  name: string;
+  image: string;
+}) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(ROUTES.THEME_PRODUCTS.replace(":themeId", themeId.toString()));
+  };
+
   return (
-    <ThemeCardContainer>
+    <ThemeCardContainer onClick={handleClick}>
       <ThemeImage src={image} alt={name} />
       <ThemeName>{name}</ThemeName>
     </ThemeCardContainer>

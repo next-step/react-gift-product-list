@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import SubTab from "../SubTab/SubTab";
+import SubTab from "./SubTab/SubTab";
 
 const TabContentContainer = styled.div`
   width: 100%;

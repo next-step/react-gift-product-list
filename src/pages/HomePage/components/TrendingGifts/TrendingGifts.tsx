@@ -1,5 +1,3 @@
-import TabContentWrapper from "./TabContentWrapper/TabContentWrapper";
-import ProductGrid from "./ProductGrid/ProductGrid";
 import type { TrendingGiftsType } from "@/types/TrendingGiftsType";
 import {
   TrendingGiftsSection,
@@ -9,13 +7,12 @@ import {
   MainTabButton,
   TabIconContainer,
   TabLabel,
-  LoadingContainer,
   ErrorContainer,
   ErrorMessage,
 } from "./TrendingGifts.styles";
 import { LocalStorageProvider } from "@/pages/HomePage/context/TabStorageContext";
 import { useMainTab, useSubTab } from "@/pages/HomePage/hooks/useTabStorage";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Loading } from "@/components/Loading/Loading";
 import { RANK_TYPE, TARGET_TYPE, TRENDING_GIFTS_TABS } from "./constants/tabs";
 import {
   TRENDING_GIFTS_ERROR_MESSAGES,
@@ -23,6 +20,8 @@ import {
 } from "./constants/labels";
 import { getTrendingGifts } from "@/data/api";
 import { useFetch } from "@/hooks/useFetch";
+import TrendingGiftsProductsGrid from "./TrendingGiftsProductsGrid";
+import TabContentWrapper from "./TabContentWrapper";
 
 function TrendingGiftsContent() {
   const [mainTabIdx, setMainTabIdx] = useMainTab();
@@ -49,14 +48,10 @@ function TrendingGiftsContent() {
     }
 
     if (isLoading) {
-      return (
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
-      );
+      return <Loading />;
     }
 
-    return <ProductGrid products={data || []} />;
+    return <TrendingGiftsProductsGrid products={data || []} />;
   };
 
   return (

@@ -8,8 +8,7 @@ import ProductInfo from "./components/ProductInfo/ProductInfo";
 import { useProductInfo } from "./hooks/useProductInfo";
 import { useState } from "react";
 import { useOrderForm } from "./hooks/useOrderForm";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { LoadingContainer } from "../HomePage/components/Category/Category.styles";
+import { Loading } from "@/components/Loading/Loading";
 import { useOrderSubmit } from "./hooks/useOrderSubmit";
 
 const OrderPageContainer = styled.div`
@@ -51,9 +50,7 @@ function OrderPage() {
   if (loading) {
     return (
       <Layout>
-        <LoadingContainer>
-          <LoadingSpinner />
-        </LoadingContainer>
+        <Loading />
       </Layout>
     );
   }
