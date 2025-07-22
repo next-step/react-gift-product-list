@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (stored) {
       const parsed = JSON.parse(stored)
       setUser({ email: parsed.email, name: parsed.name })
+      localStorage.setItem('authToken', parsed.authToken)
     }
     setIsAuthReady(true)
   }, [])
@@ -36,7 +37,9 @@ const login = async (email: string, password: string) => {
     const res = await axios.post('http://localhost:3000/api/login', { email, password })
 
     const { authToken, email: userEmail, name } = res.data.data
+    console.log('로그인 응답:', res.data)
 
+    localStorage.setItem('authToken', authToken)
     const userInfo = { authToken, email: userEmail, name }
     localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userInfo))
     setUser({ email: userEmail, name })

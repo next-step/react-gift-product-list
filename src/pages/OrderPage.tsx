@@ -40,30 +40,30 @@ export const OrderPage = () => {
       setSenderName(userInfo.name)
     }
   }, [])
-const hasFetched = useRef(false)
+  const hasFetched = useRef(false)
 
-useEffect(() => {
-  if (hasFetched.current) return
-  hasFetched.current = true
+  useEffect(() => {
+    if (hasFetched.current) return
+    hasFetched.current = true
 
-  const fetchProduct = async () => {
-    try {
-      const res = await fetch(`/api/products/${productId}/summary`)
-      if (!res.ok) {
-        toast.error('존재하지 않는 상품입니다.')
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`/api/products/${productId}/summary`)
+        if (!res.ok) {
+          toast.error('존재하지 않는 상품입니다.')
+          navigate(PATHS.HOME)
+          return
+        }
+        const data = await res.json()
+        setProduct(data.data)
+      } catch (err) {
+        toast.error('상품 정보 요청 중 오류 발생')
         navigate(PATHS.HOME)
-        return
       }
-      const data = await res.json()
-      setProduct(data.data)
-    } catch (err) {
-      toast.error('상품 정보 요청 중 오류 발생')
-      navigate(PATHS.HOME)
     }
-  }
 
-  fetchProduct()
-}, [productId])
+    fetchProduct()
+  }, [productId])
 
   const [orderCompleted, setOrderCompleted] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
@@ -88,15 +88,16 @@ useEffect(() => {
     }
 
     if (!message.trim()) errors.message = '메시지를 입력해주세요.'
-    if (!senderName.trim()) errors.senderName = '보내는 사람 이름을 입력해주세요.'
-    if (recipients.length === 0) errors.recipients = '받는 사람을 한 명 이상 추가해주세요.'
+    if (!senderName.trim())
+      errors.senderName = '보내는 사람 이름을 입력해주세요.'
+    if (recipients.length === 0)
+      errors.recipients = '받는 사람을 한 명 이상 추가해주세요.'
 
     setFormErrors(errors)
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
 
     const authToken = localStorage.getItem('authToken')
-
     try {
       const res = await fetch('/api/order', {
         method: 'POST',
@@ -105,14 +106,18 @@ useEffect(() => {
           Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({
-          productId,
-          senderName,
+          productId: Number(productId),
+          ordererName: senderName,
+          messageCardId: String(selectedCardId),
           message,
-          recipients,
-          quantity: totalQuantity,
+          receivers: recipients.map((r) => ({
+            name: r.name,
+            phoneNumber: String(r.phone), 
+            quantity: r.quantity,
+          })),
         }),
       })
-
+      
       if (res.status === 401) {
         toast.error('로그인이 필요합니다.')
         navigate(PATHS.LOGIN)
@@ -187,7 +192,15 @@ useEffect(() => {
         </Section>
 
         <Section>
-          <Label style={{ textAlign: 'left', display: 'block', marginBottom: '0.5rem' }}>보내는 사람</Label>
+          <Label
+            style={{
+              textAlign: 'left',
+              display: 'block',
+              marginBottom: '0.5rem',
+            }}
+          >
+            보내는 사람
+          </Label>
           <Input
             placeholder="이름을 입력하세요."
             value={senderName}
@@ -268,7 +281,15 @@ useEffect(() => {
         </Section>
 
         <Section>
-          <Label style={{ textAlign: 'left', display: 'block', marginBottom: '0.5rem' }}>상품 정보</Label>
+          <Label
+            style={{
+              textAlign: 'left',
+              display: 'block',
+              marginBottom: '0.5rem',
+            }}
+          >
+            상품 정보
+          </Label>
           <ProductInfo>
             {product?.imageURL ? (
               <img
@@ -304,7 +325,7 @@ useEffect(() => {
                 >
                   상품가{' '}
                 </span>
-                {product?.price?.sellingPrice?.toLocaleString() || 0}원
+                {product?.price.toLocaleString() || 0}원
               </Price>
             </ProductDetails>
           </ProductInfo>
