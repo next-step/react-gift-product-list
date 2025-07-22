@@ -1,9 +1,15 @@
 import parseSessionStorage from '@/utils/parseSessionStorage';
-import axios from 'axios';
+import axios, { AxiosError, type AxiosInstance } from 'axios';
+import handleError from './handleError';
+
+export interface ApiSuccess<T> {
+  data: T;
+  message?: string;
+}
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const apiClient = axios.create({
+const apiClient: AxiosInstance = axios.create({
   baseURL: `${API_BASE_URL}`,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -18,13 +24,18 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  error => {
+  (error: AxiosError) => {
+    handleError(error);
     return Promise.reject(error);
   }
 );
 
 apiClient.interceptors.response.use(
   response => response.data.data,
-  error => Promise.reject(error)
+  (error: AxiosError) => {
+    handleError(error);
+    return Promise.reject(error);
+  }
 );
+
 export { apiClient };

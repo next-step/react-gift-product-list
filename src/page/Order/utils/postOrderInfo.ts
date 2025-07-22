@@ -1,7 +1,6 @@
 import { requests } from '@/api/requests';
 import { ROUTES } from '@/routes/routes';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import type { OrderInfoValues } from '..';
 
 export interface postOrderInfoProps {
@@ -17,11 +16,6 @@ const postOrderInfo = async ({ orderData, navigate, id }: postOrderInfoProps): P
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const status = error.response?.data?.data?.statusCode;
-      toast(
-        status && status >= 400 && status < 500
-          ? error.response?.data?.data?.message
-          : '기타 에러 발생(서버 에러, 네트워크 에러 등)'
-      );
       if (status === 401) {
         navigate(ROUTES.LOGIN);
       }

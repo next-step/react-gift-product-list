@@ -1,6 +1,5 @@
 import { requests } from '@/api/requests';
 import { useUserInfo } from '@/contexts/UserInfoContext';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 
 export interface UserInfoProps {
@@ -23,15 +22,7 @@ const useLogin = () => {
       setLoginSession(userInfoData);
       toast(userInfoData.email);
       return true;
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.data?.data?.statusCode;
-        toast(
-          status && status >= 400 && status < 500
-            ? error.response?.data?.data?.message
-            : '기타 에러 발생(서버 에러, 네트워크 에러 등)'
-        );
-      }
+    } catch {
       return false;
     }
   };
