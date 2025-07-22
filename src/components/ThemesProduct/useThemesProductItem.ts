@@ -1,6 +1,8 @@
 import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
+import { URLS } from '@src/assets/urls';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { NavigateFunction } from 'react-router-dom';
 
 type ThemeProduct = {
   id: number;
@@ -26,7 +28,7 @@ type ThemeProducts = {
   };
 };
 
-export const useThemesProductItem = () => {
+export const useThemesProductItem = (navigate: NavigateFunction) => {
   const urlArray = new URL(window.location.href).pathname.split('/');
   const themeId = urlArray[urlArray.length - 1];
 
@@ -46,20 +48,23 @@ export const useThemesProductItem = () => {
     };
     try {
       const fetchData = await apiClient(apiReqeustParmas);
-      console.log(fetchData);
-      setProducts((prev) => {
-        if (prev) {
-          return {
-            data: {
-              list: [...prev.data.list, ...fetchData.data.list],
-              cursor: fetchData.data.cursor,
-              hasMoreList: fetchData.data.hasMoreList,
-            },
-          };
-        } else {
-          return fetchData;
-        }
-      });
+      if (fetchData.data.statusCode === 404) {
+        navigate(URLS.home);
+      } else {
+        setProducts((prev) => {
+          if (prev) {
+            return {
+              data: {
+                list: [...prev.data.list, ...fetchData.data.list],
+                cursor: fetchData.data.cursor,
+                hasMoreList: fetchData.data.hasMoreList,
+              },
+            };
+          } else {
+            return fetchData;
+          }
+        });
+      }
 
       if (fetchData.data.hasMoreList) {
         setCursor(fetchData.data.cursor);

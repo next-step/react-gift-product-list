@@ -13,10 +13,12 @@ import {
   StyledThemesProductPaddingContainer,
 } from './StyledThemesProductItem';
 import { useThemesProductItem } from './useThemesProductItem';
+import { useNavigate } from 'react-router-dom';
 
 const ThemesProductItem = () => {
-  const { label } = useThemesProductLabel();
-  const { products, loader } = useThemesProductItem();
+  const navigate = useNavigate();
+  const { label } = useThemesProductLabel(navigate);
+  const { products, loader } = useThemesProductItem(navigate);
   return (
     <StyledTopestDiv>
       <StyledThemesProductLabelItem background={label?.backgroundColor}>
