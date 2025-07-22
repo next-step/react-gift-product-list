@@ -1,35 +1,43 @@
 import { createContext, useContext } from "react";
 
-import { useLocalStorageState, type SerializableRecord } from "@/shared/hooks/useLocalStorageState";
-import { JSONSerializer } from "@/shared/utils/json";
+import { AUTH_TOKEN_STORAGE_KEY } from "@/features/auth/utils/getStoredAuthToken";
 
-export interface AuthContextValue extends SerializableRecord {
+import { useLocalStorageState, type SerializableRecord } from "@/shared/hooks/useLocalStorageState";
+
+export interface UserInfo extends SerializableRecord {
     isAuthenticated: boolean;
     nickname?: string;
     email?: string;
-    authToken?: string;
 }
 
-export const AUTH_STORAGE_KEY = "auth";
+export const USER_INFO_STORAGE_KEY = "userInfo";
 
 export const AuthContext = createContext<{
-    authState: AuthContextValue;
-    setAuthState: (value: AuthContextValue) => void;
+    userInfo: UserInfo;
+    setUserInfo: (value: UserInfo) => void;
+    authToken: string | null;
+    setAuthToken: (value: string | null) => void;
 } | null>(null);
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-    const [authState, setAuthState] = useLocalStorageState<AuthContextValue>(AUTH_STORAGE_KEY, {
+    const [userInfo, setUserInfo] = useLocalStorageState<UserInfo>(USER_INFO_STORAGE_KEY, {
         isAuthenticated: false,
         nickname: undefined,
         email: undefined,
-        authToken: undefined,
     });
+
+    const [authToken, setAuthToken] = useLocalStorageState<string | null>(
+        AUTH_TOKEN_STORAGE_KEY,
+        null,
+    );
 
     return (
         <AuthContext.Provider
             value={{
-                authState,
-                setAuthState,
+                userInfo,
+                setUserInfo,
+                authToken,
+                setAuthToken,
             }}
         >
             {children}
@@ -43,8 +51,4 @@ export const useAuthContext = () => {
         throw new Error("AuthContext must be used within an AuthProvider");
     }
     return context;
-};
-
-export const getAuthToken = () => {
-    return JSONSerializer.parse<AuthContextValue>(localStorage.getItem(AUTH_STORAGE_KEY) ?? "");
 };

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { getAuthToken } from "@/features/auth/context/AuthContext";
+import { getStoredAuthToken } from "@/features/auth/utils/getStoredAuthToken";
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -8,7 +8,7 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const { authToken } = getAuthToken();
+    const authToken = getStoredAuthToken();
 
     if (!authToken) return config;
 
