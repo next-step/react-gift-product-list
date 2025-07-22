@@ -21,7 +21,13 @@ export const fetchThemeProducts = async (
   limit = 10,
 ): Promise<ThemeProductListResponse> => {
   const res = await apiClient.get<{ data: ThemeProductListResponse }>(
-    `${API_ENDPOINTS.THEMES.PRODUCTS(themeId)}?cursor=${cursor}&limit=${limit}`,
+    API_ENDPOINTS.THEMES.PRODUCTS(themeId),
+    {
+      params: {
+        cursor,
+        limit,
+      },
+    },
   )
   return res.data.data
 }
