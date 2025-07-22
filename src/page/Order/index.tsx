@@ -5,7 +5,7 @@ import SenderInfo from './components/SenderInfo';
 import ReceiverField from './components/ReceiverField';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
-import { ROUTES } from '@/routes/routes';
+import { ROUTES } from '@/routes/Routes';
 import toLocaleString from '@/utils/toLocaleString';
 import useRanking from './hooks/useRnaking';
 import ProductInfo from './components/ProductInfo';
@@ -27,8 +27,10 @@ const OrderPage = () => {
   const orderForm = useForm<OrderInfoValues>({
     defaultValues: { message: '축하해요.', name: userInfo.name, receiverInfos: [] },
   });
+  const orderData = orderForm.getValues();
+  const price = orderData.receiverInfos.length * (productSummaryData?.price || 0);
 
-  const onSubmit = async (orderData: OrderInfoValues) => {
+  const onSubmit = async () => {
     if (!id) return;
     if (orderData.receiverInfos.length <= 0) {
       toast('받는 사람이 없습니다');
@@ -64,7 +66,7 @@ const OrderPage = () => {
             <SenderInfo />
             <ReceiverField />
             {productSummaryData && <ProductInfo productSummaryData={productSummaryData} />}
-            <OrderButton type="submit">{toLocaleString(29000)}원 주문하기</OrderButton>
+            <OrderButton type="submit">{toLocaleString(price)}원 주문하기</OrderButton>
           </form>
         </FormProvider>
       </Section>
