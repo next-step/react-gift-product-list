@@ -29,6 +29,7 @@ type ThemeProducts = {
 export const useThemesProductItem = () => {
   const urlArray = new URL(window.location.href).pathname.split('/');
   const themeId = urlArray[urlArray.length - 1];
+  console.log(themeId);
 
   const [products, setProducts] = useState<ThemeProducts | null>(null);
   const [cursor, setCursor] = useState(0);
