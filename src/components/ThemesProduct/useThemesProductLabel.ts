@@ -1,6 +1,7 @@
 import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
 import { URLS } from '@src/assets/urls';
+import type { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, type NavigateFunction } from 'react-router-dom';
 
@@ -27,13 +28,9 @@ export const useThemesProductLabel = (navigate: NavigateFunction) => {
       };
       try {
         const fetchData = await apiClient(apiReqeustParmas);
-        if (fetchData.data.statusCode === 404) {
-          navigate(URLS.home);
-        } else {
-          setLabel(fetchData.data);
-        }
-      } catch (error) {
-        return error;
+        setLabel(fetchData.data);
+      } catch (error: unknown) {
+        if ((error as AxiosError).status === 404) navigate(URLS.home);
       }
     };
 
