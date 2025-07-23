@@ -11,6 +11,7 @@ import OrderPage from './pages/OrderPage';
 import { PrivateRoute } from './router/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ThemePage from './pages/ThemePage';
 
 const theme = { palette, typography, spacing } as const;
 
@@ -22,6 +23,7 @@ const App = () => (
       <AuthProvider>
         <Routes>
           <Route path="/" element={<GiftPage />} />
+          <Route path="/theme/:themeId" element={<ThemePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my" element={<PrivateRoute><MyPage /></PrivateRoute>} />
           <Route path="/order/:itemId" element={<PrivateRoute><OrderPage /></PrivateRoute>} />
