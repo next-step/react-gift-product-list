@@ -1,13 +1,11 @@
 import { useParams } from 'react-router-dom'
 import Layout from '@/components/Layout'
 import RecipientOverlay from '@/components/RecipientOverlay'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import CardData from '@/data/CardData'
-import { mockProductList } from '@/data/products'
 import type { Recipient } from '@/components/RecipientOverlay'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/Root'
-import { useEffect, useRef } from 'react'
 import {
   Container,
   Section,
@@ -27,28 +25,41 @@ import {
   ErrorText,
   RecipientTable,
 } from '@/styles/OrderPage.styled'
+import { toast } from 'react-toastify'
 
 export const OrderPage = () => {
-  const didNavigate = useRef(false)
   const { productId } = useParams()
   const navigate = useNavigate()
 
   const [product, setProduct] = useState(null)
-  useEffect(() => {
-    if (!productId) return
 
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    if (userInfo?.name) {
+      setSenderName(userInfo.name)
+    }
+  }, [])
+
+  useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`/api/products/${productId}`)
+        const res = await fetch(`/api/products/${productId}/summary`)
+        if (!res.ok) {
+          toast.error('존재하지 않는 상품입니다.')
+          setTimeout(() => navigate(PATHS.HOME), 0)
+          return
+        }
         const data = await res.json()
         setProduct(data.data)
       } catch (err) {
-        console.error(err)
+        toast.error('상품 정보 요청 중 오류 발생')
+        setTimeout(() => navigate(PATHS.HOME), 0)
       }
     }
 
     fetchProduct()
   }, [productId])
+
   const [orderCompleted, setOrderCompleted] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(CardData[0]?.id || null)
   const selectedCard = CardData.find((card) => card.id === selectedCardId)
@@ -64,51 +75,76 @@ export const OrderPage = () => {
     recipients: '',
   })
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     const errors = {
       message: '',
       senderName: '',
       recipients: '',
     }
 
-    if (!message.trim()) {
-      errors.message = '메시지를 입력해주세요.'
-    }
-    if (!senderName.trim()) {
+    if (!message.trim()) errors.message = '메시지를 입력해주세요.'
+    if (!senderName.trim())
       errors.senderName = '보내는 사람 이름을 입력해주세요.'
-    }
-    if (recipients.length === 0) {
+    if (recipients.length === 0)
       errors.recipients = '받는 사람을 한 명 이상 추가해주세요.'
-    }
 
     setFormErrors(errors)
-
     const hasErrors = Object.values(errors).some((e) => e)
     if (hasErrors) return
 
-    alert(
-      `주문이 완료되었습니다.
-      상품명: ${product?.name || ''}
-      구매 수량: ${totalQuantity}
-      발신자 이름: ${senderName}
-      메시지: ${message}`
-    )
-    setOrderCompleted(true)
-    if (!didNavigate.current) {
+    const storedUserInfo = localStorage.getItem('userInfo')
+    let authHeader = ''
+    if (storedUserInfo) {
+      const userInfo = JSON.parse(storedUserInfo)
+      if (userInfo.authToken) {
+        authHeader =
+          userInfo.authToken === 'dummy-token'
+            ? userInfo.authToken
+            : `Bearer ${userInfo.authToken}`
+      }
+    }
+    try {
+      const res = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+        },
+        body: JSON.stringify({
+          productId: Number(productId),
+          ordererName: senderName,
+          messageCardId: String(selectedCardId),
+          message,
+          receivers: recipients.map((r) => ({
+            name: r.name,
+            phoneNumber: String(r.phone),
+            quantity: r.quantity,
+          })),
+        }),
+      })
+      if (!res.ok) {
+        const text = await res.text()
+
+        console.error('응답:', res.status)
+
+        if (res.status === 401) {
+          toast.error('로그인이 필요합니다.')
+          navigate(PATHS.LOGIN)
+          return
+        }
+
+        toast.error(`주문 실패: ${text}`)
+        return
+      }
+
+      toast.success('주문이 완료되었습니다.')
+      setOrderCompleted(true)
+
       navigate(PATHS.HOME)
-      didNavigate.current = true
+    } catch (err) {
+      toast.error('주문 요청 중 오류가 발생했습니다.')
     }
   }
-  useEffect(() => {
-    if (orderCompleted && !didNavigate.current) {
-      const timer = setTimeout(() => {
-        navigate(PATHS.HOME)
-        didNavigate.current = true
-      }, 3000)
-
-      return () => clearTimeout(timer)
-    }
-  }, [orderCompleted, navigate])
 
   const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0)
   const totalPrice =
@@ -150,7 +186,15 @@ export const OrderPage = () => {
         </Section>
 
         <Section>
-          <Label>보내는 사람</Label>
+          <Label
+            style={{
+              textAlign: 'left',
+              display: 'block',
+              marginBottom: '0.5rem',
+            }}
+          >
+            보내는 사람
+          </Label>
           <Input
             placeholder="이름을 입력하세요."
             value={senderName}
@@ -231,7 +275,15 @@ export const OrderPage = () => {
         </Section>
 
         <Section>
-          <Label>상품 정보</Label>
+          <Label
+            style={{
+              textAlign: 'left',
+              display: 'block',
+              marginBottom: '0.5rem',
+            }}
+          >
+            상품 정보
+          </Label>
           <ProductInfo>
             {product?.imageURL ? (
               <img
@@ -267,7 +319,7 @@ export const OrderPage = () => {
                 >
                   상품가{' '}
                 </span>
-                {product?.price?.sellingPrice?.toLocaleString() || 0}원
+                {product?.price.toLocaleString() || 0}원
               </Price>
             </ProductDetails>
           </ProductInfo>

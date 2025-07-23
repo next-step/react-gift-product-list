@@ -142,7 +142,8 @@ export const RecipientTable = styled.table`
     background: #f8f8f8;
   }
 
-  th, td {
+  th,
+  td {
     text-align: left;
     padding: 0.75rem 1rem;
     font-size: 0.9rem;

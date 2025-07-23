@@ -1,20 +1,25 @@
-import { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { ReactNode } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
+import { PATHS } from '@/Root'
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isLoggedIn } = useAuth();
-  const location = useLocation();
+  const { user } = useAuth()
+  const location = useLocation()
 
-  if (!isLoggedIn) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (user === undefined) {
+    return null
   }
 
-  return <>{children}</>;
-};
+  if (!user) {
+    return <Navigate to={PATHS.LOGIN} replace state={{ from: location }} />
+  }
 
-export default ProtectedRoute;
+  return <>{children}</>
+}
+
+export default ProtectedRoute

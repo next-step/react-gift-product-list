@@ -65,7 +65,6 @@ export const colors = {
     1000: '#4a1209',
   },
 
-
   kakaoYellow: '#fee500',
   kakaoYellowHover: '#ffea2e',
   kakaoYellowActive: '#d5c000',
@@ -127,7 +126,7 @@ export const typography = {
     fontWeight: 400,
     lineHeight: '1.1875rem',
   },
-  body1Bold: {              
+  body1Bold: {
     fontSize: '1rem',
     fontWeight: 700,
     lineHeight: '1.375rem',

@@ -65,7 +65,14 @@ interface Props {
   price: number
   onClick: () => void
 }
-export const RankingItem = ({ rank, image, brand, name, price, onClick  }: Props) => {
+export const RankingItem = ({
+  rank,
+  image,
+  brand,
+  name,
+  price,
+  onClick,
+}: Props) => {
   return (
     <Card>
       <ImageWrapper onClick={onClick}>

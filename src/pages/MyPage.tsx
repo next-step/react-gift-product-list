@@ -46,8 +46,8 @@ export default function MyPage() {
     <Layout>
       <MyPageWrapper>
         <Title>마이 페이지</Title>
-        <Greeting>{user}님 안녕하세요!</Greeting>
-        <Email>이메일 주소는 {user}@naver.com입니다.</Email>
+        <Greeting>{user?.name}님 하세요!</Greeting>
+        <Email>이메일 주소는 {user?.email}입니다.</Email>
         <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
       </MyPageWrapper>
     </Layout>

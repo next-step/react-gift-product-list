@@ -5,7 +5,7 @@ import { HomeContentCard } from '@/components/HomeContentCard'
 import { RankingSection } from '@/components/RankingSection/RankingSection'
 import { MotivationBanner } from '@/components/MotivationBanner'
 import { CategorySection } from '@/components/CategorySection/CategorySection'
-import './App.css' 
+import './App.css'
 
 const AppWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.gray[100]};
@@ -27,5 +27,6 @@ function App() {
         </main>
       </Layout>
     </AppWrapper>
-  );
-}export default App;
+  )
+}
+export default App

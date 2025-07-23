@@ -20,7 +20,6 @@ export const RankingSortTabs = () => {
       {tabs.map((label) => (
         <Tab key={label}>{label}</Tab>
       ))}
-
     </TabWrapper>
   )
 }

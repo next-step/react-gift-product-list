@@ -76,12 +76,14 @@ export default function LoginPage() {
     isValid,
   } = LoginForm()
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!isValid) return
 
-    login(id)
-    
+    try {
+      await login(id, pw)
+      navigate(fromPath, { replace: true })
+    } catch (err) {}
   }
 
   useEffect(() => {
