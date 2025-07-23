@@ -10,6 +10,11 @@ export interface FetchOrderProps {
   orderData: OrderInfoValues;
   id: string;
 }
+interface fetchThemeIdProductsProps {
+  index: number;
+  currentCursor: number;
+  currentPage: number;
+}
 interface OrderResponseData {
   success: boolean;
 }
@@ -50,6 +55,10 @@ export const requests = {
   fetchTheme: (): Promise<ThemeInfo[]> => apiClient.get('/api/themes'),
   fetchThemeIdInfo: (id: number): Promise<ThemeIdInfoData> =>
     apiClient.get(`/api/themes/${id}/info`),
-  fetchThemeIdProducts: (id: number): Promise<ThemeIdProductsData> =>
-    apiClient.get(`/api/themes/${id}/products`),
+  fetchThemeIdProducts: ({
+    index,
+    currentCursor,
+    currentPage,
+  }: fetchThemeIdProductsProps): Promise<ThemeIdProductsData> =>
+    apiClient.get(`/api/themes/${index}/products?cursor=${currentCursor}?page=${currentPage}`),
 };

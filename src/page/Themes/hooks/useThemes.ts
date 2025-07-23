@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { ThemeIdInfoData, ThemeIdProductsData } from '..';
+import type { ThemeIdInfoData } from '..';
 import axios from 'axios';
 import { requests } from '@/api/requests';
 import { ROUTES } from '@/routes/Routes';
@@ -11,16 +11,16 @@ const useThemes = () => {
   const navigate = useNavigate();
 
   const [themeIdInfo, setThemeIdInfo] = useState<ThemeIdInfoData>();
-  const [themeIdProducts, setThemeIdProducts] = useState<ThemeIdProductsData>();
+  //   const [themeIdProducts, setThemeIdProducts] = useState<ThemeIdProductsData>();
 
   useEffect(() => {
     if (!index) return;
     const fetchData = async () => {
       try {
         const infoResponse = await requests.fetchThemeIdInfo(index);
-        const productsResponse = await requests.fetchThemeIdProducts(index);
+        // const productsResponse = await requests.fetchThemeIdProducts(index);
         setThemeIdInfo(infoResponse);
-        setThemeIdProducts(productsResponse);
+        // setThemeIdProducts(productsResponse);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const status = error.response?.status;
@@ -33,6 +33,6 @@ const useThemes = () => {
     fetchData();
   }, [index]);
 
-  return { themeIdInfo, themeIdProducts };
+  return { themeIdInfo };
 };
 export default useThemes;

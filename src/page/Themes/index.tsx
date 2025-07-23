@@ -38,14 +38,14 @@ export interface ThemeIdInfoData {
 }
 
 const ThemesPage = () => {
-  const { themeIdInfo, themeIdProducts } = useThemes();
+  const { themeIdInfo } = useThemes();
 
-  if (!themeIdProducts || !themeIdInfo) return null;
+  if (!themeIdInfo) return null;
 
   return (
     <Container>
       <CardSection themeIdInfo={themeIdInfo} />
-      <GridSection themeIdProducts={themeIdProducts} />
+      <GridSection />
     </Container>
   );
 };
