@@ -41,4 +41,8 @@
 - useInfiniteScroll 훅 작성
 - useInfiniteScroll을 ProductList.tsx에서 연동하여 무한 스크롤 구현
 
+#### EmptyMessage 컴포넌트화
+
+- 기존에 styled-component로 사용하던 EmptyMessage를 컴포넌트로 리팩토링
+
 ## 리뷰 반영

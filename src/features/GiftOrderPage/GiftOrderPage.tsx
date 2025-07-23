@@ -11,7 +11,6 @@ import ReceiveModal from '@features/GiftOrderPage/components/ReceiveModal';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormProvider } from 'react-hook-form';
-import styled from '@emotion/styled';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '@contexts/AuthContext';
@@ -22,6 +21,7 @@ import useReceiveModal from './hooks/useReceiveModal';
 import useOrderSubmit from './hooks/useOrderSubmit';
 import useOrderInvalid from './hooks/useOrderInvalid';
 import type { ProductSummaryInfo } from './OrderTypes';
+import EmptyMessage from '@components/common/EmptyMessage';
 
 const GiftOrderPage = () => {
   // 데이터 fetch
@@ -100,11 +100,3 @@ const GiftOrderPage = () => {
 };
 
 export default GiftOrderPage;
-
-const EmptyMessage = styled.div(({ theme }) => ({
-  ...theme.typography.body1Regular,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '28.75rem',
-}));

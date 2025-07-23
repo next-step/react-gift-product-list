@@ -1,6 +1,7 @@
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import type { GridProps, RankedProduct } from './RankingTypes';
 import styled from '@emotion/styled';
+import EmptyMessage from '@components/common/EmptyMessage';
 
 const ProductGrid = ({
   products,
@@ -108,14 +109,6 @@ const Price = styled.p(({ theme }) => ({
   marginTop: '4px',
   fontWeight: theme.typography.body2Bold.fontWeight,
   fontSize: theme.typography.body2Bold.fontSize,
-}));
-
-const EmptyMessage = styled.div(({ theme }) => ({
-  ...theme.typography.body1Regular,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '28.75rem',
 }));
 
 const ToggleButton = styled.button(({ theme }) => ({

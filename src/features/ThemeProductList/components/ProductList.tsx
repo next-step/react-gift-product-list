@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { fetchThemeProducts } from '@apis/themeApi';
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
+import EmptyMessage from '@components/common/EmptyMessage';
 
 export interface ThemeProduct {
   id: number;
@@ -80,11 +81,8 @@ const ProductList = ({ id }: { id: string }) => {
     isFetching,
   });
 
-  // if (loading) return <LoadingSpinner />;
   if (isFetching && products.length === 0) return <LoadingSpinner />;
 
-  // if (!data?.list || data.list.length === 0)
-  //   return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
   if (!isFetching && products.length === 0)
     return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
 
@@ -107,12 +105,4 @@ const GridWrqpper = styled.div(({ theme }) => ({
   gridTemplateColumns: 'repeat(3, 1fr)',
   gap: theme.spacing.spacing5,
   padding: theme.spacing.spacing6,
-}));
-
-const EmptyMessage = styled.div(({ theme }) => ({
-  ...theme.typography.body1Regular,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '28.75rem',
 }));
