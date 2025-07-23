@@ -5,6 +5,7 @@ import type { FormValues } from '@/types/orderFormType';
 import styled from '@emotion/styled';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
 
 const Container = styled.button`
   all: unset;
@@ -40,7 +41,7 @@ export const OrderButton = () => {
   const recipientInfo = useWatch({ control, name: 'recipientInfo' });
   const receivers = recipientInfo?.map(({ recipientName, phoneNumber, amount }) => ({
     name: recipientName,
-    phoneNumber: phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'),
+    phoneNumber: formatPhoneNumber(phoneNumber),
     quantity: Number(amount),
   }));
   let totalAmount = 0;
