@@ -27,8 +27,8 @@ const Text = styled.div`
 
 export const OrderButton = () => {
   const navigate = useNavigate();
-  const storage = sessionStorage.getItem('userInfo');
-  const token = storage ? JSON.parse(storage).authToken : '';
+  const storedUserInfo = sessionStorage.getItem('userInfo');
+  const token = storedUserInfo ? JSON.parse(storedUserInfo).authToken : '';
   const {
     control,
     watch,

@@ -10,16 +10,16 @@ type UserInfo = {
 };
 
 export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
-  const storage = sessionStorage.getItem('userInfo');
+  const storedUserInfo = sessionStorage.getItem('userInfo');
   const [user, setUser] = useState({
-    email: storage ? JSON.parse(storage).email : '',
+    email: storedUserInfo ? JSON.parse(storedUserInfo).email : '',
     password: '',
   });
 
   useEffect(() => {
     if (!user.email) return;
 
-    if (JSON.parse(storage!)?.authToken) return;
+    if (JSON.parse(storedUserInfo!)?.authToken) return;
 
     const login = async () => {
       try {
@@ -51,7 +51,7 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     login();
-  }, [storage, user]);
+  }, [storedUserInfo, user]);
 
   return <UserInfoContext.Provider value={{ user, setUser }}>{children}</UserInfoContext.Provider>;
 };
