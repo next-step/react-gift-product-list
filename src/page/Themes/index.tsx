@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import CardSection from './components/CardSection';
 import GridSection from './components/GridSection';
-import useThemes from './hooks/useThemes';
+import useThemeInfo from './hooks/useThemeInfo';
 
 interface BrandInfo {
   id: number;
@@ -38,7 +38,7 @@ export interface ThemeIdInfoData {
 }
 
 const ThemesPage = () => {
-  const { themeIdInfo } = useThemes();
+  const { themeIdInfo } = useThemeInfo();
 
   if (!themeIdInfo) return null;
 
