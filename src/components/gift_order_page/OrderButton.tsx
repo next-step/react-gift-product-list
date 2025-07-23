@@ -1,4 +1,3 @@
-import apiClient from '@/api/apiClient';
 import axios from 'axios';
 import useProductInfo from '@/hooks/useProductInfo';
 import type { FormValues } from '@/types/orderFormType';
@@ -6,6 +5,7 @@ import styled from '@emotion/styled';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
+import authApi from '@/api/authApi';
 
 const Container = styled.button`
   all: unset;
@@ -28,8 +28,6 @@ const Text = styled.div`
 
 export const OrderButton = () => {
   const navigate = useNavigate();
-  const storedUserInfo = sessionStorage.getItem('userInfo');
-  const token = storedUserInfo ? JSON.parse(storedUserInfo).authToken : '';
   const {
     control,
     watch,
@@ -54,22 +52,13 @@ export const OrderButton = () => {
 
   const order = async () => {
     try {
-      const response = await apiClient.post(
-        '/api/order',
-        {
-          productId: id,
-          message: message,
-          messageCardId: messageCardId,
-          ordererName: senderName,
-          receivers: receivers,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        }
-      );
+      const response = await authApi.post('/api/order', {
+        productId: id,
+        message: message,
+        messageCardId: messageCardId,
+        ordererName: senderName,
+        receivers: receivers,
+      });
       console.log('주문 성공: ', response.data);
       alert(`
             주문이 완료되었습니다.
