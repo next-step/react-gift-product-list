@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { PATH } from '@/constants/paths';
 
 type PrivateRouteProps = {
   children: ReactNode;
@@ -11,7 +12,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const location = useLocation();
 
   if (!userInfo) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to={PATH.LOGIN} state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

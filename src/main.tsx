@@ -12,19 +12,20 @@ import PrivateRoute from '@/PrivateRoute';
 import OrderPage from '@/pages/OrderPage/OrderPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { PATH } from '@/constants/paths';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: PATH.ROOT,
     element: <App />, // 기존 UI
     errorElement: <NotFoundPage />,
   },
   {
-    path: '/login',
+    path: PATH.LOGIN,
     element: <LoginPage />,
   },
   {
-    path: '/my',
+    path: PATH.MY_PAGE,
     element: (
       <PrivateRoute>
         <MyPage />
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/order/:id',
+    path: PATH.ORDER_DETAIL_PATH,
     element: (
       <PrivateRoute>
         <OrderPage />

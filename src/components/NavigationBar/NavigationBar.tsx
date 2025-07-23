@@ -2,6 +2,7 @@ import { ChevronLeft, UserRound } from 'lucide-react';
 import * as S from './NavigationBar.styles';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { PATH } from '@/constants/paths';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
@@ -13,9 +14,9 @@ const NavigationBar = () => {
 
   const goToLogin = () => {
     if (userInfo) {
-      navigate('/my'); // 로그인됨
+      navigate(PATH.MY_PAGE); // 로그인됨
     } else {
-      navigate('/login'); // 로그인안됨
+      navigate(PATH.LOGIN); // 로그인안됨
     }
   };
 

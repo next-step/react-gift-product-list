@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import NavigationBar from '@/components/NavigationBar/NavigationBar';
+import { PATH } from '@/constants/paths';
 
 const MyPage = () => {
   const { userInfo, logout } = useAuth();
@@ -10,7 +11,7 @@ const MyPage = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login', { replace: true });
+    navigate(PATH.LOGIN, { replace: true });
   };
 
   return (
