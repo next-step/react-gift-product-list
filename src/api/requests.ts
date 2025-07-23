@@ -4,6 +4,7 @@ import type { GiftRankingItem, RankingApiProps } from '@/page/Home/hooks/useRank
 import type { OrderInfoValues } from '@/page/Order';
 import type { ProductSummaryData } from '@/page/Order/hooks/useRnaking';
 import type { ThemeInfo } from '@/page/Home/hooks/useTheme';
+import type { ThemeIdInfoData, ThemeIdProductsData } from '@/page/Themes';
 
 export interface FetchOrderProps {
   orderData: OrderInfoValues;
@@ -47,4 +48,8 @@ export const requests = {
     );
   },
   fetchTheme: (): Promise<ThemeInfo[]> => apiClient.get('/api/themes'),
+  fetchThemeIdInfo: (id: number): Promise<ThemeIdInfoData> =>
+    apiClient.get(`/api/themes/${id}/info`),
+  fetchThemeIdProducts: (id: number): Promise<ThemeIdProductsData> =>
+    apiClient.get(`/api/themes/${id}/products`),
 };

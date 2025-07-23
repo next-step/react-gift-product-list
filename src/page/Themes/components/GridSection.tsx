@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import type { ThemeProductsData } from '..';
+import type { ThemeIdProductsData } from '..';
+
 interface GridSectionProps {
-  themeProducts?: ThemeProductsData;
+  themeIdProducts?: ThemeIdProductsData;
 }
-const GridSection = ({ themeProducts }: GridSectionProps) => {
-  console.log(themeProducts);
+const GridSection = ({ themeIdProducts }: GridSectionProps) => {
+  console.log('GridSection', themeIdProducts);
   return (
     <Container>
       <GridContainer></GridContainer>

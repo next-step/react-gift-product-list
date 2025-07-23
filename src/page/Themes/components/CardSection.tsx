@@ -1,18 +1,17 @@
 import styled from '@emotion/styled';
-import type { ThemeInfo } from '..';
+import type { ThemeIdInfoData } from '..';
 
 interface CardSectionProps {
-  themeInfo?: ThemeInfo;
+  themeIdInfo?: ThemeIdInfoData;
 }
 
-const CardSection = ({ themeInfo }: CardSectionProps) => {
-  if (!themeInfo) return null;
-  console.log(themeInfo);
+const CardSection = ({ themeIdInfo }: CardSectionProps) => {
+  if (!themeIdInfo) return null;
   return (
-    <Section key={themeInfo.themeId} bg={themeInfo.backgroundColor}>
-      <Subtitle2Bold>{themeInfo.name}</Subtitle2Bold>
-      <Title1Bold>{themeInfo.title}</Title1Bold>
-      <Body1Regular>{themeInfo.description}</Body1Regular>
+    <Section key={themeIdInfo.themeId} bg={themeIdInfo.backgroundColor}>
+      <Subtitle2Bold>{themeIdInfo.name}</Subtitle2Bold>
+      <Title1Bold>{themeIdInfo.title}</Title1Bold>
+      <Body1Regular>{themeIdInfo.description}</Body1Regular>
     </Section>
   );
 };
