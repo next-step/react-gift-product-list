@@ -15,7 +15,7 @@ import {
   SubText,
   SubTitle,
 } from '@/styles/CommomStyle/Common.styled';
-import type { ProductItemSummary } from '@/type/product';
+import { defaultProductItemSummary, type ProductItemSummary } from '@/type/GiftAPI/product';
 import { orderAPI } from '@/utils/orderApi';
 import { useEffect } from 'react';
 
@@ -35,7 +35,7 @@ const OrderCheck = () => {
   const id = idParam !== null ? Number(idParam) : null;
 
   const productUrl = `http://localhost:3000/api/products/${id}/summary`;
-  const { item, error } = useFetchFromUrlT<ProductItemSummary>(productUrl);
+  const { item, error } = useFetchFromUrlT<ProductItemSummary>(productUrl,defaultProductItemSummary);
 
 
   useEffect(() => {

@@ -1,14 +1,9 @@
 // src/context/AuthContext.tsx
+import type { UserInfo } from '@/type/GiftAPI/user';
 import { logInAPI } from '@/utils/logInAPI';
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const AUTH_KEY = 'login_user';
-
-type UserInfo = {
-  email: string;
-  name: string;
-  authToken: string;
-}
 
 type AuthContextType = {
   user: UserInfo | null;
@@ -34,8 +29,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logIn = useCallback(async (email: string, password: string) => {
     try {
       const response = await logInAPI(email, password);
-      setUser(response.data)
-      localStorage.setItem(AUTH_KEY, JSON.stringify(response.data));
+      setUser(response)
+      localStorage.setItem(AUTH_KEY, JSON.stringify(response));
     } catch (error) {
       throw new Error(`${(error as Error).message}`);
     }

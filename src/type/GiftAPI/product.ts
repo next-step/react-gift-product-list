@@ -27,11 +27,19 @@ export const defaultProductItemFromTheme = {
 }
 
 export interface ProductItemSummary {
-  id: 11526198;
+  id: number;
   name: string;
   brandName: string;
   price: number
   imageURL: string;
+}
+
+export const defaultProductItemSummary = {
+  id: 0,
+  name: '',
+  brandName: '',
+  price: 0,
+  imageURL: ''
 }
 
 export interface ThemeInfo {

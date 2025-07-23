@@ -15,7 +15,7 @@ import {
 } from '@/styles/CommomStyle/Common.styled';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { ButtonSpace, CancleButton, Hr1Gray, ReceiverOne, ReceiverTitle, SubmitButton, XButton } from './ReceiverModal.styled';
-import type { Receiver } from '@/type/order';
+import type { Receiver } from '@/type/GiftAPI/order';
 
 type ModalStateProps = {
   isOpen: boolean;

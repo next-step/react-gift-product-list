@@ -1,4 +1,4 @@
-import type { Receiver } from '@/type/order';
+import type { Receiver } from '@/type/GiftAPI/order';
 import axios from 'axios';
 
 const orderUrl = 'http://localhost:3000/api/order';

@@ -7,12 +7,12 @@ const themeUrl = 'http://localhost:3000/api/themes'
 
 
 const GiftThemeList = () => {
-  const { item, loding, error } = useFetchFromUrlT<[]>(themeUrl, []);
+  const { item, loading, error } = useFetchFromUrlT<[]>(themeUrl, []);
   const navigate = useNavigate();
 
   if (error) return null
 
-  if (loding) return (
+  if (loading) return (
     <SpinnerWrapper>
       <Spinner />
     </SpinnerWrapper>

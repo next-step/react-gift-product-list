@@ -5,11 +5,12 @@ import {
 } from './GiftRanking.styled';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import type { ProductItem } from '@/type/product';
+import type { ProductItem } from '@/type/GiftAPI/product';
 import type { RankType, TargetType } from '@/type/giftRanking';
-import { CentorAlignDiv240, EmptyDiv16h, Spinner, SpinnerWrapper } from '@/styles/CommomStyle/Common.styled';
+import { CentorAlignDiv240, EmptyDiv16h } from '@/styles/CommomStyle/Common.styled';
 import { BrandImage, Price, ProductCard, ProductGrid, ProductImage, ProductInfo } from '@/styles/CommomStyle/ProductList';
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
+import Loading from '../Loading';
 
 const baseRankingUrl = 'http://localhost:3000/api/products/ranking'
 
@@ -25,7 +26,7 @@ const GIFTLENGTH = 6;
 const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
     const RankingUrl = `${baseRankingUrl}?targetType=${targetType}&rankType=${rankType}`
     const [isExpanded, setIsExpanded] = useState(false);
-    const { item, loding, error } = useFetchFromUrlT<[]>(RankingUrl, []);
+    const { item, loading, error } = useFetchFromUrlT<[]>(RankingUrl, []);
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -43,12 +44,10 @@ const GiftRankingList = ({ targetType, rankType }: GiftRankingListProps) => {
 
     if (error) return null
 
-    if (item === null || loding) return (
-        <SpinnerWrapper>
-            <Spinner />
-        </SpinnerWrapper>
+    if (item === null || loading) return (
+        <Loading/>
     )
-    if (!item || item?.length === 0) return (
+    if (item?.length === 0) return (
         <CentorAlignDiv240>
             <p>상품이 없습니다</p>
         </CentorAlignDiv240>

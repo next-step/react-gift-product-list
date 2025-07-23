@@ -5,7 +5,7 @@ import ProductList from '@/component/theme/ProductList';
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
 import { DefaultDiv, EmptyDiv4h, EmptyDiv8h } from '@/styles/CommomStyle/Common.styled';
 import { ThemeDescription, ThemeName, ThemeTitle, ThemeTop } from '@/styles/CommomStyle/themes.styled';
-import { defaultThemeInfo, type ThemeInfo } from '@/type/product';
+import { defaultThemeInfo, type ThemeInfo } from '@/type/GiftAPI/product';
 import { useParams } from 'react-router-dom';
 //import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
 

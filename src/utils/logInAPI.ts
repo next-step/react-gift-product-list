@@ -1,14 +1,15 @@
+import type { UserInfo } from '@/type/GiftAPI/user';
 import axios from 'axios';
 
 const loginUrl = 'http://localhost:3000/api/login';
 
-export async function logInAPI( email:string, password:string) {
+export async function logInAPI( email:string, password:string) : Promise<UserInfo> {
   try {
-    const response = await axios.post(loginUrl, {
+    const response = await axios.post<{ data: UserInfo }>(loginUrl, {
       email,
       password
     });
-    return response.data
+    return response.data.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.data?.message);
