@@ -128,4 +128,7 @@ export const reset = css`
   html {
     scrollbar-gutter: stable;
   }
+  * {
+    box-sizing: border-box;
+  }
 `;

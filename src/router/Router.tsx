@@ -5,24 +5,28 @@ import NotFound from '@pages/NotFound';
 import { URLS } from '@assets/urls';
 import MyPage from '@pages/MyPage';
 import Order from '@pages/Order';
-
+import ThemesProduct from '@src/pages/ThemesProduct';
 const Router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
+    Component: Home,
   },
   {
     path: URLS.login,
-    element: <Login />,
+    Component: Login,
   },
   {
     path: URLS.mypage,
-    element: <MyPage />,
+    Component: MyPage,
   },
-  { path: URLS.order, element: <Order /> },
+  {
+    path: `${URLS.themes}/:themeId`,
+    Component: ThemesProduct,
+  },
+  { path: URLS.order, Component: Order },
   {
     path: '*',
-    element: <NotFound />,
+    Component: NotFound,
   },
 ]);
 export default Router;

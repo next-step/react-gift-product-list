@@ -1,6 +1,7 @@
 export const URLS = {
-  login: '/login',
   home: '/',
+  login: '/login',
   mypage: '/my',
   order: '/order',
+  themes: '/themes',
 };
