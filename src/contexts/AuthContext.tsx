@@ -59,30 +59,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast.error(error.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
       throw error;
     }
-
-    /*
-    try {
-      const response = await axios.post<UserInfo>('http://localhost:3000/api/login', {
-        email: credentials.email,
-        password: credentials.pw,
-      });
-
-      const { email, name, authToken } = response.data.data;
-      const newUserInfo = { email, name, authToken };
-
-      setUserInfo(newUserInfo);
-      localStorage.setItem('userInfo', JSON.stringify(newUserInfo));
-      console.log('로그인 성공:', newUserInfo);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('로그인 실패:', error.response?.data || error.message);
-        throw new Error(error.response?.data?.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
-      } else {
-        console.error('로그인 중 예상치 못한 오류 발생:', error);
-        throw new Error('예상치 못한 오류가 발생했습니다.');
-      }
-    }
-    */
   };
 
   const logout = () => {
