@@ -28,6 +28,7 @@ import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useAuth } from '@contexts/AuthContext';
 
 export interface FormSectionProps {
   register: UseFormRegister<MultiOrderFormData>;
@@ -103,7 +104,7 @@ const GiftOrderPage = () => {
     error,
   } = useFetch<ProductSummaryInfo>(`/products/${id}/summary`);
 
-  // 로딩 및 에러 처리
+  //에러 처리
   const navigate = useNavigate();
   useEffect(() => {
     if (error && axios.isAxiosError(error)) {
@@ -113,15 +114,22 @@ const GiftOrderPage = () => {
           '데이터를 처리하는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.',
           {
             autoClose: 2000,
-            onClose: () => {
-              navigate('/');
-            },
+            onClose: () => navigate('/'),
           }
         );
       }
     }
-  }, [error]);
+  }, [error, navigate]);
 
+  //초기화 로직
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user?.name) {
+      setValue('sender', user.name);
+    }
+  }, [user?.name, setValue]);
+
+  // 로딩 처리
   if (loading) return <LoadingSpinner />;
   if (!productInfo)
     return <EmptyMessage>상품정보를 찾을 수 없습니다</EmptyMessage>;

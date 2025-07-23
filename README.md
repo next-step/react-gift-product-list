@@ -57,4 +57,9 @@
 - useFetch 수정: hasError:boolean -> error: unknown
 - toast를 이용하여 에러 메시지 출력
 
+#### 보내는 사람 초기값 설정
+
+- 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 초기화
+- 의존성 배열 navigate 누락 수정
+
 ## 리뷰 반영
