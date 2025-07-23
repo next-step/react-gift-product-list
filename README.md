@@ -46,4 +46,10 @@
 
 - key를 잘못 주고 있었던 오류 수정
 
+#### api를 사용하여 제품 정보 fetch
+
+- GiftOrderPage 코드 정리
+- api 사용하여 data 가져오기
+- mock data로 사용하고 있던 부분을 가져온 데이터로 교체
+
 ## 리뷰 반영
