@@ -2,9 +2,14 @@
 import { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import Layout from '@/Layout'
-import { fetchThemeProducts, fetchThemes } from '@/api/themes'
+import {
+  fetchThemeProducts,
+  fetchThemeInfo,
+  type ThemeInfo,
+} from '@/api/themes'
 import type { Product } from '@/type'
 import ProductItem from '@/components/ProductItem'
+import ThemeHero from '@/components/ThemeHero'
 import { spacing } from '@/theme/spacing'
 
 const Grid = styled.div`
@@ -18,48 +23,40 @@ export default function ThemeProductsPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [products, setProducts] = useState<Product[]>([])
+    const [info, setInfo] = useState<ThemeInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    async function loadThemeProducts(themeId: number) {
-      const data = await fetchThemeProducts(themeId)
-      setProducts(data.list)
+    const themeId = Number(id)
+
+    if (!id || Number.isNaN(themeId)) {
+      navigate('/', { replace: true })
+      return
     }
 
-    async function handleFallback(originalId: number) {
+    async function load() {
+      setLoading(true)
+      setError(false)
       try {
-        const themes = await fetchThemes()
-        if (themes.length === 0) {
-          throw new Error('No themes')
+        const [infoData, productsData] = await Promise.all([
+          fetchThemeInfo(themeId),
+          fetchThemeProducts(themeId),
+        ])
+        setInfo(infoData)
+        setProducts(productsData.list)
+      } catch (err: any) {
+        const code = err?.statusCode ?? 0
+        if (code === 404) {
+          navigate('/', { replace: true })
+        } else {
+          setError(true)
         }
-        const fallbackId = themes[0].themeId
-        await loadThemeProducts(fallbackId)
-        if (fallbackId !== originalId) {
-          navigate(`/theme/${fallbackId}`, { replace: true })
-        }
-      } catch {
-        setError(true)
-      }
-    }
-    async function load(targetId: number) {
-      try {
-        await loadThemeProducts(targetId)
-      } catch {
-        await handleFallback(targetId)
       } finally {
         setLoading(false)
       }
     }
-    const themeId = Number(id)
-
-    setLoading(true)
-    setError(false)
-    if (!id || Number.isNaN(themeId)) {
-      load(0)
-    } else {
-      load(themeId)
-    }
+    load()
   }, [id, navigate])
 
 
@@ -80,6 +77,7 @@ export default function ThemeProductsPage() {
 
   return (
     <Layout>
+      {info && <ThemeHero info={info} />}
       <Grid>
         {products.map((prod) => (
           <ProductItem key={prod.id} product={prod} />
