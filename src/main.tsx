@@ -21,11 +21,6 @@ createRoot(document.getElementById('root')!).render(
         draggable={true}
         theme="dark"
         transition={Bounce}
-        style={{
-          width: '25rem',
-          color: 'black',
-          backgroundColor: 'white',
-        }}
       />
     </ThemeProvider>
   </StrictMode>

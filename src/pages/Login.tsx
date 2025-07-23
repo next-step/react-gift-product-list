@@ -102,7 +102,7 @@ const Login = () => {
   const [pwdInputFieldStyle, setPwdInputFieldStyle] = useState<InputStyle>('idle');
   const isFirstTry = isFirstIdTry || isFirstPwdTry;
   const isAllValid = !idError && !passwordError;
-  const { setUser } = useUserInfo();
+  const { isValid, setUser } = useUserInfo();
   const MIN_INPUT_LENGTH = 8;
 
   const handleInputFieldStyle = useCallback(
@@ -195,12 +195,20 @@ const Login = () => {
         <Button
           onClick={() => {
             if (!email.endsWith('@kakao.com')) {
-              toast.warn('@kakao.com 이메일 주소만 가능합니다.');
+              toast.warn('@kakao.com 이메일 주소만 가능합니다.', {
+                style: {
+                  width: '25rem',
+                  color: 'black',
+                  backgroundColor: 'white',
+                },
+              });
 
               return;
             }
             setUser({ email, password });
-            navigate(nextPath, { replace: true });
+            if (isValid) {
+              navigate(nextPath, { replace: true });
+            }
           }}
           disabled={isFirstTry ? true : !isAllValid}
         >

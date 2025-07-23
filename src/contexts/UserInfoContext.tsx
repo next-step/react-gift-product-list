@@ -6,6 +6,7 @@ interface User {
 }
 
 interface UserInfoContextType {
+  isValid: boolean;
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
 }

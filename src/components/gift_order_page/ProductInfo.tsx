@@ -94,7 +94,11 @@ export const ProductInfo = () => {
         const response = await publicApi.get(`/api/products/${parsedId}`);
         setCurrentGift(response.data.data);
       } catch {
-        toast.warn('⚠️ 상품 요청 처리 중 오류가 발생했습니다.');
+        toast.warn('⚠️ 상품 요청 처리 중 오류가 발생했습니다.', {
+          style: {
+            width: '25rem',
+          },
+        });
         navigate('/');
       }
     };
