@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(response)
       localStorage.setItem(AUTH_KEY, JSON.stringify(response));
     } catch (error) {
-      throw new Error(`${(error as Error).message}`);
+      throw new Error((error as Error).message);
     }
   }, [])
 

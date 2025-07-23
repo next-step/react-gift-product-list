@@ -1,5 +1,4 @@
 import { BaseUrl } from '@/constant/api';
-import { useAuth } from '@/context/AuthContext';
 import { useOrder } from '@/context/OrderContext';
 import { useReceiver } from '@/context/ReceiverContext';
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
@@ -26,7 +25,6 @@ import { toast, ToastContainer } from 'react-toastify';
 const OrderCheck = () => {
   const { ordererName, message, messageCardId } = useOrder();
   const { receivers } = useReceiver();
-  const { user } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,7 +61,6 @@ const OrderCheck = () => {
           messageCardId,
           ordererName.value,
           receivers,
-          (user?.authToken ?? '')
         )
         alert(`주문이 완료되었습니다. 
         상품명:${name} 
@@ -88,7 +85,7 @@ const OrderCheck = () => {
         <EmptyDiv8h />
         <SubTitle>상품 정보</SubTitle>
         <ProductBox>
-          <ProductImage src={imageUrl} alt={name} />
+          <ProductImage src={imageUrl} alt={name ?? '상품 이미지'} />
 
           <ProductInfo>
             <ProductName>{name}</ProductName>
