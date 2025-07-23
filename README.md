@@ -42,4 +42,8 @@
 - Provider 리팩토링
 - 모달과 GiftOrderPage의 응집도 높이기 위해 코드 수정
 
+#### Ranking Section 오류 수정
+
+- key를 잘못 주고 있었던 오류 수정
+
 ## 리뷰 반영
