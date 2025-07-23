@@ -15,7 +15,7 @@ interface Price {
   discountRate: number;
 }
 
-export interface ProductData {
+export interface ItemData {
   id: number;
   name: string;
   price: Price;
@@ -24,7 +24,7 @@ export interface ProductData {
 }
 
 export interface ThemeIdProductsData {
-  list: ProductData[];
+  list: ItemData[];
   cursor: number;
   hasMoreList: boolean;
 }
@@ -39,6 +39,8 @@ export interface ThemeIdInfoData {
 
 const ThemesPage = () => {
   const { themeIdInfo, themeIdProducts } = useThemes();
+
+  if (!themeIdProducts || !themeIdInfo) return null;
 
   return (
     <Container>

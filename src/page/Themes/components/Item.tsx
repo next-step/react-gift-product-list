@@ -1,29 +1,29 @@
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-import type { ProductData } from '..';
+import type { ItemData } from '..';
 
-const ProductBox = ({ product }: { product: ProductData }) => {
-  if (!product) return null;
+const ItemBox = ({ item }: { item: ItemData }) => {
+  if (!item) return null;
 
   return (
-    <Link to={`/themes/${product.id}`}>
-      <ProductOntainer>
-        <ProductImg alt={product.name} src={product.imageURL} />
-        <ProductBrandInfo>{product.brandInfo.name}</ProductBrandInfo>
-        <ProductName>{product.name}</ProductName>
-        <ProductPrice>{product.price.basicPrice}</ProductPrice>
-      </ProductOntainer>
+    <Link to={`/themes/${item.id}`}>
+      <ItemOntainer>
+        <ItemImg alt={item.name} src={item.imageURL} />
+        <ItemBrandInfo>{item.brandInfo.name}</ItemBrandInfo>
+        <ItemName>{item.name}</ItemName>
+        <ItemPrice>{item.price.basicPrice}</ItemPrice>
+      </ItemOntainer>
     </Link>
   );
 };
 
-export default ProductBox;
+export default ItemBox;
 
-const ProductOntainer = styled.div`
+const ItemOntainer = styled.div`
   width: 100%;
 `;
 
-const ProductImg = styled.img`
+const ItemImg = styled.img`
   width: 100%;
   height: 100%;
   min-height: 100%;
@@ -35,7 +35,7 @@ const ProductImg = styled.img`
   background-color: rgb(243, 244, 245);
 `;
 
-const ProductBrandInfo = styled.p`
+const ItemBrandInfo = styled.p`
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.1875rem;
@@ -43,7 +43,7 @@ const ProductBrandInfo = styled.p`
   margin: 0px;
   text-align: left;
 `;
-const ProductName = styled.p`
+const ItemName = styled.p`
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.1875rem;
@@ -56,7 +56,7 @@ const ProductName = styled.p`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 `;
-const ProductPrice = styled.p`
+const ItemPrice = styled.p`
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.5rem;
