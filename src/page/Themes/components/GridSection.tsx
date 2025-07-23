@@ -1,14 +1,23 @@
 import styled from '@emotion/styled';
-import type { ThemeIdProductsData } from '..';
+import type { ProductData, ThemeIdProductsData } from '..';
+import ProductBox from './Product';
 
 interface GridSectionProps {
   themeIdProducts?: ThemeIdProductsData;
 }
+
 const GridSection = ({ themeIdProducts }: GridSectionProps) => {
-  console.log('GridSection', themeIdProducts);
+  if (!themeIdProducts) return null;
+  const { list, cursor, hasMoreList } = themeIdProducts;
+  console.log(cursor, hasMoreList);
+
   return (
     <Container>
-      <GridContainer></GridContainer>
+      <GridContainer>
+        {list.map((product: ProductData) => (
+          <ProductBox key={product.id} product={product} />
+        ))}
+      </GridContainer>
     </Container>
   );
 };

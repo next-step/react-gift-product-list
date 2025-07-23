@@ -15,7 +15,7 @@ interface Price {
   discountRate: number;
 }
 
-interface Item {
+export interface ProductData {
   id: number;
   name: string;
   price: Price;
@@ -24,7 +24,7 @@ interface Item {
 }
 
 export interface ThemeIdProductsData {
-  list: Item[];
+  list: ProductData[];
   cursor: number;
   hasMoreList: boolean;
 }
