@@ -39,12 +39,8 @@ export const OrderPage = () => {
       setSenderName(userInfo.name)
     }
   }, [])
-  const hasFetched = useRef(false)
 
   useEffect(() => {
-    if (hasFetched.current) return
-    hasFetched.current = true
-
     const fetchProduct = async () => {
       try {
         const res = await fetch(`/api/products/${productId}/summary`)
@@ -133,7 +129,7 @@ export const OrderPage = () => {
 
         if (res.status === 401) {
           toast.error('로그인이 필요합니다.')
-          setTimeout(() => navigate(PATHS.LOGIN), 0)
+          navigate(PATHS.LOGIN)
           return
         }
 
