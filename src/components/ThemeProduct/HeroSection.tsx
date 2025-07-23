@@ -1,5 +1,8 @@
+import { getThemeInfo, getThemeList } from '@/Api/api';
 import type { TypographyType } from '@/theme/tokens';
+import type { ThemeInfo } from '@/types/types';
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
 
 const Wrapper = styled.section`
   width: 100%;
@@ -37,15 +40,44 @@ const Title = styled.h5<{ variant: keyof TypographyType }>(({ theme, variant }) 
   };
 });
 
-const HeroSection = () => {
+interface Props {
+  themeId?: number;
+}
+
+const HeroSection = ({ themeId }: Props) => {
+  const [theme, setTheme] = useState<ThemeInfo | null>(null);
+
+  useEffect(() => {
+    const fetchTheme = async () => {
+      try {
+        const list = await getThemeList();
+        const id = themeId ?? (list.length ? list[0].themeId : undefined);
+
+        if (id === undefined) {
+          console.warn('테마 목록이 비어 있습니다.');
+          return;
+        }
+
+        const detail = await getThemeInfo(id);
+        setTheme(detail);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchTheme();
+  }, [themeId]);
+
+  if (!theme) return null;
+
   return (
     <>
-      <Wrapper>
-        <Text variant="subtitle2Bold">가벼운 선물</Text>
+      <Wrapper style={{ backgroundColor: theme.backgroundColor }}>
+        <Text variant="subtitle2Bold">{theme.name}</Text>
         <Margin height="8px" />
-        <Title variant="title1Bold">예산은 가볍게, 감동은 무겁게❤️</Title>
+        <Title variant="title1Bold">{theme.title}</Title>
         <Margin height="4px" />
-        <Text variant="body1Regular">당신의 센스를 뽐내줄 부담 없는 선물</Text>
+        <Text variant="body1Regular">{theme.description}</Text>
       </Wrapper>
     </>
   );

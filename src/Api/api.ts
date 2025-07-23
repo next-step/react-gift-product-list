@@ -1,4 +1,4 @@
-import type { ProductSummary } from '@/types/types';
+import type { ProductSummary, ThemeInfo, ThemeListItem } from '@/types/types';
 import axios, { type AxiosResponse } from 'axios';
 
 export const api = axios.create({
@@ -49,3 +49,21 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+interface ThemeInfoResponse {
+  data: ThemeInfo;
+}
+
+export const getThemeInfo = async (themeId: number): Promise<ThemeInfo> => {
+  const { data } = await api.get<ThemeInfoResponse>(`/api/themes/${themeId}/info`);
+  return data.data;
+};
+
+interface ThemeListResponse {
+  data: ThemeListItem[];
+}
+
+export const getThemeList = async (): Promise<ThemeListItem[]> => {
+  const { data } = await api.get<ThemeListResponse>('/api/themes');
+  return data.data;
+};
