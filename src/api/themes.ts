@@ -9,6 +9,15 @@ export interface ThemeProductsResponse {
   cursor: number
   hasMoreList: boolean
 }
+
+export interface ThemeInfo {
+  themeId: number
+  name: string
+  title: string
+  description: string
+  backgroundColor: string
+}
+
 import { fetchApi } from './client'
 
 export async function fetchThemes(): Promise<Theme[]> {
@@ -20,10 +29,23 @@ export async function fetchThemes(): Promise<Theme[]> {
   return data
 }
 
+export async function fetchThemeInfo(themeId: number): Promise<ThemeInfo> {
+  const data = await fetchApi<ThemeInfo>(`/api/themes/${themeId}/info`)
+
+  if (
+    typeof data !== 'object' ||
+    typeof data.themeId !== 'number' ||
+    typeof data.name !== 'string'
+  ) {
+    throw new Error('Invalid response from /api/themes/:themeId/info')
+  }
+
+  return data
+}
+
 export async function fetchThemeProducts(
   themeId: number,
-  cursor = 0,
-  limit = 10,
+  { cursor = 0, limit = 10 }: { cursor?: number; limit?: number } = {},
 ): Promise<ThemeProductsResponse> {
   const data = await fetchApi<ThemeProductsResponse>(
     `/api/themes/${themeId}/products`,
