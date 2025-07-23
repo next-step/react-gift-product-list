@@ -1,13 +1,15 @@
 import { css } from '@emotion/react'
 
 export const globalReset = css`
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
 
-  html{
+  html {
     height: 100%;
     font-family: 'Pretendard', sans-serif;
     background-color: #fff;
@@ -16,12 +18,12 @@ export const globalReset = css`
     -moz-osx-font-smoothing: grayscale;
   }
   body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #fff;
-  font-family: 'Pretendard', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: #fff;
+    font-family: 'Pretendard', sans-serif;
   }
   a {
     color: inherit;
@@ -35,7 +37,8 @@ export const globalReset = css`
     cursor: pointer;
   }
 
-  ul, ol {
+  ul,
+  ol {
     list-style: none;
   }
 `

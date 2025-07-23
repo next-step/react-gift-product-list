@@ -18,20 +18,29 @@ type TabLabel = '받고 싶어한' | '많이 선물한' | '위시로 받은'
 
 const filterToTargetType = (label: FilterLabel) => {
   switch (label) {
-    case '전체': return 'ALL'
-    case '여성이': return 'FEMALE'
-    case '남성이': return 'MALE'
-    case '청소년이': return 'TEEN'
-    default: return 'ALL'
+    case '전체':
+      return 'ALL'
+    case '여성이':
+      return 'FEMALE'
+    case '남성이':
+      return 'MALE'
+    case '청소년이':
+      return 'TEEN'
+    default:
+      return 'ALL'
   }
 }
 
 const tabToRankType = (label: TabLabel) => {
   switch (label) {
-    case '받고 싶어한': return 'MANY_WISH'
-    case '많이 선물한': return 'MANY_RECEIVE'
-    case '위시로 받은': return 'MANY_WISH_RECEIVE'
-    default: return 'MANY_WISH'
+    case '받고 싶어한':
+      return 'MANY_WISH'
+    case '많이 선물한':
+      return 'MANY_RECEIVE'
+    case '위시로 받은':
+      return 'MANY_WISH_RECEIVE'
+    default:
+      return 'MANY_WISH'
   }
 }
 

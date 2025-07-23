@@ -36,7 +36,7 @@ const LogoutButton = styled.button`
 export default function MyPage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  
+
   const handleLogout = () => {
     logout()
     navigate('/login')
