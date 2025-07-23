@@ -9,6 +9,7 @@ import { BrandImage, Price, ProductCard, ProductGrid, ProductImage, ProductInfo 
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
 import { useEffect, useState } from 'react';
 import Loading from '../Loading';
+import { BaseUrl } from '@/constant/api';
 
 
 const ProductList = () => {
@@ -21,7 +22,7 @@ const ProductList = () => {
   const [loaderRef, setLoaderRef] = useState<HTMLDivElement | null>(null);
   const [extraLoading, setExtraLoading] = useState(false);
 
-  const productsUrl = `http://localhost:3000/api/themes/${themeId}/products?cursor=${cursor}`
+  const productsUrl = `${BaseUrl}/api/themes/${themeId}/products?cursor=${cursor}`
   const { item, loading, error } = useFetchFromUrlT<ProductItemFromTheme>(productsUrl, defaultProductItemFromTheme,true);
 
 

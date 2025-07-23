@@ -1,3 +1,4 @@
+import type { ApiResponse } from "@/type/GiftAPI/product";
 import { getFromUrl } from "@/utils/getFromUrl";
 import { useEffect, useState } from "react";
 
@@ -12,7 +13,8 @@ function useFetchFromUrlT<T>(url: string, defaultT: T, infinite : boolean = fals
         if(!infinite) setLoading(true);
         const fetchData = async () => {
             try {
-                const newItem = await getFromUrl(url);
+                const newItem = await getFromUrl<ApiResponse<T>>(url);
+
 
                 if (!isMounted) return;
 

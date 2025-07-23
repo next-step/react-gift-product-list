@@ -1,7 +1,7 @@
+import { orderUrl } from '@/constant/api';
 import type { Receiver } from '@/type/GiftAPI/order';
 import axios from 'axios';
 
-const orderUrl = 'http://localhost:3000/api/order';
 
 export async function orderAPI(
   productId: number,
@@ -10,7 +10,7 @@ export async function orderAPI(
   ordererName: string,
   receivers: Receiver[],
   authToken : string
-  ) {
+  ) : Promise<void> {
   try {
     await axios.post(orderUrl, {
       productId,

@@ -11,8 +11,9 @@ import { CentorAlignDiv240, EmptyDiv16h } from '@/styles/CommomStyle/Common.styl
 import { BrandImage, Price, ProductCard, ProductGrid, ProductImage, ProductInfo } from '@/styles/CommomStyle/ProductList';
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
 import Loading from '../Loading';
+import { baseRankingUrl } from '@/constant/api';
 
-const baseRankingUrl = 'http://localhost:3000/api/products/ranking'
+
 
 
 interface GiftRankingListProps {

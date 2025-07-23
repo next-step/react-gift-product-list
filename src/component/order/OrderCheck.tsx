@@ -1,3 +1,4 @@
+import { BaseUrl } from '@/constant/api';
 import { useAuth } from '@/context/AuthContext';
 import { useOrder } from '@/context/OrderContext';
 import { useReceiver } from '@/context/ReceiverContext';
@@ -34,7 +35,7 @@ const OrderCheck = () => {
   const idParam = query.get('id');
   const id = idParam !== null ? Number(idParam) : null;
 
-  const productUrl = `http://localhost:3000/api/products/${id}/summary`;
+  const productUrl = `${BaseUrl}/api/products/${id}/summary`;
   const { item, error } = useFetchFromUrlT<ProductItemSummary>(productUrl,defaultProductItemSummary);
 
 

@@ -1,7 +1,7 @@
+import { loginUrl } from '@/constant/api';
 import type { UserInfo } from '@/type/GiftAPI/user';
 import axios from 'axios';
 
-const loginUrl = 'http://localhost:3000/api/login';
 
 export async function logInAPI( email:string, password:string) : Promise<UserInfo> {
   try {

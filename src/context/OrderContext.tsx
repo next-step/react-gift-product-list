@@ -21,7 +21,7 @@ export const OrderContextProvider = ({
   const { user } = useAuth();
   const ordererName = useFormInput(validateName, user?.name);
   const [message, setMessage] = useState('축하해요.');
-  const [messageCardId, setMessageCardId] = useState('');
+  const [messageCardId, setMessageCardId] = useState('card123');
 
   const value = useMemo(
     () => ({

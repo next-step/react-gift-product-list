@@ -2,7 +2,8 @@ import { GiftThemeSection, ThemeGrid, ThemeImage, ThemeItem, ThemeLabel } from '
 import { EmptyDiv24h, Spinner, SpinnerWrapper, Title, TitleDiv } from '@/styles/CommomStyle/Common.styled';
 import { useNavigate } from 'react-router-dom';
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
-const themeUrl = 'http://localhost:3000/api/themes'
+import { themeUrl } from '@/constant/api';
+
 
 
 
