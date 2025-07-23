@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 
+interface UseFetchOptions {
+  enabled?: boolean;
+}
+
 export const useFetch = <T,>(
   asyncFunction: () => Promise<T>,
-  deps: any[] = []
+  deps: any[] = [],
+  options: UseFetchOptions = { enabled: true }
 ) => {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
