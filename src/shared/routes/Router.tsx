@@ -8,6 +8,7 @@ import PrivateRoute from './PrivateRoute';
 import LoginGuard from './LoginGuard';
 import Home from '@features/Home/Home';
 import GiftOrderPage from '@features/GiftOrderPage/GiftOrderPage';
+import ThemeProductList from '@features/ThemeProductList/ThemeProductList';
 
 const Router = () => {
   return (
@@ -41,6 +42,7 @@ const Router = () => {
                 </PrivateRoute>
               }
             />
+            <Route path="/theme/:id" element={<ThemeProductList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

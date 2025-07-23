@@ -1,6 +1,7 @@
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
 import useFetch from '@hooks/useFetch';
+import { useNavigate } from 'react-router-dom';
 interface GiftTheme {
   themeId: number;
   name: string;
@@ -9,7 +10,7 @@ interface GiftTheme {
 
 const CategorySection = () => {
   const { data: themes, loading, error } = useFetch<GiftTheme[]>('/themes');
-
+  const navigate = useNavigate();
   return (
     <Section>
       <SectionTitle>선물 테마</SectionTitle>
@@ -18,7 +19,10 @@ const CategorySection = () => {
       {!loading && !error && themes && themes.length > 0 && (
         <Grid>
           {themes.map((theme: GiftTheme) => (
-            <Item key={theme.themeId}>
+            <Item
+              key={theme.themeId}
+              onClick={() => navigate(`/theme/${theme.themeId}`)}
+            >
               <Image src={theme.image} alt={theme.name} />
               <Label>{theme.name}</Label>
             </Item>
