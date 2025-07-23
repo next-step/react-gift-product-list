@@ -27,6 +27,7 @@ export const CategoryItem = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
+  cursor: pointer;
 `;
 
 export const CategoryImage = styled.img`

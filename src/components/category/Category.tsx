@@ -10,9 +10,11 @@ import {
 import type { CategoryType } from '@/types/category';
 import { useFetch } from '@/hooks/useFetch';
 import { fetchCategories } from '@/services/themeApi';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_PATH } from '@/routes/Router';
 
 const Category = () => {
-  // ✅ useFetch 훅 사용
+  const navigete= useNavigate();
   const {
     data: category,
     isLoading,
@@ -22,6 +24,9 @@ const Category = () => {
     initValue: [],
     deps:[]
   });
+const handleClickCategory = (themeId: number) => {
+navigete(ROUTE_PATH.THEME.replace(":themeId", String(themeId)))
+};
 
   if (isLoading) return <div>📢 카테고리가 로딩중입니다..</div>;
   if (error) return <div>❌ 오류 발생: {String(error)}</div>;
@@ -34,7 +39,7 @@ const Category = () => {
       </CategoryHeader>
       <CategoryGrid>
         {category.map((item) => (
-          <CategoryItem key={item.themeId}>
+          <CategoryItem onClick={() => handleClickCategory(item.themeId)} key={item.themeId}>
             <CategoryImage src={item.image} alt={item.name} />
             <p
               css={css`

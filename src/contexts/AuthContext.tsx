@@ -19,7 +19,7 @@ const [user, setUser] = useState<User>({
   email: '',
   name: '',
   isLoggedIn: false,
-});  // const [loading, setLoading] = useState(true);
+}); 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -27,7 +27,6 @@ const [user, setUser] = useState<User>({
       setUser(JSON.parse(storedUser));
     }
   }, []);
-  // if (loading) return null;
   return (
     <AuthContext.Provider value={{ user, setUser}}>
       {children}
