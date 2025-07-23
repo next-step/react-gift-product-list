@@ -8,9 +8,11 @@ import {
   StyledPresentRankingContainerTitle,
   StyledPrsentRankingDiv,
 } from '@src/components/Home/PresentRanking/Cotainer/StyledPresentRankingContainer';
+import { useRankingItem } from '@src/hooks/useRankingItem';
 
 const PresentRankingContainer = () => {
   const [isVisible, setisVisible] = useState(false);
+  const { goods, isLoading, isError } = useRankingItem();
 
   const handelToogle = () => {
     setisVisible((prev) => !prev);
@@ -25,7 +27,13 @@ const PresentRankingContainer = () => {
         <RankingTagContainer></RankingTagContainer>
       </div>
       <StyledPrsentRankingDiv>
-        <PresentRankingItem isVisible={isVisible}></PresentRankingItem>
+        <PresentRankingItem
+          goods={goods}
+          isLoading={isLoading}
+          isError={isError}
+          isVisible={isVisible}
+          showRankingNumber={true}
+        ></PresentRankingItem>
       </StyledPrsentRankingDiv>
       <StyledPresenetRankingAddItemBtnDiv>
         <StyledPresenetRankingAddItemBtn onClick={handelToogle}>
