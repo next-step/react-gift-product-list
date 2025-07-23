@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import type { ComponentPropsWithoutRef } from 'react';
 
 const InputContainer = styled.div`
   margin: 0;
@@ -35,13 +36,8 @@ const P = styled.p`
   text-align: left;
 `;
 
-export interface InputHook {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isValid: boolean;
+export interface InputHook extends ComponentPropsWithoutRef<'input'> {
   error?: string;
-  [key: string]: unknown;
 }
 
 interface InputFieldProps {
@@ -49,18 +45,12 @@ interface InputFieldProps {
   placeholder: string;
   type?: React.HTMLInputTypeAttribute;
 }
-// value, onChange, error, isValid
-const InputField = ({ hook, placeholder, type }: InputFieldProps) => {
-  const { value, error, onChange, onBlur } = hook;
+
+const InputField = ({ hook }: InputFieldProps) => {
+  const { error, ...rest } = hook;
   return (
     <InputContainer>
-      <Input
-        placeholder={placeholder}
-        type={type}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-      />
+      <Input {...rest} />
       {error && <P>{error}</P>}
     </InputContainer>
   );
