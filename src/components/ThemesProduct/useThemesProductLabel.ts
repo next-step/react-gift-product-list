@@ -2,7 +2,7 @@ import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
 import { URLS } from '@src/assets/urls';
 import { useEffect, useState } from 'react';
-import type { NavigateFunction } from 'react-router-dom';
+import { useParams, type NavigateFunction } from 'react-router-dom';
 
 type ThemeLabel = {
   themeId: number;
@@ -13,8 +13,7 @@ type ThemeLabel = {
 };
 
 export const useThemesProductLabel = (navigate: NavigateFunction) => {
-  const urlArray = new URL(window.location.href).pathname.split('/');
-  const themeId = urlArray[urlArray.length - 1];
+  const { themeId } = useParams();
   const [label, setLabel] = useState<ThemeLabel | null>(null);
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export const useThemesProductLabel = (navigate: NavigateFunction) => {
     };
 
     reqeustLabel();
-  }, [themeId]);
+  }, [themeId, navigate]);
 
   return {
     label,

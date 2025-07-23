@@ -2,7 +2,7 @@ import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
 import { URLS } from '@src/assets/urls';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { NavigateFunction } from 'react-router-dom';
+import { useParams, type NavigateFunction } from 'react-router-dom';
 
 type ThemeProduct = {
   id: number;
@@ -29,8 +29,7 @@ type ThemeProducts = {
 };
 
 export const useThemesProductItem = (navigate: NavigateFunction) => {
-  const urlArray = new URL(window.location.href).pathname.split('/');
-  const themeId = urlArray[urlArray.length - 1];
+  const { themeId } = useParams();
 
   const [products, setProducts] = useState<ThemeProducts | null>(null);
   const [cursor, setCursor] = useState(0);
