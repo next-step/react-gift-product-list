@@ -1,8 +1,11 @@
 import { getThemeInfo, getThemeList } from '@/Api/api';
+import { ROUTE_PATH } from '@/routes/Routes';
 import type { TypographyType } from '@/theme/tokens';
 import type { ThemeInfo } from '@/types/types';
 import styled from '@emotion/styled';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.section`
   width: 100%;
@@ -47,32 +50,34 @@ interface Props {
 const HeroSection = ({ themeId }: Props) => {
   const [theme, setTheme] = useState<ThemeInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTheme = async () => {
       try {
         setLoading(true);
-        const id =
-          themeId ??
-          (await getThemeList()).filter((t) => t.themeId !== undefined).map((t) => t.themeId)[0];
+        const id = themeId ?? (await getThemeList())[0]?.themeId;
 
         if (id === undefined) {
-          console.warn('테마 목록이 비어 있습니다.');
-          setTheme(null);
+          navigate(ROUTE_PATH.HOME, { replace: true });
           return;
         }
 
         const info = await getThemeInfo(id);
         setTheme(info);
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          navigate(ROUTE_PATH.HOME, { replace: true });
+        } else {
+          console.error(err);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchTheme();
-  }, [themeId]);
+  }, [themeId, navigate]);
 
   if (loading || !theme) return null;
 
