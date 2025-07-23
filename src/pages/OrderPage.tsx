@@ -22,6 +22,7 @@ import useAuth from '@/hooks/useAuth';
 import ProductSummary from '@/components/order/ProductSummary';
 import { isClientRequestError, isServerError } from '@/utils/http';
 import { HttpStatusCode } from 'axios';
+import { ROUTES } from '@/constants/routes';
 
 type ProductInfo = {
   name: string;
@@ -69,7 +70,7 @@ const OrderPage = () => {
           isClientRequestError(error)
         ) {
           toast.error('상품 정보를 불러오지 못했습니다.');
-          navigate('/homepage');
+          navigate(ROUTES.HOME);
         } else {
           toast.error('서버 오류가 발생했습니다.');
         }
@@ -120,7 +121,7 @@ const OrderPage = () => {
 
     if (!authToken) {
       toast.error('인증 정보가 없습니다.');
-      navigate('/');
+      navigate(ROUTES.HOME);
       return;
     }
 
@@ -158,7 +159,7 @@ const OrderPage = () => {
         </div>
       );
 
-      navigate('/');
+      navigate(ROUTES.HOME);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const status = error.response!.status;

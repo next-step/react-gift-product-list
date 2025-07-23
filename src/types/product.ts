@@ -16,6 +16,7 @@ export interface ProductApiResponse {
   };
 }
 export interface Product {
+  image: string | undefined;
   id: number;
   brand: string;
   name: string;

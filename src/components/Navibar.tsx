@@ -51,7 +51,7 @@ const Navibar = () => {
     if (user) {
       navigate('/my');
     } else {
-      navigate('/homepage/login', { state: { from: '/my' } });
+      navigate('/login', { state: { from: '/my' } });
     }
   };
 

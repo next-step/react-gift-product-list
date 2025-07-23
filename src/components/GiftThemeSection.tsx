@@ -3,6 +3,7 @@ import useCustomTheme from '../hooks/useCustomTheme';
 import type { Theme } from '@/data/theme';
 import { useEffect, useState } from 'react';
 import { fetchThemes, type ThemeItem } from '@/api/themes';
+import { useNavigate } from 'react-router-dom';
 
 const wrapperStyle = (theme: Theme) => css`
   padding: ${theme.spacing.spacing2};
@@ -30,10 +31,11 @@ const itemStyle = (theme: Theme) => css`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  width: ${theme.spacing.spacing14};
-  height: ${theme.spacing.spacing14};
+  width: ${theme.spacing.spacing15};
+  height: ${theme.spacing.spacing15};
   object-fit: contain;
   padding: ${theme.spacing.spacing2};
+  margin: ${theme.spacing.spacing2};
   span {
     font-size: ${theme.typography.label1Regular.fontSize};
     font-weight: ${theme.typography.label1Regular.fontWeight};
@@ -45,6 +47,7 @@ const itemStyle = (theme: Theme) => css`
 
 const GiftThemeSection = () => {
   const theme = useCustomTheme();
+  const navigate = useNavigate();
   const [themes, setThemes] = useState<ThemeItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -70,7 +73,12 @@ const GiftThemeSection = () => {
       <h2 css={titleStyle(theme)}>선물 테마</h2>
       <div css={gridStyle(theme)}>
         {themes.map((item: ThemeItem) => (
-          <div key={item.themeId} css={itemStyle(theme)}>
+          <div
+            key={item.themeId}
+            css={itemStyle(theme)}
+            onClick={() => navigate(`/themes/${item.themeId}`)}
+            style={{ cursor: 'pointer' }}
+          >
             <img src={item.image} alt={item.name} />
             <span>{item.name}</span>
           </div>

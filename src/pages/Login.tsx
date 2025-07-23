@@ -8,6 +8,7 @@ import useAuth from '@/hooks/useAuth';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { isClientRequestError, isServerError } from '@/utils/http';
+import { ROUTES } from '@/constants/routes';
 
 interface LocationState {
   from?: {
@@ -43,7 +44,8 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState | null;
-  const from = state?.from?.pathName ?? '/';
+  const from = state?.from?.pathName;
+  const safeRedirectPath = from && from !== ROUTES.LOGIN ? from : ROUTES.HOME;
   const { login } = useAuth();
   const {
     id,
@@ -74,7 +76,7 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(userInfo));
         toast.success('로그인 성공!');
         login(userInfo);
-        navigate(from, { replace: true });
+        navigate(safeRedirectPath, { replace: true });
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           if (isClientRequestError(error)) {
