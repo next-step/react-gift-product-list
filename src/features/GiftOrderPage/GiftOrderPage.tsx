@@ -1,143 +1,29 @@
 import Divider from '@components/common/Divider';
+import LoadingSpinner from '@components/common/LoadingSpinner';
+
 import CardSelector from '@features/GiftOrderPage/components/CardSelector';
 import OrderButton from '@features/GiftOrderPage/components/OrderButton';
 import ProductSummary from '@features/GiftOrderPage/components/ProductSummary';
 import SenderForm from '@features/GiftOrderPage/components/SenderForm';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  type MultiOrderFormData,
-  multiOrderSchema,
-} from '@schemas/orderSchema';
-import cardTemplate from '@data/cardTemplate.json';
-
-import {
-  FormProvider,
-  useForm,
-  type FieldErrors,
-  type UseFormRegister,
-  type UseFormSetValue,
-} from 'react-hook-form';
 import ReceiveList from '@features/GiftOrderPage/components/ReceiveList';
 import ReceiveModal from '@features/GiftOrderPage/components/ReceiveModal';
-import { useModal } from '@contexts/ModalContext';
-import { useEffect, useState } from 'react';
+
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import useFetch from '@hooks/useFetch';
-import LoadingSpinner from '@components/common/LoadingSpinner';
+import { FormProvider } from 'react-hook-form';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '@contexts/AuthContext';
-import postRequest from '@apis/postRequest';
 
-export interface FormSectionProps {
-  register: UseFormRegister<MultiOrderFormData>;
-  errors: FieldErrors<MultiOrderFormData>;
-  setValue?: UseFormSetValue<MultiOrderFormData>;
-}
-
-export interface ProductSummaryInfo {
-  id: number;
-  name: string;
-  brandName: string;
-  price: number;
-  imageURL: string;
-}
-interface OrderResponse {
-  success: boolean;
-}
+import useFetch from '@hooks/useFetch';
+import useGiftOrderForm from './hooks/useGiftOrderForm';
+import useReceiveModal from './hooks/useReceiveModal';
+import useOrderSubmit from './hooks/useOrderSubmit';
+import useOrderInvalid from './hooks/useOrderInvalid';
+import type { ProductSummaryInfo } from './orderTypes';
 
 const GiftOrderPage = () => {
-  //useForm 사용
-  const methods = useForm<MultiOrderFormData>({
-    resolver: zodResolver(multiOrderSchema),
-    mode: 'onChange',
-    defaultValues: {
-      messageCardId: cardTemplate[0].id.toString(),
-      message: cardTemplate[0].defaultTextMessage,
-      sender: '',
-      recipients: [],
-    },
-  });
-  const { handleSubmit, setValue, watch } = methods;
-
-  const onSubmit = async (formData: MultiOrderFormData) => {
-    const { message, sender, recipients, messageCardId } = formData;
-
-    const requestBody = {
-      productId: productInfo?.id,
-      message,
-      messageCardId,
-      ordererName: sender,
-      receivers: recipients.map((r) => ({
-        name: r.receiver,
-        phoneNumber: r.phone,
-        quantity: r.quantity,
-      })),
-    };
-
-    const { success, error, status } = await postRequest<OrderResponse>(
-      '/order',
-      requestBody,
-      {
-        headers: {
-          Authorization: user?.authToken || '',
-        },
-      }
-    );
-
-    if (success) {
-      toast.success('주문 완료', {
-        autoClose: 1000,
-        onClose: () => navigate('/'),
-      });
-    } else {
-      if (status == 401) {
-        toast.error(error, {
-          autoClose: 1000,
-          onClose: () => navigate('/login'),
-        });
-      } else {
-        toast.error(error);
-      }
-    }
-  };
-
-  const onInvalid = (errors: FieldErrors<MultiOrderFormData>) => {
-    if (errors.recipients) {
-      if ('message' in errors.recipients) {
-        alert(errors.recipients.message);
-      } else if (
-        'root' in errors.recipients &&
-        errors.recipients.root?.message
-      ) {
-        alert(errors.recipients.root.message);
-      }
-    }
-  };
-
-  //modal에서 recipients 관리
-  const [prevRecipients, setPrevRecipients] = useState<
-    MultiOrderFormData['recipients']
-  >([]);
-  const {
-    isReceiveModalOpen,
-    openReceiveModal: openModal,
-    closeReceiveModal: closeModal,
-  } = useModal();
-
-  const openReceiveModal = () => {
-    const currentRecipients = watch('recipients') ?? [];
-    const deepCopied = JSON.parse(JSON.stringify(currentRecipients));
-    setPrevRecipients(deepCopied);
-    openModal();
-  };
-
-  const closeReceiveModal = () => {
-    setValue('recipients', prevRecipients);
-    closeModal();
-  };
-
   // 데이터 fetch
   const { id } = useParams();
   const {
@@ -145,6 +31,24 @@ const GiftOrderPage = () => {
     loading,
     error,
   } = useFetch<ProductSummaryInfo>(`/products/${id}/summary`);
+
+  //useForm 사용
+  const methods = useGiftOrderForm();
+  const { handleSubmit, setValue, watch } = methods;
+  const onSubmit = useOrderSubmit(productInfo);
+  const onInvalid = useOrderInvalid();
+
+  //modal
+  const { isReceiveModalOpen, openReceiveModal, closeReceiveModal } =
+    useReceiveModal(watch, setValue);
+
+  //초기화 로직
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user?.name) {
+      setValue('sender', user.name);
+    }
+  }, [user?.name, setValue]);
 
   //에러 처리
   const navigate = useNavigate();
@@ -162,14 +66,6 @@ const GiftOrderPage = () => {
       }
     }
   }, [error, navigate]);
-
-  //초기화 로직
-  const { user } = useAuth();
-  useEffect(() => {
-    if (user?.name) {
-      setValue('sender', user.name);
-    }
-  }, [user?.name, setValue]);
 
   // 로딩 처리
   if (loading) return <LoadingSpinner />;

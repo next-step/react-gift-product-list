@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import type { ProductSummaryInfo } from '../GiftOrderPage';
+import type { ProductSummaryInfo } from '../orderTypes';
 
 interface ProductSummaryProps {
   productInfo: ProductSummaryInfo;
