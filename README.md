@@ -62,4 +62,9 @@
 - 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 초기화
 - 의존성 배열 navigate 누락 수정
 
+#### order API 사용하여 주문하기 기능 구현
+
+- API 이용하여 주문하기 로직 작성
+- request를 위해 zod 스키마 및 CardSelector 컴포넌트 수정
+
 ## 리뷰 반영

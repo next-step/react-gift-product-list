@@ -26,6 +26,7 @@ const CardSelector = () => {
   const handleCardSelect = (card: CardTemplate) => {
     setSelectedCard(card.imageUrl);
     setValue?.('message', card.defaultTextMessage);
+    setValue?.('messageCardId', String(card.id));
   };
 
   return (

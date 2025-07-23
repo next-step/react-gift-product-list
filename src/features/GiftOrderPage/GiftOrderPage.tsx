@@ -14,7 +14,6 @@ import {
   FormProvider,
   useForm,
   type FieldErrors,
-  type SubmitHandler,
   type UseFormRegister,
   type UseFormSetValue,
 } from 'react-hook-form';
@@ -29,6 +28,7 @@ import styled from '@emotion/styled';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '@contexts/AuthContext';
+import axiosInstance from '@apis/axiosInstance';
 
 export interface FormSectionProps {
   register: UseFormRegister<MultiOrderFormData>;
@@ -50,6 +50,7 @@ const GiftOrderPage = () => {
     resolver: zodResolver(multiOrderSchema),
     mode: 'onChange',
     defaultValues: {
+      messageCardId: cardTemplate[0].id.toString(),
       message: cardTemplate[0].defaultTextMessage,
       sender: '',
       recipients: [],
@@ -57,8 +58,39 @@ const GiftOrderPage = () => {
   });
   const { handleSubmit, setValue, watch } = methods;
 
-  const onSubmit: SubmitHandler<MultiOrderFormData> = (data) => {
-    console.log(data);
+  const onSubmit = async (formData: MultiOrderFormData) => {
+    const { message, sender, recipients, messageCardId } = formData;
+
+    const requestBody = {
+      productId: productInfo?.id,
+      message,
+      messageCardId,
+      ordererName: sender,
+      receivers: recipients.map((r) => ({
+        name: r.receiver,
+        phoneNumber: r.phone,
+        quantity: r.quantity,
+      })),
+    };
+
+    try {
+      const res = await axiosInstance.post('/order', requestBody, {
+        headers: {
+          // Authorization: user?.authToken,
+        },
+      });
+      const data = res.data.data;
+      console.log(data);
+
+      if (data.success) {
+        toast.success('주문 완료', {
+          autoClose: 2000,
+          onClose: () => navigate('/'),
+        });
+      }
+    } catch (error) {
+      console.error('에러 발생 :', error);
+    }
   };
 
   const onInvalid = (errors: FieldErrors<MultiOrderFormData>) => {
