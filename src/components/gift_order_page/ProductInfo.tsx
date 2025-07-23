@@ -3,7 +3,7 @@ import useProductInfo from '@/hooks/useProductInfo';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Bounce, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import type { GiftItemDataType } from '@/types/giftItems';
 
 const Container = styled.div`
@@ -94,22 +94,7 @@ export const ProductInfo = () => {
         const response = await apiClient.get(`/api/products/${parsedId}`);
         setCurrentGift(response.data.data);
       } catch {
-        toast.warn('⚠️ 로그인 요청 처리 중 오류가 발생했습니다.', {
-          position: 'bottom-center',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'dark',
-          transition: Bounce,
-          style: {
-            width: '25rem',
-            color: 'black',
-            backgroundColor: 'white',
-          },
-        });
+        toast.warn('⚠️ 상품 요청 처리 중 오류가 발생했습니다.');
         navigate('/');
       }
     };
