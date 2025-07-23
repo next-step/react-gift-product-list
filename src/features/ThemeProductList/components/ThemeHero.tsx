@@ -16,7 +16,6 @@ interface ThemeInfo {
 
 const ThemeHero = ({ id }: { id: string }) => {
   const { data, loading, error } = useFetch<ThemeInfo>(`/themes/${id}/info`);
-  console.log(data);
 
   const navigate = useNavigate();
   useEffect(() => {
