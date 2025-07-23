@@ -4,7 +4,7 @@ import OrderCheck from '@/component/order/OrderCheck';
 import Receiver from '@/component/order/Receiver';
 import Sender from '@/component/order/Sender';
 
-import { DefaultDiv, EmptyDivGray8h } from '@/styles/Common.styled';
+import { DefaultDiv, EmptyDivGray8h } from '@/styles/CommomStyle/Common.styled';
 const Order = () => {
   return (
     <DefaultDiv>

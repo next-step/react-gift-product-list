@@ -1,4 +1,4 @@
-import type { Receiver } from "@/type/order";
+import type { Receiver } from "@/type/GiftAPI/order";
 import {createContext, useContext, useState, type ReactNode } from "react";
 
 

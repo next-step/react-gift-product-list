@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { DefaultDiv, SimplePadding20,  } from '../styles/Common.styled';
+import { DefaultDiv, SimplePadding20,  } from '../styles/CommomStyle/Common.styled';
 
 const My = () => {
   const auth = useAuth();

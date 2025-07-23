@@ -5,7 +5,7 @@ import GiftRanking from '@/component/main/GiftRanking'
 import GiftTheme from '@/component/main/GiftTheme'
 
 
-import { DefaultDiv } from '../styles/Common.styled'
+import { DefaultDiv } from '../styles/CommomStyle/Common.styled'
 
 
 const Main = () => {

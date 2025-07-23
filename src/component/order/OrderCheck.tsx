@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { BaseUrl } from '@/constant/api';
 import { useOrder } from '@/context/OrderContext';
 import { useReceiver } from '@/context/ReceiverContext';
 import useFetchFromUrlT from '@/hook/useFetchFromUrlT';
@@ -14,8 +14,8 @@ import {
   SideBlankDiv,
   SubText,
   SubTitle,
-} from '@/styles/Common.styled';
-import type { ProductItemSummary } from '@/type/product';
+} from '@/styles/CommomStyle/Common.styled';
+import { defaultProductItemSummary, type ProductItemSummary } from '@/type/GiftAPI/product';
 import { orderAPI } from '@/utils/orderApi';
 import { useEffect } from 'react';
 
@@ -25,7 +25,6 @@ import { toast, ToastContainer } from 'react-toastify';
 const OrderCheck = () => {
   const { ordererName, message, messageCardId } = useOrder();
   const { receivers } = useReceiver();
-  const { user } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,8 +33,8 @@ const OrderCheck = () => {
   const idParam = query.get('id');
   const id = idParam !== null ? Number(idParam) : null;
 
-  const productUrl = `http://localhost:3000/api/products/${id}/summary`;
-  const { item, error } = useFetchFromUrlT<ProductItemSummary>(productUrl);
+  const productUrl = `${BaseUrl}/api/products/${id}/summary`;
+  const { item, error } = useFetchFromUrlT<ProductItemSummary>(productUrl,defaultProductItemSummary);
 
 
   useEffect(() => {
@@ -62,7 +61,6 @@ const OrderCheck = () => {
           messageCardId,
           ordererName.value,
           receivers,
-          (user?.authToken ?? '')
         )
         alert(`주문이 완료되었습니다. 
         상품명:${name} 
@@ -87,7 +85,7 @@ const OrderCheck = () => {
         <EmptyDiv8h />
         <SubTitle>상품 정보</SubTitle>
         <ProductBox>
-          <ProductImage src={imageUrl} alt={name} />
+          <ProductImage src={imageUrl} alt={name ?? '상품 이미지'} />
 
           <ProductInfo>
             <ProductName>{name}</ProductName>

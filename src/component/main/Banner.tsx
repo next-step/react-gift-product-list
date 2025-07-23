@@ -1,4 +1,4 @@
-import { EmptyDiv40h } from '@/styles/Common.styled';
+import { EmptyDiv40h } from '@/styles/CommomStyle/Common.styled';
 import theme from '@/styles/theme';
 import styled from '@emotion/styled';
 

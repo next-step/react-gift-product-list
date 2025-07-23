@@ -1,5 +1,5 @@
 import { useOrder } from '@/context/OrderContext';
-import { DefaultComponentDiv, EmptyDiv12h, EmptyDiv24h, EmptyDiv4h, EmptyDiv8h, ErrorText, SideBlankDiv, SimpleInput, SubText, SubTitle } from '@/styles/Common.styled';
+import { DefaultComponentDiv, EmptyDiv12h, EmptyDiv24h, EmptyDiv4h, EmptyDiv8h, ErrorText, SideBlankDiv, SimpleInput, SubText, SubTitle } from '@/styles/CommomStyle/Common.styled';
 
 
 
