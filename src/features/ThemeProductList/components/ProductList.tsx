@@ -1,10 +1,11 @@
-import useFetch from '@hooks/useFetch';
 import ProductCard from './ProductCard';
 import styled from '@emotion/styled';
 import LoadingSpinner from '@components/common/LoadingSpinner';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { fetchThemeProducts } from '@apis/themeApi';
+import useInfiniteScroll from '@hooks/useInfiniteScroll';
 
 export interface ThemeProduct {
   id: number;
@@ -22,17 +23,38 @@ export interface ThemeProduct {
   };
 }
 
-interface ThemeProducts {
+export interface ThemeProducts {
   list: ThemeProduct[];
   cursor: number;
   hasMoreList: boolean;
 }
 
 const ProductList = ({ id }: { id: string }) => {
-  const { data, loading, error } = useFetch<ThemeProducts>(
-    `/themes/${id}/products`
-  );
-  console.log(data);
+  const [products, setProducts] = useState<ThemeProduct[]>([]);
+  const [cursor, setCursor] = useState(0);
+  const [hasMoreList, setHasMoreList] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState<unknown | null>(null);
+
+  const isMounted = useRef(false);
+
+  const fetchNextPage = async () => {
+    if (!hasMoreList || isFetching) return;
+
+    setIsFetching(true);
+    setError(null);
+    try {
+      const data = await fetchThemeProducts(Number(id), cursor);
+      setProducts((prev) => [...prev, ...data.list]);
+      setCursor(data.cursor);
+      setHasMoreList(data.hasMoreList);
+    } catch (error) {
+      console.log('상품 목록 불러오기 실패:', error);
+      setError(error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   useEffect(() => {
     if (error && axios.isAxiosError(error)) {
@@ -46,17 +68,35 @@ const ProductList = ({ id }: { id: string }) => {
     }
   }, [error]);
 
-  if (loading) return <LoadingSpinner />;
+  useEffect(() => {
+    if (isMounted.current) return; //중복 호출 방지
+    isMounted.current = true;
+    fetchNextPage();
+  }, []);
 
-  if (!data?.list || data.list.length === 0)
+  const { sentinelRef } = useInfiniteScroll({
+    fetchNextPage,
+    hasMoreList,
+    isFetching,
+  });
+
+  // if (loading) return <LoadingSpinner />;
+  if (isFetching && products.length === 0) return <LoadingSpinner />;
+
+  // if (!data?.list || data.list.length === 0)
+  //   return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
+  if (!isFetching && products.length === 0)
     return <EmptyMessage>상품이 없습니다.</EmptyMessage>;
 
   return (
-    <GridWrqpper>
-      {data?.list.map((item, index) => (
-        <ProductCard key={index} {...item} />
-      ))}
-    </GridWrqpper>
+    <>
+      <GridWrqpper>
+        {products.map((item, index) => (
+          <ProductCard key={index} {...item} />
+        ))}
+      </GridWrqpper>
+      {hasMoreList && <div ref={sentinelRef} style={{ height: '1px' }} />}
+    </>
   );
 };
 

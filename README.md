@@ -31,4 +31,14 @@
 - 상품 클릭시 주문하기 페이지로 연결
 - 불필요한 console.log 삭제
 
+#### 무한 스크롤 구현
+
+- fetchThemeProducts 메서드 작성
+- ProductList.tsx에서 사용하던 API 호출방식을 fetchThemeProducts로 변경
+  - fetchNextPage 메서드 구현
+  - useEffect 사용하여 최초 호출
+  - StrictMode에 의한 중복 호출 방지 로직 추가
+- useInfiniteScroll 훅 작성
+- useInfiniteScroll을 ProductList.tsx에서 연동하여 무한 스크롤 구현
+
 ## 리뷰 반영
