@@ -5,10 +5,10 @@ import { useNavigate, useLocation } from "react-router-dom"
 import Blank from "@/components/Blank"
 import Icon from "@/assets/Icon.svg?react"
 import { useInput } from "@/hooks/useInput"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import type { FormEvent, FocusEventHandler } from "react"
 import type { ValueType } from "@/interfaces/ValueType"
-import { AuthContext } from "@/context/AuthContext"
+import { useAuth } from "@/context/AuthContext"
 import { toast } from "react-toastify"
 
 import {
@@ -32,7 +32,7 @@ const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || "/my"
-  const { login } = useContext(AuthContext)
+  const { login } = useAuth()
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.target

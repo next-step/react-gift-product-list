@@ -38,7 +38,7 @@ export const OrderMessage = ({
   placeholder,
 
 }: OrderMessageProps) => {
-  const { setValue } = useFormContext<FormData>()
+  const { setValue,register  } = useFormContext<FormData>()
   
   useEffect(() => {
     if (placeholder) {
@@ -46,7 +46,6 @@ export const OrderMessage = ({
     }
   }, [placeholder, setValue])
 
-  const { register } = useFormContext<FormData>()
   console.log(placeholder)
   
   return (

@@ -11,6 +11,7 @@ import Loading from "@/components/PresentTheme/Loading"
 import { toast } from "react-toastify"
 import useProductInfo from "@/hooks/useProductInfo"
 import { useOrder } from "@/hooks/useOrder"
+import { useAuth } from "@/context/AuthContext"
 
 export interface Receiver {
   name: string
@@ -49,12 +50,21 @@ const OrderPage = () => {
   }, [error, navigate])
 
   const { createOrder } = useOrder()
+  const { authToken } = useAuth()
+
+  const { handleSubmit,reset, watch } = methods
+
+  const receivers = watch("receivers")
+
+  const totalQuantity = receivers.reduce(
+    (sum, r) => sum + Number(r.quantity || 0),
+    0
+  )
 
   const handleOrder = async (data: FormData) => {
     try {
-      const token = localStorage.getItem("authToken")
       
-      if (!token) {
+      if (!authToken) {
         toast.error("로그인이 필요합니다.")
         navigate("/login")
         return
@@ -74,7 +84,7 @@ const OrderPage = () => {
             quantity: Number(r.quantity),
           })),
         },
-        token 
+        authToken 
       )
       alert(
         `주문이 완료되었습니다.\n` +
@@ -85,7 +95,7 @@ const OrderPage = () => {
       )
 
     } catch (e:any) {
-      if (e?.response?.status === 401) {
+      if (e?.name === 401) {
         toast.error("인증이 만료되었습니다. 다시 로그인해주세요.")
         localStorage.removeItem("authToken") 
         navigate("/login")
@@ -98,16 +108,9 @@ const OrderPage = () => {
   if (loading) return <Loading />
   if (!product) return null
   console.log(product)
-  const { handleSubmit,reset,  watch } = methods
 
-  const receivers = watch("receivers")
-  const totalQuantity = receivers.reduce(
-    (sum, r) => sum + Number(r.quantity || 0),
-    0
-  )
   const totalPrice = totalQuantity * product.price
 
-  
 const onSubmit = (data: FormData) => {
   
   handleOrder(data);
