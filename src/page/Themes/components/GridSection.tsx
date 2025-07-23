@@ -5,13 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { requests } from '@/api/requests';
 import { useParams } from 'react-router-dom';
 
-// interface GridSectionProps {
-//   themeIdProducts: ThemeIdProductsData;
-// }
 
 const GridSection = () => {
-  // const { list, cursor, hasMoreList } = themeIdProducts;
-  // console.log(cursor, hasMoreList);
 
   const { id } = useParams<{ id: string }>();
   const index = Number(id);

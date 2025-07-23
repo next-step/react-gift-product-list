@@ -53,8 +53,8 @@ export const requests = {
     );
   },
   fetchTheme: (): Promise<ThemeInfo[]> => apiClient.get('/api/themes'),
-  fetchThemeIdInfo: (id: number): Promise<ThemeIdInfoData> =>
-    apiClient.get(`/api/themes/${id}/info`),
+  fetchThemeIdInfo: (index: number): Promise<ThemeIdInfoData> =>
+    apiClient.get(`/api/themes/${index}/info`),
   fetchThemeIdProducts: ({
     index,
     currentCursor,
