@@ -93,8 +93,7 @@ export const ProductInfo = () => {
       try {
         const response = await apiClient.get(`/api/products/${parsedId}`);
         setCurrentGift(response.data.data);
-      } catch (error) {
-        console.log('⚠️ 요청 처리 중 오류가 발생했습니다.', error);
+      } catch {
         toast.warn('⚠️ 로그인 요청 처리 중 오류가 발생했습니다.', {
           position: 'bottom-center',
           autoClose: 5000,

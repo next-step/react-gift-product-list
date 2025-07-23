@@ -214,7 +214,7 @@ const Login = () => {
 
               return;
             }
-            setUser({ email: email, password: password });
+            setUser({ email, password });
             navigate(nextPath, { replace: true });
           }}
           disabled={isFirstTry ? true : !isAllValid}

@@ -78,7 +78,7 @@ export const OrderButton = () => {
 
   return (
     <Container
-      onClick={async () => {
+      onClick={() => {
         if (isValid) order();
       }}
     >
