@@ -35,8 +35,8 @@ const Text = styled.p`
 `
 
 export const GiftFriendSelector = () => {
-  const { user } = useAuth();
-  const userName = user?.email?.split('@')[0];
+  const { user } = useAuth()
+  const userName = user?.email?.split('@')[0]
   return (
     <Wrapper>
       <Button>

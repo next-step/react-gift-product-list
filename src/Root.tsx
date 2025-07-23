@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -9,7 +6,7 @@ import MyPage from './pages/MyPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './contexts/AuthContext'
 import OrderPage from './pages/OrderPage'
-import { CategoryItem } from './pages/CategoryItem';
+import { CategoryItem } from './pages/CategoryItem'
 export const PATHS = {
   HOME: '/',
   LOGIN: '/login',
@@ -17,7 +14,7 @@ export const PATHS = {
   ORDER: '/order/:productId',
   MY: '/my',
   CATEGORY: '/category/:themeId',
-}as const
+} as const
 import { ToastContainer } from 'react-toastify'
 
 const authProtected = (element: React.ReactNode) => (
@@ -30,7 +27,7 @@ const router = createBrowserRouter([
   },
   {
     path: PATHS.HOME,
-    element: authProtected(<App />),
+    element: <App />,
   },
   {
     path: PATHS.ORDER,
@@ -42,12 +39,11 @@ const router = createBrowserRouter([
   },
   {
     path: PATHS.NOT_FOUND,
-    element: authProtected(<NotFoundPage />),
+    element: <NotFoundPage />,
   },
-  { path: PATHS.CATEGORY,
-    element: authProtected(<CategoryItem />), 
-  },
+  { path: PATHS.CATEGORY, element: <CategoryItem /> },
 ])
+
 const Root = () => {
   return (
     <AuthProvider>

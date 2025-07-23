@@ -18,7 +18,6 @@ export const useRankingProducts = (targetType: string, rankType: string) => {
 
       try {
         const url = `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
-        
 
         const res = await fetch(url)
         if (!res.ok) {
@@ -26,7 +25,7 @@ export const useRankingProducts = (targetType: string, rankType: string) => {
         }
 
         const json = await res.json()
-        
+
         setData(json.data || [])
       } catch (err) {
         console.error(err)

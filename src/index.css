@@ -34,13 +34,12 @@ a:hover {
 
 body {
   margin: 0;
-  
+
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
   background-color: #fff;
   font-family: 'Pretendard', sans-serif;
-
 }
 
 h1 {

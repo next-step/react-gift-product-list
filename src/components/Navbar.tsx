@@ -1,11 +1,11 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext'; 
-import { ChevronLeft, UserRound } from 'lucide-react'; 
-import styled from '@emotion/styled';
-import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { ChevronLeft, UserRound } from 'lucide-react'
+import styled from '@emotion/styled'
+import React from 'react'
 
 const NavbarContainer = styled.nav`
-  position: relative; 
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -38,9 +38,9 @@ const SideButton = styled.button`
 `
 
 export const Navbar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { user } = useAuth()
 
   return (
     <NavbarContainer>
@@ -55,14 +55,14 @@ export const Navbar = () => {
       <SideButton
         onClick={() => {
           if (user) {
-            navigate('/my');
+            navigate('/my')
           } else {
-            navigate('/login', { state: { from: location } });
+            navigate('/login', { state: { from: location } })
           }
         }}
       >
         <UserRound size={20} color="#000" />
       </SideButton>
     </NavbarContainer>
-  );
-};
+  )
+}

@@ -28,7 +28,6 @@ import {
 import { toast } from 'react-toastify'
 
 export const OrderPage = () => {
-  const didNavigate = useRef(false)
   const { productId } = useParams()
   const navigate = useNavigate()
 
@@ -51,14 +50,14 @@ export const OrderPage = () => {
         const res = await fetch(`/api/products/${productId}/summary`)
         if (!res.ok) {
           toast.error('존재하지 않는 상품입니다.')
-          setTimeout(() => navigate(PATHS.HOME), 0);
+          setTimeout(() => navigate(PATHS.HOME), 0)
           return
         }
         const data = await res.json()
         setProduct(data.data)
       } catch (err) {
         toast.error('상품 정보 요청 중 오류 발생')
-        setTimeout(() => navigate(PATHS.HOME), 0);
+        setTimeout(() => navigate(PATHS.HOME), 0)
       }
     }
 
@@ -134,7 +133,7 @@ export const OrderPage = () => {
 
         if (res.status === 401) {
           toast.error('로그인이 필요합니다.')
-          setTimeout(() => navigate(PATHS.LOGIN), 0);
+          setTimeout(() => navigate(PATHS.LOGIN), 0)
           return
         }
 
@@ -144,25 +143,12 @@ export const OrderPage = () => {
 
       toast.success('주문이 완료되었습니다.')
       setOrderCompleted(true)
-      if (!didNavigate.current) {
-        navigate(PATHS.HOME)
-        didNavigate.current = true
-      }
+
+      navigate(PATHS.HOME)
     } catch (err) {
       toast.error('주문 요청 중 오류가 발생했습니다.')
     }
   }
-
-  useEffect(() => {
-    if (orderCompleted && !didNavigate.current) {
-      const timer = setTimeout(() => {
-        navigate(PATHS.HOME)
-        didNavigate.current = true
-      }, 3000)
-
-      return () => clearTimeout(timer)
-    }
-  }, [orderCompleted, navigate])
 
   const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0)
   const totalPrice =

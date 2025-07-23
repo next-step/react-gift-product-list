@@ -9,7 +9,6 @@ const Wrapper = styled.section`
 `
 
 const Title = styled.h2`
-  
   ${({ theme }) => theme.typography.body1Regular};
   margin-bottom: ${({ theme }) => theme.spacing.spacing6};
 `
@@ -21,9 +20,9 @@ const Description = styled.p`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr); 
+  grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.spacing4};
-`;
+`
 
 export const CategoryItem = () => {
   const { themeId } = useParams()
