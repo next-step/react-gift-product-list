@@ -21,7 +21,7 @@ import useGiftOrderForm from './hooks/useGiftOrderForm';
 import useReceiveModal from './hooks/useReceiveModal';
 import useOrderSubmit from './hooks/useOrderSubmit';
 import useOrderInvalid from './hooks/useOrderInvalid';
-import type { ProductSummaryInfo } from './orderTypes';
+import type { ProductSummaryInfo } from './OrderTypes';
 
 const GiftOrderPage = () => {
   // 데이터 fetch

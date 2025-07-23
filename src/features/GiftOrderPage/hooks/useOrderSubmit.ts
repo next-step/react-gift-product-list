@@ -3,7 +3,7 @@ import postRequest from '@apis/postRequest';
 import { useAuth } from '@contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { ProductSummaryInfo } from '../orderTypes';
+import type { ProductSummaryInfo } from '../OrderTypes';
 
 interface OrderResponse {
   success: boolean;
