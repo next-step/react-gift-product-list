@@ -2,7 +2,7 @@ import { apiClient } from '@src/api/FetchData';
 import type { HttpTypes } from '@src/api/HttpType';
 import { URLS } from '@src/assets/urls';
 import type { AxiosError } from 'axios';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams, type NavigateFunction } from 'react-router-dom';
 
 type ThemeProduct = {
@@ -31,11 +31,9 @@ type ThemeProducts = {
 
 export const useThemesProductItem = (navigate: NavigateFunction) => {
   const { themeId } = useParams();
-
   const [products, setProducts] = useState<ThemeProducts | null>(null);
   const [cursor, setCursor] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const loader = useRef<HTMLDivElement | null>(null);
 
   const loadItem = useCallback(async () => {
     if (!hasMore) return;
@@ -72,26 +70,9 @@ export const useThemesProductItem = (navigate: NavigateFunction) => {
     }
   }, [cursor, hasMore, themeId, navigate]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore) {
-          loadItem();
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    const el = loader.current;
-    if (el) observer.observe(el);
-
-    return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, [loadItem, hasMore]);
-
   return {
     products,
-    loader,
+    loadItem,
+    hasMore,
   };
 };

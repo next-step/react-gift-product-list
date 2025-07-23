@@ -14,11 +14,17 @@ import {
 } from './StyledThemesProductItem';
 import { useThemesProductItem } from './useThemesProductItem';
 import { useNavigate } from 'react-router-dom';
+import { useIntersectionObserver } from './useIntersectionObserver';
 
 const ThemesProductItem = () => {
   const navigate = useNavigate();
   const { label } = useThemesProductLabel(navigate);
-  const { products, loader } = useThemesProductItem(navigate);
+  const { products, loadItem, hasMore } = useThemesProductItem(navigate);
+  const loaderRef = useIntersectionObserver({
+    onIntersect: loadItem,
+    canLoadMore: hasMore,
+  });
+
   return (
     <StyledTopestDiv>
       <StyledThemesProductLabelItem background={label?.backgroundColor}>
@@ -31,7 +37,7 @@ const ThemesProductItem = () => {
           {products && products.data.list.length !== 0 ? (
             products.data.list.map((item) => (
               <StyledPresentRankingItemDiv key={item.id}>
-                <StyledPresentRankingItemImage src={item.imageURL} alt='제품 이미지' />
+                <StyledPresentRankingItemImage src={item.imageURL} alt={item.name} />
                 <StyledPresentRankingItemBrandName className='brand_name'>
                   {item.brandInfo.name}
                 </StyledPresentRankingItemBrandName>
@@ -48,7 +54,7 @@ const ThemesProductItem = () => {
               <p>상품이 없습니다.</p>
             </div>
           )}
-          <div className='loader' ref={loader}></div>
+          <div className='loader' ref={loaderRef}></div>
         </StyledThemesProductGridContainer>
       </StyledThemesProductPaddingContainer>
     </StyledTopestDiv>
