@@ -1,21 +1,26 @@
 import ErrorText from '@components/common/ErrorText';
 import styled from '@emotion/styled';
 import type { MultiOrderFormData } from '@schemas/orderSchema';
-import type { FieldErrors, UseFormRegister } from 'react-hook-form';
-
+import { useFormContext } from 'react-hook-form';
 interface ReceiveFormProps {
   index: number;
-  register: UseFormRegister<MultiOrderFormData>;
-  errors: FieldErrors<MultiOrderFormData>;
-  remove: (index: number) => void;
+  handleRemove: (index: number) => void;
 }
 
-const ReceiveForm = ({ index, register, errors, remove }: ReceiveFormProps) => {
+const ReceiveForm = ({
+  index,
+
+  handleRemove,
+}: ReceiveFormProps) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<MultiOrderFormData>();
   return (
     <Wrapper>
       <HeaderRow>
         <SectionTitle>받는사람 {index + 1}</SectionTitle>
-        <DeleteButton type="button" onClick={() => remove(index)}>
+        <DeleteButton type="button" onClick={() => handleRemove(index)}>
           X
         </DeleteButton>
       </HeaderRow>

@@ -46,7 +46,7 @@ export interface FilterProps {
 export interface GridProps {
   products: RankedProduct[];
   loading: boolean;
-  hasError: boolean;
+  error: boolean;
   isExpanded: boolean;
   toggleExpand: () => void;
   onClickItem: (item: RankedProduct) => void;

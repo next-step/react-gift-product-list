@@ -1,36 +1,23 @@
 import styled from '@emotion/styled';
 import type { MultiOrderFormData } from '@schemas/orderSchema';
-import {
-  useFormContext,
-  type FieldArrayWithId,
-  type FieldErrors,
-  type UseFieldArrayAppend,
-  type UseFieldArrayRemove,
-  type UseFormRegister,
-} from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import ReceiveForm from './ReceiveForm';
 import { useEffect } from 'react';
+import { useModal } from '@contexts/ModalContext';
 
 interface ReceiveModalProps {
-  register: UseFormRegister<MultiOrderFormData>;
-  errors: FieldErrors<MultiOrderFormData>;
-  fields: FieldArrayWithId<MultiOrderFormData, 'recipients', 'id'>[];
-  append: UseFieldArrayAppend<MultiOrderFormData, 'recipients'>;
-  remove: UseFieldArrayRemove;
   onClose: () => void;
-  onComplete: () => void;
 }
 
-const ReceiveModal = ({
-  register,
-  errors,
-  fields,
-  append,
-  remove,
-  onClose,
-  onComplete,
-}: ReceiveModalProps) => {
-  const { clearErrors } = useFormContext<MultiOrderFormData>();
+const ReceiveModal = ({ onClose }: ReceiveModalProps) => {
+  const { clearErrors, control, getValues, trigger } =
+    useFormContext<MultiOrderFormData>();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'recipients',
+  });
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -41,6 +28,38 @@ const ReceiveModal = ({
   useEffect(() => {
     clearErrors('recipients');
   }, []);
+
+  const handleAdd = () => {
+    append({ receiver: '', phone: '', quantity: 1 });
+  };
+
+  const handleRemove = (index: number) => {
+    remove(index);
+  };
+
+  const { closeReceiveModal } = useModal();
+  const handleComplete = async () => {
+    const recipents = getValues('recipients') ?? [];
+    if (recipents.length === 0) {
+      closeReceiveModal();
+      return;
+    }
+
+    const valid = await trigger('recipients'); //검증이 일어나지 않은 필드도 검사하기 위해 사용
+    if (!valid) {
+      alert('받는 사람 정보를 정확히 입력해주세요.');
+      return;
+    }
+
+    const phones = recipents.map((recipent) => recipent.phone);
+    const phoneSet = new Set(phones);
+    if (phoneSet.size !== phones.length) {
+      alert('전화번호가 중복된 사람이 있습니다.');
+      return;
+    }
+    closeReceiveModal();
+  };
+
   return (
     <Overlay>
       <ModalWrapper>
@@ -50,10 +69,7 @@ const ReceiveModal = ({
           <Subtitle>
             * 받는 사람의 전화번호를 중복으로 입력할 수 없어요.
           </Subtitle>
-          <AddButton
-            onClick={() => append({ receiver: '', phone: '', quantity: 1 })}
-            disabled={fields.length >= 10}
-          >
+          <AddButton onClick={handleAdd} disabled={fields.length >= 10}>
             추가하기
           </AddButton>
         </ModalHeader>
@@ -62,15 +78,13 @@ const ReceiveModal = ({
             <ReceiveForm
               key={field.id}
               index={index}
-              register={register}
-              errors={errors}
-              remove={remove}
+              handleRemove={handleRemove}
             />
           ))}
         </FormScrollArea>
         <ButtonGroup>
           <CancelButton onClick={onClose}>취소</CancelButton>
-          <CompleteButton type="submit" onClick={onComplete}>
+          <CompleteButton type="submit" onClick={handleComplete}>
             {fields.length} 명 완료
           </CompleteButton>
         </ButtonGroup>

@@ -44,7 +44,7 @@ const RankingSection = () => {
     setSearchParams(newParams);
   };
 
-  const { data, loading, hasError } = useFetch<Product[]>(
+  const { data, loading, error } = useFetch<Product[]>(
     `/products/ranking?targetType=${Target_MAP[selectedTarget]}&rankType=${Rank_MAP[selectedRank]}`
   );
 
@@ -71,7 +71,7 @@ const RankingSection = () => {
       <ProductGrid
         products={products}
         loading={loading}
-        hasError={hasError}
+        error={error}
         isExpanded={isExpanded}
         toggleExpand={() => setIsExpanded((prev) => !prev)}
         onClickItem={handleClick}

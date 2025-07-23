@@ -1,15 +1,72 @@
 import ErrorText from '@components/common/ErrorText';
 import { useAuth } from '@contexts/AuthContext';
 import styled from '@emotion/styled';
-import { useLoginForm } from '@hooks/useLoginForm';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginSchema, type LoginFormData } from '@schemas/loginSchema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface LoginButtonProps {
   disabled: boolean;
 }
 
-const Container = styled.div(({ theme }) => ({
+const Login = () => {
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState('');
+  const { login } = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onTouched',
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    if (await login(data)) {
+      if (window.history.length > 2) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
+    } else {
+      setLoginError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      console.log(loginError); //useAuth의 login에서 toast로 처리하고 있긴 하지만 임시로 사용하였습니다.
+    }
+  };
+
+  return (
+    <Container onSubmit={handleSubmit(onSubmit)}>
+      <Title>kakao</Title>
+      <Input
+        type="email"
+        placeholder="이메일"
+        {...register('email')}
+        error={!!errors.email}
+      />
+      {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+
+      <Input
+        type="password"
+        placeholder="비밀번호"
+        {...register('password')}
+        error={!!errors.password}
+      />
+      {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
+
+      <Button type="submit" disabled={!isValid}>
+        로그인
+      </Button>
+    </Container>
+  );
+};
+
+export default Login;
+
+const Container = styled.form(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -27,16 +84,14 @@ const Title = styled.h1(({ theme }) => ({
   color: theme.colors.semantic.textDefault,
 }));
 
-const Input = styled.input<{ hasError?: boolean }>(({ theme, hasError }) => ({
+const Input = styled.input<{ error?: boolean }>(({ theme, error }) => ({
   width: '100%',
   maxWidth: '320px',
   padding: `${theme.spacing.spacing3} 0`,
   marginBottom: theme.spacing.spacing2,
   border: 'none',
   borderBottom: `1px solid ${
-    hasError
-      ? theme.colors.semantic.critical
-      : theme.colors.semantic.borderDefault
+    error ? theme.colors.semantic.critical : theme.colors.semantic.borderDefault
   }`,
   fontSize: theme.typography.body1Regular.fontSize,
   fontWeight: theme.typography.body1Regular.fontWeight,
@@ -81,79 +136,3 @@ const Button = styled.button<LoginButtonProps>(({ theme, disabled }) => ({
       : theme.colors.semantic.kakaoYellowActive,
   },
 }));
-
-const Login = () => {
-  const navigate = useNavigate();
-  const {
-    email,
-    setEmail,
-    emailError,
-    validateEmail,
-    password,
-    setPassword,
-    passwordError,
-    validatePassword,
-    isValid,
-  } = useLoginForm();
-
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const { login } = useAuth();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const isEmailOk = validateEmail();
-    const isPWOk = validatePassword();
-
-    if (!isEmailOk || !isPWOk) return;
-
-    if (login({ email, password })) {
-      if (window.history.length > 2) {
-        navigate(-1);
-      } else {
-        navigate('/');
-      }
-    } else {
-      setLoginError('이메일 또는 비밀번호가 올바르지 않습니다.');
-      console.log(loginError); //임시
-    }
-  };
-
-  return (
-    <Container as="form" onSubmit={handleSubmit}>
-      <Title>kakao</Title>
-      <Input
-        type="email"
-        placeholder="이메일"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onBlur={() => {
-          setEmailTouched(true);
-          validateEmail();
-        }}
-        hasError={emailTouched && !!emailError}
-      />
-      {emailTouched && emailError && <ErrorText>{emailError}</ErrorText>}
-      <Input
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        onBlur={() => {
-          setPasswordTouched(true);
-          validatePassword();
-        }}
-        hasError={passwordTouched && !!passwordError}
-      />
-      {passwordTouched && passwordError && (
-        <ErrorText>{passwordError}</ErrorText>
-      )}
-      <Button type="submit" disabled={!isValid}>
-        로그인
-      </Button>
-    </Container>
-  );
-};
-
-export default Login;

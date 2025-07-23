@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 const ProductGrid = ({
   products,
   loading,
-  hasError,
+  error,
   isExpanded,
   toggleExpand,
   onClickItem,
@@ -15,10 +15,14 @@ const ProductGrid = ({
     <>
       {loading && <LoadingSpinner />}
 
-      {!loading && !hasError && products.length > 0 ? (
+      {!loading && !error && products.length > 0 ? (
         <Grid>
           {visibleItems.map((item: RankedProduct) => (
-            <ProductCard item={item} onClickItem={onClickItem} />
+            <ProductCard
+              key={item.ranking}
+              item={item}
+              onClickItem={onClickItem}
+            />
           ))}
         </Grid>
       ) : (
@@ -41,9 +45,7 @@ interface CardProps {
 }
 const ProductCard = ({ item, onClickItem }: CardProps) => {
   return (
-    <Card key={item.ranking}>
-      {/* 임시로 ranking으로 해두었지만 추후 id값으로 바꿀 계획입니다 */}
-      {/*Card도 따로 파일을 분리하려 했으나 오히려 더 가독성이 나빠질 수도 있을 것 같아 보류했습니다.*/}
+    <Card>
       <ImageWrapper onClick={() => onClickItem(item)}>
         <ProductImage src={item.imageURL} alt={item.name} />
         <RankBadge>{item.ranking}</RankBadge>

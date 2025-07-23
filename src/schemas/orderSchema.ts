@@ -35,6 +35,7 @@ export const singleOrderSchema = z.object({
 });
 
 export const multiOrderSchema = z.object({
+  messageCardId: z.string().min(1, '카드를 선택해주세요'), //혹시 모를 에러 대응
   message: z.string().min(1, '메시지를 입력해주세요.'),
   sender: z.string().min(1, '이름을 입력해주세요.'),
   recipients: z

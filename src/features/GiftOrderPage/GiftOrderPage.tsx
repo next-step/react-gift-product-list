@@ -1,158 +1,110 @@
 import Divider from '@components/common/Divider';
+import LoadingSpinner from '@components/common/LoadingSpinner';
+
 import CardSelector from '@features/GiftOrderPage/components/CardSelector';
 import OrderButton from '@features/GiftOrderPage/components/OrderButton';
 import ProductSummary from '@features/GiftOrderPage/components/ProductSummary';
 import SenderForm from '@features/GiftOrderPage/components/SenderForm';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  type MultiOrderFormData,
-  multiOrderSchema,
-} from '@schemas/orderSchema';
-import cardTemplate from '@data/cardTemplate.json';
-
-import {
-  FormProvider,
-  useFieldArray,
-  useForm,
-  type FieldErrors,
-  type SubmitHandler,
-  type UseFormRegister,
-  type UseFormSetValue,
-} from 'react-hook-form';
 import ReceiveList from '@features/GiftOrderPage/components/ReceiveList';
 import ReceiveModal from '@features/GiftOrderPage/components/ReceiveModal';
-import { useModal } from '@contexts/ModalContext';
-import { useState } from 'react';
 
-export interface FormSectionProps {
-  register: UseFormRegister<MultiOrderFormData>;
-  errors: FieldErrors<MultiOrderFormData>;
-  setValue?: UseFormSetValue<MultiOrderFormData>;
-}
-const defaultCard = cardTemplate[0];
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FormProvider } from 'react-hook-form';
+import styled from '@emotion/styled';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useAuth } from '@contexts/AuthContext';
 
-const mockItems = {
-  id: 123,
-  name: 'BBQ 양념치킨+크림치즈볼+콜라1.25L',
-  imageURL:
-    'https://st.kakaocdn.net/product/gift/product/20231030175450_53e90ee9708f45ffa45b3f7b4bc01c7c.jpg',
-  price: {
-    basicPrice: 29000,
-    discountRate: 0,
-    sellingPrice: 29000,
-  },
-  brandInfo: {
-    id: 2088,
-    name: 'BBQ',
-    imageURL:
-      'https://st.kakaocdn.net/product/gift/gift_brand/20220216170226_38ba26d8eedf450683200d6730757204.png',
-  },
-};
+import useFetch from '@hooks/useFetch';
+import useGiftOrderForm from './hooks/useGiftOrderForm';
+import useReceiveModal from './hooks/useReceiveModal';
+import useOrderSubmit from './hooks/useOrderSubmit';
+import useOrderInvalid from './hooks/useOrderInvalid';
+import type { ProductSummaryInfo } from './OrderTypes';
 
 const GiftOrderPage = () => {
-  const methods = useForm<MultiOrderFormData>({
-    resolver: zodResolver(multiOrderSchema),
-    mode: 'onChange',
-    defaultValues: {
-      message: defaultCard.defaultTextMessage,
-      sender: '',
-      recipients: [],
-    },
-  });
-
+  // 데이터 fetch
+  const { id } = useParams();
   const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    control,
-    formState: { errors },
-    trigger,
-    getValues,
-  } = methods;
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'recipients',
-  });
+    data: productInfo,
+    loading,
+    error,
+  } = useFetch<ProductSummaryInfo>(`/products/${id}/summary`);
 
-  const onSubmit: SubmitHandler<MultiOrderFormData> = (data) => {
-    console.log(data);
-  };
+  //useForm 사용
+  const methods = useGiftOrderForm();
+  const { handleSubmit, setValue, watch } = methods;
+  const onSubmit = useOrderSubmit(productInfo);
+  const onInvalid = useOrderInvalid();
+
+  //modal
+  const { isReceiveModalOpen, openReceiveModal, closeReceiveModal } =
+    useReceiveModal(watch, setValue);
+
+  //초기화 로직
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user?.name) {
+      setValue('sender', user.name);
+    }
+  }, [user?.name, setValue]);
+
+  //에러 처리
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (error && axios.isAxiosError(error)) {
+      const status = error.status;
+      if (status && status >= 400 && status < 500) {
+        toast.error(
+          '데이터를 처리하는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+          {
+            autoClose: 2000,
+            onClose: () => navigate('/'),
+          }
+        );
+      }
+    }
+  }, [error, navigate]);
+
+  // 로딩 처리
+  if (loading) return <LoadingSpinner />;
+  if (!productInfo)
+    return <EmptyMessage>상품정보를 찾을 수 없습니다</EmptyMessage>;
+
+  // 가격 계산
   const recipients = watch('recipients') ?? [];
   const totalQuantity = recipients.reduce(
     (acc, curr) => acc + curr.quantity,
     0
   );
-  const totalPrice = mockItems.price.basicPrice * totalQuantity;
-
-  const [prevRecipients, setPrevRecipients] = useState<
-    MultiOrderFormData['recipients']
-  >([]);
-  const {
-    isReceiveModalOpen,
-    openReceiveModal: openModal,
-    closeReceiveModal: closeModal,
-  } = useModal();
-
-  const openReceiveModal = () => {
-    setPrevRecipients(watch('recipients') ?? []);
-    openModal();
-  };
-
-  const closeReceiveModal = () => {
-    setValue('recipients', prevRecipients);
-    closeModal();
-  };
-
-  const handleComplete = async () => {
-    const recipents = getValues('recipients') ?? [];
-    if (recipents.length === 0) {
-      closeModal();
-      return;
-    }
-
-    const valid = await trigger('recipients'); //검증이 일어나지 않은 필드도 검사하기 위해 사용
-    if (!valid) {
-      alert('받는 사람 정보를 정확히 입력해주세요.');
-      return;
-    }
-
-    const phones = recipents.map((recipent) => recipent.phone);
-    const phoneSet = new Set(phones);
-    if (phoneSet.size !== phones.length) {
-      alert('전화번호가 중복된 사람이 있습니다.');
-      return;
-    }
-    closeModal();
-  };
+  const totalPrice = productInfo.price * totalQuantity;
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardSelector register={register} errors={errors} setValue={setValue} />
-        <Divider />
-        <SenderForm register={register} errors={errors} />
-        <Divider />
-        <ReceiveList onOpen={openReceiveModal} control={control} />
-        <Divider />
-        <ProductSummary />
-        <OrderButton price={totalPrice} />
-      </form>
-      {isReceiveModalOpen && (
-        <FormProvider {...methods}>
-          <ReceiveModal
-            register={register}
-            errors={errors}
-            fields={fields}
-            append={append}
-            remove={remove}
-            onClose={closeReceiveModal}
-            onComplete={handleComplete}
-          />
-        </FormProvider>
-      )}
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
+          <CardSelector />
+          <Divider />
+          <SenderForm />
+          <Divider />
+          <ReceiveList onOpen={openReceiveModal} />
+          <Divider />
+          <ProductSummary productInfo={productInfo} />
+          <OrderButton price={totalPrice} />
+        </form>
+        {isReceiveModalOpen && <ReceiveModal onClose={closeReceiveModal} />}
+      </FormProvider>
     </>
   );
 };
 
 export default GiftOrderPage;
+
+const EmptyMessage = styled.div(({ theme }) => ({
+  ...theme.typography.body1Regular,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '28.75rem',
+}));

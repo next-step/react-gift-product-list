@@ -1,4 +1,6 @@
+import postRequest from '@apis/postRequest';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface LoginCredentials {
   email: string;
@@ -8,11 +10,12 @@ interface LoginCredentials {
 export interface User {
   email: string;
   name: string;
+  authToken: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (loginInfo: LoginCredentials) => boolean;
+  login: (loginInfo: LoginCredentials) => Promise<boolean>;
   logout: () => void;
   isInitialized: boolean;
 }
@@ -24,28 +27,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = sessionStorage.getItem('userInfo');
     if (savedUser) setUser(JSON.parse(savedUser));
     setIsInitialized(true);
   }, []);
 
-  const login = ({ email, password }: LoginCredentials): boolean => {
+  const login = async ({
+    email,
+    password,
+  }: LoginCredentials): Promise<boolean> => {
     //임시 검증 로직
-    if (email && password) {
-      const userData: User = {
-        name: email.split('@')[0],
-        email,
-      };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+
+    const { data, success, error, status } = await postRequest<User>('/login', {
+      email,
+      password,
+    });
+
+    if (success && data) {
+      setUser(data);
+      sessionStorage.setItem('userInfo', JSON.stringify(data));
+      toast.success('로그인 성공');
       return true;
+    } else {
+      if (status && status >= 400 && status < 500) {
+        toast.error(error);
+      } else {
+        toast.error('서버 오류 또는 네트워크 문제 발생');
+      }
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('userInfo');
   };
 
   return (

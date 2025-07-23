@@ -2,77 +2,84 @@
 
 ## 구현할 기능 목록
 
-### 선물하기 홈 > 선물 테마 섹션
+### 로그인 기능
 
-- /api/themes API를 사용하여 테마 목록을 완성
-- 데이터를 불러오는 동안 보여줄 로딩 화면 구현
-- 데이터가 없거나, 에러가 발생하면 선물 테마 섹션이 보여지지 않게 처리
+- /login api 를 사용하여 로그인 기능을 완성
+- 로그인 성공 시 내려오는 authToken과 email, name을 userInfo storage(Session storage)에 저장하고 활용
+- 4XX 에러가 발생하면 Toast를 통해 에러메시지를 출력 (react-toastify 라이브러리 사용)
 
-### 선물하기 홈 > 실시간 급상승 선물랭킹 섹션
+### 주문하기 기능
 
-- /api/products/ranking API를 사용하여 실시간 급상승 선물 랭킹 섹션을 구현
-- 각 필터 선택 시 해당 필터에 맞는 API를 재 요청
-- 데이터를 불러오는 동안 로딩 화면 구현
-- 보여 줄 상품 목록이 없을경우 상품 목록이 없다는 문구 출력
+- /products/:productId/summary api를 사용하여 제품 정보를 받기
+- 만약 제품 정보 API에서 4XX 에러가 발생하면 Toast를 통해 에러메시지를 보여주고, 선물하기 홈으로 연결
+- 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 채움
+- /order api를 사용하여 주문하기 기능을 완성
+- 주문하기 API의 경우 Authorization헤더에 로그인 응답에서 전달 받은 authToken을 넣어야만 동작
+- 주문하기 API에서 401 에러가 발생하면 로그인 페이지로 연결
 
 ## 구현한 기능
 
-### 선물하기 홈 > 선물 테마 섹션
+### 로그인 기능
 
-#### axios 인스턴스 설정
+#### api로 로그인 기능 구현
 
-- API 호출 시 .env를 사용
-  - .env 환경 변수로 VITE_API_BASE_URL 설정
-  - 자동완성을 위해 vite-env.d에 내용 추가
-  - 환경 분리는 하지 않았으나 필요하다면 추후 할 계획(env.production)
-- 재사용성을 위해 API 유틸 구성
-  - api 폴더 만들고 axiosInstance.ts 파일 작성
-  - 기본 설정을 포함한 Axios 인스턴스 생성
+- api를 사용하여 session storage에 authToken과 email, name 저장
 
-#### theme(카테고리) API 섹션 구현
+#### toast를 이용하여 400번대 에러 처리
 
-- 가독성 위해 스타일드 컴포넌트 위치 이동
-- apis 경로를 못찾는 오류가 생겨 alias 추가
-- useState로 필요한 상태 정의 (로딩 제외)
-- useEffect로 API 요청 로직 구현
+- 로그인 성공시 성공 메시지 출력
+- 에러 발생시 에러 상황 출력
 
-#### 로딩 구현
+#### Login 리팩토링
 
-- 로딩 컴포넌트 구현
-- 카테고리 섹션에 로딩 로직 및 상태 추가
-- UI 요소 개선
+- zod와 react-hook-form 이용하여 리팩토링
 
-#### 랭킹 섹션 API 요청 및 상태 처리 구현
+### 주문하기 기능
 
-- Product, RankedProduct interface 설정
-- mockData에서 실제 데이터로 변경
-  - addRanking 메서드 구현
-- useSearchParams에서 rawExpanded 제거하고 state로 관리
-- styled-component 위치 변경
-- API 요청 로직 추가 (theme과 동일)
-- LoadingSpinner 리팩토링
+#### GiftOrderPage 리팩토링
 
-#### API 요청 함수 리팩토링
+- alert 추가(추후 toast로 통일 예정)
+- Provider 리팩토링
+- 모달과 GiftOrderPage의 응집도 높이기 위해 코드 수정
 
-- theme 요청 리팩토링
-- ranking 요청 리팩토링
+#### Ranking Section 오류 수정
+
+- key를 잘못 주고 있었던 오류 수정
+
+#### api를 사용하여 제품 정보 fetch
+
+- GiftOrderPage 코드 정리
+- api 사용하여 data 가져오기
+- mock data로 사용하고 있던 부분을 가져온 데이터로 교체
+
+#### 제품 정보 API 4XX 에러 처리
+
+- useFetch 수정: hasError:boolean -> error: unknown
+- toast를 이용하여 에러 메시지 출력
+
+#### 보내는 사람 초기값 설정
+
+- 보내는 사람 Input Field에 userInfo의 name을 defaultValue로 초기화
+- 의존성 배열 navigate 누락 수정
+
+#### order API 사용하여 주문하기 기능 구현
+
+- API 이용하여 주문하기 로직 작성
+- request를 위해 zod 스키마 및 CardSelector 컴포넌트 수정
+
+#### 에러 처리
+
+- 에러 발생시 toast 표시
+- 401 에러시 login 페이지로 이동
+
+#### post API 요청 리팩토링
+
+- postRequest 작성
+- post 요청하는 페이지 수정
+
+#### GiftOrderPage 리팩토링
+
+- 기존 페이지는 역할이 너무 많고 복잡
+- 관심사 분리를 위해 훅을 만들어서 리팩토링
 
 ## 리뷰 반영
-
-### 폴더 구조 개선
-
-- 관심사 분리와 좀 더 직관적이 폴더를 위해 기능 기반 방식으로 폴더 구조를 변경하였습니다.
-
-### API 공통 부분 추상화
-
-- 공통부분을 추상화
-- 기존에 사용하던 fetchRankedProducts, fetchTheme은 일단 임시로 사용 중단
-
-### TYPE 정의 수정
-
-- MAP을 통해 타입을 정의하는 방식으로 변경
-
-### RankingSection 리팩토링
-
-- 컴포넌트 분리
-- 타입 파일 사용
