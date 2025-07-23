@@ -35,13 +35,14 @@ const OrderPage = () => {
   const [selectedCard, setSelectedCard] = useState<MessageCard | null>(null);
 
   useEffect(() => {
-    if (!selectedCard) {
-      const defaultCard = messageCards.find((card) => card.id === 904) ?? null;
-      setSelectedCard(defaultCard);
-      if (defaultCard) {
-        setValue('message', defaultCard.defaultTextMessage, { shouldValidate: true });
-      }
-    }
+    if (selectedCard) return;
+
+    const defaultCard = messageCards.find((card) => card.id === 904) ?? null;
+    setSelectedCard(defaultCard);
+
+    if (!defaultCard) return;
+
+    setValue('message', defaultCard.defaultTextMessage, { shouldValidate: true });
   }, []);
 
   const handleSelectCard = (card: MessageCard) => {
