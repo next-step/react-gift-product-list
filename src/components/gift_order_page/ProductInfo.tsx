@@ -129,7 +129,7 @@ export const ProductInfo = () => {
     <Container>
       <Label>상품 정보</Label>
       <Body>
-        <ProductImg src={currentGift?.imageURL} />
+        {currentGift?.imageURL && <ProductImg src={currentGift.imageURL} />}
         <Info>
           <Name>{currentGift?.name}</Name>
           <Brand>{currentGift?.brandInfo.name}</Brand>
