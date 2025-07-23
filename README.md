@@ -72,4 +72,9 @@
 - 에러 발생시 toast 표시
 - 401 에러시 login 페이지로 이동
 
+#### post API 요청 리팩토링
+
+- postRequest 작성
+- post 요청하는 페이지 수정
+
 ## 리뷰 반영
