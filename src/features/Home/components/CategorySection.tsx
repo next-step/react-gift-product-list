@@ -8,14 +8,14 @@ interface GiftTheme {
 }
 
 const CategorySection = () => {
-  const { data: themes, loading, hasError } = useFetch<GiftTheme[]>('/themes');
+  const { data: themes, loading, error } = useFetch<GiftTheme[]>('/themes');
 
   return (
     <Section>
       <SectionTitle>선물 테마</SectionTitle>
       {loading && <LoadingSpinner />}
 
-      {!loading && !hasError && themes && themes.length > 0 && (
+      {!loading && !error && themes && themes.length > 0 && (
         <Grid>
           {themes.map((theme: GiftTheme) => (
             <Item key={theme.themeId}>

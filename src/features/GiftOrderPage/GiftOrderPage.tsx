@@ -21,11 +21,13 @@ import {
 import ReceiveList from '@features/GiftOrderPage/components/ReceiveList';
 import ReceiveModal from '@features/GiftOrderPage/components/ReceiveModal';
 import { useModal } from '@contexts/ModalContext';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import useFetch from '@hooks/useFetch';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import styled from '@emotion/styled';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export interface FormSectionProps {
   register: UseFormRegister<MultiOrderFormData>;
@@ -98,10 +100,28 @@ const GiftOrderPage = () => {
   const {
     data: productInfo,
     loading,
-    hasError,
+    error,
   } = useFetch<ProductSummaryInfo>(`/products/${id}/summary`);
 
   // 로딩 및 에러 처리
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (error && axios.isAxiosError(error)) {
+      const status = error.status;
+      if (status && status >= 400 && status < 500) {
+        toast.error(
+          '데이터를 처리하는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+          {
+            autoClose: 2000,
+            onClose: () => {
+              navigate('/');
+            },
+          }
+        );
+      }
+    }
+  }, [error]);
+
   if (loading) return <LoadingSpinner />;
   if (!productInfo)
     return <EmptyMessage>상품정보를 찾을 수 없습니다</EmptyMessage>;

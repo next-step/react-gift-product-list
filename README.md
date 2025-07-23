@@ -52,4 +52,9 @@
 - api 사용하여 data 가져오기
 - mock data로 사용하고 있던 부분을 가져온 데이터로 교체
 
+#### 제품 정보 API 4XX 에러 처리
+
+- useFetch 수정: hasError:boolean -> error: unknown
+- toast를 이용하여 에러 메시지 출력
+
 ## 리뷰 반영

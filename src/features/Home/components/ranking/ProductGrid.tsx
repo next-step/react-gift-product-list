@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 const ProductGrid = ({
   products,
   loading,
-  hasError,
+  error,
   isExpanded,
   toggleExpand,
   onClickItem,
@@ -15,7 +15,7 @@ const ProductGrid = ({
     <>
       {loading && <LoadingSpinner />}
 
-      {!loading && !hasError && products.length > 0 ? (
+      {!loading && !error && products.length > 0 ? (
         <Grid>
           {visibleItems.map((item: RankedProduct) => (
             <ProductCard

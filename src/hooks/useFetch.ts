@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 type UseFetchResult<T> = {
   data: T | null;
   loading: boolean;
-  hasError: boolean; //추후 변경 예정
+  error: unknown; //추후 변경 예정
 };
 
 const useFetch = <T>(url: string): UseFetchResult<T> => {
   const [data, setData] = useState<T | null>(null);
-  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,9 +17,9 @@ const useFetch = <T>(url: string): UseFetchResult<T> => {
       try {
         const res = await axiosInstance.get(url);
         setData(res.data.data);
-      } catch (error) {
-        console.error('오류 발생: ', error);
-        setHasError(true);
+      } catch (err) {
+        console.error('오류 발생: ', err);
+        setError(err);
       } finally {
         setLoading(false);
       }
@@ -27,7 +27,7 @@ const useFetch = <T>(url: string): UseFetchResult<T> => {
     loadData();
   }, [url]);
 
-  return { data, loading, hasError };
+  return { data, loading, error };
 };
 
 export default useFetch;

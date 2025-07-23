@@ -45,7 +45,7 @@ const Login = () => {
         type="email"
         placeholder="이메일"
         {...register('email')}
-        hasError={!!errors.email}
+        error={!!errors.email}
       />
       {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
 
@@ -53,7 +53,7 @@ const Login = () => {
         type="password"
         placeholder="비밀번호"
         {...register('password')}
-        hasError={!!errors.password}
+        error={!!errors.password}
       />
       {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
 
@@ -84,16 +84,14 @@ const Title = styled.h1(({ theme }) => ({
   color: theme.colors.semantic.textDefault,
 }));
 
-const Input = styled.input<{ hasError?: boolean }>(({ theme, hasError }) => ({
+const Input = styled.input<{ error?: boolean }>(({ theme, error }) => ({
   width: '100%',
   maxWidth: '320px',
   padding: `${theme.spacing.spacing3} 0`,
   marginBottom: theme.spacing.spacing2,
   border: 'none',
   borderBottom: `1px solid ${
-    hasError
-      ? theme.colors.semantic.critical
-      : theme.colors.semantic.borderDefault
+    error ? theme.colors.semantic.critical : theme.colors.semantic.borderDefault
   }`,
   fontSize: theme.typography.body1Regular.fontSize,
   fontWeight: theme.typography.body1Regular.fontWeight,
