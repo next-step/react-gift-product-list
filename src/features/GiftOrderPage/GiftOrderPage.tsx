@@ -76,7 +76,7 @@ const GiftOrderPage = () => {
     try {
       const res = await axiosInstance.post('/order', requestBody, {
         headers: {
-          // Authorization: user?.authToken,
+          Authorization: user?.authToken,
         },
       });
       const data = res.data.data;
@@ -90,6 +90,29 @@ const GiftOrderPage = () => {
       }
     } catch (error) {
       console.error('에러 발생 :', error);
+      if (axios.isAxiosError(error) && error.response) {
+        const statusCode = error.response?.status;
+        const errorMessage =
+          error.response.data?.data?.message ||
+          '알 수 없는 에러가 발생했습니다.';
+        console.log(errorMessage);
+
+        if (statusCode == 401) {
+          toast.error(errorMessage, {
+            autoClose: 1000,
+            onClose: () => navigate('/login'),
+          });
+          return;
+        }
+
+        if (statusCode >= 400 && statusCode < 500) {
+          toast.error(errorMessage);
+        } else {
+          toast.error('서버 오류 또는 네트워크 문제 발생');
+        }
+      } else {
+        toast.error('예상치 못한 오류가 발생했습니다.');
+      }
     }
   };
 
