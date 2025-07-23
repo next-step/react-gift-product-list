@@ -1,15 +1,23 @@
 import styled from '@emotion/styled';
 import { messageCardDatas, type MessageCard } from '@/data/messageCardDatas';
 import { useState } from 'react';
+import type { OrderInfoValues } from '..';
+import { useFormContext } from 'react-hook-form';
 
 const MessageCardSection = () => {
-  const [selected, setSelected] = useState<MessageCard>(messageCardDatas[0][0]);
+  const { setValue } = useFormContext<OrderInfoValues>();
+  const [selected, setSelected] = useState<MessageCard>(messageCardDatas[0]);
+
+  const handleCardClick = (card: MessageCard) => {
+    setSelected(card);
+    setValue('message', card.defaultTextMessage, { shouldValidate: true });
+  };
 
   return (
     <MessageCardContainer>
       <MessageCardList>
-        {messageCardDatas[0].map(card => (
-          <MessageCardItem key={card.id} onClick={() => setSelected(card)}>
+        {messageCardDatas.map(card => (
+          <MessageCardItem key={card.id} onClick={() => handleCardClick(card)}>
             <Img src={card.thumbUrl} alt={card.defaultTextMessage} />
           </MessageCardItem>
         ))}
