@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { filters, generations } from '@/data/categoryDatas';
 import useSearchParamState from '../hooks/useSearchParamState';
 import useToggleCollapse from '../hooks/useToggleCollapse';
-import { useUserInfo } from '@/contexts/UserInfoContext';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/Routes';
 import Loading from '@/components/Loading';
@@ -24,15 +23,10 @@ const GiftRankingSection = () => {
   const { rankingDatas, loading } = useRanking({ activeGenerationButton, activeFilterButton });
 
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
-  const { isLoggedIn } = useUserInfo();
 
   const navigate = useNavigate();
   const handleItemClick = (id: string) => {
-    if (isLoggedIn) {
-      navigate(generatePath(ROUTES.ORDER, { id }));
-    } else {
-      navigate(ROUTES.LOGIN);
-    }
+    navigate(generatePath(ROUTES.ORDER, { id }));
   };
 
   const renderContent = () => {
