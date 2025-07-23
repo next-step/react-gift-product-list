@@ -46,29 +46,35 @@ interface Props {
 
 const HeroSection = ({ themeId }: Props) => {
   const [theme, setTheme] = useState<ThemeInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTheme = async () => {
       try {
-        const list = await getThemeList();
-        const id = themeId ?? (list.length ? list[0].themeId : undefined);
+        setLoading(true);
+        const id =
+          themeId ??
+          (await getThemeList()).filter((t) => t.themeId !== undefined).map((t) => t.themeId)[0];
 
         if (id === undefined) {
           console.warn('테마 목록이 비어 있습니다.');
+          setTheme(null);
           return;
         }
 
-        const detail = await getThemeInfo(id);
-        setTheme(detail);
-      } catch (err) {
-        console.error(err);
+        const info = await getThemeInfo(id);
+        setTheme(info);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTheme();
   }, [themeId]);
 
-  if (!theme) return null;
+  if (loading || !theme) return null;
 
   return (
     <>

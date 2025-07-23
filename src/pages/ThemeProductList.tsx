@@ -4,6 +4,7 @@ import NavigationBar from '@components/NavigationBar';
 import HeroSection from '@components/ThemeProduct/HeroSection';
 import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Navigate, useParams } from 'react-router-dom';
 
 const Wrapper = styled.div(({ theme }) => ({
   width: '100%',
@@ -32,6 +33,12 @@ const Main = styled.div`
   height: 100%;
 `;
 const ThemeProductList = () => {
+  const { themeId } = useParams<{ themeId: string }>();
+  if (!themeId) return <Navigate to="/not-found" replace />;
+
+  const id = Number(themeId);
+
+  if (Number.isNaN(id)) return <Navigate to="/not-found" replace />;
   return (
     <>
       <GlobalStyle />
@@ -40,7 +47,7 @@ const ThemeProductList = () => {
           <NavigationBar />
           <Container>
             <Main>
-              <HeroSection />
+              <HeroSection themeId={id} />
             </Main>
           </Container>
         </Wrapper>

@@ -25,5 +25,5 @@ export const ROUTE_PATH = {
   NOT_FOUND: '*',
   MY_PAGE: '/Mypage',
   ORDER: '/Order',
-  THEME_PRODUCT_LIST: '/ThemeProductList',
+  THEME_PRODUCT_LIST: '/themes/:themeId/products',
 };

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { api } from '@/Api/api';
 import LoadingSpinner from './common/LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.section`
   padding: 8px;
@@ -78,6 +79,7 @@ interface ThemeResponse {
 }
 
 const PresentTheme = () => {
+  const navigate = useNavigate();
   const [themeList, setThemeList] = useState<ThemeItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -101,6 +103,10 @@ const PresentTheme = () => {
     return null;
   }
 
+  const handleClick = (id: number) => {
+    navigate(`/themes/${id}/products`);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -114,7 +120,7 @@ const PresentTheme = () => {
         ) : (
           <CategoryContainer>
             {themeList.map((t) => (
-              <Category key={t.themeId}>
+              <Category key={t.themeId} onClick={() => handleClick(t.themeId)}>
                 <PresentImage src={t.image} alt={t.name} />
                 <PresentName>{t.name}</PresentName>
               </Category>
