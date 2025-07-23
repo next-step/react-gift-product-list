@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
-import authApi from '@/api/authApi';
+import authApi from '@/apiClient/authApi';
 
 const Container = styled.button`
   all: unset;

@@ -1,6 +1,6 @@
 import { UserInfoContext } from '@/contexts/UserInfoContext';
 import { useEffect, useState, type ReactNode } from 'react';
-import apiClient from '@/api/apiClient';
+import publicApi from '@/apiClient/publicApi';
 import { toast } from 'react-toastify';
 
 type UserInfo = {
@@ -23,7 +23,7 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async () => {
       try {
-        const response = await apiClient.post('/api/login', user);
+        const response = await publicApi.post('/api/login', user);
         const userInfo: UserInfo = {
           email: response.data.data.email,
           name: response.data.data.name,

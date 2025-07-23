@@ -1,4 +1,4 @@
-import apiClient from '@/api/apiClient';
+import publicApi from '@/apiClient/publicApi';
 import useProductInfo from '@/hooks/useProductInfo';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
@@ -91,7 +91,7 @@ export const ProductInfo = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await apiClient.get(`/api/products/${parsedId}`);
+        const response = await publicApi.get(`/api/products/${parsedId}`);
         setCurrentGift(response.data.data);
       } catch {
         toast.warn('⚠️ 상품 요청 처리 중 오류가 발생했습니다.');
