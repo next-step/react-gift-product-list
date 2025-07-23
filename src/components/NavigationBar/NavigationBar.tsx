@@ -9,7 +9,11 @@ const NavigationBar = () => {
   const { userInfo } = useAuth();
 
   const goToBack = () => {
+    if (window.history.length > 1) {
     navigate(-1);
+  } else {
+    navigate(PATH.ROOT); // fallback 경로
+  }
   };
 
   const goToLogin = () => {
