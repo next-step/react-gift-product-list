@@ -23,7 +23,7 @@ export interface ItemData {
   brandInfo: BrandInfo;
 }
 
-export interface ThemeIdProductsData {
+export interface ThemeIdItemsData {
   list: ItemData[];
   cursor: number;
   hasMoreList: boolean;

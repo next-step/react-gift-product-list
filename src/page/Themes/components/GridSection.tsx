@@ -5,9 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { requests } from '@/api/requests';
 import { useParams } from 'react-router-dom';
 
-
 const GridSection = () => {
-
   const { id } = useParams<{ id: string }>();
   const index = Number(id);
 
@@ -35,7 +33,7 @@ const GridSection = () => {
   };
   const loadMore = async () => {
     try {
-      const data = await requests.fetchThemeIdProducts({ index, currentCursor, currentPage });
+      const data = await requests.fetchThemeIdItems({ index, currentCursor, currentPage });
       const { list, cursor, hasMoreList } = data;
 
       setItems(prev => [...prev, ...list]);
@@ -48,6 +46,10 @@ const GridSection = () => {
       console.error('Error fetching more items:', error);
     }
   };
+
+  if (!hasMore && !items.length) {
+    return <Container>상품이 없습니다.</Container>;
+  }
 
   return (
     <Container>
