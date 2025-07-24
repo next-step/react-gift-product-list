@@ -46,11 +46,11 @@ interface InputFieldProps {
   type?: React.HTMLInputTypeAttribute;
 }
 
-const InputField = ({ hook }: InputFieldProps) => {
+const InputField = ({ hook, placeholder, type }: InputFieldProps) => {
   const { error, ...rest } = hook;
   return (
     <InputContainer>
-      <Input {...rest} />
+      <Input placeholder={placeholder} type={type} {...rest} />
       {error && <P>{error}</P>}
     </InputContainer>
   );
