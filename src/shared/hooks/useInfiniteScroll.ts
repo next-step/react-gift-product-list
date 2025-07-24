@@ -87,12 +87,13 @@ export function useInfiniteScroll<T, K extends string>({
     }, []);
 
     useEffect(() => {
-        if (enabled && items.length === 0 && hasMore && !isPending) loadMore();
-    }, [enabled, items.length, hasMore, isPending, loadMore]);
-
-    useEffect(() => {
         reset();
-    }, [enabled, reset]);
+
+        if (enabled) {
+            loadMore();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [enabled]);
 
     return {
         items,
