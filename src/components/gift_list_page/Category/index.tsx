@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import type { CategoryDataType } from '@/types/category';
 import { CategoryCard } from '@/components/gift_list_page/Category/CategoryCard';
-import apiClient from '@/api/apiClient';
+import publicApi from '@/apiClient/publicApi';
 import { keyframes } from '@emotion/react';
 
 const Container = styled.div`
@@ -70,7 +70,7 @@ export const Category = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await apiClient.get('/api/themes');
+        const response = await publicApi.get('/api/themes');
         setCategories(response.data.data);
         setIsError(false);
       } catch (error) {

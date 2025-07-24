@@ -1,11 +1,12 @@
 import { createContext } from 'react';
 
 interface User {
-  id: string;
+  email: string;
   password: string;
 }
 
 interface UserInfoContextType {
+  isValid: boolean;
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
 }

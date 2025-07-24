@@ -4,6 +4,9 @@ import { Category } from '@/components/gift_list_page/Category';
 import { SelectFriend } from '@/components/gift_list_page/SelectFriend';
 import { Banner } from '@/components/gift_list_page/Banner';
 import { GiftList } from '@/components/gift_list_page/GiftList';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { setNavigator } from '@/utils/navigate';
 
 const Container = styled.div`
   display: flex;
@@ -19,6 +22,12 @@ const Container = styled.div`
 `;
 
 const GiftShop = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setNavigator(navigate);
+  }, [navigate]);
+
   return (
     <Container>
       <TopNavBar title="선물하기" mainPath="/" />

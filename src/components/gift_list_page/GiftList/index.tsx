@@ -4,7 +4,7 @@ import type { GiftItemDataType } from '@/types/giftItems';
 import { GiftItemCard } from './GiftItemCard';
 import { Header } from './Header';
 import { MoreButton } from './MoreButton';
-import apiClient from '@/api/apiClient';
+import publicApi from '@/apiClient/publicApi';
 import { keyframes } from '@emotion/react';
 
 const Container = styled.div`
@@ -62,7 +62,7 @@ export const GiftList = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await apiClient.get(
+        const response = await publicApi.get(
           `/api/products/ranking?targetType=${targetType}&rankType=${rankType}`
         );
         console.log(response.data.data);
@@ -114,7 +114,8 @@ export const GiftList = () => {
               return (
                 <GiftItemCard
                   key={item.id}
-                  id={i + 1}
+                  rank={i + 1}
+                  id={item.id}
                   name={item.name}
                   image={item.imageURL}
                   brandName={item.brandInfo.name}

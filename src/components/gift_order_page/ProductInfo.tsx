@@ -1,8 +1,10 @@
+import publicApi from '@/apiClient/publicApi';
 import useProductInfo from '@/hooks/useProductInfo';
-import giftItemData from '@/mock_data/giftItems';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import type { GiftItemDataType } from '@/types/giftItems';
 
 const Container = styled.div`
   display: flex;
@@ -79,39 +81,50 @@ const PriceValue = styled.div`
 `;
 
 export const ProductInfo = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   if (!id) throw new Error('id가 없습니다');
   const parsedId = parseInt(id!);
-  const currentGift = giftItemData[parsedId];
+  const [currentGift, setCurrentGift] = useState<GiftItemDataType>();
   const { setId, setName, setPrice, setBrand } = useProductInfo();
 
   useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await publicApi.get(`/api/products/${parsedId}`);
+        setCurrentGift(response.data.data);
+      } catch {
+        toast.warn('⚠️ 상품 요청 처리 중 오류가 발생했습니다.', {
+          style: {
+            width: '25rem',
+          },
+        });
+        navigate('/');
+      }
+    };
+    getData();
+  }, [navigate, parsedId]);
+
+  useEffect(() => {
+    if (!currentGift) return;
+
     setId(currentGift.id);
     setName(currentGift.name);
     setPrice(currentGift.price.basicPrice);
     setBrand(currentGift.brandInfo.name);
-  }, [
-    currentGift.brandInfo.name,
-    currentGift.id,
-    currentGift.name,
-    currentGift.price.basicPrice,
-    setBrand,
-    setId,
-    setName,
-    setPrice,
-  ]);
+  }, [currentGift, setBrand, setId, setName, setPrice]);
 
   return (
     <Container>
       <Label>상품 정보</Label>
       <Body>
-        <ProductImg src={currentGift.imageURL} />
+        {currentGift?.imageURL && <ProductImg src={currentGift.imageURL} />}
         <Info>
-          <Name>{currentGift.name}</Name>
-          <Brand>{currentGift.brandInfo.name}</Brand>
+          <Name>{currentGift?.name}</Name>
+          <Brand>{currentGift?.brandInfo.name}</Brand>
           <Price>
             <PriceLabel>상품가</PriceLabel>
-            <PriceValue>{currentGift.price.basicPrice}원</PriceValue>
+            <PriceValue>{currentGift?.price.basicPrice}원</PriceValue>
           </Price>
         </Info>
       </Body>

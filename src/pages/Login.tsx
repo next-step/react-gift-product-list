@@ -6,6 +6,7 @@ import useValidateId from '@/hooks/useValidateId';
 import useValidatePassword from '@/hooks/useValidatePassword';
 import useUserInfo from '@/hooks/useUserInfo';
 import type { InputStyle } from '@/types/inputStyle';
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
   display: flex;
@@ -101,7 +102,7 @@ const Login = () => {
   const [pwdInputFieldStyle, setPwdInputFieldStyle] = useState<InputStyle>('idle');
   const isFirstTry = isFirstIdTry || isFirstPwdTry;
   const isAllValid = !idError && !passwordError;
-  const { setUser } = useUserInfo();
+  const { isValid, setUser } = useUserInfo();
   const MIN_INPUT_LENGTH = 8;
 
   const handleInputFieldStyle = useCallback(
@@ -193,8 +194,21 @@ const Login = () => {
         </div>
         <Button
           onClick={() => {
-            setUser({ id: email, password: password });
-            navigate(nextPath, { replace: true });
+            if (!email.endsWith('@kakao.com')) {
+              toast.warn('@kakao.com 이메일 주소만 가능합니다.', {
+                style: {
+                  width: '25rem',
+                  color: 'black',
+                  backgroundColor: 'white',
+                },
+              });
+
+              return;
+            }
+            setUser({ email, password });
+            if (isValid) {
+              navigate(nextPath, { replace: true });
+            }
           }}
           disabled={isFirstTry ? true : !isAllValid}
         >
