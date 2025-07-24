@@ -1,15 +1,53 @@
 import { useParams } from 'react-router-dom';
-import { productList } from '@/data/products';
-import type { Product } from '@/data/products.types';
+import { useFetch } from '@/hooks/useFetch';
 import * as S from './ProductSummary.styles';
 
+interface ProductSummaryData {
+  id: number;
+  name: string;
+  price: number;
+  imageURL: string;
+  brandName?: string;
+}
+
 const ProductSummary = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const productId = parseInt(id ?? '', 10);
-  const product: Product | undefined = productList.find((p) => p.id === productId);
+
+  const url = isNaN(productId) ? null : `http://localhost:3000/api/products/${productId}/summary`;
+
+  const { data: product, isLoading, error } = useFetch<ProductSummaryData>(url);
+
+  if (isNaN(productId)) {
+    return (
+      <S.Wrapper style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
+        <p>유효하지 않은 상품 ID입니다.</p>
+      </S.Wrapper>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <S.Wrapper style={{ textAlign: 'center', padding: '20px' }}>
+        <p>상품 정보를 불러오는 중...</p>
+      </S.Wrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <S.Wrapper style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
+        <p>{error}</p>
+      </S.Wrapper>
+    );
+  }
 
   if (!product) {
-    return <p>상품 정보를 불러올 수 없습니다.</p>;
+    return (
+      <S.Wrapper style={{ textAlign: 'center', padding: '20px' }}>
+        <p>상품 정보를 찾을 수 없습니다.</p>
+      </S.Wrapper>
+    );
   }
 
   return (
@@ -17,11 +55,12 @@ const ProductSummary = () => {
       <S.Thumbnail src={product.imageURL} alt={product.name} />
       <S.Info>
         <S.Name>{product.name}</S.Name>
-        <S.Brand>
-          <img src={product.brandInfo.imageURL} alt={product.brandInfo.name} />
-          <span>{product.brandInfo.name}</span>
-        </S.Brand>
-        <S.Price>{product.price.sellingPrice.toLocaleString()}원</S.Price>
+        {product.brandName && (
+          <S.Brand>
+            <span>{product.brandName}</span>
+          </S.Brand>
+        )}
+        <S.Price>{product.price.toLocaleString()}원</S.Price>
       </S.Info>
     </S.Wrapper>
   );

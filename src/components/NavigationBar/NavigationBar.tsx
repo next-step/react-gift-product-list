@@ -2,20 +2,25 @@ import { ChevronLeft, UserRound } from 'lucide-react';
 import * as S from './NavigationBar.styles';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { PATH } from '@/constants/paths';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { userInfo } = useAuth();
 
   const goToBack = () => {
-    navigate(-1);
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate(PATH.ROOT); // fallback 경로
+    }
   };
 
   const goToLogin = () => {
-    if (user) {
-      navigate('/my'); // 로그인됨
+    if (userInfo) {
+      navigate(PATH.MY_PAGE); // 로그인됨
     } else {
-      navigate('/login'); // 로그인안됨
+      navigate(PATH.LOGIN); // 로그인안됨
     }
   };
 

@@ -1,6 +1,6 @@
 import * as S from './CategorySection.styles';
 import CategoryItem from './CategoryItem';
-import { useState, useEffect } from 'react';
+import { useFetch } from '@/hooks/useFetch';
 
 interface Category {
   themeId: number;
@@ -9,39 +9,8 @@ interface Category {
 }
 
 const CategorySection = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        setHasError(false);
-
-        const response = await fetch('http://localhost:3000/api/themes');
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-
-        if (result && Array.isArray(result.data)) {
-          setCategories(result.data);
-        } else {
-          throw new Error('Unexpected API response structure');
-        }
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const url = 'http://localhost:3000/api/themes';
+  const { data: categories = [], isLoading, error } = useFetch<Category[]>(url);
 
   if (isLoading) {
     return (
@@ -51,7 +20,7 @@ const CategorySection = () => {
     );
   }
 
-  if (hasError || categories.length === 0) {
+  if (error || !categories || categories.length === 0) {
     return null;
   }
 
