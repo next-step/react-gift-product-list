@@ -1,6 +1,10 @@
+import { ROUTE_PATH } from '@/routes/Routes';
+import { isLoggedIn } from '@/utils/auth';
 import NavigationBar from '@components/NavigationBar';
 import OrderForm from '@components/OrderForm/OrderForm';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.div(({ theme }) => ({
   width: '100%',
@@ -25,6 +29,13 @@ const Container = styled.div(({ theme }) => ({
 }));
 
 const Order = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate(ROUTE_PATH.LOGIN, { replace: true });
+    }
+  }, [navigate]);
   return (
     <Wrapper>
       <NavigationBar />

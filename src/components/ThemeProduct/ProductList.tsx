@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import LoadingSpinner from '@components/common/LoadingSpinner';
+import { isLoggedIn } from '@/utils/auth';
 
 const Container = styled.div`
   padding: 16px;
@@ -98,7 +99,18 @@ const ProductList = ({ themeId }: Props) => {
           <ProductCard
             key={p.id}
             product={p}
-            onClick={() => navigate(`${ROUTE_PATH.ORDER}?productId=${p.id}`)}
+            onClick={() => {
+              const target = `${ROUTE_PATH.ORDER}?productId=${p.id}`;
+
+              if (!isLoggedIn()) {
+                navigate(`${ROUTE_PATH.LOGIN}?redirect=${encodeURIComponent(target)}`, {
+                  replace: true,
+                });
+                return;
+              }
+
+              navigate(target);
+            }}
           />
         ))}
       </Main>

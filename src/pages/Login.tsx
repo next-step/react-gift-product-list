@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import KakaoIconUrl from '../assets/KaKaoLogo.svg';
 import GlobalStyle from '@/styles/global';
 import NavigationBar from '@components/NavigationBar';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { useAuth } from '@/hooks/useAuth';
 import { postLogin } from '@/Api/api';
@@ -128,8 +128,10 @@ type LocationState = { from?: string };
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
-  const redirectTo = (location.state as LocationState | null)?.from || '/';
+  const redirectTo =
+    searchParams.get('redirect') || (location.state as LocationState | null)?.from || '/';
 
   const {
     id,
