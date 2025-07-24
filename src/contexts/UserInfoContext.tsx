@@ -1,18 +1,23 @@
+import type { UserInfoData } from '@/page/Login/hooks/useLogin';
+import parseUserFromSessionStorage from '@/utils/parseUserFromSessionStorage';
 import { createContext, useContext, useState, type PropsWithChildren } from 'react';
 
 interface UserInfo {
+  name: string;
   email: string;
-  token: string;
+  authToken: string;
 }
 
 interface Ctx {
   userInfo: UserInfo;
-  login: (email: string, token: string) => void;
-  logout: () => void;
+  setLoginSession: (userInfoData: UserInfoData) => void;
+  setLogoutSession: () => void;
   isLoggedIn: boolean;
 }
 
 const UserInfoContext = createContext<Ctx | null>(null);
+const EMPTY_USER_INFO: UserInfoData = { name: '', email: '', authToken: '' };
+export const STORAGE_KEY = 'user';
 
 export const useUserInfo = () => {
   const context = useContext(UserInfoContext);
@@ -23,26 +28,23 @@ export const useUserInfo = () => {
 };
 
 export const UserInfoProvider = ({ children }: PropsWithChildren) => {
-  const [userInfo, setUserInfo] = useState<UserInfo>(() => ({
-    email: sessionStorage.getItem('email') ?? '',
-    token: sessionStorage.getItem('token') ?? '',
-  }));
+  const parsed = parseUserFromSessionStorage(STORAGE_KEY);
+  const [userInfo, setUserInfo] = useState<UserInfoData>(parsed ? parsed : EMPTY_USER_INFO);
 
   const isLoggedIn = Boolean(userInfo.email);
 
-  const login = (email: string, token: string) => {
-    setUserInfo({ email, token });
-    sessionStorage.setItem('email', email);
-    sessionStorage.setItem('token', token);
+  const setLoginSession = (userInfoData: UserInfoData) => {
+    setUserInfo(userInfoData);
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(userInfoData));
   };
 
-  const logout = () => {
-    setUserInfo({ email: '', token: '' });
-    sessionStorage.clear();
+  const setLogoutSession = () => {
+    setUserInfo(EMPTY_USER_INFO);
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(EMPTY_USER_INFO));
   };
 
   return (
-    <UserInfoContext.Provider value={{ userInfo, login, logout, isLoggedIn }}>
+    <UserInfoContext.Provider value={{ userInfo, setLoginSession, setLogoutSession, isLoggedIn }}>
       {children}
     </UserInfoContext.Provider>
   );

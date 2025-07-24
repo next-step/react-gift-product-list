@@ -21,7 +21,9 @@ const GiftRankingSection = () => {
     activeFilterButton,
   } = useSearchParamState();
 
+
   const { rankingDatas, loading } = useRanking({ activeGenerationButton, activeFilterButton });
+
 
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
   const { isLoggedIn } = useUserInfo();

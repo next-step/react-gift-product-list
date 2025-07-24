@@ -1,6 +1,32 @@
 import styled from '@emotion/styled';
 import type { OrderInfoValues } from '..';
 
+interface ReceiverInfoArrayProps {
+  receiverInfos: OrderInfoValues['receiverInfos'];
+}
+
+const ReceiverInfoArray = ({ receiverInfos }: ReceiverInfoArrayProps) => {
+  return (
+    <Container>
+      <Category>
+        <TitleText>이름</TitleText>
+        <TitleText>전화번호</TitleText>
+        <TitleText>수량</TitleText>
+      </Category>
+
+      {receiverInfos.map((receiver, index) => (
+        <Details key={index}>
+          <DetailText>{receiver.name}</DetailText>
+          <DetailText>{receiver.phoneNumber}</DetailText>
+          <DetailText>{receiver.quantity}</DetailText>
+        </Details>
+      ))}
+    </Container>
+  );
+};
+
+export default ReceiverInfoArray;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -43,29 +69,3 @@ const DetailText = styled.p`
   margin: 0px;
   text-align: left;
 `;
-
-interface ReceiverInfoArrayProps {
-  receiverInfos: OrderInfoValues['receiverInfos'];
-}
-
-const ReceiverInfoArray = ({ receiverInfos }: ReceiverInfoArrayProps) => {
-  return (
-    <Container>
-      <Category>
-        <TitleText>이름</TitleText>
-        <TitleText>전화번호</TitleText>
-        <TitleText>수량</TitleText>
-      </Category>
-
-      {receiverInfos.map((receiver, index) => (
-        <Details key={index}>
-          <DetailText>{receiver.name}</DetailText>
-          <DetailText>{receiver.phoneNumber}</DetailText>
-          <DetailText>{receiver.quantity}</DetailText>
-        </Details>
-      ))}
-    </Container>
-  );
-};
-
-export default ReceiverInfoArray;

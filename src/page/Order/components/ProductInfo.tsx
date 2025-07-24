@@ -1,5 +1,28 @@
-import { rankingDatas } from '@/data/rankingDatas';
 import styled from '@emotion/styled';
+import type { ProductSummaryData } from '../hooks/useRnaking';
+
+const ProductInfo = ({ productSummaryData }: { productSummaryData: ProductSummaryData }) => {
+  const { name, brandName, price, imageURL } = productSummaryData;
+  return (
+    <ProductInfoContainer>
+      <Title>상품 정보</Title>
+
+      <ItemContainer>
+        <img alt={name} src={imageURL} />
+        <div>
+          <p>{name}</p>
+          <p>{brandName}</p>
+          <p>
+            <span>상품가 </span>
+            {price}
+          </p>
+        </div>
+      </ItemContainer>
+    </ProductInfoContainer>
+  );
+};
+
+export default ProductInfo;
 
 const ProductInfoContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.semantic.background.default};
@@ -64,30 +87,3 @@ const Title = styled.h3`
   color: ${({ theme }) => theme.colors.semantic.text.default};
   margin-bottom: ${({ theme }) => theme.spacing.spacing3};
 `;
-
-interface ProductInfoProps {
-  index: number;
-}
-
-const ProductInfo = ({ index }: ProductInfoProps) => {
-  const { name, subName, price, image } = rankingDatas[index - 1];
-  return (
-    <ProductInfoContainer>
-      <Title>상품 정보</Title>
-
-      <ItemContainer>
-        <img alt={name} src={image} />
-        <div>
-          <p>{name}</p>
-          <p>{subName}</p>
-          <p>
-            <span>상품가 </span>
-            {price}
-          </p>
-        </div>
-      </ItemContainer>
-    </ProductInfoContainer>
-  );
-};
-
-export default ProductInfo;

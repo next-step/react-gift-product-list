@@ -2,6 +2,35 @@ import styled from '@emotion/styled';
 import type { OrderInfoValues } from '..';
 import { useFormContext } from 'react-hook-form';
 
+const SenderInfo = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<OrderInfoValues>();
+
+  return (
+    <SenderInfoContainer>
+      <h3>보내는 사람</h3>
+      <InputWrapper>
+        <Input
+          type="text"
+          placeholder="이름을 입력하세요."
+          {...register(`name`, {
+            required: { value: true, message: '이름을 입력해주세요.' },
+          })}
+        />
+        {errors.name ? (
+          <ErrorMessage>{errors.name.message}</ErrorMessage>
+        ) : (
+          <SubText>* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.</SubText>
+        )}
+      </InputWrapper>
+    </SenderInfoContainer>
+  );
+};
+
+export default SenderInfo;
+
 const SenderInfoContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.semantic.background.fill};
   padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
@@ -41,32 +70,3 @@ const ErrorMessage = styled.p`
   color: ${({ theme }) => theme.colors.colorScale.red[600]};
   margin-top: ${({ theme }) => theme.spacing.spacing1};
 `;
-
-const SenderInfo = () => {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<OrderInfoValues>();
-
-  return (
-    <SenderInfoContainer>
-      <h3>보내는 사람</h3>
-      <InputWrapper>
-        <Input
-          type="text"
-          placeholder="이름을 입력하세요."
-          {...register(`name`, {
-            required: { value: true, message: '이름을 입력해주세요.' },
-          })}
-        />
-        {errors.name ? (
-          <ErrorMessage>{errors.name.message}</ErrorMessage>
-        ) : (
-          <SubText>* 실제 선물 발송 시 발신자이름으로 반영되는 정보입니다.</SubText>
-        )}
-      </InputWrapper>
-    </SenderInfoContainer>
-  );
-};
-
-export default SenderInfo;

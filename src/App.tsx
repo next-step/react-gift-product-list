@@ -5,6 +5,7 @@ import { theme } from '@/styles/theme';
 import styled from '@emotion/styled';
 import AppRouter from './routes/Routers';
 import { UserInfoProvider } from './contexts/UserInfoContext';
+import { ToastContainer } from 'react-toastify';
 
 const AppContainer = styled.div`
   width: 100%;
@@ -22,6 +23,8 @@ function App() {
         <AppContainer>
           <Navigation />
           <AppRouter />
+          <div id="receiverModal" />
+          <ToastContainer />
         </AppContainer>
       </UserInfoProvider>
     </ThemeProvider>

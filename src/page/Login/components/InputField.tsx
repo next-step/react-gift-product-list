@@ -50,7 +50,7 @@ interface InputFieldProps {
   type?: React.HTMLInputTypeAttribute;
 }
 // value, onChange, error, isValid
-const InputField: React.FC<InputFieldProps> = ({ hook, placeholder, type }) => {
+const InputField = ({ hook, placeholder, type }: InputFieldProps) => {
   const { value, error, onChange, onBlur } = hook;
   return (
     <InputContainer>

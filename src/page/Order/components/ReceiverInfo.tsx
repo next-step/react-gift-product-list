@@ -3,57 +3,6 @@ import styled from '@emotion/styled';
 import { type UseFieldArrayReturn, type UseFormReturn } from 'react-hook-form';
 import type { OrderInfoValues } from '..';
 
-const ReceiverInfoContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.semantic.background.fill};
-  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
-  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
-  min-height: 0;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-`;
-
-const InputWrapper = styled.div`
-  width: 100%;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing.spacing2};
-  border: 1px solid ${({ theme }) => theme.colors.colorScale.gray[200]};
-  border-radius: 8px;
-  font-size: ${({ theme }) => theme.typography.body1Regular.fontSize};
-  line-height: ${({ theme }) => theme.typography.body1Regular.lineHeight};
-  color: ${({ theme }) => theme.colors.semantic.text.default};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.semantic.brand.kakaoYellow};
-  }
-`;
-
-const Text = styled.p`
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.375rem;
-  color: rgb(42, 48, 56);
-  margin: 0px;
-  text-align: left;
-  min-width: 3.75rem;
-`;
-
-const ErrorMessage = styled.p`
-  font-size: ${({ theme }) => theme.typography.label2Regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.label2Regular.fontWeight};
-  color: ${({ theme }) => theme.colors.colorScale.red[600]};
-  margin-top: ${({ theme }) => theme.spacing.spacing1};
-`;
-
 const DeleteIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke="black">
     <path d="M18 6 6 18" />
@@ -147,3 +96,54 @@ const ReceiverInfo = ({ index, remove, receiverInfosForm }: ReceiverInfoProps) =
 };
 
 export default ReceiverInfo;
+
+const ReceiverInfoContainer = styled.div`
+  background-color: ${({ theme }) => theme.colors.semantic.background.fill};
+  padding: ${({ theme }) => theme.spacing.spacing4} ${({ theme }) => theme.spacing.spacing3};
+  margin-bottom: ${({ theme }) => theme.spacing.spacing4};
+  min-height: 0;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+`;
+
+const InputWrapper = styled.div`
+  width: 100%;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.spacing2};
+  border: 1px solid ${({ theme }) => theme.colors.colorScale.gray[200]};
+  border-radius: 8px;
+  font-size: ${({ theme }) => theme.typography.body1Regular.fontSize};
+  line-height: ${({ theme }) => theme.typography.body1Regular.lineHeight};
+  color: ${({ theme }) => theme.colors.semantic.text.default};
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.semantic.brand.kakaoYellow};
+  }
+`;
+
+const Text = styled.p`
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.375rem;
+  color: rgb(42, 48, 56);
+  margin: 0px;
+  text-align: left;
+  min-width: 3.75rem;
+`;
+
+const ErrorMessage = styled.p`
+  font-size: ${({ theme }) => theme.typography.label2Regular.fontSize};
+  font-weight: ${({ theme }) => theme.typography.label2Regular.fontWeight};
+  color: ${({ theme }) => theme.colors.colorScale.red[600]};
+  margin-top: ${({ theme }) => theme.spacing.spacing1};
+`;
