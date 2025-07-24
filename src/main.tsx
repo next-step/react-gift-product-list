@@ -1,6 +1,6 @@
 import "reflect-metadata";
 
-import { StrictMode } from "react";
+import { Fragment } from "react";
 import { createRoot } from "react-dom/client";
 
 import { GlobalStyles } from "@/app/styles";
@@ -8,8 +8,8 @@ import { GlobalStyles } from "@/app/styles";
 import App from "@/App";
 
 createRoot(document.getElementById("root")!).render(
-    <StrictMode>
+    <Fragment>
         <GlobalStyles />
         <App />
-    </StrictMode>,
+    </Fragment>,
 );
