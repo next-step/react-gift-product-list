@@ -6,6 +6,7 @@ import CardData from '@/data/CardData'
 import type { Recipient } from '@/components/RecipientOverlay'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/Root'
+import { STORAGE_KEY_USER } from '@/contexts/AuthContext'
 import {
   Container,
   Section,
@@ -34,7 +35,7 @@ export const OrderPage = () => {
   const [product, setProduct] = useState(null)
 
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const userInfo = JSON.parse(localStorage.getItem(STORAGE_KEY_USER) || '{}')
     if (userInfo?.name) {
       setSenderName(userInfo.name)
     }
@@ -44,16 +45,29 @@ export const OrderPage = () => {
     const fetchProduct = async () => {
       try {
         const res = await fetch(`/api/products/${productId}/summary`)
+        console.log('응답 상태 코드:', res.status)
+
         if (!res.ok) {
+          const errorText = await res.text()
+          console.error('에러:', errorText)
           toast.error('존재하지 않는 상품입니다.')
-          setTimeout(() => navigate(PATHS.HOME), 0)
+          navigate(PATHS.HOME)
           return
         }
+
         const data = await res.json()
+
+        if (!data?.data || typeof data.data.price !== 'number') {
+          console.error('예상과 다른 응답 구조:', data)
+          toast.error('상품 정보가 올바르지 않습니다.')
+          return
+        }
+
         setProduct(data.data)
       } catch (err) {
+        console.error('상품 정보 요청 중 오류 발생:', err)
         toast.error('상품 정보 요청 중 오류 발생')
-        setTimeout(() => navigate(PATHS.HOME), 0)
+        navigate(PATHS.HOME)
       }
     }
 
@@ -148,8 +162,8 @@ export const OrderPage = () => {
 
   const totalQuantity = recipients.reduce((sum, r) => sum + r.quantity, 0)
   const totalPrice =
-    product?.price?.sellingPrice && totalQuantity
-      ? product.price.sellingPrice * totalQuantity
+    typeof product?.price === 'number' && totalQuantity
+      ? product.price * totalQuantity
       : 0
 
   return (

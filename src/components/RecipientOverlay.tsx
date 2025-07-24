@@ -166,9 +166,7 @@ export default function RecipientOverlay({
                   return
                 }
                 append({ name: '', phone: '', quantity: 1 })
-                setTimeout(() => {
-                  listEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-                }, 0)
+                listEndRef.current?.scrollIntoView({ behavior: 'smooth' })
               }}
               style={{
                 border: '1px solid #ddd',
