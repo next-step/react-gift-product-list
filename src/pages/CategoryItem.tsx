@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import styled from '@emotion/styled'
 import RankingItem from '../components/RankingSection/RankingItem'
@@ -26,19 +26,35 @@ const Grid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.spacing4};
 `
+interface ThemeInfo {
+  name: string
+  title: string
+  backgroundColor?: string
+}
 
+interface Product {
+  id: number
+  name: string
+  imageURL: string
+  price: {
+    sellingPrice: number
+  }
+  brandInfo?: {
+    name?: string
+  }
+}
 export const CategoryItem = () => {
   const { themeId } = useParams()
   const navigate = useNavigate()
 
-  const [themeInfo, setThemeInfo] = useState(null)
-  const [products, setProducts] = useState([])
+  const [themeInfo, setThemeInfo] = useState<ThemeInfo | null>(null)
+  const [products, setProducts] = useState<Product[]>([])
   const [cursor, setCursor] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const observerRef = useRef(null)
 
-  const loadMore = async () => {
+  const loadMore = useCallback(async () => {
     if (!themeId || isLoading || !hasMore) return
     setIsLoading(true)
     try {
@@ -54,7 +70,7 @@ export const CategoryItem = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [themeId, cursor, isLoading, hasMore])
 
   useEffect(() => {
     if (!themeId) return
@@ -74,7 +90,7 @@ export const CategoryItem = () => {
 
     fetchTheme()
     loadMore()
-  }, [themeId])
+  }, [themeId, loadMore, navigate])
 
   useEffect(() => {
     const el = observerRef.current

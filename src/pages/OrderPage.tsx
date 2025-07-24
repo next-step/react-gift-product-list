@@ -56,7 +56,6 @@ export const OrderPage = () => {
         }
 
         const data = await res.json()
-        console.log('정상 응답:', data)
 
         if (!data?.data || typeof data.data.price !== 'number') {
           console.error('예상과 다른 응답 구조:', data)
