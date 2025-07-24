@@ -4,6 +4,7 @@ import styled from '@emotion/styled'
 import RankingItem from '../components/RankingSection/RankingItem'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
+import axios from 'axios'
 const Wrapper = styled.section`
   padding: ${({ theme }) => theme.spacing.spacing5};
 `
@@ -34,9 +35,8 @@ export const CategoryItem = () => {
 
     const fetchData = async () => {
       try {
-        const infoRes = await fetch(`/api/themes/${themeId}/info`)
-        const infoData = await infoRes.json()
-        setThemeInfo(infoData.data)
+        const infoRes = await axios.get(`/api/themes/${themeId}/info`)
+        setThemeInfo(infoRes.data.data)
 
         const productsRes = await fetch(
           `/api/themes/${themeId}/products?cursor=0&limit=10`
@@ -44,7 +44,11 @@ export const CategoryItem = () => {
         const productsData = await productsRes.json()
         setProducts(productsData.data.list)
       } catch (error) {
-        console.error(error)
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          navigate('/')
+        } else {
+          console.error(error)
+        }
       }
     }
 
