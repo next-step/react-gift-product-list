@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.tsx
+import { ThemeProvider } from '@emotion/react';
+import { theme } from './styles/theme';
+import { BaseLayout } from './components/Layout/BaseLayout';
+import { Navigation } from './components/Layout/Navigation';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from '@/pages/Home/Page';
+import LoginPage from '@/pages/Login/LoginPage';
+import OrderPage from '@/pages/Home/OrderPage';
+import MyPage from '@/pages/MyPage/MyPage';
+import NotFound from '@/pages/NotFound/Page';
+import { RequireAuth } from '@/components/RequireAuth';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <ThemeProvider theme={theme}>
+      <BaseLayout header={<Navigation />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/order/:id" element={<OrderPage />} />
 
-export default App
+          {/* 여기! /my 경로를 RequireAuth로 감싸서 로그인된 사용자만 접근하도록 */}
+          <Route 
+            path="/my" 
+            element={
+              <RequireAuth>
+                <MyPage />
+              </RequireAuth>
+            } 
+          />
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BaseLayout>
+    </ThemeProvider>
+  );
+};
+
+export default App;
