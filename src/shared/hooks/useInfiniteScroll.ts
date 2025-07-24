@@ -3,6 +3,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "@/shared/hooks/useInView";
 import { cursorGenerator, type CursorPaginateApiFunction } from "@/shared/utils/cursorGenerator";
 
+export const USE_INFINITE_SCROLL_DEFAULT_OPTIONS = {
+    LIMIT: 10,
+    ENABLED: true,
+    THRESHOLD: 0.1,
+    ROOT_MARGIN: "100px",
+};
+
 export interface UseInfiniteScrollOptions<T, K extends string> {
     apiFunction: CursorPaginateApiFunction<T, K>;
     limit?: number;
@@ -13,10 +20,10 @@ export interface UseInfiniteScrollOptions<T, K extends string> {
 
 export function useInfiniteScroll<T, K extends string>({
     apiFunction,
-    limit = 10,
-    enabled = true,
-    threshold = 0.1,
-    rootMargin = "100px",
+    limit = USE_INFINITE_SCROLL_DEFAULT_OPTIONS.LIMIT,
+    enabled = USE_INFINITE_SCROLL_DEFAULT_OPTIONS.ENABLED,
+    threshold = USE_INFINITE_SCROLL_DEFAULT_OPTIONS.THRESHOLD,
+    rootMargin = USE_INFINITE_SCROLL_DEFAULT_OPTIONS.ROOT_MARGIN,
 }: UseInfiniteScrollOptions<T, K>) {
     const [items, setItems] = useState<T[]>([]);
     const [hasMore, setHasMore] = useState(true);
