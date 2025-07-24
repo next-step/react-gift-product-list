@@ -9,7 +9,7 @@ type AuthContextType = {
   logout: () => void
 }
 
-const STORAGE_KEY_USER = 'userInfo'
+export const STORAGE_KEY_USER = 'userInfo'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
