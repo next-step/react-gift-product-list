@@ -2,6 +2,7 @@ import GlobalStyle from '@/styles/global';
 import { theme } from '@/theme/theme';
 import NavigationBar from '@components/NavigationBar';
 import HeroSection from '@components/ThemeProduct/HeroSection';
+import ProductList from '@components/ThemeProduct/ProductList';
 import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Navigate, useParams } from 'react-router-dom';
@@ -48,6 +49,7 @@ const ThemeProductList = () => {
           <Container>
             <Main>
               <HeroSection themeId={id} />
+              <ProductList themeId={id} />
             </Main>
           </Container>
         </Wrapper>

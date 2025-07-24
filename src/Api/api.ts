@@ -67,3 +67,34 @@ export const getThemeList = async (): Promise<ThemeListItem[]> => {
   const { data } = await api.get<ThemeListResponse>('/api/themes');
   return data.data;
 };
+
+export interface ProductItem {
+  id: number;
+  name: string;
+  imageURL: string;
+  price: {
+    basicPrice: number;
+    sellingPrice: number;
+    discountRate: number;
+  };
+  brandInfo: {
+    id: number;
+    name: string;
+    imageURL: string;
+  };
+}
+
+interface ThemeProductResponse {
+  data: {
+    list: ProductItem[];
+    cursor: number;
+    hasMoreList: boolean;
+  };
+}
+
+export const getThemeProducts = async (themeId: number, cursor = 0, limit = 10) => {
+  const { data } = await api.get<ThemeProductResponse>(`/api/themes/${themeId}/products`, {
+    params: { cursor, limit },
+  });
+  return data.data; // { list, cursor, hasMoreList }
+};
