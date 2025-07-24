@@ -9,7 +9,6 @@ type UseInViewOptions = {
 export const useInView = ({ onInView, threshold = 0.1, rootMargin = "50px" }: UseInViewOptions) => {
     const [isInView, setIsInView] = useState<boolean>(false);
     const elementRef = useRef<HTMLDivElement>(null);
-    const observerRef = useRef<IntersectionObserver | null>(null);
 
     const handleIntersection = useCallback(
         (entries: IntersectionObserverEntry[]) => {
@@ -27,14 +26,14 @@ export const useInView = ({ onInView, threshold = 0.1, rootMargin = "50px" }: Us
         const element = elementRef.current;
         if (!element) return;
 
-        observerRef.current = new IntersectionObserver(handleIntersection, {
+        const intersectionObserver = new IntersectionObserver(handleIntersection, {
             threshold,
             rootMargin,
         });
 
-        observerRef.current.observe(element);
+        intersectionObserver.observe(element);
 
-        return () => observerRef.current?.disconnect();
+        return () => intersectionObserver?.disconnect();
     }, [handleIntersection, threshold, rootMargin]);
 
     return {
