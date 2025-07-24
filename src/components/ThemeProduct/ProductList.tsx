@@ -95,7 +95,11 @@ const ProductList = ({ themeId }: Props) => {
     <Container>
       <Main>
         {products.map((p) => (
-          <ProductCard key={p.id} product={p} />
+          <ProductCard
+            key={p.id}
+            product={p}
+            onClick={() => navigate(`${ROUTE_PATH.ORDER}?productId=${p.id}`)}
+          />
         ))}
       </Main>
 
