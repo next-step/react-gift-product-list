@@ -28,6 +28,25 @@ const LoadMore = styled.button`
   cursor: pointer;
 `;
 
+const EmptyContainer = styled.div`
+  width: 100%;
+  height: 240px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+`;
+
+const Empty = styled.p(({ theme }) => ({
+  fontSize: '0.875rem',
+  fontWeight: 400,
+  lineHeight: '1.1875rem',
+  color: theme.semanticColors.text.default,
+  margin: '0px',
+  width: '100%',
+  textAlign: 'center',
+}));
 interface Props {
   themeId: number;
 }
@@ -64,6 +83,14 @@ const ProductList = ({ themeId }: Props) => {
       setLoading(false);
     }
   };
+
+  if (!loading && products.length === 0) {
+    return (
+      <EmptyContainer>
+        <Empty>상품이 없습니다.</Empty>
+      </EmptyContainer>
+    );
+  }
   return (
     <Container>
       <Main>
