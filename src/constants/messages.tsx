@@ -5,4 +5,5 @@ export const ERROR_MESSAGES = {
   receiverPhone: "전화번호를 입력해주세요.",
   quantity: "수량을 입력해주세요.",
   message: "",
+  messageCardId: "",
 }

@@ -1,10 +1,11 @@
 import { createContext, useContext } from "react"
-import type { ValueType } from "@/interfaces/ValueType"
 
-export interface AuthContextType extends ValueType {
+export interface AuthContextType {
   isLoggedIn: boolean
-  setIsLoggedIn: (isLoggedIn: boolean) => void
-  login: (email: string, password: string) => boolean
+  email: string
+  name: string
+  authToken: string | null
+  login: (email: string, password: string) => Promise<boolean>
   logout: () => void
 }
 

@@ -10,10 +10,13 @@ import MyPage from "@/pages/MyPage"
 import ProtectedRoute from "./ProtectedRoute"
 import OrderPage from "@/pages/OrderPage"
 import CardProvider from "@/context/CardProvider"
+import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer } from "react-toastify"
 
 const Router = () => {
   return (
     <AuthContextProvider>
+      <ToastContainer position="bottom-center" />
       <BrowserRouter>
         <PresentThemeProvider>
           <PresentProvider>

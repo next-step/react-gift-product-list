@@ -13,29 +13,8 @@ import getRoute from "@/functions/getRoute"
 import useQueryState from "@/hooks/useQueryState"
 import Loading from "./PresentTheme/Loading"
 import useFetch from "@/hooks/useFetch"
-
+import ProductsResponse from "@/interfaces/ProductResponse"
 const VISIBLE_COUNT = 6
-
-interface Price {
-  basicPrice: number
-  sellingPrice: number
-  discountRate: number
-}
-interface BrandInfo {
-  id: number
-  name: string
-  imageURL: string
-}
-export interface Product {
-  id: number
-  name: string
-  price: Price
-  imageURL: string
-  brandInfo: BrandInfo
-}
-interface ProductsResponse {
-  data: Product[]
-}
 
 const ProductGrid = () => {
   const [showAll, setShowAll] = useState(false)
@@ -45,7 +24,11 @@ const ProductGrid = () => {
 
   const [rankType] = useQueryState<string>("rankType", "MANY_WISH_RECEIVE")
   const [targetType] = useQueryState<string>("targetType", "ALL")
+
   console.log(rankType, targetType)
+
+  const baseUrl = import.meta.env.VITE_BASE_URL
+
   const handleGoOrder = useCallback(
     (id: number) => {
       if (!isLoggedIn) {
@@ -56,8 +39,9 @@ const ProductGrid = () => {
     },
     [isLoggedIn, navigate]
   )
-  const baseUrl = import.meta.env.VITE_BASE_URL
+
   const rankingUrlObj = new URL("/api/products/ranking", baseUrl)
+
   rankingUrlObj.searchParams.set("targetType", targetType)
   rankingUrlObj.searchParams.set("rankType", rankType)
 
