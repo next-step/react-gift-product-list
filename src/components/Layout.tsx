@@ -4,10 +4,9 @@ import { Navbar } from './Navbar'
 import type { ReactNode } from 'react'
 
 const Wrapper = styled.div`
-  width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  overflow-y: auto;
+  width: 100%;
 `
 
 const Inner = styled.div`
@@ -16,6 +15,7 @@ const Inner = styled.div`
   margin: 0 auto;
   padding: 0 16px;
   box-sizing: border-box;
+  flex: 1;
 `
 
 interface Props {
