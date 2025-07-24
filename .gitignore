@@ -25,3 +25,8 @@ dist-ssr
 
 .env
 .env.production
+
+GEMINI.md
+requirements.md
+references
+mock_server
