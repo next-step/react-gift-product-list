@@ -11,6 +11,13 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { getThemeInfo, getThemeProducts } from '@/api/services';
 import type { GiftItem } from '@/types';
+import { css } from '@emotion/react';
+
+const centeredMessage = css`
+  text-align: center;
+  padding: 50px;
+  color: #868b94;
+`;
 
 const ThemePage = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -41,9 +48,9 @@ const ThemePage = () => {
     onIntersect: fetchNextPage,
     enabled: hasNextPage && !isFetchingNextPage,
   });
-  
+
   const allProducts = productsData?.pages.flatMap(page => page.list) || [];
-  
+
   useEffect(() => {
     if (axios.isAxiosError(themeInfoError) && themeInfoError.response?.status === 404) {
       alert('존재하지 않는 테마입니다.');
@@ -59,7 +66,7 @@ const ThemePage = () => {
     return (
       <Layout>
         <NavBar />
-        <div style={{ textAlign: 'center', padding: '50px' }}>로딩 중...</div>
+        <div css={centeredMessage}>로딩 중...</div>
       </Layout>
     );
   }
@@ -68,11 +75,24 @@ const ThemePage = () => {
     return (
       <Layout>
         <NavBar />
-        <div style={{ textAlign: 'center', padding: '50px' }}>테마 정보를 불러오는 데 실패했습니다.</div>
+        <div css={centeredMessage}>테마 정보를 불러오는 데 실패했습니다.</div>
       </Layout>
     );
   }
-  
+
+  const renderProductContent = () => {
+    if (isProductsLoading && allProducts.length === 0) {
+      return <RankingGridSkeleton />;
+    }
+    if (productsError) {
+      return <div css={centeredMessage}>상품 목록을 불러오는 데 실패했습니다.</div>;
+    }
+    if (allProducts.length === 0) {
+      return <div css={centeredMessage}>상품이 없습니다.</div>;
+    }
+    return <RankingGrid items={allProducts} onCardClick={handleCardClick} />;
+  };
+
   return (
     <Layout>
       <NavBar />
@@ -82,20 +102,11 @@ const ThemePage = () => {
         description={themeInfo.description}
         backgroundColor={themeInfo.backgroundColor}
       />
-      
-      {allProducts.length > 0 && <RankingGrid items={allProducts} onCardClick={handleCardClick} />}
-      
-      {isProductsLoading && allProducts.length === 0 && <RankingGridSkeleton />}
+      {renderProductContent()}
 
-      {allProducts.length === 0 && !isProductsLoading && !productsError && (
-        <div style={{ textAlign: 'center', padding: '50px' }}>상품이 없습니다.</div>
-      )}
-      
       {isFetchingNextPage && <RankingGridSkeleton />}
 
       {hasNextPage && !isProductsLoading && <div ref={targetRef} style={{ height: '50px' }} />}
-      
-      {productsError && <div style={{ textAlign: 'center', padding: '50px' }}>상품 목록을 불러오는 데 실패했습니다.</div>}
     </Layout>
   );
 };
