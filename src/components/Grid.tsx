@@ -9,5 +9,6 @@ const Grid = styled.div<GridStyle>`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme, gap }) => theme.space[gap]};
+  padding: ${theme.space.spacing4}
 `;
 export default Grid
