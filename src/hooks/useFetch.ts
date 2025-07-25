@@ -14,6 +14,10 @@ export const useFetch = <T,>(
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (!options.enabled) {
+      return;
+    }
+
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);

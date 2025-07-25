@@ -4,13 +4,11 @@ import { useForm, useFieldArray, useWatch, type SubmitHandler } from 'react-hook
 import { Layout } from '@/components/Layout';
 import { NavBar } from '@/components/NavBar';
 import type { MessageCard } from '@/types';
-import { rankingAll } from '@/data/rankings';
 import { messageCardTemplates } from '@/data/messageCards';
 import { toastError, toastSuccess } from '@/utils/toast';
 import axios from 'axios';
 import { getProductSummary, createOrder } from '@/api/services';
 import { useFetch } from '@/hooks/useFetch';
-import { useAuth } from '@/contexts/AuthContext';
 
 import * as S from '@/styles/OrderPage.styles';
 import { MessageCardSection } from '@/components/order/MessageCardSection';
@@ -26,7 +24,6 @@ const OrderPage = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user } = useAuth();
 
   const { data: item, isLoading, error } = useFetch(() => getProductSummary(itemId!), [itemId]);
   useEffect(() => {

@@ -1,5 +1,5 @@
 // 페이지가 맨 아래까지 스크롤했는지 검사 
-import { useEffect, useState, useRef, use } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface UseIntersectionObserverProps {
   threshold?: number;

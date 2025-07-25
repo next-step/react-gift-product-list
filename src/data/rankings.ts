@@ -1,5 +1,4 @@
 import type{ GiftItem } from '@/types';
-import type { RankingItem } from '@/types';
 
 const sampleGift: GiftItem = {
   id: 123,
