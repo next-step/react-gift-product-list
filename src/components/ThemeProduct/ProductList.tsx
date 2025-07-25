@@ -65,7 +65,11 @@ const ProductList = ({ themeId }: Props) => {
       setLoading(true);
       try {
         const { list, cursor: next, hasMoreList } = await getThemeProducts(themeId, cur);
-        setProducts((prev) => [...prev, ...list]);
+        setProducts((prev) => {
+          const ids = new Set(prev.map((it) => it.id)); // 이미 있던 id 집합
+          const deduped = list.filter((it) => !ids.has(it.id));
+          return [...prev, ...deduped];
+        });
         setCursor(next);
         setHasMore(hasMoreList);
       } catch (err) {
