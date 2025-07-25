@@ -1,5 +1,4 @@
 export type RankType = "MANY_WISH" | "MANY_RECEIVE" | "MANY_WISH_RECEIVE";
-
 export type TargetType = "ALL" | "FEMALE" | "MALE" | "TEEN";
 
 export interface RankingRequestParams {
@@ -7,7 +6,7 @@ export interface RankingRequestParams {
   rankType?: RankType;
 }
 
-export type cardItemData = {
+export type CardItemData = {
   id: number;
   name: string;
   imageURL: string;
@@ -23,8 +22,16 @@ export type cardItemData = {
   };
 };
 
+export interface CardItem {
+  id: number;
+  imageUrl: string;
+  brand: string;
+  name: string;
+  price: number;
+}
+
 export interface ProductDetailDataDto {
-  data: cardItemData[];
+  data: CardItemData[];
 }
 
 export interface ProductSummaryRequest {

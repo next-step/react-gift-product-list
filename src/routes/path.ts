@@ -2,5 +2,10 @@ export const RouterPath = {
   HOME: "/",
   LOGIN: "/login",
   MYPAGE: "/my",
-  ORDERPAGE: "/order/:id",
+  THEME: {
+    DETAIL: "/theme/:id",
+  },
+  ORDER: {
+    DETAIL: "/order/:id",
+  },
 };

@@ -13,7 +13,7 @@ import RankSelectionBar from "@/components/RankSelectionBar/RankSelectionBar";
 import ShowMoreButton from "@/components/ShowMoreButton/ShowMoreButton";
 import CardList from "@/components/CardList/CardList";
 import { getRanking } from "@/api/user/product";
-import type { cardItemData } from "@/types/DTO/productDTO";
+import type { CardItemData } from "@/types/DTO/productDTO";
 import { AGE_SELECT } from "@/constants/age";
 import { RANK_SELECT } from "@/constants/tabs";
 import type { TargetType } from "@/constants/age";
@@ -43,7 +43,7 @@ const RankingSection = () => {
   const selectedTarget = searchParams.get("targetType") as TargetType;
   const selectedRank = searchParams.get("rankType") as RankType;
 
-  const { data, isLoading, error, execute } = useAsync<cardItemData[]>([]);
+  const { data, isLoading, error, execute } = useAsync<CardItemData[]>([]);
 
   useEffect(() => {
     execute(() =>
@@ -96,7 +96,7 @@ const RankingSection = () => {
 
     return (
       <>
-        <CardList cards={visibleCards} onCardClick={handleCardClick} />
+        <CardList cards={visibleCards} showRank onCardClick={handleCardClick} />
         {!showAll && cards.length > MIN_VISIBLE_CARDS && (
           <ShowMoreButton onClick={() => setShowAll(true)}>
             더보기

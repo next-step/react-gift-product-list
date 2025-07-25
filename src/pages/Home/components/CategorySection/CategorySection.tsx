@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getThemes } from "@/api/user/theme";
 import type { Themetype } from "@/types/DTO/themeDTO";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
@@ -14,10 +15,15 @@ import {
 
 const CategorySection = () => {
   const { data: themes, isLoading, error, execute } = useAsync<Themetype[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     execute(getThemes);
   }, []);
+
+  const handleThemeClick = (themeId: number) => {
+    navigate(`/theme/${themeId}`);
+  };
 
   if (isLoading) {
     return (
@@ -48,7 +54,10 @@ const CategorySection = () => {
       <Title>선물 테마</Title>
       <Grid>
         {themes.map((theme) => (
-          <CategoryItem key={theme.themeId}>
+          <CategoryItem
+            key={theme.themeId}
+            onClick={() => handleThemeClick(theme.themeId)}
+          >
             <CategoryImage src={theme.image} alt={theme.name} />
             <Text>{theme.name}</Text>
           </CategoryItem>

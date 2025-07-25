@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import {
   CardWrapper,
   RankNumber,
@@ -9,26 +10,21 @@ import {
 } from "@/components/Card/Card.style";
 
 export interface CardProps {
-  rank: number;
+  rank?: number;
   imageUrl: string;
   brand: string;
   name: string;
   price: number;
   onClick?: () => void;
-
 }
 
-export default function Card({
-  rank,
-  imageUrl,
-  brand,
-  name,
-  price,
-  onClick,
-}: CardProps) {
+export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
+  { rank, imageUrl, brand, name, price, onClick },
+  ref
+) {
   return (
-    <CardWrapper onClick={onClick} style={{ cursor: "pointer" }}>
-      <RankNumber>{rank}</RankNumber>
+    <CardWrapper ref={ref} onClick={onClick} style={{ cursor: "pointer" }}>
+      {typeof rank === "number" && rank > 0 && <RankNumber>{rank}</RankNumber>}
       <Image src={imageUrl} />
       <Info>
         <Brand>{brand}</Brand>
@@ -40,4 +36,6 @@ export default function Card({
       </Info>
     </CardWrapper>
   );
-}
+});
+
+export default Card;

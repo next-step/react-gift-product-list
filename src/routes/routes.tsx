@@ -4,6 +4,7 @@ import HomePage from "@/pages/Home/Home";
 import LoginPage from "@/pages/Login/Login";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
 import MyPage from "@/pages/MyPage/MyPage";
+import ThemePage from "@/pages/ThemePage/ThemePage";
 import OrderPage from "@/pages/OrderPage/OrderPage";
 
 const router = createBrowserRouter([
@@ -23,7 +24,12 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
   },
   {
-    path: RouterPath.ORDERPAGE,
+    path: RouterPath.THEME.DETAIL,
+    element: <ThemePage />,
+    errorElement: <NotFoundPage />,
+  },
+  {
+    path: RouterPath.ORDER.DETAIL,
     element: <OrderPage />,
     errorElement: <NotFoundPage />,
   },
