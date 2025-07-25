@@ -1,8 +1,37 @@
 import styled from '@emotion/styled';
 import { CategoryItem } from '@/components/CategoryItem';
-import { categoryMock } from '@/data/categoryMock';
+import useHTTP from '@/hooks/useHTTP';
+import { Spinner } from '@/components/common/Spinner';
+import { api } from '@/services/api';
+
+interface Theme {
+  themeId: number;
+  name: string;
+  image: string;
+}
+
+async function getGiftThemes(): Promise<Theme[]> {
+  const response = await api.get<{
+    data: Theme[];
+  }>('/themes');
+  return response.data.data;
+}
 
 export function CategorySection() {
+  const { data: themes, isPending, error } = useHTTP<void, Theme[]>({ apiFunction: getGiftThemes });
+
+  if (isPending) {
+    return (
+      <Section>
+        <Spinner size="40px" borderWidth="4px" color="#000" />
+      </Section>
+    );
+  }
+
+  if (error || !themes || themes.length === 0) {
+    return null;
+  }
+
   return (
     <Section>
       {/* 선물할 친구 선택 메시지 */}
@@ -18,7 +47,7 @@ export function CategorySection() {
 
       {/* 테마 목록 그리드 */}
       <Grid>
-        {categoryMock.map(({ themeId, name, image }) => (
+        {themes.map(({ themeId, name, image }) => (
           <CategoryItem key={themeId} name={name} image={image} />
         ))}
       </Grid>
