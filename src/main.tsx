@@ -13,6 +13,7 @@ import OrderPage from '@/pages/OrderPage/OrderPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PATH } from '@/constants/paths';
+import ThemeProductPage from '@/pages/ThemeProductPage/ThemeProductPage'; // 위치 맞춰줘!
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
         <OrderPage />
       </PrivateRoute>
     ),
+  },
+  {
+    path: PATH.THEME_PRODUCTS_PATH,
+    element: <ThemeProductPage />,
   },
 ]);
 
