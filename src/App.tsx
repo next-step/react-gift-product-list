@@ -12,6 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useContext } from 'react';
 import { LoginInfoContext } from '@/contexts/LoginInfoContext';
+import ThemeDetail from './pages/ThemeDetail';
 
 function App() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ function App() {
           <Route path="/login" element={<Login onLogin={handleBackClick} />} />
           <Route path="/my" element={<Mypage onLogin={handleBackClick} />} />
           <Route path="/order/:orderId" element={<Order />} />
+          <Route path="/themes/:themeId" element={<ThemeDetail />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
