@@ -1,42 +1,7 @@
-// import styled from '@emotion/styled';
-// import { MOCK_THEME_LIST } from './mock';
-// import { SelectThemeSectionListItem } from './ListItem';
-// import { Typography } from '@/components/common/Typography';
-
-// export const SelectThemeSection = () => {
-//   return (
-//     <Section>
-//       <TitleWrapper>
-//         <Typography as='h3' variant='title1Bold' color='default' width='100%'>
-//           선물 테마
-//         </Typography>
-//       </TitleWrapper>
-//       <Wrapper>
-//         {MOCK_THEME_LIST.map((theme) => (
-//           <SelectThemeSectionListItem key={theme.themeId} label={theme.name} image={theme.image} />
-//         ))}
-//       </Wrapper>
-//     </Section>
-//   );
-// };
-
-// const Section = styled.section(({ theme }) => ({
-//   padding: `0${theme.spacing.spacing2}`,
-// }));
-
-// const TitleWrapper = styled.div(({ theme }) => ({
-//   padding: `0 ${theme.spacing.spacing2} ${theme.spacing.spacing5}`,
-// }));
-
-// const Wrapper = styled.div(({ theme }) => ({
-//   width: '100%',
-//   display: 'grid',
-//   gridTemplateColumns: 'repeat(5, 1fr)',
-//   gap: `${theme.spacing.spacing5} ${theme.spacing.spacing1}`,
-// }));
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import { SelectThemeSectionListItem } from './ListItem';
 import { Typography } from '@/components/common/Typography';
 
@@ -69,9 +34,9 @@ export const SelectThemeSection: React.FC = () => {
   if (loading) {
     return (
       <Section>
-        <Typography as="p" variant="body1Regular" color="default">
-          로딩 중…
-        </Typography>
+        <SpinWrapper>
+          <Loader />
+        </SpinWrapper>
       </Section>
     );
   }
@@ -102,6 +67,29 @@ export const SelectThemeSection: React.FC = () => {
     </Section>
   );
 };
+
+// Spin animation keyframes
+const spin = keyframes`
+  to { transform: rotate(360deg); }
+`;
+
+// Loader spinner
+const Loader = styled.div`
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(0,0,0,0.1);
+  border-top-color: rgba(0,0,0,0.7);
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite;
+`;
+
+// Center wrapper for spinner
+const SpinWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+`;
 
 const Section = styled.section(({ theme }) => ({
   padding: `0 ${theme.spacing.spacing2}`,
