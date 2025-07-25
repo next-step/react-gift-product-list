@@ -22,7 +22,7 @@ function ThemeDetail() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [cursor, setCursor] = useState(0);
-  const [limit] = useState(10);
+  const limit = 10;
 
   useEffect(() => {
     if (!themeId) return;
@@ -47,7 +47,7 @@ function ThemeDetail() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore, limit],
+    [loading, hasMore],
   );
 
   useEffect(() => {
@@ -59,9 +59,9 @@ function ThemeDetail() {
         setHasMore(data.hasMoreList);
       })
       .finally(() => {
-        setTimeout(() => setLoading(false), 500);
+        setTimeout(() => setLoading(false));
       });
-  }, [themeId, cursor, limit]);
+  }, [themeId, cursor]);
 
   return (
     <ThemeContainerWrapper>
@@ -78,16 +78,14 @@ function ThemeDetail() {
       <ProductList>
         {products.length === 0 && !loading && <div>상품이 없습니다.</div>}
         {products.map((item, idx) => (
-          <ProductCard
-            key={`${item.id}-${idx}`}
-            ref={idx === products.length - 1 ? lastProductRef : undefined}
-          >
+          <ProductCard key={`${item.id}-${idx}`}>
             <ProductImg src={item.imageURL} alt={item.name} />
             <ProductName>{item.name}</ProductName>
             <ProductBrand>{item.brandInfo.name}</ProductBrand>
             <ProductPrice>{item.price.basicPrice}원</ProductPrice>
           </ProductCard>
         ))}
+        <div ref={lastProductRef} />
       </ProductList>
       {loading && <div style={{ textAlign: 'center', padding: '16px' }}>로딩중...</div>}
     </ThemeContainerWrapper>
