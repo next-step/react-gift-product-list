@@ -1,4 +1,3 @@
-import axios from 'axios';
 import useProductInfo from '@/hooks/useProductInfo';
 import type { FormValues } from '@/types/orderFormType';
 import styled from '@emotion/styled';
@@ -70,9 +69,6 @@ export const OrderButton = () => {
       navigate('/');
     } catch (error) {
       console.log('주문 실패: ', error);
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        navigate('/login');
-      }
     }
   };
 
