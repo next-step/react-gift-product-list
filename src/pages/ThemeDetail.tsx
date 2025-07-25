@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { getThemeInfo, getThemeProducts } from '@/apis/theme';
+import { useState, useEffect } from 'react';
+import { getThemeInfo } from '@/apis/theme';
 import type { ThemeInfoResponseDTO } from '@/types/DTO/themeDTO';
-import type { RankItemType } from '@/types/DTO/productDTO';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import {
   ThemeContainerWrapper,
   ThemeInfoContainer,
@@ -18,11 +18,7 @@ function ThemeDetail() {
   const { themeId } = useParams();
   const navigate = useNavigate();
   const [themeInfo, setThemeInfo] = useState<ThemeInfoResponseDTO>();
-  const [products, setProducts] = useState<RankItemType[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [cursor, setCursor] = useState(0);
-  const limit = 10;
+  const { products, loading, lastProductRef } = useIntersectionObserver(Number(themeId));
 
   useEffect(() => {
     if (!themeId) return;
@@ -34,34 +30,6 @@ function ThemeDetail() {
         }
       });
   }, [themeId, navigate]);
-
-  const observer = useRef<IntersectionObserver | null>(null);
-  const lastProductRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setCursor((prev) => prev + limit);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore],
-  );
-
-  useEffect(() => {
-    if (!themeId || !hasMore) return;
-    setLoading(true);
-    getThemeProducts(Number(themeId), cursor, limit)
-      .then((data) => {
-        setProducts((prev) => [...prev, ...data.list]);
-        setHasMore(data.hasMoreList);
-      })
-      .finally(() => {
-        setTimeout(() => setLoading(false));
-      });
-  }, [themeId, cursor]);
 
   return (
     <ThemeContainerWrapper>
