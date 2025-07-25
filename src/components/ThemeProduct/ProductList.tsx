@@ -2,7 +2,7 @@ import { getThemeProducts, type ProductItem } from '@/Api/api';
 import { ROUTE_PATH } from '@/routes/Routes';
 import styled from '@emotion/styled';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import LoadingSpinner from '@components/common/LoadingSpinner';
@@ -59,31 +59,54 @@ const ProductList = ({ themeId }: Props) => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  const fetchProducts = useCallback(
+    async (cur = cursor) => {
+      if (loading || !hasMore) return;
+      setLoading(true);
+      try {
+        const { list, cursor: next, hasMoreList } = await getThemeProducts(themeId, cur);
+        setProducts((prev) => [...prev, ...list]);
+        setCursor(next);
+        setHasMore(hasMoreList);
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          navigate(ROUTE_PATH.HOME, { replace: true });
+        } else {
+          console.error(err);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [themeId, cursor, hasMore, loading, navigate]
+  );
+
   useEffect(() => {
     setProducts([]);
     setCursor(0);
     setHasMore(true);
     fetchProducts(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeId]);
 
-  const fetchProducts = async (cur = cursor) => {
-    if (loading || !hasMore) return;
-    setLoading(true);
-    try {
-      const { list, cursor: next, hasMoreList } = await getThemeProducts(themeId, cur);
-      setProducts((prev) => [...prev, ...list]);
-      setCursor(next);
-      setHasMore(hasMoreList);
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        navigate(ROUTE_PATH.HOME, { replace: true });
-      } else {
-        console.error(err);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting) {
+          fetchProducts(cursor);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [fetchProducts, cursor]);
 
   if (!loading && products.length === 0) {
     return (
@@ -117,7 +140,7 @@ const ProductList = ({ themeId }: Props) => {
 
       {loading && <LoadingSpinner />}
 
-      {!loading && hasMore && <LoadMore onClick={() => fetchProducts(cursor)}>더 보기</LoadMore>}
+      <div ref={sentinelRef} style={{ height: 1 }} />
     </Container>
   );
 };
