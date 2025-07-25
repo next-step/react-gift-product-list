@@ -2,7 +2,7 @@ import useThemeProduct from "@/hooks/useThemeProduct"
 import Grid from "./Grid"
 import Card from "./Card"
 import Text from "./Text"
-import NotFound from "@/pages/NotFound"
+import ThemeNotFound from "./PresentTheme/ThemeNotFound"
 import ProductImage from "./ProductImage"
 import theme from "@/styles/theme"
 import { useCallback } from "react"
@@ -10,15 +10,23 @@ import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants/routes"
 import getRoute from "@/functions/getRoute"
 import { useAuth } from "@/context/AuthContext"
+import Loading from "./PresentTheme/Loading"
 
 const ThemeProductSection = ({ themeId }: { themeId: string }) => {
-    const {themeProducts} =useThemeProduct(themeId)
+    const {themeProducts,loading,error} =useThemeProduct(themeId)
     const navigate = useNavigate()
     const { isLoggedIn } = useAuth()
     console.log(themeId)
     console.log(themeProducts)
 
+    if (loading) return <Loading/>
 
+    if (error) return <ThemeNotFound/>
+
+    if (!themeProducts || themeProducts.list.length === 0) {
+        return <ThemeNotFound/>
+      }
+      
     const handleGoOrder = useCallback(
         (id: number) => {
           if (!isLoggedIn) {
@@ -29,10 +37,10 @@ const ThemeProductSection = ({ themeId }: { themeId: string }) => {
         },
         [isLoggedIn, navigate]
       )
-      if (!themeProducts) return (<NotFound/>)
+      if (!themeProducts) return (<ThemeNotFound/>)
 
     return ( <Grid gap="spacing2">
-        {themeProducts.list.map((item, idx) => (
+        {themeProducts.list.map((item) => (
           <Card
             key={item.id}
             borderRadius="spacing2"
