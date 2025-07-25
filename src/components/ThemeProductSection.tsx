@@ -29,7 +29,7 @@ const ThemeProductSection = ({ themeId }: { themeId: string }) => {
         },
         [isLoggedIn, navigate]
       )
-      if (!themeProducts) return <NotFound/>
+      if (!themeProducts) return (<NotFound/>)
 
     return ( <Grid gap="spacing2">
         {themeProducts.list.map((item, idx) => (

@@ -7,6 +7,7 @@ export default function useThemeInfo(themeId?: string) {
   
   const { data, loading, error } = useFetch<ThemeInfoResponse>(themeUrl, {
     dependencies: [themeId],
+    onError: (err) => console.log("useFetch onError:", err),
   })
 
   return {
