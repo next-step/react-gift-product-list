@@ -1,6 +1,6 @@
 import { HorizontalSpacing } from '@/components/common/Spacing/HorizontalSpacing';
 import { AdListSection } from './components/AdListSection';
-import { ProductRankingListSection } from './components/ProductRankingListSection';
+import ProductRankingListSection from '@/pages/Home/components/ProductRankingListSection';
 import { SelectFriendSection } from './components/SelectFriendSection';
 import { SelectThemeSection } from './components/SelectThemeSection';
 
