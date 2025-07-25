@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { palette } from '@/styles/theme';
 import type { Category } from '@/types';
+import { Link } from 'react-router-dom';
 
 const gridStyle = css`
   display: grid;
@@ -30,10 +31,15 @@ interface Props {
 export const CategoryGrid = ({ items }: Props) => (
   <div css={gridStyle}>
     {items.map((cat) => (
-      <button key={cat.themeId} css={itemStyle} aria-label={cat.name}>
+      <Link
+        key={cat.themeId}
+        to={`/theme/${cat.themeId}`} 
+        css={itemStyle}
+        aria-label={cat.name}
+      >
         <img src={cat.image} alt={cat.name} />
         {cat.name}
-      </button>
+      </Link>
     ))}
   </div>
 );

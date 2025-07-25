@@ -41,3 +41,15 @@ export const createOrder = async (orderData: any) => {
   const response = await client.post('/api/order', orderData);
   return response.data.data;
 };
+
+export const getThemeInfo = async (themeId: string) => {
+  const response = await client.get(`/api/themes/${themeId}/info`);
+  return response.data.data;
+};
+
+export const getThemeProducts = async (themeId: string, cursor?: number) => {
+  const response = await client.get(`/api/themes/${themeId}/products`, {
+    params: { cursor },
+  });
+  return response.data.data;
+};
