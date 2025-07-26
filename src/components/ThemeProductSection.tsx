@@ -6,23 +6,22 @@ import ThemeNotFound from "./PresentTheme/ThemeNotFound"
 import Loading from "./PresentTheme/Loading"
 import theme from "@/styles/theme"
 import useThemeProduct from "@/hooks/useThemeProduct"
-import {  useCallback } from "react"
+import { useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants/routes"
 import getRoute from "@/functions/getRoute"
 import { useAuth } from "@/context/AuthContext"
-import useInView from "@/hooks/useInview"
+import useInView from "@/hooks/useInView"
 import { useEffect } from "react"
 const ThemeProductSection = ({ themeId }: { themeId: string }) => {
-  
-  const { products, hasMore, loadingInitial,error, isFetching, fetchMore } =
+  const { products, hasMore, loadingInitial, error, isFetching, fetchMore } =
     useThemeProduct(themeId)
 
-    const [sentinelRef, inView] = useInView() 
-    useEffect(() => {
-        if (inView && hasMore && !isFetching) fetchMore()
-      }, [inView, hasMore, isFetching, fetchMore])
-  
+  const [sentinelRef, inView] = useInView()
+  useEffect(() => {
+    if (inView && hasMore && !isFetching) fetchMore()
+  }, [inView, hasMore, isFetching, fetchMore])
+
   const { isLoggedIn } = useAuth()
   const navigate = useNavigate()
 
@@ -34,7 +33,7 @@ const ThemeProductSection = ({ themeId }: { themeId: string }) => {
     [isLoggedIn, navigate]
   )
 
-  if (loadingInitial) return <Loading /> 
+  if (loadingInitial) return <Loading />
   if (error) return <ThemeNotFound />
   if (!products.length) return <ThemeNotFound />
 
@@ -75,7 +74,7 @@ const ThemeProductSection = ({ themeId }: { themeId: string }) => {
           </Card>
         ))}
       </Grid>
-      {isFetching ? (<Loading />) :(<div style={{ height: 40 }} />)}
+      {isFetching ? <Loading /> : <div style={{ height: 40 }} />}
       <div style={{ height: 8 }} ref={sentinelRef} />
     </>
   )
