@@ -156,9 +156,9 @@ export default function OrderPage() {
 }
 
 const Container = styled.div`
-    max-width: 480px;
-    margin: 0 auto;
-    padding-bottom: 80px;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 80px;
 `;
 
 const LetterCardContainer = styled.header`

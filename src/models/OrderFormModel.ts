@@ -15,19 +15,20 @@ export const ReceiverModel = z.object({
 
 export const ReceiversModel = z
   .object({
-    receivers: z.array(ReceiverModel)
+    receivers: z
+      .array(ReceiverModel)
       .min(1, '받는 사람을 추가해주세요.')
       .max(10, '최대 10명까지 추가할 수 있어요.'),
   })
-  .check((ctx) => {
+  .check(ctx => {
     const phoneNumbers = new Set<string>();
 
     ctx.value.receivers.forEach((receiver, index) => {
       if (receiver.phoneNumber && phoneNumbers.has(receiver.phoneNumber)) {
         ctx.issues.push({
-          code: "custom",
-          message: "이미 사용중인 전화번호입니다.",
-          path: ["receivers", index, "phoneNumber"],
+          code: 'custom',
+          message: '이미 사용중인 전화번호입니다.',
+          path: ['receivers', index, 'phoneNumber'],
           input: receiver.phoneNumber,
         });
       } else if (receiver.phoneNumber) {

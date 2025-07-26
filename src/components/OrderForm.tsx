@@ -112,7 +112,7 @@ export const OrderForm = forwardRef<OrderFormRef, OrderFormProps>(
         </Form>
       </FormProvider>
     );
-  }
+  },
 );
 
 const Form = styled.form`
