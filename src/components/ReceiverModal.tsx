@@ -35,8 +35,8 @@ export function ReceiverModal() {
             {fields.map((field, index) => (
               <ReceiverFieldSet key={field.id} index={index} onRemove={remove} />
             ))}
-            {methods.formState.errors.receivers?.root?.message && (
-              <ErrorMessage>{methods.formState.errors.receivers.root.message}</ErrorMessage>
+            {methods.formState.errors.root?.message && (
+              <ErrorMessage>{methods.formState.errors.root.message}</ErrorMessage>
             )}
           </Container>
 

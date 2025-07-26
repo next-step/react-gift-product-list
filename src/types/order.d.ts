@@ -1,12 +1,16 @@
-export type OrderFormKey = keyof OrderForm;
+export type OrderFormKey = 'message' | 'senderName';
 export type OrderFormErrors = Partial<Record<OrderFormKey, string>>;
 
-export interface OrderForm {
+export interface OrderInfo {
+  productId: number;
+  ordererName: string;
   message: string;
-  senderName: string;
-  receiverName: string;
-  receiverPhoneNumber: string;
-  quantity: number;
+  messageCardId: string;
+  receivers: Array<{
+    name: string;
+    phoneNumber: string;
+    quantity: number;
+  }>;
 }
 
 export interface CardTemplate {

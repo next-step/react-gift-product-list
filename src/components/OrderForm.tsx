@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { forwardRef, useEffect } from 'react';
+import { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/common/Button';
@@ -11,97 +11,113 @@ import { OrderFormModel, type OrderFormModelType } from '@/models/OrderFormModel
 import { ReceiverList } from '@/components/ReceiverList';
 import type { CardTemplate } from '@/types/order';
 import { useOrderStore } from '@/stores/orderStore';
+import { FieldSet, Legend } from '@/components/common/FieldSet';
+import { VerticalSpacing } from '@/components/common/VerticalSpacing';
 
 interface OrderFormProps {
   selectedCard?: CardTemplate;
+  userInfo?: {
+    name: string;
+    email: string;
+  };
 }
 
-export const OrderForm = forwardRef<HTMLFormElement, OrderFormProps>(({ selectedCard }, ref) => {
-  const { open } = useModal();
-  const { receivers: receiversFromStore } = useOrderStore();
+export interface OrderFormRef {
+  getFormData: () => { message: string; senderName: string };
+}
 
-  const methods = useForm<OrderFormModelType>({
-    resolver: zodResolver(OrderFormModel),
-    defaultValues: {
-      message: selectedCard?.defaultTextMessage || '',
-      senderName: '',
-      receivers: { receivers: receiversFromStore },
-    },
-  });
+export const OrderForm = forwardRef<OrderFormRef, OrderFormProps>(
+  ({ selectedCard, userInfo }, ref) => {
+    const { open } = useModal();
+    const { receivers: receiversFromStore } = useOrderStore();
 
-  const receivers = methods.watch('receivers.receivers');
+    const methods = useForm<OrderFormModelType>({
+      resolver: zodResolver(OrderFormModel),
+      defaultValues: {
+        message: selectedCard?.defaultTextMessage || '',
+        senderName: '',
+      },
+    });
 
-  useEffect(() => {
-    if (selectedCard) {
-      methods.setValue('message', selectedCard.defaultTextMessage);
-    }
-  }, [selectedCard, methods]);
+    useEffect(() => {
+      if (userInfo) {
+        methods.setValue('senderName', userInfo.name);
+      }
+    }, [userInfo, methods]);
 
-  useEffect(() => {
-    methods.setValue('receivers.receivers', receiversFromStore);
-  }, [receiversFromStore, methods]);
+    useEffect(() => {
+      if (selectedCard?.defaultTextMessage) {
+        methods.setValue('message', selectedCard.defaultTextMessage);
+      }
+    }, [selectedCard, methods]);
 
-  const onSubmit = (data: OrderFormModelType) => {
-    console.log(data);
-    alert('주문이 완료되었습니다.');
-  };
+    useImperativeHandle(ref, () => ({
+      getFormData: () => ({
+        message: methods.getValues('message'),
+        senderName: methods.getValues('senderName'),
+      }),
+    }));
 
-  const handleOpenReceiverModal = () => {
-    open(<ReceiverModal />);
-  };
+    const onSubmit = (data: OrderFormModelType) => {
+      console.log(data);
+      alert('주문이 완료되었습니다.');
+    };
 
-  return (
-    <FormProvider {...methods}>
-      <Form ref={ref} onSubmit={methods.handleSubmit(onSubmit)}>
-        <FieldSet>
-          <TextArea
-            placeholder="메시지를 입력해주세요."
-            {...methods.register('message')}
-            error={methods.formState.errors.message?.message}
-          />
-        </FieldSet>
+    const handleOpenReceiverModal = () => {
+      open(<ReceiverModal />);
+    };
 
-        <VerticalSpacing size="32px" />
-        <VerticalSpacing size="8px" backgroundColor="#f3f4f5" />
+    return (
+      <FormProvider {...methods}>
+        <Form onSubmit={methods.handleSubmit(onSubmit)}>
+          <FieldSet>
+            <TextArea
+              placeholder="메시지를 입력해주세요."
+              {...methods.register('message')}
+              error={methods.formState.errors.message?.message}
+            />
+          </FieldSet>
 
-        <FieldSet>
-          <Legend>보내는 사람</Legend>
-          <Input
-            placeholder="이름을 입력하세요."
-            {...methods.register('senderName')}
-            error={methods.formState.errors.senderName?.message}
-          />
-        </FieldSet>
+          <VerticalSpacing size="32px" />
+          <VerticalSpacing size="8px" backgroundColor="#f3f4f5" />
 
-        <VerticalSpacing size="32px" />
-        <VerticalSpacing size="8px" backgroundColor="#f3f4f5" />
+          <FieldSet>
+            <Legend>보내는 사람</Legend>
+            <Input
+              placeholder="이름을 입력하세요."
+              {...methods.register('senderName')}
+              error={methods.formState.errors.senderName?.message}
+            />
+          </FieldSet>
 
-        <FieldSet>
-          <ReceiverLabel>
-            <Legend>받는 사람</Legend>
-            <Button
-              type="button"
-              variant="secondary"
-              width="56px"
-              height="35px"
-              onClick={handleOpenReceiverModal}
-            >
-              {receivers.length !== 0 ? '수정' : '추가'}
-            </Button>
-          </ReceiverLabel>
+          <VerticalSpacing size="32px" />
+          <VerticalSpacing size="8px" backgroundColor="#f3f4f5" />
 
-          <ReceiverList />
-        </FieldSet>
-      </Form>
-    </FormProvider>
-  );
-});
+          <FieldSet>
+            <ReceiverLabel>
+              <Legend>받는 사람</Legend>
+              <Button
+                type="button"
+                variant="secondary"
+                width="56px"
+                height="35px"
+                onClick={handleOpenReceiverModal}
+              >
+                {receiversFromStore.length !== 0 ? '수정' : '추가'}
+              </Button>
+            </ReceiverLabel>
+
+            <ReceiverList />
+          </FieldSet>
+        </Form>
+      </FormProvider>
+    );
+  }
+);
 
 const Form = styled.form`
   padding: 0 16px;
 `;
-
-import { FieldSet, Legend } from '@/components/common/FieldSet';
 
 const ReceiverLabel = styled.div`
   display: flex;
@@ -109,5 +125,3 @@ const ReceiverLabel = styled.div`
   align-items: center;
   margin: 4px 0;
 `;
-
-import { VerticalSpacing } from '@/components/common/VerticalSpacing';

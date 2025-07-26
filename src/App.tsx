@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Navbar } from '@/components/Navbar';
 import { CategorySection } from '@/components/CategorySection';
 import { ProductListSection } from '@/components/ProductListSection';
@@ -33,6 +35,7 @@ function App() {
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <ToastContainer />
     </ModalProvider>
   );
 }

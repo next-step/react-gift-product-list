@@ -17,7 +17,7 @@ export function ProductItem({ product, rank }: Props) {
         </ThumbWrapper>
 
         {/* 브랜드명 */}
-        <Brand>{product.brandInfo.name}</Brand>
+        <Brand>{product.brandName}</Brand>
 
         {/* 상품명(두 줄 까지만 표시) */}
         <Name title={product.name}>{product.name}</Name>

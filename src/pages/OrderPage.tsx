@@ -1,21 +1,28 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styled from '@emotion/styled';
-
 import { LetterCardSelector } from '@/components/LetterCardSelector';
-import { OrderForm } from '@/components/OrderForm';
+import { OrderForm, type OrderFormRef } from '@/components/OrderForm';
 import { ProductInfo } from '@/components/ProductInfo';
 import { cardTemplates } from '@/data/cardTemplateMock';
-import { productListMock } from '@/data/productListMock';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { Button } from '@/components/common/Button';
 import { useOrderStore } from '@/stores/orderStore';
+import useAuthStore from '@/stores/authStore';
 import { FieldSet, Legend } from '@/components/common/FieldSet';
 import { VerticalSpacing } from '@/components/common/VerticalSpacing';
+import { getProductSummary } from '@/services/product';
+import { createOrder } from '@/services/order';
+import type { Product } from '@/types/product';
+import { Spinner } from '@/components/common/Spinner';
 
 export default function OrderPage() {
   const { productId } = useParams();
-  const product = productListMock.find(p => p.id === Number(productId));
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [selectedCardId, setSelectedCardId] = useState(cardTemplates[0].id);
   const selectedCard = useMemo(
@@ -23,14 +30,41 @@ export default function OrderPage() {
     [selectedCardId],
   );
 
-  const formRef = useRef<HTMLFormElement>(null);
+  const formRef = useRef<OrderFormRef>(null);
   const { setReceivers } = useOrderStore();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const productData = await getProductSummary(Number(productId));
+        setProduct(productData);
+        // console.log('Product State Updated:', productData);
+      } catch {
+        toast.error('제품 정보를 불러오는데 실패했습니다.');
+        navigate('/');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId, navigate]);
 
   useEffect(() => {
     return () => {
       setReceivers([]);
     };
   }, [setReceivers]);
+
+  if (loading) {
+    return (
+      <Container>
+        <Spinner size="40px" borderWidth="4px" color="#000" />
+      </Container>
+    );
+  }
 
   if (!product) {
     return <NotFoundPage />;
@@ -40,8 +74,44 @@ export default function OrderPage() {
     setSelectedCardId(id);
   };
 
-  const handleOrderSubmit = () => {
-    formRef.current?.requestSubmit();
+  const handleOrderSubmit = async () => {
+    if (!formRef.current || !selectedCard) return;
+
+    const formData = formRef.current.getFormData();
+    const receivers = useOrderStore.getState().receivers;
+
+    if (receivers.length === 0) {
+      toast.error('받는 사람을 추가해주세요.');
+      return;
+    }
+
+    try {
+      const mappedReceivers = receivers.map(receiver => ({
+        name: receiver.receiverName,
+        phoneNumber: receiver.phoneNumber,
+        quantity: receiver.quantity,
+      }));
+
+      const orderPayload = {
+        productId: product.id,
+        ordererName: formData.senderName,
+        message: formData.message,
+        messageCardId: selectedCard.id.toString(),
+        receivers: mappedReceivers,
+      };
+
+      console.log('Order Payload:', orderPayload); // 주문 정보 콘솔 출력
+
+      await createOrder(orderPayload);
+      toast.success('주문이 완료되었습니다.');
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Unauthorized') {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+      } else {
+        toast.error('주문에 실패했습니다.');
+      }
+    }
   };
 
   return (
@@ -64,13 +134,18 @@ export default function OrderPage() {
 
       <VerticalSpacing size="40px" />
 
-      <OrderForm ref={formRef} selectedCard={selectedCard} />
+      <OrderForm ref={formRef} selectedCard={selectedCard} userInfo={user ?? undefined} />
 
       <VerticalSpacing size="8px" backgroundColor="#f3f4f5" />
 
       <FieldSet>
         <Legend>상품 정보</Legend>
-        <ProductInfo product={product} />
+        <ProductInfo
+          imgSrc={product.imageURL}
+          productName={product.name}
+          brandName={product.brandName}
+          price={product.price.sellingPrice}
+        />
       </FieldSet>
 
       <VerticalSpacing size="60px" />
@@ -81,9 +156,9 @@ export default function OrderPage() {
 }
 
 const Container = styled.div`
-  max-width: 480px;
-  margin: 0 auto;
-  padding-bottom: 80px; /* 주문하기 버튼에 가려지지 않도록 */
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 80px;
 `;
 
 const LetterCardContainer = styled.header`

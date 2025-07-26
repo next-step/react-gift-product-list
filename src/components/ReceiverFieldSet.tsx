@@ -29,6 +29,9 @@ export function ReceiverFieldSet({ index, onRemove }: ReceiverFieldSetProps) {
       />
       <Input
         type="number"
+        placeholder="수량"
+        min={1}
+        max={999}
         defaultValue={1}
         {...register(`receivers.${index}.quantity`, { valueAsNumber: true })}
         error={errors.receivers?.[index]?.quantity?.message}

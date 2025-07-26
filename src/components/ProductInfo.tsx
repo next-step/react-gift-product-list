@@ -1,18 +1,29 @@
 import styled from '@emotion/styled';
-import type { Product } from '@/types/product';
+import { Spinner } from '@/components/common/Spinner';
 
 interface ProductInfoProps {
-  product: Product;
+  imgSrc: string;
+  productName: string;
+  brandName: string;
+  price: number;
 }
 
-export function ProductInfo({ product }: ProductInfoProps) {
+export function ProductInfo({ imgSrc, productName, brandName, price }: ProductInfoProps) {
+  if (!imgSrc || !productName || !brandName || price === undefined) {
+    return (
+      <Container>
+        <Spinner />
+      </Container>
+    );
+  }
+
   return (
     <Container>
-      <Image src={product.imageURL} alt={product.name} />
+      <Image src={imgSrc} alt={productName} />
       <Info>
-        <Brand>{product.brandInfo.name}</Brand>
-        <Name>{product.name}</Name>
-        <Price>{`${product.price.sellingPrice.toLocaleString()}원`}</Price>
+        <Brand>{brandName}</Brand>
+        <Name>{productName}</Name>
+        <Price>{`${price.toLocaleString()}원`}</Price>
       </Info>
     </Container>
   );
