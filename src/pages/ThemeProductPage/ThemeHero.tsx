@@ -18,8 +18,7 @@ const ThemeHero = ({ themeId }: { themeId: string }) => {
   );
 
   if (error) {
-    console.error(error); //test
-    if (error.includes('존재하지 않는')) {
+    if (error.includes('존재하지 않는 리소스입니다.')) {
       navigate(PATH.ROOT);
       return null;
     }
