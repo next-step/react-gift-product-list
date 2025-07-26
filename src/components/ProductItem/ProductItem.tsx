@@ -1,3 +1,4 @@
+import { PATH } from '@/constants/paths';
 import * as S from './ProductItem.styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +22,7 @@ const ProductItem = ({
   const navigate = useNavigate();
 
   const goToOrderPage = () => {
-    navigate(`/order/${id}`);
+    navigate(PATH.ORDER_DETAIL(id));
   };
 
   return (
