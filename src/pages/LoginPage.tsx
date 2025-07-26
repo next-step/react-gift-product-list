@@ -6,7 +6,7 @@ import { Input } from '@/components/common/Input';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import useAuthStore from '@/stores/authStore';
 import { useLogIn } from '@/services/login';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export function LoginPage() {
@@ -23,6 +23,10 @@ export function LoginPage() {
     if (response) {
       login(response.authToken, { email: response.email, name: response.name });
       navigate(from, { replace: true });
+    } else {
+      // 애초에 입력창 조건이 만족하지 않으면 로그인 버튼 자체가 비활성화되는건데, 현재 UI상에서 변화가 없어서 몰랐던 거였구나
+      // TODO : 로그인 입력 유효성 검사 만족 못했을때 로그인 버튼 흐리게 표시
+      toast.error('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
     }
   };
 
