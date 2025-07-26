@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import ThemeHero from './ThemeHero';
-// import ProductList from './ProductList';
+import ThemeProductList from './ThemeProductList';
 
 const ThemeProductPage = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -10,7 +10,7 @@ const ThemeProductPage = () => {
   return (
     <div>
       <ThemeHero themeId={themeId} />
-      {/* <ProductList themeId={themeId} /> */}
+      <ThemeProductList themeId={themeId} />
     </div>
   );
 };
