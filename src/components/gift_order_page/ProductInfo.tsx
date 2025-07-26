@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { GiftItemDataType } from '@/types/giftItems';
+import type { GiftItemDataType } from '@/types/giftItem';
 
 const Container = styled.div`
   display: flex;
