@@ -1,9 +1,9 @@
 import * as S from './GiftRankingSection.styles';
-import ProductItem from './ProductItem';
 import { useEffect, useState, useCallback } from 'react';
 import FilterGroup from './FilterGroup';
 import { useSearchParams } from 'react-router-dom';
 import { useFetch } from '@/hooks/useFetch';
+import ProductListRenderer from '@/components/ProductList/ProductListRenderer';
 
 interface Product {
   id: number;
@@ -111,7 +111,7 @@ const GiftRankingSection = () => {
         onSelect={handleReceiverSelect}
       />
       <FilterGroup items={sorts} selected={currentSortText} onSelect={handleSortSelect} />
-      {renderContent()}
+      <ProductListRenderer isLoading={isLoading} error={error} products={products} />
     </S.Section>
   );
 };

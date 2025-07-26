@@ -28,7 +28,12 @@ const CategorySection = () => {
     <>
       <S.Wrapper>
         {categories.map((category) => (
-          <CategoryItem key={category.themeId} name={category.name} image={category.image} />
+          <CategoryItem
+            key={category.themeId}
+            themeId={category.themeId}
+            name={category.name}
+            image={category.image}
+          />
         ))}
       </S.Wrapper>
       <S.Banner>
