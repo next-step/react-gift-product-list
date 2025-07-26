@@ -1,5 +1,5 @@
 import * as S from './GiftRankingSection.styles';
-import ProductItem from './ProductItem';
+import ProductItem from '@/components/ProductItem/ProductItem';
 import { useEffect, useState, useCallback } from 'react';
 import FilterGroup from './FilterGroup';
 import { useSearchParams } from 'react-router-dom';
