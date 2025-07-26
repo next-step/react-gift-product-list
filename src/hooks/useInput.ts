@@ -26,14 +26,10 @@ export function useInput({ initialValue = '', validator }: UseInputOptions) {
     }
   };
 
-  const isValid = validator ? validator(value) === null : true;
-
   return {
     value,
     error,
-    onChange: handleChange,
     validate,
-    isValid,
     bind: {
       value,
       onChange: handleChange,

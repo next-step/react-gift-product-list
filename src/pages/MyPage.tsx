@@ -15,7 +15,7 @@ const MyPage = () => {
       <h1>My Page</h1>
       {user && (
         <div>
-          <p>Nickname: {user.nickname}</p>
+          <p>Name: {user.name}</p>
           <p>Email: {user.email}</p>
         </div>
       )}

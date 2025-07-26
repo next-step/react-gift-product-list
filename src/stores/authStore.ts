@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-type User = {
-  nickname: string;
+interface User {
+  name: string;
   email: string;
-};
+}
 
-export type AuthState = {
+interface AuthState {
   accessToken: string | null;
   user: User | null;
   isAuthenticated: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
-};
+}
 
 const useAuthStore = create<AuthState>()(
   persist(
@@ -20,7 +20,7 @@ const useAuthStore = create<AuthState>()(
       accessToken: null,
       user: null,
       isAuthenticated: false,
-      login: (token, user) => set({ accessToken: token, user, isAuthenticated: true }),
+      login: (accessToken, user) => set({ accessToken, user, isAuthenticated: true }),
       logout: () => set({ accessToken: null, user: null, isAuthenticated: false }),
     }),
     {
