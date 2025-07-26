@@ -19,13 +19,8 @@ export function LoginPage() {
       <Navbar />
       <Container>
         <Logo>kakao</Logo>
-        <Form onSubmit={(e) => handleSubmit(e, login, navigate, from)}>
-          <Input
-            type="email"
-            placeholder="이메일"
-            {...emailInput.bind}
-            error={emailInput.error}
-          />
+        <Form onSubmit={e => handleSubmit(e, login, navigate, from)}>
+          <Input type="email" placeholder="이메일" {...emailInput.bind} error={emailInput.error} />
           <Input
             type="password"
             placeholder="비밀번호"

@@ -1,4 +1,3 @@
-
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/common/Button';
@@ -11,7 +10,10 @@ interface ReceiverFieldSetProps {
 }
 
 export function ReceiverFieldSet({ index, onRemove }: ReceiverFieldSetProps) {
-  const { register, formState: { errors } } = useFormContext<ReceiversModelType>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<ReceiversModelType>();
 
   return (
     <FieldSet>

@@ -22,7 +22,6 @@ export const validatePhoneNumber = (phoneNumber: string) => {
 
 export const validateRequired = (value: string) => {
   return !(!value || value.trim().length === 0);
-
 };
 
 export const validateMinLength = (value: string, minLength: number) => {

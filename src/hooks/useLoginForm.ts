@@ -17,7 +17,7 @@ export function useLoginForm() {
     e: React.FormEvent<HTMLFormElement>,
     login: AuthState['login'],
     navigate: (path: string, options?: { replace: boolean }) => void,
-    from: string
+    from: string,
   ) => {
     e.preventDefault();
     const isEmailValid = emailInput.validate();
@@ -37,4 +37,3 @@ export function useLoginForm() {
     handleSubmit,
   };
 }
-

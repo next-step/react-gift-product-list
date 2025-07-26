@@ -40,7 +40,9 @@ const Card = styled.img<{
   width: 80px;
   height: 80px;
   border-radius: 8px;
-  border: 3px solid ${({ isSelected, theme }) => (isSelected ? theme.semanticColors.brand.kakaoYellow : 'transparent')};
+  border: 3px solid
+    ${({ isSelected, theme }) =>
+      isSelected ? theme.semanticColors.brand.kakaoYellow : 'transparent'};
   cursor: pointer;
   transition: border-color 0.2s ease-in-out;
   flex-shrink: 0;

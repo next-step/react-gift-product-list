@@ -20,7 +20,7 @@ export default function OrderPage() {
   const [selectedCardId, setSelectedCardId] = useState(cardTemplates[0].id);
   const selectedCard = useMemo(
     () => cardTemplates.find(card => card.id === selectedCardId),
-    [selectedCardId]
+    [selectedCardId],
   );
 
   const formRef = useRef<HTMLFormElement>(null);

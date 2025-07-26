@@ -20,7 +20,7 @@ export const ReceiversModel = z
       .max(10, '최대 10명까지 추가할 수 있어요.'),
   })
   .refine(
-    (data) => {
+    data => {
       const phoneNumbers = new Set<string>();
       for (const receiver of data.receivers) {
         if (phoneNumbers.has(receiver.phoneNumber)) {
@@ -33,7 +33,7 @@ export const ReceiversModel = z
     {
       message: '이미 사용중인 전화번호입니다.',
       path: ['receivers'],
-    }
+    },
   );
 
 export const OrderFormModel = z.object({
