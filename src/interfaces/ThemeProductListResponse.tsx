@@ -1,5 +1,5 @@
-import { ThemeProductList } from "./ThemeProductList";
+import { ThemeProductList } from "./ThemeProductList"
 
 export interface ThemeProductListResponse {
-    data: ThemeProductList
+  data: ThemeProductList
 }

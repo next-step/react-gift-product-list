@@ -7,8 +7,8 @@ const PresentCardStyle = styled.button`
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-background-color: ${theme.colors.gray00};
-border:none;
+  background-color: ${theme.colors.gray00};
+  border: none;
   img {
     width: 3.125rem;
     height: 3.125rem;
@@ -16,7 +16,6 @@ border:none;
     border-radius: 18px;
     object-fit: cover;
     overflow: hidden;
-    
   }
 `
 

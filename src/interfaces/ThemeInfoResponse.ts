@@ -1,4 +1,4 @@
-import {ThemeInfo} from "@/interfaces/ThemeInfo"
+import { ThemeInfo } from "@/interfaces/ThemeInfo"
 
 interface ThemeInfoResponse {
   data: ThemeInfo

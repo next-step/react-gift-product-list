@@ -7,7 +7,7 @@ type Props = {
 }
 
 const options: IntersectionObserverInit = {
-  threshold: 0.1,             
+  threshold: 0.1,
 }
 
 export default function useInfiniteScrolling({

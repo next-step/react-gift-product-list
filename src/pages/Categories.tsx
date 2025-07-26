@@ -28,14 +28,17 @@ const PresentCard = ({ present }: PresentCardProps) => {
   const navigate = useNavigate()
   const handleGoTheme = useCallback(
     (id: number) => {
-
-        navigate(getRoute(ROUTES.THEME, { id }))
-
+      navigate(getRoute(ROUTES.THEME, { id }))
     },
     [navigate]
   )
   return (
-    <PresentCardStyle type="button" onClick={()=>{handleGoTheme(present.themeId)}}>
+    <PresentCardStyle
+      type="button"
+      onClick={() => {
+        handleGoTheme(present.themeId)
+      }}
+    >
       <img src={present.image} alt="" />
       <Text variant="label2Regular" margin="spacing0" padding="spacing0">
         {present.name}
@@ -47,21 +50,17 @@ interface ThemesResponse {
   data: PresentItem[]
 }
 const PresentList = () => {
-
   const baseUrl = import.meta.env.VITE_BASE_URL
-  const url  = new URL("/api/themes", baseUrl).toString();
+  const url = new URL("/api/themes", baseUrl).toString()
 
-  const { data: themesData, loading } = useFetch<ThemesResponse>(
-    url,
-    {
-      onSuccess: (data) => {
-        console.log("Themes fetched:", data)
-      },
-      onError: (error) => {
-        console.log("Error fetching themes:", error)
-      },
-    }
-  )
+  const { data: themesData, loading } = useFetch<ThemesResponse>(url, {
+    onSuccess: (data) => {
+      console.log("Themes fetched:", data)
+    },
+    onError: (error) => {
+      console.log("Error fetching themes:", error)
+    },
+  })
 
   const presents = themesData?.data || []
   if (loading) {
