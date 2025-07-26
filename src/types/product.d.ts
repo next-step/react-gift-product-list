@@ -1,11 +1,19 @@
 export interface Product {
   id: number;
   name: string;
-  imageURL: string;
   price: {
+    basicPrice: number;
     sellingPrice: number;
+    discountRate: number;
   };
+  imageURL: string;
   brandInfo: {
-    name:string;
+    id: number;
+    name: string;
+    imageURL: string;
   };
 }
+
+export type GetRankingProductsResponse = {
+  data: Product[];
+};
