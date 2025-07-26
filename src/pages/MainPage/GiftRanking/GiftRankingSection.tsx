@@ -4,6 +4,7 @@ import FilterGroup from './FilterGroup';
 import { useSearchParams } from 'react-router-dom';
 import { useFetch } from '@/hooks/useFetch';
 import ProductListRenderer from '@/components/ProductList/ProductListRenderer';
+
 interface Product {
   id: number;
   name: string;
@@ -71,6 +72,36 @@ const GiftRankingSection = () => {
     receiverOptions.find((opt) => opt.apiValue === selectedTargetType)?.text || '전체';
   const currentSortText =
     sortOptions.find((opt) => opt.apiValue === selectedRankType)?.text || '받고 싶어한';
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <S.LoadingMessage>상품 목록을 불러오는 중...</S.LoadingMessage>;
+    }
+
+    if (error) {
+      return <S.ErrorMessage>{error}</S.ErrorMessage>;
+    }
+
+    if (!products || products.length === 0) {
+      return <S.NoProductMessage>보여줄 상품 목록이 없습니다.</S.NoProductMessage>;
+    }
+
+    return (
+      <S.Grid>
+        {products.map((product) => (
+          <ProductItem
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            imageURL={product.imageURL}
+            sellingPrice={product.price.sellingPrice}
+            brandImageURL={product.brandInfo.imageURL}
+            brandName={product.brandInfo.name}
+          />
+        ))}
+      </S.Grid>
+    );
+  };
 
   return (
     <S.Section>
