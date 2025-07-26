@@ -6,24 +6,23 @@ import ThemeNotFound from "./PresentTheme/ThemeNotFound"
 import Loading from "./PresentTheme/Loading"
 import theme from "@/styles/theme"
 import useThemeProduct from "@/hooks/useThemeProduct"
-import useInfiniteScrolling from "@/hooks/useInfiniteScrolling"
-import { useState, useCallback } from "react"
+import {  useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants/routes"
 import getRoute from "@/functions/getRoute"
 import { useAuth } from "@/context/AuthContext"
-
+import useInView from "@/hooks/useInview"
+import { useEffect } from "react"
 const ThemeProductSection = ({ themeId }: { themeId: string }) => {
-  const [observerRef, setObserverRef] = useState<null | HTMLDivElement>(null)
+  
   const { products, hasMore, loadingInitial,error, isFetching, fetchMore } =
     useThemeProduct(themeId)
 
-  useInfiniteScrolling({
-    observerRef,
-    fetchMore,
-    hasMore: hasMore && !isFetching,
-  })
-
+    const [sentinelRef, inView] = useInView() 
+    useEffect(() => {
+        if (inView && hasMore && !isFetching) fetchMore()
+      }, [inView, hasMore, isFetching, fetchMore])
+  
   const { isLoggedIn } = useAuth()
   const navigate = useNavigate()
 
@@ -77,7 +76,7 @@ const ThemeProductSection = ({ themeId }: { themeId: string }) => {
         ))}
       </Grid>
       {isFetching ? (<Loading />) :(<div style={{ height: 40 }} />)}
-      <div style={{ height: 8 }} ref={setObserverRef} />
+      <div style={{ height: 8 }} ref={sentinelRef} />
     </>
   )
 }
