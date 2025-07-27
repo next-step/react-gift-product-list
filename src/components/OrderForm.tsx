@@ -58,8 +58,10 @@ export const OrderForm = forwardRef<OrderFormRef, OrderFormProps>(
       }),
     }));
 
-    const onSubmit = (data: OrderFormModelType) => {
-      console.log(data);
+    const onSubmit = (
+      // data: OrderFormModelType
+    ) => {
+      // console.log(data);
       alert('주문이 완료되었습니다.');
     };
 

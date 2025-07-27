@@ -5,8 +5,16 @@ import { AxiosError } from 'axios';
 export const getProductSummary = async (productId: number): Promise<Product> => {
   try {
     const response = await api.get(`/products/${productId}/summary`);
-    // console.log('API Response Data:', response.data);
-    return response.data.data;
+    const summaryData = response.data.data;
+
+    return {
+      ...summaryData,
+      price: {
+        sellingPrice: summaryData.price,
+        basicPrice: summaryData.price,
+        discountRate: 0,
+      },
+    };
   } catch (error) {
     if (error instanceof AxiosError) {
       throw new Error(`HTTP ${error.response?.status || 'Unknown'}`);
