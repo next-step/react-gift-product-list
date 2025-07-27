@@ -8,7 +8,10 @@ type Props = {
 };
 
 const RecipientsList = ({ recipients, onEdit, unitPrice }: Props) => {
-  const totalPrice = recipients.reduce((sum, r) => sum + r.quantity * unitPrice, 0);
+  const totalPrice = recipients.reduce(
+    (sum, r) => sum + r.quantity * unitPrice,
+    0
+  );
 
   return (
     <Wrapper>

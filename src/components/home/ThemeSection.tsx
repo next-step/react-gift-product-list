@@ -7,7 +7,7 @@ const ThemeSection: React.FC = () => {
   const { themes, loading, error } = useThemes();
 
   if (loading) return <Spinner />;
-  if (error) return <ErrorMsg>테마를 불러오는 중 오류가 발생했습니다.</ErrorMsg>;
+  if (error) return null;
 
   return (
     <Section>
@@ -42,7 +42,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 12px 16px;
-  
+
   @media (max-width: 720px) {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
@@ -66,10 +66,4 @@ const Label = styled.div`
   font-size: 12px;
   text-align: center;
   color: ${({ theme }) => theme.textColors.default};
-`;
-
-const ErrorMsg = styled.p`
-  text-align: center;
-  margin: 16px 0;
-  color: ${({ theme }) => theme.colors.red500};
 `;

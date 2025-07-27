@@ -5,27 +5,34 @@ interface ApiResponse<T> {
   data: T;
 }
 
-export function useFetch<T = any>(
+export function useFetch<T = unknown>(
   endpoint: string,
-  params?: Record<string, any>
+  params?: Record<string, unknown>
 ) {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
     let canceled = false;
     setLoading(true);
+
     apiClient
       .get<ApiResponse<T>>(endpoint, { params })
-      .then(res => {
-        if (!canceled) setData(res.data.data);
+      .then((res) => {
+        if (!canceled) {
+          setData(res.data.data);
+        }
       })
-      .catch(err => {
-        if (!canceled) setError(err);
+      .catch((err: unknown) => {
+        if (!canceled) {
+          setError(err);
+        }
       })
       .finally(() => {
-        if (!canceled) setLoading(false);
+        if (!canceled) {
+          setLoading(false);
+        }
       });
 
     return () => {

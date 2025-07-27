@@ -41,11 +41,7 @@ const OrderForm = ({
     <form onSubmit={handleSubmit((data) => onSubmit({ ...data, recipients }))}>
       <Field>
         <Label>메시지</Label>
-        <TextArea
-          {...register('message')}
-          rows={3}
-          placeholder="축하해요."
-        />
+        <TextArea {...register('message')} rows={3} placeholder="축하해요." />
       </Field>
 
       <Field>
@@ -98,9 +94,7 @@ const OrderForm = ({
         <Info>
           <Brand>{product.brandInfo.name}</Brand>
           <ProdName>{product.name}</ProdName>
-          <Price>
-            상품가 {product.price.sellingPrice.toLocaleString()}원
-          </Price>
+          <Price>상품가 {product.price.sellingPrice.toLocaleString()}원</Price>
         </Info>
       </ProductCard>
 

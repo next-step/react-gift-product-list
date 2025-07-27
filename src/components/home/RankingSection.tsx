@@ -1,20 +1,31 @@
-
 import React from 'react';
 import styled from '@emotion/styled';
 
 import { useRanking } from '@/hooks/useRanking';
-import Spinner            from '@/components/common/Spinner';
-import GiftItemCard       from '@/components/GiftRanking/GiftItemCard';
-import GiftRankingFilter  from '@/components/GiftRanking/GiftRankingFilter';
-import GiftRankingTab     from '@/components/GiftRanking/GiftRankingTab';
+import Spinner from '@/components/common/Spinner';
+import GiftItemCard from '@/components/GiftRanking/GiftItemCard';
+import GiftRankingFilter, {
+  FilterValue,
+} from '@/components/GiftRanking/GiftRankingFilter';
+import GiftRankingTab from '@/components/GiftRanking/GiftRankingTab';
+import type { TabValue } from '@/constants/RankingTabs';
 
 const PAGE_SIZE = 10;
 
 const RankingSection: React.FC = () => {
-  const [filter, setFilter]           = React.useState<'all' | 'female' | 'male' | 'teen'>('all');
-  const [tab,    setTab]              = React.useState<'wish' | 'sent' | 'wishlist'>(() => {
-    return (localStorage.getItem('lastTab') as 'wish' | 'sent' | 'wishlist') ?? 'wish';
+  const [filter, setFilter] = React.useState<FilterValue>('ALL');
+  const [tab, setTab] = React.useState<TabValue>(() => {
+    const saved = localStorage.getItem('lastTab');
+    const validTabs: TabValue[] = [
+      'MANY_WISH',
+      'MANY_RECEIVE',
+      'MANY_WISH_RECEIVE',
+    ];
+    return (
+      validTabs.includes(saved as TabValue) ? saved : 'MANY_WISH'
+    ) as TabValue;
   });
+
   const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
 
   React.useEffect(() => {
@@ -25,16 +36,16 @@ const RankingSection: React.FC = () => {
   const { products, loading, error } = useRanking(filter, tab);
 
   if (loading) return <Spinner />;
-  if (error)   return <ErrorMsg>상품을 불러오는 중 오류가 발생했습니다.</ErrorMsg>;
+  if (error) return null;
   if (products.length === 0) return <ErrorMsg>상품이 없습니다.</ErrorMsg>;
 
   const visibleItems = products.slice(0, visibleCount);
-  const hasMore      = visibleCount < products.length;
+  const hasMore = visibleCount < products.length;
 
   return (
     <Section>
       <SectionTitle>실시간 급상승 선물랭킹</SectionTitle>
-      <GiftRankingFilter onChange={setFilter} />
+      <GiftRankingFilter selected={filter} onChange={setFilter} />
       <GiftRankingTab selected={tab} onChange={setTab} />
 
       <Grid>
@@ -43,17 +54,17 @@ const RankingSection: React.FC = () => {
             <RankBadge>{idx + 1}</RankBadge>
             <GiftItemCard
               item={{
-                id:       p.id,
-                name:     p.name,
+                id: p.id,
+                name: p.name,
                 imageURL: p.imageURL,
                 price: {
-                  basicPrice:   p.price.basicPrice,
+                  basicPrice: p.price.basicPrice,
                   sellingPrice: p.price.sellingPrice,
                   discountRate: p.price.discountRate,
                 },
                 brandInfo: {
-                  id:       p.brandInfo.id,
-                  name:     p.brandInfo.name,
+                  id: p.brandInfo.id,
+                  name: p.brandInfo.name,
                   imageURL: p.brandInfo.imageURL,
                 },
               }}
@@ -63,7 +74,7 @@ const RankingSection: React.FC = () => {
       </Grid>
 
       {hasMore && (
-        <MoreButton onClick={() => setVisibleCount(c => c + PAGE_SIZE)}>
+        <MoreButton onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
           더보기
         </MoreButton>
       )}

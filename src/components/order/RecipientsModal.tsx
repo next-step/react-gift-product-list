@@ -145,7 +145,6 @@ const RecipientsModal = ({
 
 export default RecipientsModal;
 
-
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
@@ -162,7 +161,8 @@ const Modal = styled.div`
   border-radius: ${({ theme }) => theme.spacing.spacing4};
   width: 100%;
   max-width: 720px;
-  margin: ${({ theme }) => theme.spacing.spacing8} ${({ theme }) => theme.spacing.spacing4};
+  margin: ${({ theme }) => theme.spacing.spacing8}
+    ${({ theme }) => theme.spacing.spacing4};
 `;
 
 const Title = styled.h3`
@@ -217,9 +217,10 @@ const ErrorMsg = styled.span`
 
 const DeleteButton = styled.button`
   background: ${({ theme }) => theme.stateColors.critical};
-  color: ${props => props.theme.colors.gray00};
+  color: ${(props) => props.theme.colors.gray00};
   border: none;
-  padding: ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing2}
+    ${({ theme }) => theme.spacing.spacing3};
   border-radius: ${({ theme }) => theme.spacing.spacing2};
   cursor: pointer;
   font: ${({ theme }) => theme.typography.label2Bold};
@@ -230,7 +231,8 @@ const DeleteButton = styled.button`
 
 const AddButton = styled.button`
   margin-top: ${({ theme }) => theme.spacing.spacing2};
-  padding: ${({ theme }) => theme.spacing.spacing2} ${({ theme }) => theme.spacing.spacing3};
+  padding: ${({ theme }) => theme.spacing.spacing2}
+    ${({ theme }) => theme.spacing.spacing3};
   background: ${({ theme }) => theme.sementicColors.kakaoYellow};
   border: none;
   border-radius: ${({ theme }) => theme.spacing.spacing2};

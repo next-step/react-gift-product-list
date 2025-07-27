@@ -28,9 +28,13 @@ const OrderPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   if (productLoading || cardsLoading) return <Spinner />;
-  if (productError) return <ErrorText>상품 정보를 불러오는 중 오류가 발생했습니다.</ErrorText>;
+  if (productError)
+    return <ErrorText>상품 정보를 불러오는 중 오류가 발생했습니다.</ErrorText>;
   if (!product) return <ErrorText>존재하지 않는 상품입니다.</ErrorText>;
-  if (cardsError) return <ErrorText>메시지 카드를 불러오는 중 오류가 발생했습니다.</ErrorText>;
+  if (cardsError)
+    return (
+      <ErrorText>메시지 카드를 불러오는 중 오류가 발생했습니다.</ErrorText>
+    );
 
   const handleOrderSubmit = (form: OrderFormData) => {
     alert(
@@ -39,7 +43,9 @@ const OrderPage = () => {
         `발신자: ${form.sender}\n` +
         `메시지: ${form.message}\n\n` +
         form.recipients
-          .map((r, i) => `${i + 1}. ${r.name} / ${r.phone} / 수량 ${r.quantity}개`)
+          .map(
+            (r, i) => `${i + 1}. ${r.name} / ${r.phone} / 수량 ${r.quantity}개`
+          )
           .join('\n')
     );
     navigate('/');
