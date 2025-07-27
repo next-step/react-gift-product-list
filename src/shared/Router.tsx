@@ -12,6 +12,7 @@ import OrderPage from "@/pages/OrderPage"
 import CardProvider from "@/context/CardProvider"
 import "react-toastify/dist/ReactToastify.css"
 import { ToastContainer } from "react-toastify"
+import ThemeInfo from "@/pages/ThemeInfoPage"
 
 const Router = () => {
   return (
@@ -40,6 +41,12 @@ const Router = () => {
                       <ProtectedRoute>
                         <OrderPage />
                       </ProtectedRoute>
+                    }
+                  />
+                                    <Route
+                    path="/theme/:themeId"
+                    element={
+                        <ThemeInfo />
                     }
                   />
                   <Route path={"*"} element={<NotFound />} />

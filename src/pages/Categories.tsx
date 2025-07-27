@@ -10,6 +10,10 @@ import Trending from "../components/Trending"
 import useFetch from "@/hooks/useFetch"
 import Loading from "@/components/PresentTheme/Loading"
 import ThemeNotFound from "@/components/PresentTheme/ThemeNotFound"
+import { useNavigate } from "react-router-dom"
+import { useCallback } from "react"
+import { ROUTES } from "@/constants/routes"
+import getRoute from "@/functions/getRoute"
 
 interface PresentItem {
   themeId: number
@@ -21,8 +25,20 @@ interface PresentCardProps {
 }
 
 const PresentCard = ({ present }: PresentCardProps) => {
+  const navigate = useNavigate()
+  const handleGoTheme = useCallback(
+    (id: number) => {
+      navigate(getRoute(ROUTES.THEME, { id }))
+    },
+    [navigate]
+  )
   return (
-    <PresentCardStyle>
+    <PresentCardStyle
+      type="button"
+      onClick={() => {
+        handleGoTheme(present.themeId)
+      }}
+    >
       <img src={present.image} alt="" />
       <Text variant="label2Regular" margin="spacing0" padding="spacing0">
         {present.name}
@@ -35,18 +51,16 @@ interface ThemesResponse {
 }
 const PresentList = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL
-  const url  = new URL("/api/themes", baseUrl).toString();
-  const { data: themesData, loading } = useFetch<ThemesResponse>(
-    url,
-    {
-      onSuccess: (data) => {
-        console.log("Themes fetched:", data)
-      },
-      onError: (error) => {
-        console.log("Error fetching themes:", error)
-      },
-    }
-  )
+  const url = new URL("/api/themes", baseUrl).toString()
+
+  const { data: themesData, loading } = useFetch<ThemesResponse>(url, {
+    onSuccess: (data) => {
+      console.log("Themes fetched:", data)
+    },
+    onError: (error) => {
+      console.log("Error fetching themes:", error)
+    },
+  })
 
   const presents = themesData?.data || []
   if (loading) {

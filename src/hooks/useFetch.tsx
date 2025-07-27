@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react"
+import { useState, useEffect } from "react"
 import axios, { AxiosResponse } from "axios"
 
 interface UseFetchOptions {
@@ -17,11 +17,7 @@ function useFetch<T = any>(
   url: string,
   options: UseFetchOptions = {}
 ): UseFetchReturn<T> {
-  const {
-    dependencies = [],
-    onSuccess,
-    onError,
-  } = options
+  const { dependencies = [], onSuccess, onError } = options
 
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -49,7 +45,7 @@ function useFetch<T = any>(
   return {
     data,
     loading,
-    error
+    error,
   }
 }
 
