@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import useInput from './hooks/useInput';
 import InputField from './components/InputField';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/routes/routes';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/routes/Routes';
 import useLogin from './hooks/useLogin';
 
 const Container = styled.div`
@@ -53,6 +53,8 @@ const Button = styled.button`
 const LoginPage = () => {
   const { loginAndStoreSession } = useLogin();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || ROUTES.MY;
   const username = useInput('email');
   const password = useInput('password');
 
@@ -63,7 +65,7 @@ const LoginPage = () => {
     if (!username.isValid || !password.isValid) return;
     const isSuccess = await loginAndStoreSession({ username, password });
     if (isSuccess) {
-      navigate(ROUTES.MY, { replace: true });
+      navigate(from, { replace: true });
     }
   };
 

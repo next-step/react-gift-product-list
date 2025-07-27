@@ -1,5 +1,5 @@
 import { requests } from '@/api/requests';
-import { ROUTES } from '@/routes/routes';
+import { ROUTES } from '@/routes/Routes';
 import axios from 'axios';
 import type { OrderInfoValues } from '..';
 

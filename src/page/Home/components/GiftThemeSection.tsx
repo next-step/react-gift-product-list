@@ -1,9 +1,16 @@
 import styled from '@emotion/styled';
 import Loading from '@/components/Loading';
 import useTheme from '../hooks/useTheme';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/routes/Routes';
 
 const GiftThemeSection = () => {
   const { themes, loading, error } = useTheme();
+  const navigate = useNavigate();
+
+  const handleClick = (id: string) => {
+    navigate(generatePath(ROUTES.THEMES, { id }));
+  };
 
   const renderContent = () => {
     if (error) return null;
@@ -11,7 +18,7 @@ const GiftThemeSection = () => {
     return (
       <Container>
         {themes.map(theme => (
-          <Theme key={theme.themeId}>
+          <Theme key={theme.themeId} onClick={() => handleClick(String(theme.themeId))}>
             <Image alt={theme.name} src={theme.image} />
             <Text>{theme.name}</Text>
           </Theme>

@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 import { filters, generations } from '@/data/categoryDatas';
 import useSearchParamState from '../hooks/useSearchParamState';
 import useToggleCollapse from '../hooks/useToggleCollapse';
-import { useUserInfo } from '@/contexts/UserInfoContext';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/routes/routes';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/routes/Routes';
 import Loading from '@/components/Loading';
 import useRanking from '../hooks/useRanking';
 import toLocaleString from '@/utils/toLocaleString';
@@ -21,20 +20,13 @@ const GiftRankingSection = () => {
     activeFilterButton,
   } = useSearchParamState();
 
-
   const { rankingDatas, loading } = useRanking({ activeGenerationButton, activeFilterButton });
 
-
   const { isCollapsed, visibleItemsCount, toggleCollapse } = useToggleCollapse(rankingDatas.length);
-  const { isLoggedIn } = useUserInfo();
 
   const navigate = useNavigate();
-  const handleItemClick = (id: number) => {
-    if (isLoggedIn) {
-      navigate(`/order/${id}`);
-    } else {
-      navigate(ROUTES.LOGIN);
-    }
+  const handleItemClick = (id: string) => {
+    navigate(generatePath(ROUTES.ORDER, { id }));
   };
 
   const renderContent = () => {
@@ -46,7 +38,7 @@ const GiftRankingSection = () => {
       <>
         <RankContainer>
           {rankingDatas.slice(0, visibleItemsCount).map((rank, index) => (
-            <RankItem key={rank.id} onClick={() => handleItemClick(rank.id)}>
+            <RankItem key={rank.id} onClick={() => handleItemClick(String(rank.id))}>
               <RankNumber>{index + 1}</RankNumber>
               <ItemContainer>
                 <Image src={rank.imageURL} alt={rank.name} />

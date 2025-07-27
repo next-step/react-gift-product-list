@@ -4,10 +4,19 @@ import type { GiftRankingItem, RankingApiProps } from '@/page/Home/hooks/useRank
 import type { OrderInfoValues } from '@/page/Order';
 import type { ProductSummaryData } from '@/page/Order/hooks/useRnaking';
 import type { ThemeInfo } from '@/page/Home/hooks/useTheme';
+import type { ThemeIdInfoData, ThemeIdItemsData } from '@/page/Themes';
 
 export interface FetchOrderProps {
   orderData: OrderInfoValues;
   id: string;
+}
+interface fetchThemeIdItemsProps {
+  index: number;
+  currentCursor: number;
+  currentPage: number;
+}
+interface OrderResponseData {
+  success: boolean;
 }
 interface OrderResponseData {
   success: boolean;
@@ -44,4 +53,12 @@ export const requests = {
     );
   },
   fetchTheme: (): Promise<ThemeInfo[]> => apiClient.get('/api/themes'),
+  fetchThemeIdInfo: (index: number): Promise<ThemeIdInfoData> =>
+    apiClient.get(`/api/themes/${index}/info`),
+  fetchThemeIdItems: ({
+    index,
+    currentCursor,
+    currentPage,
+  }: fetchThemeIdItemsProps): Promise<ThemeIdItemsData> =>
+    apiClient.get(`/api/themes/${index}/products?cursor=${currentCursor}?page=${currentPage}`),
 };
