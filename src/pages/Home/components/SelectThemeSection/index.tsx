@@ -114,11 +114,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeHero } from './ThemeHero';
-import axios, { AxiosResponse, AxiosError } from 'axios';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { SelectThemeSectionListItem } from './ListItem';
 import { Typography } from '@/components/common/Typography';
+import api from '@/api/api';
+import { AxiosResponse, AxiosError } from 'axios';
 
 interface Theme {
   themeId: number;
@@ -130,14 +131,12 @@ export const SelectThemeSection: React.FC = () => {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
-  // ① 클릭된 테마 ID를 저장할 state
   const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get<{ data: Theme[] }>('http://localhost:3000/api/themes')
+    api
+      .get<{ data: Theme[] }>('/api/themes')
       .then((res: AxiosResponse<{ data: Theme[] }>) => {
         setThemes(res.data.data);
         setLoading(false);
@@ -152,7 +151,9 @@ export const SelectThemeSection: React.FC = () => {
   if (loading) {
     return (
       <Section>
-        <SpinWrapper><Loader /></SpinWrapper>
+        <SpinWrapper>
+          <Loader />
+        </SpinWrapper>
       </Section>
     );
   }
@@ -163,7 +164,6 @@ export const SelectThemeSection: React.FC = () => {
 
   return (
     <>
-      {/* ② selectedThemeId가 세팅되면 Hero 출력 */}
       {selectedThemeId !== null && (
         <ThemeHero themeId={selectedThemeId} />
       )}
@@ -174,6 +174,7 @@ export const SelectThemeSection: React.FC = () => {
             선물 테마
           </Typography>
         </TitleWrapper>
+
         <Wrapper>
           {themes.map((theme) => (
             <SelectThemeSectionListItem
@@ -181,9 +182,7 @@ export const SelectThemeSection: React.FC = () => {
               label={theme.name}
               image={theme.image}
               onClick={() => {
-                // ③ 클릭 시 hero에 사용할 ID 세팅
                 setSelectedThemeId(theme.themeId);
-                // (원한다면) 상품 목록 페이지로 이동
                 navigate(`/themes/${theme.themeId}/products`);
               }}
             />
@@ -193,8 +192,6 @@ export const SelectThemeSection: React.FC = () => {
     </>
   );
 };
-
-
 
 // Spin animation keyframes
 const spin = keyframes`
@@ -233,4 +230,3 @@ const Wrapper = styled.div(({ theme }) => ({
   gridTemplateColumns: 'repeat(5, 1fr)',
   gap: `${theme.spacing.spacing5} ${theme.spacing.spacing1}`,
 }));
-
