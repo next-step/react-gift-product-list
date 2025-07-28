@@ -42,11 +42,12 @@
 // export default App;
 // src/App.tsx
 import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProductsPage } from '@/pages/ThemeProductsPage';
 import { ThemeProvider } from '@emotion/react'
 import { theme } from './styles/theme'
 import { BaseLayout } from './components/Layout/BaseLayout'
 import { Navigation } from './components/Layout/Navigation'
-import { Routes, Route } from 'react-router-dom'
 import HomePage from '@/pages/Home/Page'
 import LoginPage from '@/pages/Login/LoginPage'
 import OrderPage from '@/pages/Home/OrderPage'
@@ -64,6 +65,7 @@ const App: React.FC = () => {
       <BaseLayout header={<Navigation />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="themes/:themeId/products" element={<ThemeProductsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/order/:id" element={<OrderPage />} />
           <Route
