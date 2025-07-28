@@ -89,8 +89,4 @@ const Button = styled.button(({ theme }) => ({
 }));
 
 
-// barrel export
-
-export { LoginForm } from './LoginForm';   // barrel export
-
-
+export { default as LoginForm } from './LoginForm';
