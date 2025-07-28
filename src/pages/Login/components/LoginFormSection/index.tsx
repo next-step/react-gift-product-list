@@ -103,6 +103,7 @@ export interface LoginFormSectionProps {
   onSubmit: () => void
   emailError?: string | null
   passwordError?: string | null
+  loginError?: string | null
   isFormValid: boolean
 }
 
@@ -114,6 +115,7 @@ export const LoginFormSection: React.FC<LoginFormSectionProps> = ({
   onSubmit,
   emailError,
   passwordError,
+  loginError,
   isFormValid,
 }) => (
   <Wrapper>
@@ -132,8 +134,11 @@ export const LoginFormSection: React.FC<LoginFormSectionProps> = ({
       onChange={onChangePassword}
     />
     {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
-    <HorizontalSpacing size="spacing12" />
 
+    {/* 로그인 실패 시 출력되는 에러 메세지 */}
+    {loginError && <GlobalError>{loginError}</GlobalError>}
+
+    <HorizontalSpacing size="spacing12" />
     <Button disabled={!isFormValid} onClick={onSubmit}>
       로그인
     </Button>
@@ -150,6 +155,12 @@ const ErrorMessage = styled.div(({ theme }) => ({
   color: theme.colors.semantic.critical.default,
   ...theme.typography.label2Regular,
   marginTop: theme.spacing.spacing1,
+}))
+
+const GlobalError = styled.div(({ theme }) => ({
+  color: theme.colors.semantic.critical.default,
+  ...theme.typography.body2Regular,
+  marginTop: theme.spacing.spacing2,
 }))
 
 const Button = styled.button(({ theme }) => ({
