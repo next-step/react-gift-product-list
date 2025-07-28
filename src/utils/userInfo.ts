@@ -1,4 +1,5 @@
 // src/utils/userInfo.ts
+
 export interface UserInfo {
   authToken: string;
   email: string;
@@ -19,7 +20,7 @@ export function setUserInfo(info: UserInfo) {
  */
 export function getUserInfo(): UserInfo | null {
   const json = localStorage.getItem(KEY);
-  return json ? JSON.parse(json) as UserInfo : null;
+  return json ? (JSON.parse(json) as UserInfo) : null;
 }
 
 /**

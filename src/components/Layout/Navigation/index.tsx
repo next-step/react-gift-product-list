@@ -31,7 +31,7 @@ export const Navigation = () => {
         isLoginPage ? (
           <UserRound />
         ) : (
-          <Link to={`${ROUTE_PATH.LOGIN}?redirect=${encodeURIComponent(window.location.pathname)}`}>
+          <Link to={`${ROUTE_PATH.LOGIN}?=${encodeURIComponent(window.location.pathname)}`}>
             <UserRound />
           </Link>
         )
