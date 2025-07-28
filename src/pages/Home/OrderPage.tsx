@@ -131,7 +131,6 @@ const onSubmit = async (data: FormValues) => {
     navigate("/", { replace: true });
   } catch (err: any) {
    const status = err.response?.status;
-   // 401 Unauthorized 일 때만 로그인 페이지로
    if (status === 401) {
      // 현재 URL 을 redirect 파라미터로 넘기기
      const redirectTo = location.pathname + location.search;

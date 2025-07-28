@@ -156,7 +156,9 @@ export const LoginForm: React.FC = () => {
       const { authToken, email: userEmail, name } = payload
 
       login({ user: { email: userEmail, name }, token: authToken })
-
+     sessionStorage.setItem('authToken', authToken)
+     sessionStorage.setItem('userEmail', userEmail)
+     sessionStorage.setItem('userName', name)
       const target = redirect ? decodeURIComponent(redirect) : ROUTE_PATH.HOME
       navigate(target, { replace: true })
     } catch (err: any) {
