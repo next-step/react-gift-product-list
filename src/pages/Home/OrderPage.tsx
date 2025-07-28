@@ -72,7 +72,7 @@ export default function OrderPage() {
     setErrorProduct(false)
     axios
       .get<{ data: ProductData }>(
-        `http://127.0.0.1:3000/api/products/${productId}`
+        `http://127.0.0.1:3000/api/products/${productId}/summary`,
       )
       .then((res: AxiosResponse<{ data: ProductData }>) => {
         setProductSummary(res.data.data)
