@@ -130,11 +130,23 @@ const onSubmit = async (data: FormValues) => {
     alert("주문이 완료되었습니다!");
     navigate("/", { replace: true });
   } catch (err: any) {
-    console.error("주문 에러 응답:", err.response?.data);
-    alert(
-      err.response?.data?.message ||
-      `서버 에러: ${err.response?.status}`
-    );
+   const status = err.response?.status;
+   // 401 Unauthorized 일 때만 로그인 페이지로
+   if (status === 401) {
+     // 현재 URL 을 redirect 파라미터로 넘기기
+     const redirectTo = location.pathname + location.search;
+     navigate(
+       `/login?redirect=${encodeURIComponent(redirectTo)}`,
+       { replace: true }
+     );
+     return;
+   }
+   // 그 외 에러는 기존처럼 alert
+   console.error("주문 에러 응답:", err.response?.data);
+   alert(
+     err.response?.data?.message ||
+     `서버 에러: ${status}`
+   );
   }
 };
 
