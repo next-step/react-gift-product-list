@@ -98,6 +98,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 import { ROUTE_PATH } from '@/pages/Routes'
 import { LoginFormSection } from './index'
 import { AuthContext } from '@/context/AuthContext'
@@ -159,9 +160,18 @@ export const LoginForm: React.FC = () => {
       const target = redirect ? decodeURIComponent(redirect) : ROUTE_PATH.HOME
       navigate(target, { replace: true })
     } catch (err: any) {
-      const msg =
-        err.response?.data?.message || err.response?.statusText || '로그인에 실패했습니다.'
-      setLoginError(msg)
+      if (axios.isAxiosError(err) && err.response) {
+        const status = err.response.status
+        const msg = err.response.data?.message || err.response.statusText
+        // 4XX 에러면 toast로 보여주기
+        if (status >= 400 && status < 500) {
+          toast.error(msg)
+        } else {
+          toast.error('서버 오류가 발생했습니다.')
+        }
+      } else {
+        toast.error('알 수 없는 오류가 발생했습니다.')
+      }
       console.error('[Login] 에러:', err)
     }
   }
