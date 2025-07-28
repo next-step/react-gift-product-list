@@ -1,3 +1,4 @@
+
 // import React, { useContext, useEffect, useState } from "react";
 // import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 // import { useForm, useFieldArray } from "react-hook-form";
@@ -20,7 +21,6 @@
 //   const navigate = useNavigate();
 //   const { token } = useContext(AuthContext)!;
 
-//   // React Hook Form 설정
 //   const {
 //     control,
 //     register,
@@ -104,6 +104,7 @@
 //     padding: "8px 0",
 //   };
 
+
 //   return (
 //     <div style={{ padding: 20 }}>
 //       {/* 템플릿 리스트 */}
@@ -125,8 +126,6 @@
 //           />
 //         ))}
 //       </div>
-
-//       {/* 선택된 템플릿 미리보기 & 메시지 */}
 //       <img
 //         src={selectedTemplate.imageUrl}
 //         alt="선택된 템플릿 메시지 카드 미리보기"
@@ -150,6 +149,7 @@
 //             className="w-full p-2 border rounded"
 //           />
 //           {errors.sender && <p className="text-red-500 text-sm">{errors.sender.message}</p>}
+
 //         </div>
 
 //         {/* 받는 사람 리스트 */}
@@ -170,13 +170,13 @@
 //         {fields.map((field, idx) => (
 //           <div key={field.id} style={{ marginBottom: 16 }}>
 //             <div style={{ display: "flex", justifyContent: "space-between" }}>
+
 //               <h3>받는 사람 {idx + 1}</h3>
 //               <button type="button" onClick={() => remove(idx)} className="text-red-500">
 //                 ✕
 //               </button>
 //             </div>
 
-//             {/* 이름 */}
 //             <div className="mb-2">
 //               <label>이름</label>
 //               <input
@@ -188,7 +188,6 @@
 //               )}
 //             </div>
 
-//             {/* 전화번호 */}
 //             <div className="mb-2">
 //               <label>전화번호</label>
 //               <input
@@ -207,7 +206,6 @@
 //               )}
 //             </div>
 
-//             {/* 수량 */}
 //             <div className="mb-2">
 //               <label>수량</label>
 //               <input
@@ -237,6 +235,7 @@
 //         />
 //         <div>{productSummary.name}</div>
 //         <p>₩{productSummary.price.sellingPrice?.toLocaleString()}</p>
+
 //       </div>
 //     </div>
 //   );
@@ -256,6 +255,8 @@ type FormValues = { sender: string; receivers: Receiver[] }
 const MAX_RECEIVERS = 10
 const DEFAULT_RECEIVER: Receiver = { name: "", phone: "", quantity: 1 }
 
+
+// OrderPage 컴포넌트
 export default function OrderPage() {
   const params = useParams<{ id: string }>()
   const [searchParams] = useSearchParams()
@@ -273,6 +274,7 @@ export default function OrderPage() {
   if (!token || !user) return null
 
   // React Hook Form 설정 (sender 기본값에 user.name 사용)
+
   const {
     control,
     register,
@@ -294,6 +296,7 @@ export default function OrderPage() {
   const selectedTemplate =
     templates.find((t) => t.id === selectedTemplateId) || templates[0]
   const [messageText, setMessageText] = useState(selectedTemplate.defaultTextMessage)
+
   useEffect(() => {
     setMessageText(selectedTemplate.defaultTextMessage)
   }, [selectedTemplateId])
@@ -358,6 +361,15 @@ export default function OrderPage() {
     padding: "8px 0",
   }
 
+
+  // 스타일 정의
+  const templateListStyle: React.CSSProperties = {
+    display: "flex",
+    overflowX: "auto",
+    gap: 8,
+    padding: "8px 0",
+  };
+
   return (
     <div style={{ padding: 20 }}>
       {/* 템플릿 리스트 */}
@@ -373,10 +385,7 @@ export default function OrderPage() {
               height: 80,
               objectFit: "cover",
               cursor: "pointer",
-              border:
-                selectedTemplateId === t.id
-                  ? "2px solid #467DE9"
-                  : "2px solid transparent",
+              border: selectedTemplateId === t.id ? "2px solid #467DE9" : "2px solid transparent",
               borderRadius: 4,
             }}
           />
@@ -407,9 +416,7 @@ export default function OrderPage() {
             defaultValue={userName}
             className="w-full p-2 border rounded"
           />
-          {errors.sender && (
-            <p className="text-red-500 text-sm">{errors.sender.message}</p>
-          )}
+          {errors.sender && <p className="text-red-500 text-sm">{errors.sender.message}</p>}
         </div>
 
         {/* 받는 사람 리스트 */}
