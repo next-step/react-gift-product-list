@@ -82,6 +82,18 @@ export default function OrderPage() {
         console.error("상품 조회 실패:", err)
         setErrorProduct(true)
         setLoadingProduct(false)
+        const errorMessage =
+          (err.response &&
+            typeof err.response.data === "object" &&
+            err.response.data &&
+            "data" in err.response.data &&
+            typeof (err.response.data as any).data === "object" &&
+            (err.response.data as any).data &&
+            "message" in (err.response.data as any).data)
+            ? (err.response.data as any).data.message
+            : "제품 정보를 불러오지 못했습니다."
+        toast.error(errorMessage)
+       navigate("/", { replace: true })
       })
   }, [productId])
 
