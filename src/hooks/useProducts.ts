@@ -15,7 +15,12 @@ export function useProducts(mainTab: TargetType, subTab: 'WANT' | 'GIVE' | 'WISH
       setIsLoading(true);
       setError(null);
       try {
-        const rankType: RankType = subTab === 'WANT' ? 'MANY_WISH' : subTab === 'GIVE' ? 'MANY_RECEIVE' : 'MANY_WISH_RECEIVE';
+        const rankType: RankType =
+          subTab === 'WANT'
+            ? 'MANY_WISH'
+            : subTab === 'GIVE'
+              ? 'MANY_RECEIVE'
+              : 'MANY_WISH_RECEIVE';
         const response = await api.get<GetRankingProductsResponse>('/products/ranking', {
           params: {
             targetType: mainTab,
@@ -35,5 +40,3 @@ export function useProducts(mainTab: TargetType, subTab: 'WANT' | 'GIVE' | 'WISH
 
   return { products, isLoading, error };
 }
-
-

@@ -1,4 +1,3 @@
-
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/common/Button';
@@ -11,7 +10,10 @@ interface ReceiverFieldSetProps {
 }
 
 export function ReceiverFieldSet({ index, onRemove }: ReceiverFieldSetProps) {
-  const { register, formState: { errors } } = useFormContext<ReceiversModelType>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<ReceiversModelType>();
 
   return (
     <FieldSet>
@@ -27,6 +29,9 @@ export function ReceiverFieldSet({ index, onRemove }: ReceiverFieldSetProps) {
       />
       <Input
         type="number"
+        placeholder="수량"
+        min={1}
+        max={999}
         defaultValue={1}
         {...register(`receivers.${index}.quantity`, { valueAsNumber: true })}
         error={errors.receivers?.[index]?.quantity?.message}

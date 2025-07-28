@@ -24,10 +24,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* Alias */ 
-    "baseUrl": ".",            // 루트 기준
+    /* Alias */
+    "baseUrl": ".", // 루트 기준
     "paths": {
-      "@/*": ["src/*"]         // 절대 경로 매핑
+      "@/*": ["src/*"] // 절대 경로 매핑
     }
   },
   "include": ["src"]

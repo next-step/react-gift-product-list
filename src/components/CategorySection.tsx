@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { CategoryItem } from '@/components/CategoryItem';
-import useHTTP from '@/hooks/useHTTP';
+import { useHTTP } from '@/hooks/useHTTP';
 import { Spinner } from '@/components/common/Spinner';
 import { api } from '@/services/api';
 
@@ -18,7 +19,16 @@ async function getGiftThemes(): Promise<Theme[]> {
 }
 
 export function CategorySection() {
-  const { data: themes, isPending, error } = useHTTP<void, Theme[]>({ apiFunction: getGiftThemes });
+  const [themes, setThemes] = useState<Theme[] | null>(null);
+  const { request, isPending, error } = useHTTP<void, Theme[]>({ apiFunction: getGiftThemes });
+
+  useEffect(() => {
+    request().then(data => {
+      if (data) {
+        setThemes(data);
+      }
+    });
+  }, [request]);
 
   if (isPending) {
     return (
@@ -47,7 +57,7 @@ export function CategorySection() {
 
       {/* 테마 목록 그리드 */}
       <Grid>
-        {themes.map(({ themeId, name, image }) => (
+        {themes.map(({ themeId, name, image }: Theme) => (
           <CategoryItem key={themeId} name={name} image={image} />
         ))}
       </Grid>

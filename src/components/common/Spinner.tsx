@@ -7,7 +7,7 @@ export interface SpinnerProps {
   color?: CSSProperties['borderColor'];
 }
 
-export const Spinner = ({ borderWidth = "4px", size = "48px", color = "#000" }: SpinnerProps) => {
+export const Spinner = ({ borderWidth = '4px', size = '48px', color = '#000' }: SpinnerProps) => {
   return <SpinnerStyled borderWidth={borderWidth} size={size} color={color}></SpinnerStyled>;
 };
 

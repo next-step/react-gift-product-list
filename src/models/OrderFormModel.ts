@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const ReceiverModel = z.object({
+  id: z.string().optional(),
   receiverName: z.string().min(1, '이름을 입력해주세요.'),
   phoneNumber: z
     .string()
@@ -19,27 +20,26 @@ export const ReceiversModel = z
       .min(1, '받는 사람을 추가해주세요.')
       .max(10, '최대 10명까지 추가할 수 있어요.'),
   })
-  .refine(
-    (data) => {
-      const phoneNumbers = new Set<string>();
-      for (const receiver of data.receivers) {
-        if (phoneNumbers.has(receiver.phoneNumber)) {
-          return false;
-        }
+  .check(ctx => {
+    const phoneNumbers = new Set<string>();
+
+    ctx.value.receivers.forEach((receiver, index) => {
+      if (receiver.phoneNumber && phoneNumbers.has(receiver.phoneNumber)) {
+        ctx.issues.push({
+          code: 'custom',
+          message: '이미 사용중인 전화번호입니다.',
+          path: ['receivers', index, 'phoneNumber'],
+          input: receiver.phoneNumber,
+        });
+      } else if (receiver.phoneNumber) {
         phoneNumbers.add(receiver.phoneNumber);
       }
-      return true;
-    },
-    {
-      message: '이미 사용중인 전화번호입니다.',
-      path: ['receivers'],
-    }
-  );
+    });
+  });
 
 export const OrderFormModel = z.object({
   message: z.string().min(1, '메시지를 입력해주세요.'),
   senderName: z.string().min(1, '보내는 사람 이름을 입력해주세요.'),
-  receivers: ReceiversModel,
 });
 
 export type ReceiverModelType = z.infer<typeof ReceiverModel>;

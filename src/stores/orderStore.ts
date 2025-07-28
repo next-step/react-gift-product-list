@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { ReceiverModelType } from '@/models/OrderFormModel';
@@ -12,18 +11,17 @@ interface OrderState {
 }
 
 export const useOrderStore = create<OrderState>()(
-  devtools((set) => ({
+  devtools(set => ({
     receivers: [],
-    setReceivers: (receivers) => set({ receivers }),
-    addReceiver: (receiver) =>
-      set((state) => ({ receivers: [...state.receivers, receiver] })),
-    removeReceiver: (index) =>
-      set((state) => ({
+    setReceivers: receivers => set({ receivers }),
+    addReceiver: receiver => set(state => ({ receivers: [...state.receivers, receiver] })),
+    removeReceiver: index =>
+      set(state => ({
         receivers: state.receivers.filter((_, i) => i !== index),
       })),
     updateReceiver: (index, receiver) =>
-      set((state) => ({
+      set(state => ({
         receivers: state.receivers.map((r, i) => (i === index ? receiver : r)),
       })),
-  }))
+  })),
 );

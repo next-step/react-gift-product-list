@@ -25,14 +25,16 @@ const StyledTextArea = styled.textarea<{
   width: 100%;
   padding: 12px;
   font-size: 14px;
-  border: 1px solid ${({ theme, error }) => (error ? theme.colors.red.red600 : theme.colors.gray.gray400)};
+  border: 1px solid
+    ${({ theme, error }) => (error ? theme.colors.red.red600 : theme.colors.gray.gray400)};
   border-radius: 5px;
   resize: vertical;
   min-height: 100px;
 
   &:focus {
     outline: none;
-    border-color: ${({ theme, error }) => (error ? theme.colors.red.red600 : theme.colors.gray.gray800)};
+    border-color: ${({ theme, error }) =>
+      error ? theme.colors.red.red600 : theme.colors.gray.gray800};
   }
 `;
 

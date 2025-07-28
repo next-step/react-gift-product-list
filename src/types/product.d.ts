@@ -7,11 +7,7 @@ export interface Product {
     discountRate: number;
   };
   imageURL: string;
-  brandInfo: {
-    id: number;
-    name: string;
-    imageURL: string;
-  };
+  brandName: string;
 }
 
 export type GetRankingProductsResponse = {

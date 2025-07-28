@@ -1,40 +1,53 @@
 import { useInput } from '@/hooks/useInput';
 import { validateEmail, validatePassword } from '@/utils/validation';
-import type { AuthState } from '@/stores/authStore';
+import type React from 'react';
 
 export function useLoginForm() {
-  const emailInput = useInput({
+  const {
+    value: email,
+    error: emailError,
+    bind: emailBind,
+    validate: validateEmailValue,
+  } = useInput({
     validator: validateEmail,
   });
 
-  const passwordInput = useInput({
+  const {
+    value: password,
+    error: passwordError,
+    bind: passwordBind,
+    validate: validatePasswordValue,
+  } = useInput({
     validator: validatePassword,
   });
 
-  const isFormValid = emailInput.isValid && passwordInput.isValid;
+  const isFormValid = email && password && !emailError && !passwordError;
 
   const handleSubmit = (
     e: React.FormEvent<HTMLFormElement>,
-    login: AuthState['login'],
-    navigate: (path: string, options?: { replace: boolean }) => void,
-    from: string
+    callback: (values: { email: string; password: string }) => void,
   ) => {
     e.preventDefault();
-    const isEmailValid = emailInput.validate();
-    const isPasswordValid = passwordInput.validate();
+    const isEmailValid = validateEmailValue();
+    const isPasswordValid = validatePasswordValue();
 
     if (isEmailValid && isPasswordValid) {
-      const mockUser = { nickname: '김대영', email: emailInput.value };
-      login('mock_access_token', mockUser);
-      navigate(from, { replace: true });
+      callback({ email, password });
     }
   };
 
   return {
-    emailInput,
-    passwordInput,
+    emailInput: {
+      value: email,
+      error: emailError,
+      bind: emailBind,
+    },
+    passwordInput: {
+      value: password,
+      error: passwordError,
+      bind: passwordBind,
+    },
     isFormValid,
     handleSubmit,
   };
 }
-
