@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Loading from '@/components/Loading/Loading';
-import * as S from '@/features/Gift/components/TrendRanking/TrendRankingStyle';
+import * as S from '@/features/Gift/components/TrendRanking/TrendRanking.style';
 import ProductCard from '@/components/ProductCard/ProductCard';
 import {
   FilterGender,
