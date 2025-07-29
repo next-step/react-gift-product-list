@@ -43,7 +43,7 @@
 // src/App.tsx
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ThemeProductsPage } from '@/pages/ThemeProductsPage';
+import ThemeProductsPage from '@/pages/ThemeProductsPage';
 import { ThemeProvider } from '@emotion/react'
 import { theme } from './styles/theme'
 import { BaseLayout } from './components/Layout/BaseLayout'
