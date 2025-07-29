@@ -13,30 +13,8 @@ interface ThemeProduct {
 }
 
 export const ProductList: React.FC<{ themeId: number }> = ({ themeId }) => {
-  const [products, setProducts] = useState<ThemeProduct[]>([]);
-  const [cursor, setCursor] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
-
-  const fetchPage = useCallback(async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
-    try {
-      const res = await api.get<{ data: { list: ThemeProduct[]; cursor: number; hasMoreList: boolean } }>(
-        `/api/themes/${themeId}/products`,
-        { params: { cursor, limit: 10 } }
-      );
-      const { list, cursor: nextCursor, hasMoreList } = res.data.data;
-      setProducts(prev => [...prev, ...list]);
-      setCursor(nextCursor);
-      setHasMore(hasMoreList);
-    } catch (err) {
-      console.error('테마별 상품 로드 실패:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [themeId, cursor, hasMore, loading]);
+  const{ products, hasMore, loading } = useFetchThemeProduct
 
   useEffect(() => { setProducts([]); setCursor(0); setHasMore(true); }, [themeId]);
   useEffect(() => { fetchPage(); }, [fetchPage]);
