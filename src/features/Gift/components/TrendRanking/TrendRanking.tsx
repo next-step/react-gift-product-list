@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import Loading from '@/components/Loading/Loading';
 import * as S from '@/features/Gift/components/TrendRanking/TrendRankingStyle';
 import ProductCard from '@/components/ProductCard/ProductCard';
 import {
@@ -40,14 +41,16 @@ const TrendRanking = () => {
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleGenderClick = (gender: Gender) => {
+  const handleGenderClick = (label: string) => {
+    const gender = label as Gender;
     const params = new URLSearchParams(searchParams);
     params.set('gender', gender);
     if (selectedType) params.set('type', selectedType);
     setSearchParams(params, { replace: true });
   };
 
-  const handleTypeSelect = (type: Type) => {
+  const handleTypeSelect = (label: string) => {
+    const type = label as Type;
     const params = new URLSearchParams(searchParams);
     params.set('type', type);
     if (selectedGender) params.set('gender', selectedGender);
