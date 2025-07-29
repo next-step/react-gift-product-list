@@ -137,7 +137,7 @@ const SubTabs = styled.ul`
 
 const ProductGrid = styled.ul`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, calc((100% - (2 * ${({ theme }) => theme.spacing.spacing4})) / 3));
   gap: ${({ theme }) => theme.spacing.spacing4};
 `;
 

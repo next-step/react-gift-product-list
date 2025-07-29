@@ -40,13 +40,14 @@
 - [x] Suspense, ErrorBoundary도 사용 금지
 
 ### 3단계 미션 :
-- [ ] Intersection Observer API를 사용하여 페이지네이션을 구현
-  - [ ] axios외에 별도의 fetch 관련 라이브러리를 사용하지 않고 구현
-  - [ ] Suspense, ErrorBoundary도 사용 금지]
-- [ ] 테마 상품 목록 페이지
-  - [ ] 선물하기 홈 → 선물 테마 섹션의 아이템을 클릭 → 테마 상품 목록 페이지로 연결
-  - [ ] /api/themes/:themeId/info API 사용 → 선물 테마 섹션의 히어로 영역 구현
-  - [ ] 테마 정보를 가져오는 API에서 404 에러 발생 → 선물하기 홈 페이지로 연결
-  - [ ] /api/themes/:themeId/products API 사용 → 상품 리스트를 구현
-  - [ ] 무한 스크롤 기능 구현
-  - [ ] 상품 리스트가 없으면 빈 페이지 표시
+
+- [x] Intersection Observer API를 사용하여 페이지네이션을 구현
+  - [x] axios외에 별도의 fetch 관련 라이브러리를 사용하지 않고 구현
+  - [x] Suspense, ErrorBoundary도 사용 금지
+- [x] 테마 상품 목록 페이지
+  - [x] 선물하기 홈 → 선물 테마 섹션의 아이템을 클릭 → 테마 상품 목록 페이지로 연결
+  - [x] /api/themes/:themeId/info API 사용 → 선물 테마 섹션의 히어로 영역 구현
+  - [x] 테마 정보를 가져오는 API에서 404 에러 발생 → 선물하기 홈 페이지로 연결
+  - [x] /api/themes/:themeId/products API 사용 → 상품 리스트를 구현
+  - [x] 무한 스크롤 기능 구현
+  - [x] 상품 리스트가 없으면 빈 페이지 표시

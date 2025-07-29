@@ -58,7 +58,7 @@ export function CategorySection() {
       {/* 테마 목록 그리드 */}
       <Grid>
         {themes.map(({ themeId, name, image }: Theme) => (
-          <CategoryItem key={themeId} name={name} image={image} />
+          <CategoryItem key={themeId} themeId={themeId} name={name} image={image} />
         ))}
       </Grid>
 

@@ -11,6 +11,7 @@ import MyPage from '@/pages/MyPage';
 import PrivateRoute from '@/components/PrivateRoute';
 import OrderPage from '@/pages/OrderPage';
 import { ModalProvider } from '@/contexts/ModalContext';
+import ThemePage from '@/pages/ThemePage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           }
         />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/theme/:themeId" element={<ThemePage />} />
         <Route element={<PrivateRoute />}>
           <Route path="/my" element={<MyPage />} />
           <Route path="/order/:productId" element={<OrderPage />} />
