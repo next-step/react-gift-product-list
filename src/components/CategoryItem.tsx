@@ -1,16 +1,20 @@
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 
 interface CategoryItemProps {
+  themeId: number;
   name: string;
   image: string;
 }
 
-export function CategoryItem({ name, image }: CategoryItemProps) {
+export function CategoryItem({ themeId, name, image }: CategoryItemProps) {
   return (
-    <Item>
-      <Thumb src={image} alt={name} loading="lazy" />
-      <Name>{name}</Name>
-    </Item>
+    <Link to={`/theme/${themeId}`}>
+      <Item>
+        <Thumb src={image} alt={name} loading="lazy" />
+        <Name>{name}</Name>
+      </Item>
+    </Link>
   );
 }
 
