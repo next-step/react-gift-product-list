@@ -3,8 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { products } from '@/data/product';
 import type { Product } from '@/data/product';
-import * as S from '@components/TrendRankingStyle';
-import { FilterGender, FilterType } from '@components/TrendRankingFilter';
+import * as S from '@/features/Gift/components/TrendRanking/TrendRankingStyle';
+import {
+  FilterGender,
+  FilterType,
+} from '@/features/Gift/components/TrendRanking/TrendRankingFilter';
 
 const genderList = [
   { label: 'All', icon: 'ALL' },

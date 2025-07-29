@@ -32,7 +32,7 @@ const textStyle = (theme: ThemeType) => css`
   ${theme.typography.title2Bold};
 `;
 
-function GiftRecipientList() {
+function GiftRecipient() {
   const theme = useTheme();
   const { isLoggedIn, user } = useUserContext();
   const navigate = useNavigate();
@@ -60,4 +60,4 @@ function GiftRecipientList() {
   );
 }
 
-export default GiftRecipientList;
+export default GiftRecipient;

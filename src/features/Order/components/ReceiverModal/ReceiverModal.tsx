@@ -65,7 +65,7 @@ const ReceiverModal = ({
                 quantity: 1,
               })
             }
-            disabled={fields.length >= 10}
+            disabled={fields.length >= 10} // 받는 사람 최대 10명 제한
             size="small"
           >
             추가하기

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import GiftRecipientList from '@/components/GiftRecipientList';
+import GiftPage from '@/features/Gift/pages/GiftPage';
 import LoginPage from '@/features/Login/pages/LoginPage';
 import NotFoundPage from '@/features/NotFound/NotFound';
 import Layout from '@/components/Layout';
@@ -24,7 +24,7 @@ const Router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <GiftRecipientList />,
+        element: <GiftPage />,
       },
       {
         path: ROUTE_PATH.LOGIN.slice(1),
