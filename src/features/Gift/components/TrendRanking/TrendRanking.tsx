@@ -1,63 +1,57 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { products } from '@/data/product';
-import type { Product } from '@/data/product';
 import * as S from '@/features/Gift/components/TrendRanking/TrendRankingStyle';
+import ProductCard from '@/components/ProductCard/ProductCard';
 import {
   FilterGender,
   FilterType,
 } from '@/features/Gift/components/TrendRanking/TrendRankingFilter';
+import {
+  useProductsRanking,
+  type Gender,
+  type Type,
+  type Product,
+} from '@/features/Gift/hooks/useProductsRanking';
 
+const INITIAL_VISIBLE_COUNT = 6;
 const genderList = [
   { label: 'All', icon: 'ALL' },
   { label: '남성이', icon: '👨‍🦰' },
   { label: '여성이', icon: '👩‍🦰' },
   { label: '청소년이', icon: '👦' },
-];
-
-const typeList = ['받고 싶어한', '많이 선물한', '위시로 받은'];
-
-type GenderLabel = (typeof genderList)[number]['label'];
-type TypeLabel = (typeof typeList)[number];
+] as const;
+const typeList = ['받고 싶어한', '많이 선물한', '위시로 받은'] as const;
 
 const TrendRanking = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const getInitialGender = (): GenderLabel => {
-    const genderFromUrl = searchParams.get('gender');
-    if (genderList.some((g) => g.label === genderFromUrl)) {
-      return genderFromUrl as GenderLabel;
-    }
-    return 'All';
-  };
+  const selectedGender = (searchParams.get('gender') ??
+    genderList[0].label) as Gender;
+  const selectedType = (searchParams.get('type') ?? typeList[0]) as Type;
 
-  const getInitialType = (): TypeLabel => {
-    const typeFromUrl = searchParams.get('type');
-    if (typeList.includes(typeFromUrl as TypeLabel)) {
-      return typeFromUrl as TypeLabel;
-    }
-    return '받고 싶어한';
-  };
+  const { products, loading, error } = useProductsRanking(
+    selectedGender,
+    selectedType
+  );
 
-  const [selectedGender, setSelectedGender] =
-    useState<GenderLabel>(getInitialGender);
-  const [selectedType, setSelectedType] = useState<TypeLabel>(getInitialType);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleGenderClick = (label: string) => {
-    const genderLabel = label as GenderLabel;
-    setSelectedGender(genderLabel);
-    setSearchParams({ gender: genderLabel, type: selectedType });
+  const handleGenderClick = (gender: Gender) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('gender', gender);
+    if (selectedType) params.set('type', selectedType);
+    setSearchParams(params, { replace: true });
   };
 
-  const handleTypeSelect = (label: string) => {
-    const typeLabel = label as TypeLabel;
-    setSelectedType(typeLabel);
-    setSearchParams({ gender: selectedGender, type: typeLabel });
+  const handleTypeSelect = (type: Type) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('type', type);
+    if (selectedGender) params.set('gender', selectedGender);
+    setSearchParams(params, { replace: true });
   };
 
   const handleProductSelect = (product: Product) => {
@@ -66,23 +60,32 @@ const TrendRanking = () => {
   };
 
   const handleToggleView = () => {
-    if (isExpanded) {
-      setVisibleCount(6);
-      setIsExpanded(false);
-    } else {
-      setVisibleCount(products.length);
-      setIsExpanded(true);
-    }
+    setIsExpanded(!isExpanded);
+    setVisibleCount(isExpanded ? INITIAL_VISIBLE_COUNT : products.length);
   };
 
   useEffect(() => {
-    console.log('선택된 Product:', selectedProduct);
-  }, [selectedProduct]);
+    const params = new URLSearchParams(searchParams);
+    const prevGender = params.get('gender');
+    const prevType = params.get('type');
+
+    const isGenderValid = genderList.some((g) => g.label === selectedGender);
+    const isTypeValid = typeList.includes(selectedType as Type);
+
+    if (!isGenderValid) params.set('gender', genderList[0].label);
+    if (!isTypeValid) params.set('type', typeList[0]);
+
+    const nextGender = params.get('gender');
+    const nextType = params.get('type');
+
+    const isChanged = prevGender !== nextGender || prevType !== nextType;
+
+    if (isChanged) setSearchParams(params, { replace: true });
+  }, [searchParams, selectedGender, selectedType, setSearchParams]);
 
   return (
     <S.Container>
-      <h2>실시간 급상승 선물랭킹</h2>
-
+      <S.Title>실시간 급상승 선물랭킹</S.Title>
       <S.GenderTab>
         {genderList.map(({ icon, label }) => (
           <FilterGender
@@ -106,24 +109,22 @@ const TrendRanking = () => {
         ))}
       </S.TypeTab>
 
-      <S.ProductTab>
-        {products.slice(0, visibleCount).map((item, index) => (
-          <S.ProductItem
-            key={item.id}
-            onClick={() => handleProductSelect(item)}
-          >
-            <S.Rank rank={index + 1}>{index + 1}</S.Rank>
-            <S.ProductImage src={item.imageURL} alt={item.name} />
-            <p>{item.brandInfo.name}</p>
-            <p>{item.name}</p>
-            <strong>{item.price.sellingPrice.toLocaleString()} 원</strong>
-          </S.ProductItem>
-        ))}
-      </S.ProductTab>
+      {loading && <Loading />}
+      {error && <S.ErrorText>에러: {error}</S.ErrorText>}
 
-      <S.MoreButton onClick={handleToggleView}>
-        {isExpanded ? '접기' : '더보기'}
-      </S.MoreButton>
+      {!loading && !error && products.length === 0 && (
+        <S.NoProduct>상품이 없습니다.</S.NoProduct>
+      )}
+
+      {!loading && !error && products.length !== 0 && (
+        <ProductCard
+          products={products}
+          visibleCount={visibleCount}
+          isExpanded={isExpanded}
+          onProductSelect={handleProductSelect}
+          onToggleView={handleToggleView}
+        />
+      )}
     </S.Container>
   );
 };
