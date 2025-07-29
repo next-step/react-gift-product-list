@@ -1,5 +1,3 @@
-// src/utils/userInfo.ts
-
 export interface UserInfo {
   authToken: string;
   email: string;
