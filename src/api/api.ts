@@ -4,8 +4,8 @@ import { toast } from 'react-toastify';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000', 
-  // 필요하다면 withCredentials, headers 등 추가 설정
 });
+
 api.interceptors.response.use(
   res => res,
   err => {
