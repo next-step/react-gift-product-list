@@ -16,21 +16,53 @@ import {
 } from '@/features/Gift/hooks/useProductsRanking';
 
 const INITIAL_VISIBLE_COUNT = 6;
+
 const genderList = [
   { label: 'All', icon: 'ALL' },
   { label: '남성이', icon: '👨‍🦰' },
   { label: '여성이', icon: '👩‍🦰' },
   { label: '청소년이', icon: '👦' },
 ] as const;
+
 const typeList = ['받고 싶어한', '많이 선물한', '위시로 받은'] as const;
+
+const isValidGender = (value: string): value is Gender =>
+  genderList.some((g) => g.label === value);
+
+const isValidType = (value: string): value is Type =>
+  typeList.includes(value as Type);
+
+const updateSearchParams = (
+  currentParams: URLSearchParams,
+  updates: Partial<{ gender: string; type: string }>,
+  replace: (params: URLSearchParams, options?: { replace?: boolean }) => void
+) => {
+  const newParams = new URLSearchParams(currentParams);
+
+  if (updates.gender !== undefined) {
+    newParams.set('gender', updates.gender);
+  }
+  if (updates.type !== undefined) {
+    newParams.set('type', updates.type);
+  }
+
+  replace(newParams, { replace: true });
+};
 
 const TrendRanking = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedGender = (searchParams.get('gender') ??
-    genderList[0].label) as Gender;
-  const selectedType = (searchParams.get('type') ?? typeList[0]) as Type;
+  const rawGender = searchParams.get('gender');
+  const rawType = searchParams.get('type');
+
+  const rawG = rawGender ?? '';
+  const selectedGender: Gender = isValidGender(rawG)
+    ? rawG
+    : genderList[0].label;
+
+  const rawT = rawType ?? '';
+  const selectedType: Type = isValidType(rawT) ? rawT : typeList[0];
 
   const { products, loading, error } = useProductsRanking(
     selectedGender,
@@ -42,18 +74,20 @@ const TrendRanking = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleGenderSelect = (gender: Gender) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('gender', gender);
-    if (selectedType) params.set('type', selectedType);
-    setSearchParams(params, { replace: true });
+    updateSearchParams(
+      searchParams,
+      { gender, type: selectedType },
+      setSearchParams
+    );
   };
 
   const handleTypeSelect = (label: string) => {
-    const type = label as Type;
-    const params = new URLSearchParams(searchParams);
-    params.set('type', type);
-    if (selectedGender) params.set('gender', selectedGender);
-    setSearchParams(params, { replace: true });
+    const type = isValidType(label) ? label : typeList[0];
+    updateSearchParams(
+      searchParams,
+      { type, gender: selectedGender },
+      setSearchParams
+    );
   };
 
   const handleProductSelect = (product: Product) => {
@@ -71,19 +105,20 @@ const TrendRanking = () => {
     const prevGender = params.get('gender');
     const prevType = params.get('type');
 
-    const isGenderValid = genderList.some((g) => g.label === selectedGender);
-    const isTypeValid = typeList.includes(selectedType as Type);
+    const genderValid = isValidGender(prevGender ?? '');
+    const typeValid = isValidType(prevType ?? '');
 
-    if (!isGenderValid) params.set('gender', genderList[0].label);
-    if (!isTypeValid) params.set('type', typeList[0]);
-
-    const nextGender = params.get('gender');
-    const nextType = params.get('type');
-
-    const isChanged = prevGender !== nextGender || prevType !== nextType;
-
-    if (isChanged) setSearchParams(params, { replace: true });
-  }, [searchParams, selectedGender, selectedType, setSearchParams]);
+    if (!genderValid || !typeValid) {
+      updateSearchParams(
+        searchParams,
+        {
+          gender: genderValid ? prevGender! : genderList[0].label,
+          type: typeValid ? prevType! : typeList[0],
+        },
+        setSearchParams
+      );
+    }
+  }, [searchParams, setSearchParams]);
 
   return (
     <S.Container>
@@ -96,7 +131,7 @@ const TrendRanking = () => {
             icon={icon}
             label={label}
             isActive={selectedGender === label}
-            onClick={() => handleGenderSelect(label as Gender)}
+            onClick={() => handleGenderSelect(label)}
           />
         ))}
       </S.GenderTab>
