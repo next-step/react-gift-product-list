@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useApi } from '@/hooks/useApi';
 import { api } from '@/lib/axios';
 
 export interface Price {
@@ -38,36 +38,19 @@ const typeMap: Record<Type, string> = {
 };
 
 export const useProductsRanking = (gender: Gender, type: Type) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProductsRanking = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        const response = await api.get('/products/ranking', {
-          params: {
-            targetType: genderMap[gender],
-            rankType: typeMap[type],
-          },
-        });
-        setProducts(response.data.data);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('에러가 발생하였습니다.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProductsRanking();
+  const { data, loading, error } = useApi<Product[]>(async () => {
+    const res = await api.get('/products/ranking', {
+      params: {
+        targetType: genderMap[gender],
+        rankType: typeMap[type],
+      },
+    });
+    return res.data.data;
   }, [gender, type]);
 
-  return { products, loading, error };
+  return {
+    products: data ?? [],
+    loading,
+    error,
+  };
 };

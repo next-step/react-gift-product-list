@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Loading from '@/components/Loading/Loading';
 import * as S from '@/features/Gift/components/TrendRanking/TrendRanking.style';
 import ProductCard from '@/components/ProductCard/ProductCard';
+import { ROUTE_PATH } from '@/routes/Router';
 import {
   FilterGender,
   FilterType,
@@ -41,8 +41,7 @@ const TrendRanking = () => {
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleGenderClick = (label: string) => {
-    const gender = label as Gender;
+  const handleGenderSelect = (gender: Gender) => {
     const params = new URLSearchParams(searchParams);
     params.set('gender', gender);
     if (selectedType) params.set('type', selectedType);
@@ -59,7 +58,7 @@ const TrendRanking = () => {
 
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product);
-    navigate(`/order?productId=${product.id}`);
+    navigate(ROUTE_PATH.ORDER.replace(':productId', String(product.id)));
   };
 
   const handleToggleView = () => {
@@ -89,6 +88,7 @@ const TrendRanking = () => {
   return (
     <S.Container>
       <S.Title>실시간 급상승 선물랭킹</S.Title>
+
       <S.GenderTab>
         {genderList.map(({ icon, label }) => (
           <FilterGender
@@ -96,7 +96,7 @@ const TrendRanking = () => {
             icon={icon}
             label={label}
             isActive={selectedGender === label}
-            onClick={handleGenderClick}
+            onClick={() => handleGenderSelect(label as Gender)}
           />
         ))}
       </S.GenderTab>
@@ -113,7 +113,7 @@ const TrendRanking = () => {
       </S.TypeTab>
 
       {loading && <Loading />}
-      {error && <S.ErrorText>에러: {error}</S.ErrorText>}
+      {error && <S.ErrorText>{error}</S.ErrorText>}
 
       {!loading && !error && products.length === 0 && (
         <S.NoProduct>상품이 없습니다.</S.NoProduct>

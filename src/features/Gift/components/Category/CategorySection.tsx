@@ -50,27 +50,25 @@ const CategorySection = () => {
     navigate(`/themes/${themeId}`);
   };
 
+  if (loading) return <Loading />;
+  if (error || themes.length === 0) return null;
+
   return (
-    <>
-      {loading && <Loading />}
-      {!loading && !error && themes.length > 0 && (
-        <section css={containerStyle(theme)}>
-          <h2 css={titleStyle}>선물 테마</h2>
-          <div css={gridStyle}>
-            {themes.map((theme) => (
-              <div
-                key={theme.themeId}
-                css={itemStyle}
-                onClick={() => handleSelect(theme.themeId)}
-              >
-                <img src={theme.image} alt={theme.name} css={imageStyle} />
-                <p css={nameStyle}>{theme.name}</p>
-              </div>
-            ))}
+    <section css={containerStyle(theme)}>
+      <h2 css={titleStyle}>선물 테마</h2>
+      <div css={gridStyle}>
+        {themes.map((theme) => (
+          <div
+            key={theme.themeId}
+            css={itemStyle}
+            onClick={() => handleSelect(theme.themeId)}
+          >
+            <img src={theme.image} alt={theme.name} css={imageStyle} />
+            <p css={nameStyle}>{theme.name}</p>
           </div>
-        </section>
-      )}
-    </>
+        ))}
+      </div>
+    </section>
   );
 };
 
