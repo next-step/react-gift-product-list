@@ -1,88 +1,70 @@
-import {
-  Container,
-  FormContainer,
-  KakaoTitle,
-  InputForm,
-  ErrorMessage,
-} from './LoginForm.styles';
-import { useNavigate } from 'react-router-dom';
+import * as S from './LoginForm.styles';
 import KakaoLogo from '@/assets/Kakao_logo.png';
 import MyButton from '@/components/button/button';
 import { useLoginForm } from '../hooks/useLoginForm';
-import { useUserContext } from '@/contexts/UserContext';
+import { useLoginSubmit } from '../hooks/useLoginSubmit';
 
 interface LoginFormProps {
   redirectPath: string;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ redirectPath }) => {
+  const methods = useLoginForm();
+  const { submitLogin } = useLoginSubmit(redirectPath);
+
   const {
-    values,
-    errors,
-    handleChange,
-    handleBlur,
-    validateForm,
-    isLoginValid,
-  } = useLoginForm();
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = methods;
 
-  const { login } = useUserContext();
-  const navigate = useNavigate();
-
-  const handleLoginClick = async () => {
-    const valid = validateForm();
-    if (!valid) return;
-
-    const email = values.email;
-    const nickname = email.split('@')[0];
-    login({ email, nickname });
-
-    navigate(redirectPath, { replace: true });
-  };
+  const onSubmit = handleSubmit(submitLogin);
 
   return (
-    <Container>
-      <FormContainer>
-        <KakaoTitle>
-          <img
-            src={KakaoLogo}
-            alt="Kakao Logo"
-            style={{ width: '100%', height: '40%' }}
+    <S.Container>
+      <form onSubmit={onSubmit}>
+        <S.FormContainer>
+          <S.KakaoTitle>
+            <img
+              src={KakaoLogo}
+              alt="Kakao Logo"
+              style={{ width: '100%', height: '40%' }}
+            />
+          </S.KakaoTitle>
+
+          <S.InputForm
+            placeholder="이메일"
+            type="email"
+            {...register('email')}
+            isError={!!errors.email}
           />
-        </KakaoTitle>
+          {errors.email && (
+            <S.ErrorMessage isActive>{errors.email.message}</S.ErrorMessage>
+          )}
 
-        <InputForm
-          placeholder="이메일"
-          type="email"
-          value={values.email}
-          onChange={(e) => handleChange('email', e.target.value)}
-          onBlur={() => handleBlur('email')}
-          isError={!!errors.email}
-        />
-        <ErrorMessage isActive={!!errors.email}>{errors.email}</ErrorMessage>
+          <S.InputForm
+            placeholder="비밀번호"
+            type="password"
+            {...register('password')}
+            isError={!!errors.password}
+          />
+          {errors.password && (
+            <S.ErrorMessage isActive>{errors.password.message}</S.ErrorMessage>
+          )}
 
-        <InputForm
-          placeholder="비밀번호"
-          type="password"
-          value={values.password}
-          onChange={(e) => handleChange('password', e.target.value)}
-          onBlur={() => handleBlur('password')}
-          isError={!!errors.password}
-        />
-        <ErrorMessage isActive={!!errors.password}>
-          {errors.password}
-        </ErrorMessage>
-
-        <MyButton
-          onClick={handleLoginClick}
-          disabled={!isLoginValid()}
-          fullWidth
-          variant="primary"
-          size="large"
-        >
-          로그인
-        </MyButton>
-      </FormContainer>
-    </Container>
+          <MyButton
+            type="submit"
+            variant="primary"
+            size="large"
+            disabled={!isValid}
+            fullWidth
+            style={{ marginTop: '32px' }}
+          >
+            로그인
+          </MyButton>
+        </S.FormContainer>
+      </form>
+    </S.Container>
   );
 };
 
