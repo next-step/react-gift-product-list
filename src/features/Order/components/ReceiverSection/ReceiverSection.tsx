@@ -22,6 +22,7 @@ interface ReceiverSectionProps {
   remove: UseFieldArrayRemove;
   getValues: UseFormGetValues<Order>;
   trigger: UseFormTrigger<Order>;
+  onConfirm?: () => void; // ✅ 추가된 부분
 }
 
 const ReceiverSection = ({
@@ -32,6 +33,7 @@ const ReceiverSection = ({
   remove,
   getValues,
   trigger,
+  onConfirm, // ✅ 추가된 부분
 }: ReceiverSectionProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [receivers, setReceivers] = useState<Receiver[]>([]);
@@ -81,14 +83,16 @@ const ReceiverSection = ({
         errors={errors}
         append={append}
         remove={remove}
+        getValues={getValues}
         onComplete={async () => {
           const isValid = await trigger('receivers');
           if (!isValid) return;
+
           const updatedReceivers = getValues('receivers');
           setReceivers(updatedReceivers);
           setIsModalOpen(false);
+          onConfirm?.(); // ✅ 안전하게 호출
         }}
-        getValues={getValues}
       />
     </S.Container>
   );

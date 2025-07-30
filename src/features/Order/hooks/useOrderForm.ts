@@ -1,20 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-
-export interface Receiver {
-  receiver: string;
-  phone: string;
-  quantity: number;
-}
-
-export interface Order {
-  message: string;
-  sender: string;
-  receivers: Receiver[];
-}
+import { orderSchema, type Order } from '../schema/OrderSchema';
+import { useOrderSubmit } from '../hooks/useOrderSubmit';
+import { useUserContext } from '@/contexts/UserContext';
+import { ROUTE_PATH } from '@/routes/Router';
 
 interface UseOrderFormParams {
+  productId?: number;
   defaultMessage: string;
   productName: string;
   sellingPrice: number;
@@ -23,73 +17,98 @@ interface UseOrderFormParams {
 }
 
 export const useOrderForm = ({
+  productId,
   defaultMessage,
   productName,
   sellingPrice,
   selectedCardId,
   selectedCardMessage,
 }: UseOrderFormParams) => {
+  const { submitOrder } = useOrderSubmit();
   const navigate = useNavigate();
+
+  const { user } = useUserContext();
+  const senderName = user?.nickname;
+
+  const methods = useForm<Order>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: {
+      message: defaultMessage,
+      sender: senderName,
+      receivers: [],
+    },
+    mode: 'onChange',
+  });
 
   const {
     control,
     register,
     handleSubmit,
     setValue,
-    watch,
-    trigger,
     getValues,
     formState: { errors },
-  } = useForm<Order>({
-    defaultValues: {
-      message: defaultMessage,
-      sender: '',
-      receivers: [],
-    },
-    mode: 'onChange',
-  });
+    trigger,
+  } = methods;
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'receivers',
   });
 
-  const order = watch();
-  const totalPrice = order.receivers.reduce(
-    (sum: number, r) => sum + r.quantity * sellingPrice,
-    0
-  );
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+
+  const confirmReceivers = () => {
+    const confirmed = getValues('receivers') || [];
+    const price = confirmed.reduce(
+      (sum, r) => sum + r.quantity * sellingPrice,
+      0
+    );
+    const quantity = confirmed.reduce((sum, r) => sum + r.quantity, 0);
+    setTotalPrice(price);
+    setTotalQuantity(quantity);
+  };
 
   useEffect(() => {
     setValue('message', selectedCardMessage || '');
   }, [selectedCardId, selectedCardMessage, setValue]);
 
-  const onSubmit = handleSubmit((data) => {
-    const totalQuantity = data.receivers.reduce(
-      (sum, r) => sum + Number(r.quantity),
-      0
-    );
+  const onSubmit = handleSubmit(async (data) => {
+    const orderPayload = {
+      productId: Number(productId),
+      message: data.message || '',
+      messageCardId: String(selectedCardId),
+      ordererName: data.sender || '',
+      receivers: data.receivers.map((r) => ({
+        name: r.receiver || '',
+        phoneNumber: r.phone || '',
+        quantity: Number(r.quantity) || 1,
+      })),
+    };
 
-    alert(`주문이 완료되었습니다.
+    try {
+      await submitOrder(orderPayload);
+      alert(`주문이 완료되었습니다.
 상품명: ${productName}
 총 수량: ${totalQuantity}
 발신자 이름: ${data.sender}
 메시지: ${data.message}`);
-
-    navigate('/');
+      navigate(ROUTE_PATH.GIFT);
+    } catch (error) {
+      console.error('주문 중 오류 발생:', error);
+    }
   });
 
   return {
+    methods,
     register,
     onSubmit,
     errors,
-    order,
+    confirmReceivers,
     totalPrice,
+    control,
     fields,
     append,
     remove,
-    control,
-    getValues,
-    trigger,
   };
 };

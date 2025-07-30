@@ -1,34 +1,25 @@
-import {
-  Container,
-  Title,
-  ProductCard,
-  ProductImage,
-  ProductDetails,
-  ProductName,
-  BrandName,
-  ProductPrice,
-} from './ProductInfo.styles';
-import type { Product } from '@/data/product';
+import * as S from './ProductInfo.styles';
+import type { ProductSummary } from '@/features/Order/hooks/useProductSummary';
 
 interface ProductInfoProps {
-  product: Product;
+  product: ProductSummary;
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
   return (
-    <Container>
-      <Title>상품 정보</Title>
-      <ProductCard>
-        <ProductImage src={product.imageURL} alt={product.name} />
-        <ProductDetails>
-          <ProductName>{product.name}</ProductName>
-          <BrandName>{product.brandInfo.name}</BrandName>
-          <ProductPrice>
-            상품가 {product.price.sellingPrice.toLocaleString()}원
-          </ProductPrice>
-        </ProductDetails>
-      </ProductCard>
-    </Container>
+    <S.Container>
+      <S.Title>상품 정보</S.Title>
+      <S.ProductCard>
+        <S.ProductImage src={product.imageURL} alt={product.name} />
+        <S.ProductDetails>
+          <S.ProductName>{product.name}</S.ProductName>
+          <S.BrandName>{product.brandName}</S.BrandName>
+          <S.ProductPrice>
+            상품가 {product.price.toLocaleString()}원
+          </S.ProductPrice>
+        </S.ProductDetails>
+      </S.ProductCard>
+    </S.Container>
   );
 };
 
