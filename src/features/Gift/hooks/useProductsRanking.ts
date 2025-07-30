@@ -46,7 +46,7 @@ export const useProductsRanking = (gender: Gender, type: Type) => {
       },
     });
     return res.data.data;
-  }, [gender, type]);
+  });
 
   return {
     products: data ?? [],

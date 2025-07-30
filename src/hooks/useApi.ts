@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isAxiosError } from 'axios';
 
 export const useApi = <T>(fetchFn: () => Promise<T>) => {
   const [data, setData] = useState<T | null>(null);
@@ -13,11 +14,20 @@ export const useApi = <T>(fetchFn: () => Promise<T>) => {
       setError(null);
 
       try {
-        await new Promise((resolve) => setTimeout(resolve, 800));
         const result = await fetchFn();
         if (isMounted) setData(result);
       } catch (err) {
-        if (isMounted) setError(String(err));
+        if (isMounted) {
+          if (isAxiosError(err)) {
+            setError(
+              err.response?.data?.message || '요청 중 오류가 발생했습니다.'
+            );
+          } else {
+            setError(
+              (err as Error).message || '알 수 없는 오류가 발생했습니다.'
+            );
+          }
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
