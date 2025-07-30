@@ -12,7 +12,7 @@ export const ROUTE_PATH = {
   GIFT: '/',
   LOGIN: '/login',
   MY: '/my',
-  ORDER: '/order',
+  ORDER: '/order/:productId',
   NOT_FOUND: '*',
 };
 
@@ -39,7 +39,7 @@ const Router = createBrowserRouter([
         ),
       },
       {
-        path: ROUTE_PATH.ORDER.slice(1),
+        path: 'order/:productId',
         element: (
           <PrivateRoute>
             <OrderPage />
