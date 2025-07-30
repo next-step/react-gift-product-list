@@ -34,13 +34,17 @@ const textStyle = (theme: ThemeType) => css`
 
 function GiftRecipient() {
   const theme = useTheme();
-  const { isLoggedIn, user } = useUserContext();
+  const { user } = useUserContext();
   const navigate = useNavigate();
 
   const handleClick = () => {
     const productId = 1;
     navigate(`/order?productId=${productId}`);
   };
+
+  const message = user
+    ? `${user.nickname}님! 선물할 친구를 선택해 주세요.`
+    : '선물할 친구를 선택해 주세요.';
 
   return (
     <div css={containerStyle(theme)}>
@@ -49,13 +53,9 @@ function GiftRecipient() {
         aria-label="받는 사람 추가"
         onClick={handleClick}
       >
-        ＋
+        +
       </button>
-      <span css={textStyle(theme)}>
-        {isLoggedIn
-          ? `${user?.nickname}님! 선물할 친구를 선택해 주세요.`
-          : '선물할 친구를 선택해 주세요.'}
-      </span>
+      <span css={textStyle(theme)}>{message}</span>
     </div>
   );
 }
