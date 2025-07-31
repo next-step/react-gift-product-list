@@ -5,6 +5,7 @@ import LoginPage from '@/features/Login/pages/LoginPage';
 import NotFoundPage from '@/features/NotFound/NotFound';
 import Layout from '@/components/Layout';
 import MyPage from '@/features/My/pages/MyPage';
+import ThemePage from '@/features/Theme/pages/ThemePage';
 import OrderPage from '@/features/Order/pages/OrderPage';
 import PrivateRoute from '@/routes/PrivateRoute';
 
@@ -13,6 +14,7 @@ export const ROUTE_PATH = {
   LOGIN: '/login',
   MY: '/my',
   ORDER: '/order/:productId',
+  THEME: '/themes/:themeId',
   NOT_FOUND: '*',
 };
 
@@ -39,12 +41,16 @@ const Router = createBrowserRouter([
         ),
       },
       {
-        path: 'order/:productId',
+        path: ROUTE_PATH.ORDER,
         element: (
           <PrivateRoute>
             <OrderPage />
           </PrivateRoute>
         ),
+      },
+      {
+        path: ROUTE_PATH.THEME,
+        element: <ThemePage />,
       },
     ],
   },
