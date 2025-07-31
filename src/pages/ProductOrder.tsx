@@ -1,5 +1,5 @@
 import { FormProvider } from 'react-hook-form';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import NavigationBar from '@/common/NavigationBar';
 import GiftCardSelector from '@/components/ProductOrder/GiftCardSelector';
 import SenderInfoSection from '@/components/ProductOrder/SenderInfoSection';
@@ -8,33 +8,17 @@ import ProductInfo from '@/components/giftHome/GiftThemes/ProductInfo';
 import OrderBtn from '@/components/ProductOrder/OrderBtn';
 import styled from '@emotion/styled';
 import { useOrderForm } from '@/hooks/useOrderForm';
-import { useEffect, useState } from 'react';
-import { getProductSummary } from '@/api/product';
-import type { ProductSummary } from '@/api/product';
-import toast from 'react-hot-toast';
+import { useState } from 'react';
+import { useProductSummary } from '@/hooks/useProductSummary';
 
 const ProductOrder = () => {
   const { productId } = useParams();
-  const navigate = useNavigate();
-  const [product, setProduct] = useState<ProductSummary | null>(null);
+  const product = useProductSummary(Number(productId));
 
   const { methods, handleSubmit, order } = useOrderForm(Number(productId));
 
   const [message, setMessage] = useState('생일 축하해!');
   const [messageCardId, setMessageCardId] = useState('default-card');
-
-  useEffect(() => {
-    if (!productId) return;
-
-    getProductSummary(Number(productId))
-      .then((data) => {
-        setProduct(data);
-      })
-      .catch(() => {
-        toast.error('상품 정보를 불러올 수 없습니다.');
-        navigate('/');
-      });
-  }, [productId, navigate]);
 
   if (!product) return <div>상품 정보를 불러오는 중입니다...</div>;
 
@@ -53,9 +37,9 @@ const ProductOrder = () => {
               />
               <GiftCardSelector
                 message={message}
-                setMessage={setMessage}
+                onChangeMessage={setMessage}
                 messageCardId={messageCardId}
-                setMessageCardId={setMessageCardId}
+                onChangeMessageCardId={setMessageCardId}
               />
               <SenderInfoSection />
               <ReceiverInfoSection />

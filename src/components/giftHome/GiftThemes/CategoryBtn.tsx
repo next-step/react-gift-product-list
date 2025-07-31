@@ -4,11 +4,12 @@ import Text from '@/common/Text';
 interface CategoryBtnProps {
   name: string;
   image: string;
+  onClick?: () => void;
 }
 
-const CategoryBtn = ({ name, image }: CategoryBtnProps) => {
+const CategoryBtn = ({ name, image, onClick }: CategoryBtnProps) => {
   return (
-    <Content>
+    <Content onClick={onClick}>
       <Image src={image} alt={name} />
       <Text size="label2" weight="regular">
         {name}
@@ -25,6 +26,7 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spacing.spacing3};
+  cursor: pointer;
 `;
 
 const Image = styled.img`

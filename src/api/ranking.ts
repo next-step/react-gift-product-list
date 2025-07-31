@@ -1,4 +1,4 @@
-import api from './index';
+import apiClient from '@/api/apiClient';
 
 export interface Product {
   id: number;
@@ -20,11 +20,14 @@ export const fetchProductRanking = async (
   targetType: string,
   rankType: string
 ): Promise<Product[]> => {
-  const response = await api.get<{ data: Product[] }>('/api/products/ranking', {
-    params: {
-      targetType,
-      rankType,
-    },
-  });
+  const response = await apiClient.get<{ data: Product[] }>(
+    '/api/products/ranking',
+    {
+      params: {
+        targetType,
+        rankType,
+      },
+    }
+  );
   return response.data.data;
 };

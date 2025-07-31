@@ -4,17 +4,17 @@ import styled from '@emotion/styled';
 type LoginButtonProps = {
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
-  isLoading?: boolean;
+  Loading?: boolean;
 };
 
 const LoginButton = ({
   type = 'button',
   disabled = false,
-  isLoading = false,
+  Loading = false,
 }: LoginButtonProps) => {
   return (
-    <StyledButton type={type} disabled={disabled || isLoading}>
-      {isLoading ? (
+    <StyledButton type={type} disabled={disabled || Loading}>
+      {Loading ? (
         <LoadingWrapper>
           <LoadingSpinner />
           <Text size="label2" weight="regular">

@@ -2,11 +2,11 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 const PrivateRoute = () => {
-  const { isLoggedIn, setRedirectAfterLogin } = useAuth();
+  const { isLoggedIn, onChangeRedirectAfterLogin } = useAuth();
   const location = useLocation();
 
   if (!isLoggedIn) {
-    setRedirectAfterLogin(location.pathname);
+    onChangeRedirectAfterLogin(location.pathname);
     return <Navigate to="/login" replace />;
   }
 

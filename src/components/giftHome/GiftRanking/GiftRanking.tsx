@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import ProductCard from '@/components/giftHome/GiftThemes/ProductCard';
 import Text from '@/common/Text';
-import { fetchProductRanking, type Product } from '@/api/ranking';
 import LoadingSpinner from '@/common/LoadingSpinner';
+import useGiftRanking from '@/hooks/useGiftRanking';
+import { type TargetType, type RankType } from '@/hooks/useFetch';
 
-const targetTypes = ['ALL', 'FEMALE', 'MALE', 'TEEN'] as const;
-type TargetType = (typeof targetTypes)[number];
-
-const rankTypes = ['MANY_WISH', 'MANY_RECEIVE', 'MANY_WISH_RECEIVE'] as const;
-type RankType = (typeof rankTypes)[number];
+const targetTypes: TargetType[] = ['ALL', 'FEMALE', 'MALE', 'TEEN'];
+const rankTypes: RankType[] = [
+  'MANY_WISH',
+  'MANY_RECEIVE',
+  'MANY_WISH_RECEIVE',
+];
 
 const targetTypeLabels: Record<TargetType, string> = {
   ALL: '전체',
@@ -25,32 +26,16 @@ const rankTypeLabels: Record<RankType, string> = {
   MANY_WISH_RECEIVE: '위시로 받은',
 };
 
-const GiftChart = () => {
+const GiftRanking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedTarget = (searchParams.get('target') as TargetType) || 'ALL';
   const selectedRank = (searchParams.get('rank') as RankType) || 'MANY_WISH';
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchRanking = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchProductRanking(selectedTarget, selectedRank);
-        setProducts(data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || '랭킹 데이터를 불러오지 못했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRanking();
-  }, [selectedTarget, selectedRank]);
+  const { products, loading, error, refetch } = useGiftRanking({
+    target: selectedTarget,
+    rank: selectedRank,
+  });
 
   const updateTargetFilter = (target: TargetType) => {
     setSearchParams({ target, rank: selectedRank });
@@ -58,6 +43,10 @@ const GiftChart = () => {
 
   const updateRankFilter = (rank: RankType) => {
     setSearchParams({ target: selectedTarget, rank });
+  };
+
+  const handleRetry = () => {
+    refetch();
   };
 
   return (
@@ -117,7 +106,7 @@ const GiftChart = () => {
   );
 };
 
-export default GiftChart;
+export default GiftRanking;
 
 const Layout = styled.div`
   padding: ${({ theme }) => theme.spacing.spacing6};

@@ -1,30 +1,13 @@
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CategoryBtn from '@/components/giftHome/GiftThemes/CategoryBtn';
 import Text from '@/common/Text';
-import { fetchThemes } from '@/api/themes';
-import type { Category } from '@/api/themes';
 import LoadingSpinner from '@/common/LoadingSpinner';
+import useGiftThemes from '@/hooks/useGiftThemes';
 
 const GiftCategoryList = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadThemes = async () => {
-      try {
-        const data = await fetchThemes();
-        setCategories(data);
-      } catch (err: any) {
-        setError(err.message || '테마 불러오기에 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadThemes();
-  }, []);
+  const { categories, loading, error } = useGiftThemes();
+  const navigate = useNavigate();
 
   if (loading) return <LoadingSpinner />;
   if (error) return <Text>{error}</Text>;
@@ -40,6 +23,7 @@ const GiftCategoryList = () => {
             key={category.themeId}
             name={category.name}
             image={category.image}
+            onClick={() => navigate(`/themes/${category.themeId}`)}
           />
         ))}
       </CategoryItem>

@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import api from '@/api/login';
+import { useLogin } from '@/hooks/useLogin';
+import { useAuthUser } from '@/hooks/useAuthUser';
 
 interface User {
   name: string;
@@ -15,118 +15,41 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  redirectAfterLogin: string | null;
+  onChangeRedirectAfterLogin: (path: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface UserInfo {
-  name: string;
-  email: string;
-  authToken: string;
-}
-
-function isValidUserInfo(data: unknown): data is UserInfo {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'name' in data &&
-    'email' in data &&
-    'authToken' in data &&
-    typeof (data as any).name === 'string' &&
-    typeof (data as any).email === 'string' &&
-    typeof (data as any).authToken === 'string'
-  );
-}
-
-const getErrorMessage = (error: any): string => {
-  if (error.response?.data?.message) {
-    return error.response.data.message;
-  }
-
-  switch (error.response?.status) {
-    case 400:
-      return '잘못된 요청입니다. 이메일과 비밀번호를 확인해주세요.';
-    case 401:
-      return '이메일 또는 비밀번호가 잘못되었습니다.';
-    case 404:
-      return '존재하지 않는 계정입니다.';
-    case 500:
-      return '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-    default:
-      if (error.message === 'Network Error') {
-        return '네트워크 연결을 확인해주세요.';
-      }
-      return '로그인 중 오류가 발생했습니다. 다시 시도해주세요.';
-  }
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { user, isLoggedIn, setUser, setIsLoggedIn, storage } = useAuthUser();
+  const [redirectAfterLogin, onChangeRedirectAfterLogin] = useState<
+    string | null
+  >(null);
+  const { login: loginHandler, isLoading } = useLogin();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    try {
-      const storedUserInfo = sessionStorage.getItem('userInfo');
-      if (storedUserInfo) {
-        const parsed = JSON.parse(storedUserInfo);
-        if (isValidUserInfo(parsed)) {
-          setUser({ name: parsed.name, email: parsed.email });
-          setIsLoggedIn(true);
-        } else {
-          throw new Error('Invalid user data structure');
-        }
-      }
-    } catch (error) {
-      console.error('Failed to restore user session:', error);
-      sessionStorage.removeItem('userInfo');
-    }
-  }, []);
-
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-
     try {
-      const response = await api.post('/api/login', {
-        email,
-        password,
-      });
-
-      const { data } = response.data;
-
-      if (data && data.email && data.name && data.authToken) {
-        const userInfo: UserInfo = {
-          name: data.name,
-          email: data.email,
-          authToken: data.authToken,
-        };
-
-        setUser({ name: data.name, email: data.email });
+      const loggedInUser = await loginHandler(email, password);
+      if (loggedInUser) {
+        setUser({ name: loggedInUser.name, email: loggedInUser.email });
         setIsLoggedIn(true);
-        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-
-        toast.success(`${data.name}님, 환영합니다!`);
-        navigate('/');
-      } else {
-        throw new Error('Invalid response data');
+        storage.set(loggedInUser);
+        navigate(redirectAfterLogin || '/');
+        onChangeRedirectAfterLogin(null);
       }
     } catch (error) {
-      console.error('Login failed:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage);
-      throw error;
-    } finally {
-      setIsLoading(false);
+      setUser(null);
+      setIsLoggedIn(false);
+      storage.clear();
     }
   };
 
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
-    sessionStorage.removeItem('userInfo');
-    toast.success('로그아웃되었습니다.');
-    navigate('/login');
+    storage.clear();
   };
 
   const value = useMemo(
@@ -136,8 +59,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       login,
       logout,
       isLoading,
+      redirectAfterLogin,
+      onChangeRedirectAfterLogin,
     }),
-    [isLoggedIn, user, isLoading]
+    [isLoggedIn, user, isLoading, redirectAfterLogin]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -145,8 +70,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth는 반드시 AuthProvider 안에서 사용해야 합니다.');
+  if (!context) {
+    throw new Error('useAuth는 AuthProvider 안에서만 사용할 수 있습니다.');
   }
   return context;
 };

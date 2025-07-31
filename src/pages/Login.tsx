@@ -62,7 +62,7 @@ const LoginForm = () => {
         <LoginButton
           type="submit"
           disabled={!isValid || isLoading}
-          isLoading={isLoading}
+          Loading={isLoading}
         />
       </FormWrapper>
     </Layout>
